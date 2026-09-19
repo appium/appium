@@ -17,6 +17,10 @@ export interface FakePluginSchema {
       type: 'string';
       description: string;
     };
+    interceptBidiEvents?: {
+      type: 'boolean';
+      description: string;
+    };
   };
 }
 
@@ -34,6 +38,10 @@ const schema: FakePluginSchema = {
     host: {
       type: 'string',
       description: 'The host to use for the fake web server',
+    },
+    interceptBidiEvents: {
+      type: 'boolean',
+      description: 'Whether this plugin should intercept/modify/veto BiDi events for demo/testing purposes',
     },
   },
 };

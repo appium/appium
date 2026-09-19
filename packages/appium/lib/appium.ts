@@ -33,7 +33,8 @@ import type {
 } from '@appium/types';
 import type WebSocket from 'ws';
 
-import * as bidiCommands from './bidi-commands.js';
+import * as bidiCommands from './bidi/index.js';
+import type {BidiProxyClient} from './bidi/index.js';
 import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants.js';
 import type {DriverConfig} from './extension/driver-config.js';
 import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build.js';
@@ -115,7 +116,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   readonly bidiSockets: Record<string, WebSocket[]> = {};
 
-  readonly bidiProxyClients: Record<string, WebSocket> = {};
+  readonly bidiProxyClients: Record<string, BidiProxyClient> = {};
 
   readonly desiredCapConstraints = desiredCapabilityConstraints;
 

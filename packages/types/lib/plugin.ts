@@ -4,6 +4,44 @@ import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps.js
 import type {DriverCommand, ExternalDriver} from './driver.js';
 import type {UpdateServerCallback} from './server.js';
 import type {Class, StringRecord} from './util.js';
+
+/**
+ * Where a BiDi event originated, so a plugin's interceptor can condition its behavior on origin.
+ */
+export interface BidiEventOrigin {
+  type: 'driver' | 'plugin' | 'proxy';
+  /** Set when `type === 'plugin'`: the emitting plugin's `name`. */
+  pluginName?: string;
+}
+
+/**
+ * The BiDi event payload as it flows through the interception chain.
+ */
+export interface BidiEventPayload {
+  method: string;
+  params: StringRecord;
+  context?: string;
+}
+
+/**
+ * Call with no args to pass the event on unchanged, call with a new payload to modify it before
+ * it reaches the next plugin (or the client), or don't call it at all to veto the event entirely.
+ */
+export type NextBidiEventCallback = (event?: BidiEventPayload) => Promise<void>;
+
+/**
+ * Generic catch-all BiDi event interceptor, mirroring {@link Plugin.handle} for commands. There
+ * is intentionally no per-event-name registry to implement against — BiDi's module system is
+ * open-ended, and a proxied upstream server may push event names Appium has no static knowledge
+ * of. Invoked once per event, for driver-emitted, plugin-emitted (including this same plugin's
+ * own emissions), and proxied upstream events alike.
+ */
+export type PluginBidiEventHandler<D extends ExternalDriver = ExternalDriver> = (
+  next: NextBidiEventCallback,
+  driver: D,
+  event: BidiEventPayload,
+  origin: BidiEventOrigin,
+) => Promise<void>;
 /**
  * The interface describing the constructor and static properties of a Plugin.
  */
@@ -79,6 +117,11 @@ export interface Plugin {
    * original Appium behavior (or the behavior of the next plugin in a plugin chain).
    */
   handle?: PluginCommand<ExternalDriver, [cmdName: string, ...args: any[]], void>;
+  /**
+   * Intercept a BiDi event (driver-emitted, plugin-emitted, or proxied from an upstream BiDi
+   * server), optionally observing, modifying, or vetoing it before it reaches the client.
+   */
+  handleBidiEvent?: PluginBidiEventHandler<ExternalDriver>;
 }
 
 /**

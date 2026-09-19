@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import type {AddressInfo} from 'node:net';
 import {describe, it, before, after} from 'node:test';
 
 import {httpGet, httpPost} from '@appium/driver-test-support';
@@ -8,6 +9,7 @@ import type {ParsedArgs} from 'appium/types/index.js';
 import {sleep} from 'asyncbox';
 import type {Browser} from 'webdriverio';
 import {remote as wdio} from 'webdriverio';
+import {WebSocketServer} from 'ws';
 
 import {runExtensionCommand} from '../../lib/cli/extension.js';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants.js';
@@ -450,6 +452,542 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           params: {num1: 2, num2: 3},
         });
         assert.strictEqual(result, 6);
+      });
+    });
+
+    describe('with a proxying driver', function () {
+      let driver: Browser | null;
+      const {setup, teardown} = createServer();
+      let upstreamServer: WebSocketServer;
+      let upstreamUrl: string;
+      let upstreamClosed: Promise<void>;
+
+      before(async function () {
+        const wss = new WebSocketServer({port: 0, host: '127.0.0.1'});
+        await new Promise<void>((resolve) => wss.once('listening', resolve));
+        const {port: upstreamPort} = wss.address() as AddressInfo;
+        upstreamUrl = `ws://127.0.0.1:${upstreamPort}`;
+        upstreamClosed = new Promise<void>((resolve) => {
+          wss.on('connection', (ws) => {
+            ws.on('close', () => resolve());
+            ws.on('message', (data) => {
+              const {id, method, params} = JSON.parse(data.toString());
+              switch (method) {
+                case 'session.subscribe':
+                  if (Array.isArray(params.events) && params.events.includes('vendor.preSubscribeBurst')) {
+                    // simulate an upstream server that pushes an event belonging to the
+                    // subscription while still processing it, before the success response
+                    ws.send(JSON.stringify({type: 'event', method: 'vendor.preSubscribeBurst', params: {}}));
+                    setTimeout(
+                      () => ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}})),
+                      20,
+                    );
+                  } else {
+                    // real BiDi servers return a subscription id, which callers may later use to
+                    // unsubscribe instead of repeating events/contexts
+                    ws.send(JSON.stringify({id, type: 'success', result: {subscription: `sub-${id}`}}));
+                  }
+                  break;
+                case 'session.unsubscribe':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  break;
+                case 'appium:fake.doSomeMath':
+                  ws.send(JSON.stringify({id, type: 'success', result: params.num1 + params.num2}));
+                  break;
+                case 'vendor.echo':
+                  ws.send(JSON.stringify({id, type: 'success', result: params}));
+                  break;
+                case 'vendor.triggerEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.ping', params: {pong: true}}));
+                  break;
+                case 'vendor.triggerContextEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  // standard BiDi event envelopes nest context inside params, not at the top level
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'vendor.contextPing',
+                      params: {context: 'vendor-ctx-1', pong: true},
+                    }),
+                  );
+                  break;
+                case 'vendor.triggerModuleEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.moduleEvent', params: {pong: true}}));
+                  break;
+                case 'vendor.triggerCustomContextEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(
+                    JSON.stringify({type: 'event', method: 'vendor.multiCtxPing', params: {context: params.context}}),
+                  );
+                  break;
+                case 'vendor.triggerLogEvent':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  // log events nest their context under `source`, not directly in params
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'vendor.logAdded',
+                      params: {source: {context: 'vendor-log-ctx'}, text: 'hello'},
+                    }),
+                  );
+                  break;
+                case 'vendor.triggerAB':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.a', params: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.b', params: {}}));
+                  break;
+                case 'vendor.triggerBrowsingContextEvents':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'browsingContext.load', params: {context: 'tab-x'}}));
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'browsingContext.domContentLoaded',
+                      params: {context: 'tab-x'},
+                    }),
+                  );
+                  break;
+                case 'vendor.triggerRaceAB':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.raceA', params: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.raceB', params: {}}));
+                  break;
+                default:
+                  ws.send(
+                    JSON.stringify({
+                      id,
+                      type: 'error',
+                      error: 'unknown command',
+                      message: `no handler for ${method}`,
+                    }),
+                  );
+              }
+            });
+          });
+        });
+        upstreamServer = wss;
+        await setup();
+      });
+
+      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+      // before the server shutdown
+      after(async function () {
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
+          upstreamServer.close();
+        }
+      });
+
+      before(async function () {
+        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:bidiProxyUrl': upstreamUrl};
+        driver = await wdio({...wdOpts, capabilities: caps} as any);
+      });
+
+      it('should proxy a plugin-wrapped bidi command to the upstream server when next() is called', async function () {
+        const {result} = await (driver as any).send({
+          method: 'appium:fake.doSomeMath',
+          params: {num1: 2, num2: 3},
+        });
+        assert.strictEqual(result, 11);
+      });
+
+      it('should not invoke the upstream server if the plugin overrides and does not call next()', async function () {
+        const {result} = await (driver as any).send({
+          method: 'appium:fake.doSomeMath2',
+          params: {num1: 2, num2: 3},
+        });
+        assert.strictEqual(result, 6);
+      });
+
+      it('should permissively pass through an unrecognized/vendor bidi command', async function () {
+        const {result} = await (driver as any).send({
+          method: 'vendor.echo',
+          params: {value: 42},
+        });
+        assert.deepStrictEqual(result, {value: 42});
+      });
+
+      it('should deliver a proxied event once the client subscribes (dual bidiEventSubs bookkeeping)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.ping']});
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+        assert.deepStrictEqual(collected[0], {pong: true});
+
+        // clean up so this subscription doesn't leak into later tests in this block
+        await (driver as any).sessionUnsubscribe({events: ['vendor.ping']});
+      });
+
+      it('should deliver a proxied event whose context is nested in params.context (standard BiDi shape)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.contextPing', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.contextPing'], contexts: ['vendor-ctx-1']});
+        await (driver as any).send({method: 'vendor.triggerContextEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.contextPing'], contexts: ['vendor-ctx-1']});
+      });
+
+      it('should deliver a proxied event covered by a module-wide subscription', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.moduleEvent', (ev: unknown) => collected.push(ev));
+
+        // subscribing to the bare module name (not a specific event) covers every event in it
+        await (driver as any).sessionSubscribe({events: ['vendor']});
+        await (driver as any).send({method: 'vendor.triggerModuleEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        // clean up so this broad subscription doesn't leak into later tests in this block
+        await (driver as any).sessionUnsubscribe({events: ['vendor']});
+      });
+
+      it('should unsubscribe a proxied session using a subscription id (standard BiDi form)', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        const {result: subResult} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        const subscriptionId = subResult.subscription;
+        assert.ok(subscriptionId);
+
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subscriptionId]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 0);
+      });
+
+      it('should keep an overlapping subscription alive when unsubscribing a different subscription id to the same event', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.ping', (ev: unknown) => collected.push(ev));
+
+        const {result: sub1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        const {result: sub2} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.ping']},
+        });
+        assert.ok(sub1.subscription);
+        assert.ok(sub2.subscription);
+        assert.notStrictEqual(sub1.subscription, sub2.subscription);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [sub1.subscription]},
+        });
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        // sub2 is still active, so the event must still be delivered
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [sub2.subscription]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerEvent', params: {}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 0);
+      });
+
+      it('should not throw when unsubscribing an unknown/untracked subscription id', async function () {
+        const {result} = await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: ['nonexistent-subscription-id']},
+        });
+        assert.deepStrictEqual(result, {});
+      });
+
+      it('should deliver a proxied log event whose context is nested in params.source.context', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.logAdded', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).sessionSubscribe({events: ['vendor.logAdded'], contexts: ['vendor-log-ctx']});
+        await (driver as any).send({method: 'vendor.triggerLogEvent', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.logAdded'], contexts: ['vendor-log-ctx']});
+      });
+
+      it('should deliver an event the upstream server pushes while still processing session.subscribe', async function () {
+        const collected: unknown[] = [];
+        (driver as any).on('vendor.preSubscribeBurst', (ev: unknown) => collected.push(ev));
+
+        await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.preSubscribeBurst']},
+        });
+        await sleep(300);
+
+        assert.strictEqual(collected.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.preSubscribeBurst']});
+      });
+
+      it('should preserve coverage for an earlier subscription to a different context on the same event', async function () {
+        const collected: {context?: string}[] = [];
+        (driver as any).on('vendor.multiCtxPing', (ev: {context?: string}) => collected.push(ev));
+
+        const {result: subTab1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.multiCtxPing'], contexts: ['tab-1']},
+        });
+        const {result: subTab2} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.multiCtxPing'], contexts: ['tab-2']},
+        });
+
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-2'}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 2);
+
+        // unsubscribing tab-2's subscription must not drop tab-1's still-active coverage
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab2.subscription]},
+        });
+        collected.length = 0;
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+        await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-2'}});
+        await sleep(300);
+        assert.strictEqual(collected.length, 1);
+        assert.strictEqual(collected[0].context, 'tab-1');
+
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab1.subscription]},
+        });
+      });
+
+      it('should not resurrect coverage a plain-form unsubscribe already removed from a still-tracked subscription', async function () {
+        const aEvents: unknown[] = [];
+        const bEvents: unknown[] = [];
+        (driver as any).on('vendor.a', (ev: unknown) => aEvents.push(ev));
+        (driver as any).on('vendor.b', (ev: unknown) => bEvents.push(ev));
+
+        // sub1: a single global subscription covering both vendor.a and vendor.b
+        await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.a', 'vendor.b']},
+        });
+
+        // drop vendor.a via the plain events-form, which bypasses id tracking -- sub1's tracked
+        // record must shrink to just vendor.b, not merely be left stale
+        await (driver as any).sessionUnsubscribe({events: ['vendor.a']});
+
+        // sub2: a separate, narrower subscription to vendor.a for one context
+        const {result: subTab1} = await (driver as any).send({
+          method: 'session.subscribe',
+          params: {events: ['vendor.a'], contexts: ['tab-1']},
+        });
+
+        // unsubscribing sub2 by id must not resurrect sub1's already-removed global vendor.a
+        // coverage via the union in syncCoverage
+        await (driver as any).send({
+          method: 'session.unsubscribe',
+          params: {subscriptions: [subTab1.subscription]},
+        });
+
+        await (driver as any).send({method: 'vendor.triggerAB', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(aEvents.length, 0);
+        assert.strictEqual(bEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.b']});
+      });
+
+      it(
+        'should stop delivering an individual event narrowed out of an active module-wide ' +
+          'subscription, conservatively dropping the whole module rather than a full BiDi event registry',
+        async function () {
+          const aEvents: unknown[] = [];
+          const bEvents: unknown[] = [];
+          (driver as any).on('vendor.a', (ev: unknown) => aEvents.push(ev));
+          (driver as any).on('vendor.b', (ev: unknown) => bEvents.push(ev));
+
+          // subscribe to the whole 'vendor' module, then narrow by unsubscribing just vendor.a
+          await (driver as any).send({method: 'session.subscribe', params: {events: ['vendor']}});
+          await (driver as any).sessionUnsubscribe({events: ['vendor.a']});
+
+          await (driver as any).send({method: 'vendor.triggerAB', params: {}});
+          await sleep(300);
+
+          // vendor.a was explicitly unsubscribed -- must not arrive
+          assert.strictEqual(aEvents.length, 0);
+          // without a full BiDi event registry (deliberately out of scope, since BiDi's module
+          // system is open-ended), narrowing one member out of an active module-wide subscription
+          // can't be represented precisely, so coverage for the whole module is conservatively
+          // dropped rather than leaving the module key wrongly granting vendor.a coverage
+          assert.strictEqual(bEvents.length, 0);
+
+          await (driver as any).sessionUnsubscribe({events: ['vendor']});
+        },
+      );
+
+      it(
+        'should not resurrect a context narrowed by a plain-form unsubscribe when an unrelated ' +
+          'subscription to the same event later syncs coverage',
+        async function () {
+          const collected: unknown[] = [];
+          (driver as any).on('vendor.multiCtxPing', (ev: unknown) => collected.push(ev));
+
+          await (driver as any).send({
+            method: 'session.subscribe',
+            params: {events: ['vendor.multiCtxPing'], contexts: ['tab-1', 'tab-2']},
+          });
+          // plain-form unsubscribe narrows just tab-1 out of the tracked record above
+          await (driver as any).sessionUnsubscribe({events: ['vendor.multiCtxPing'], contexts: ['tab-1']});
+
+          // an unrelated subscription to the same event, then unsubscribed by id -- this triggers
+          // a coverage rebuild (union over all tracked records) for vendor.multiCtxPing
+          const {result: subTab3} = await (driver as any).send({
+            method: 'session.subscribe',
+            params: {events: ['vendor.multiCtxPing'], contexts: ['tab-3']},
+          });
+          await (driver as any).send({
+            method: 'session.unsubscribe',
+            params: {subscriptions: [subTab3.subscription]},
+          });
+
+          await (driver as any).send({method: 'vendor.triggerCustomContextEvent', params: {context: 'tab-1'}});
+          await sleep(300);
+
+          assert.strictEqual(collected.length, 0);
+
+          await (driver as any).sessionUnsubscribe({events: ['vendor.multiCtxPing'], contexts: ['tab-2']});
+        },
+      );
+
+      it('should keep a standard sibling event covered when one member is narrowed out of a module-wide subscription', async function () {
+        const loadEvents: unknown[] = [];
+        const domContentLoadedEvents: unknown[] = [];
+        (driver as any).on('browsingContext.load', (ev: unknown) => loadEvents.push(ev));
+        (driver as any).on('browsingContext.domContentLoaded', (ev: unknown) => domContentLoadedEvents.push(ev));
+
+        await (driver as any).send({method: 'session.subscribe', params: {events: ['browsingContext']}});
+        await (driver as any).sessionUnsubscribe({events: ['browsingContext.load']});
+
+        await (driver as any).send({method: 'vendor.triggerBrowsingContextEvents', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(loadEvents.length, 0);
+        assert.strictEqual(domContentLoadedEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['browsingContext']});
+      });
+
+      it('should process a concurrent subscribe/unsubscribe pair on the same connection in send order', async function () {
+        const aEvents: unknown[] = [];
+        const bEvents: unknown[] = [];
+        (driver as any).on('vendor.raceA', (ev: unknown) => aEvents.push(ev));
+        (driver as any).on('vendor.raceB', (ev: unknown) => bEvents.push(ev));
+
+        await (driver as any).send({method: 'session.subscribe', params: {events: ['vendor.raceA']}});
+
+        // unsubscribe A, then immediately subscribe [A, B] -- without serialized handling, the
+        // still-pending subscribe's placeholder could be corrupted by the unsubscribe before
+        // its own upstream response arrives and promotes it
+        await Promise.all([
+          (driver as any).sessionUnsubscribe({events: ['vendor.raceA']}),
+          (driver as any).send({method: 'session.subscribe', params: {events: ['vendor.raceA', 'vendor.raceB']}}),
+        ]);
+
+        await (driver as any).send({method: 'vendor.triggerRaceAB', params: {}});
+        await sleep(300);
+
+        // the subscribe, sent second, is the last word for A
+        assert.strictEqual(aEvents.length, 1);
+        assert.strictEqual(bEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.raceA', 'vendor.raceB']});
+      });
+
+      it('should close the upstream connection when the session ends', async function () {
+        await driver?.deleteSession();
+        driver = null;
+        await upstreamClosed;
+      });
+    });
+
+    describe('BiDi event interception', function () {
+      let driver: Browser;
+      const {setup, teardown} = createServer();
+
+      before(async function () {
+        await setup({plugin: {fake: {interceptBidiEvents: true}}});
+      });
+      // this 'after' block needs to come before 'serverSetup' so that the delete session happens
+      // before the server shutdown
+      after(async function () {
+        try {
+          await driver?.deleteSession();
+        } finally {
+          await teardown();
+        }
+      });
+
+      before(async function () {
+        const caps = {...wdOpts.capabilities, webSocketUrl: true, 'appium:runClock': true};
+        driver = await wdio({...wdOpts, capabilities: caps} as any);
+      });
+
+      it('should let a plugin modify a driver-emitted event before it reaches the client', async function () {
+        // FakePlugin also emits its own 'appium:clock.currentTime' events (merged with the
+        // driver's, per the non-interception test above), and handleBidiEvent only modifies the
+        // driver-origin ones -- so we expect a mix, not every received event to carry the marker.
+        const collected: {time: number; intercepted?: boolean}[] = [];
+        (driver as any).on('appium:clock.currentTime', (ev: {time: number; intercepted?: boolean}) => {
+          collected.push(ev);
+        });
+
+        await (driver as any).sessionSubscribe({events: ['appium:clock.currentTime']});
+        await sleep(800);
+        await (driver as any).sessionUnsubscribe({events: ['appium:clock.currentTime']});
+
+        assert.ok(collected.length > 0);
+        assert.ok(collected.some((ev) => ev.intercepted === true));
+      });
+
+      it('should let a plugin veto an event so the client never receives it, despite being subscribed', async function () {
+        let received = 0;
+        (driver as any).on('appium:fake.vetoedEvent', () => {
+          received++;
+        });
+
+        await (driver as any).sessionSubscribe({events: ['appium:fake.vetoedEvent']});
+        await (driver as any).send({method: 'appium:fake.emitVetoedEvent', params: {}});
+        await (driver as any).send({method: 'appium:fake.emitVetoedEvent', params: {}});
+        await sleep(200);
+
+        assert.strictEqual(received, 0);
       });
     });
   });

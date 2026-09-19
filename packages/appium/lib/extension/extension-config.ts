@@ -469,7 +469,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     const createPeerWarning = (reason: string): string =>
       `${extTypeText} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to ${reason}`;
 
-    if (typeof appiumVersion === 'string' && !satisfies(APPIUM_VER, appiumVersion)) {
+    if (typeof appiumVersion === 'string' && !satisfies(APPIUM_VER, appiumVersion, {includePrerelease: true})) {
       const listData = await this.getListData();
       const extListData = listData[extName] as ExtensionListData<ExtType> | undefined;
       if (extListData?.installed) {

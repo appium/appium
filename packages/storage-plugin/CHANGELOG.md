@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.1](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.0...@appium/storage-plugin@3.0.0-beta.1) (2026-09-19)
+
+### Bug Fixes
+
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([b09efc3](https://github.com/appium/appium/commit/b09efc31c6967bbcf2c4314db9d2a0b6454fa8fb))
+
+
 ## [3.0.0-beta.0](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.0...@appium/storage-plugin@3.0.0-beta.0) (2026-09-19)
 
 ### ⚠ BREAKING CHANGES

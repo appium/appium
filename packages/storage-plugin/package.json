@@ -62,7 +62,7 @@
     "@appium/types": "1.7.0"
   },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0"
+    "appium": "^4.0.0-beta.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

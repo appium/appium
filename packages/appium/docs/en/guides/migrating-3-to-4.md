@@ -37,6 +37,16 @@ bumps the minimum required version to `^22.22.2 || ^24.15.0 || >=26.0.0`.
 
     Upgrade Node.js to `v22.22.2`/`v24.15.0` or newer
 
+### All Packages Are Now ESM-Only
+
+Every `@appium/*` package (and `appium` itself) is now published as `"type": "module"` with no
+CommonJS build. `require()` no longer works for these packages. This affects anyone importing
+Appium or a driver/plugin package directly from Node.js code, not just driver/plugin developers.
+
+!!! info "Actions Needed"
+
+    Import Appium packages with ESM `import` syntax, or use dynamic `import()` from CommonJS code
+
 ### `--nodeconfig` Flag Removed
 
 Support for registering with a legacy Selenium Grid 3 hub has been removed, along with the
@@ -136,14 +146,15 @@ validated like any other unknown parameter.
 
 ## Endpoint Changes
 
-The following endpoints (all part of the legacy JSONWP/MJSONWP protocols, already deprecated since
-Appium 2/3) have been removed:
+The following endpoints have been removed:
 
-* `GET/POST /session/:sessionId/ime/*` (all IME endpoints)
-* `GET /session/:sessionId/location`, `POST /session/:sessionId/location` (legacy geolocation)
-* `GET /session/:sessionId/network_connection`, `POST /session/:sessionId/network_connection`
-* `POST /session/:sessionId/receive_async_response`
-* `GET /session/:sessionId/element/:elementId` (undocumented legacy stub)
+* `GET/POST /session/:sessionId/ime/*` (all IME endpoints, legacy JSONWP)
+* `GET /session/:sessionId/location`, `POST /session/:sessionId/location` (legacy geolocation, legacy JSONWP)
+* `GET /session/:sessionId/network_connection`, `POST /session/:sessionId/network_connection` (legacy MJSONWP)
+* `POST /session/:sessionId/receive_async_response` (legacy JSONWP)
+* `GET /session/:sessionId/element/:elementId` (undocumented legacy JSONWP stub)
+* `GET /session/:sessionId` (deprecated `getSession`; see [below](#getsession-command-removed) for
+  its replacement)
 
 The `orientation`, `context`/`contexts`, and `rotation` deprecated endpoints are unaffected and
 remain available.
@@ -154,14 +165,27 @@ The following changes primarily affect authors of Appium drivers, plugins, or to
 Appium's internal packages directly (`@appium/base-driver`, `@appium/base-plugin`,
 `@appium/support`, `@appium/logger`). They do not affect most Appium end users.
 
-### All Packages Are Now ESM-Only
+### Remaining Legacy (M)JSONWP Support Removed From `@appium/base-driver`
 
-Every `@appium/*` package (and `appium` itself) is now published as `"type": "module"` with no
-CommonJS build. `require()` no longer works for these packages.
+Beyond the removed endpoints above, the internal machinery that translated between the legacy
+(M)JSONWP protocol and W3C WebDriver has been removed:
+
+* `ProtocolError` instances no longer carry a `jsonwpCode` property, and error responses no longer
+  include a legacy numeric `status` code (`errorFromMJSONWPStatusCode`, aliased as `errorFromCode`,
+  has been removed; use `errorFromW3CJsonCode`)
+* Responses no longer duplicate element references under the legacy `ELEMENT` key; only the W3C
+  `element-6066-11e4-a52e-4f735466cecf` key is present
+* `WebDriverProxy` (formerly `JWProxy`, now removed as a name) no longer converts responses from a
+  downstream automation server speaking legacy MJSONWP; downstream servers must speak W3C WebDriver
+* `determineProtocol`, `DriverCore#setProtocolMJSONWP()`, and `DriverCore#isMjsonwpProtocol()` have
+  been removed; drivers can no longer produce the legacy `{sessionId, status, value}` response shape
+* `@appium/base-driver` no longer exports `statusCodes`/`getSummaryByCode` (the `jsonwp-status`
+  module was removed)
 
 !!! info "Actions Needed"
 
-    Import Appium packages with ESM `import` syntax, or use dynamic `import()` from CommonJS code
+    Ensure any downstream automation server a driver proxies to (via `WebDriverProxy`) speaks pure
+    W3C WebDriver; update code referencing the removed exports to their W3C equivalents
 
 ### `@appium/base-driver` Default Export Removed
 
@@ -219,14 +243,14 @@ The deprecated `driverData` mechanism (`Core.driverData`, the `driverData` param
 
 ### `getSession` Command Removed
 
-`BaseDriver.getSession`, `ISessionHandler.getSession`, and the `GET /session/:sessionId` route
-have been removed, along with the `appium:eventTimings` capability that controlled whether its
-response included event history.
+`BaseDriver.getSession` and `ISessionHandler.getSession` have been removed (see [Endpoint
+Changes](#endpoint-changes) for the removed route), along with the `appium:eventTimings`
+capability that controlled whether its response included event history.
 
 !!! info "Actions Needed"
 
-    Use `mobile: getAppiumSessionCapabilities` to retrieve session capabilities, and
-    `mobile: getLogEvents` to retrieve event history (now returned unconditionally)
+    Use `GET /session/:sessionId/appium/capabilities` to retrieve session capabilities, and
+    `POST /session/:sessionId/appium/events` to retrieve event history (now returned unconditionally)
 
 ### `@appium/support` Deprecated APIs Removed
 

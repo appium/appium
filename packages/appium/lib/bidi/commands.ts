@@ -8,6 +8,7 @@ import type {
   StringRecord,
   SuccessBiDiCommandResponse,
 } from '@appium/types';
+import AsyncLock from 'async-lock';
 
 import type {AppiumDriver} from '../appium.js';
 import {MAX_LOGGED_DATA_LENGTH, SESSION_SUBSCRIBE, SESSION_UNSUBSCRIBE} from './constants.js';
@@ -130,22 +131,20 @@ function nextPlaceholderSubscriptionId(): string {
 
 // Serializes subscribe/unsubscribe handling per driver, so concurrent commands on the same (or a
 // second) connection can't interleave their local bookkeeping mutations.
-const SUBSCRIPTION_LOCKS: WeakMap<AnyDriver, Promise<void>> = new WeakMap();
+const SUBSCRIPTION_LOCKS: WeakMap<AnyDriver, AsyncLock> = new WeakMap();
+const SUBSCRIPTION_LOCK_KEY = 'subscription';
+
+function getSubscriptionLock(driver: AnyDriver): AsyncLock {
+  let lock = SUBSCRIPTION_LOCKS.get(driver);
+  if (!lock) {
+    lock = new AsyncLock();
+    SUBSCRIPTION_LOCKS.set(driver, lock);
+  }
+  return lock;
+}
 
 async function withSubscriptionLock<T>(driver: AnyDriver, fn: () => Promise<T>): Promise<T> {
-  const previous = SUBSCRIPTION_LOCKS.get(driver) ?? Promise.resolve();
-  let release: () => void = () => {};
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  SUBSCRIPTION_LOCKS.set(
-    driver,
-    previous.then(() => gate),
-  );
-  await previous;
-  try {
-    return await fn();
-  } finally {
-    release();
-  }
+  return await getSubscriptionLock(driver).acquire(SUBSCRIPTION_LOCK_KEY, fn);
 }
 
 /**

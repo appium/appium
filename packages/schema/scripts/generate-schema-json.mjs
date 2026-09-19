@@ -50,7 +50,7 @@ async function write() {
     throw new Error(`${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`, {cause: e});
   }
 
-  const json = JSON.stringify(schema, null, 2);
+  const json = `${JSON.stringify(schema, null, 2)}\n`;
 
   try {
     await mkdir(OUTPUT_DIR, {recursive: true});

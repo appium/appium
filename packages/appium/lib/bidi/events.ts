@@ -35,12 +35,10 @@ export function getBidiEventLogCounts(driver: AnyDriver): Record<string, number>
   return eventLogCounts;
 }
 
-// Per-driver browsing-context parent tracking (child context id -> parent context id), built
-// from observed browsingContext.contextCreated events. BiDi context-scoped subscriptions cover
-// the subscribed context's descendants too (e.g. an iframe nested under a subscribed top-level
-// tab), so the gate needs this ancestry to correctly match events from a subscribed context's
-// children. Keyed loosely by `object` (rather than `AnyDriver`) so commands.ts's subscription
-// bookkeeping can also resolve a context's top-level ancestor without needing the full driver type.
+// Per-driver context ancestry (child -> parent), built from browsingContext.contextCreated.
+// Keyed by `object` rather than `AnyDriver` so commands.ts can reuse it. Never pruned: several
+// connections share this map with independent FIFOs, so deleting on contextDestroyed can race
+// ahead of another connection's still-queued event for the same child.
 const CONTEXT_PARENTS_MAP: WeakMap<object, Map<string, string>> = new WeakMap();
 
 function getContextParents(driver: object): Map<string, string> {
@@ -74,10 +72,9 @@ export function getTopLevelContext(driver: object, context: string): string {
   return top;
 }
 
-// Per-driver realm -> context tracking, built from observed script.realmCreated events (worker
-// realms, which identify themselves via `owners` rather than a `context`, aren't tracked here).
-// Some standard events that scope to a realm rather than a context (e.g. script.realmDestroyed)
-// carry no context field at all, so this is needed to resolve them to a context for the gate.
+// Per-driver realm -> context tracking (script.realmCreated + the getRealms bootstrap). Worker
+// realms (identified via `owners`, not `context`) aren't tracked. Never pruned, same reasoning
+// as CONTEXT_PARENTS_MAP.
 const REALM_CONTEXTS_MAP: WeakMap<object, Map<string, string>> = new WeakMap();
 
 function getRealmContexts(driver: object): Map<string, string> {
@@ -102,25 +99,11 @@ function trackContextCreated(driver: object, event: BidiEventPayload): void {
   }
 }
 
-function trackContextDestroyed(driver: object, event: BidiEventPayload): void {
-  const context = event.params?.context as string | undefined;
-  if (context) {
-    getContextParents(driver).delete(context);
-  }
-}
-
 function trackRealmCreated(driver: object, event: BidiEventPayload): void {
   const realm = event.params?.realm as string | undefined;
   const context = event.params?.context as string | undefined;
   if (realm && context) {
     getRealmContexts(driver).set(realm, context);
-  }
-}
-
-function trackRealmDestroyed(driver: object, event: BidiEventPayload): void {
-  const realm = event.params?.realm as string | undefined;
-  if (realm) {
-    getRealmContexts(driver).delete(realm);
   }
 }
 
@@ -233,10 +216,7 @@ export function createBidiEventDispatcher(
   }
 
   return function dispatch(event, origin) {
-    // Track context/realm creation from the raw event, before plugin interception (so a plugin
-    // that modifies/vetoes the event doesn't blind the gate to a relationship it needs for
-    // matching *other* events) and before this event enters the FIFO (so a later-arriving event
-    // for the same child, dispatched before this one's queued turn runs, can already see it).
+    // track creation before plugin interception, so a veto/modify can't blind the gate
     if (event.method === 'browsingContext.contextCreated') {
       trackContextCreated(bidiHandlerDriver, event);
     } else if (event.method === 'script.realmCreated') {
@@ -250,16 +230,6 @@ export function createBidiEventDispatcher(
           `Error while running a plugin's BiDi event interceptor for '${event.method}': ` +
             `${err instanceof Error ? err.message : err}. Event was dropped.`,
         );
-      } finally {
-        // Destruction is applied only after this event has been filtered/delivered (and after
-        // any earlier-queued event has had its own turn), so an ancestry/realm relationship
-        // remains available for the destruction event's own gate check, and for any event still
-        // ahead of it in the queue.
-        if (event.method === 'browsingContext.contextDestroyed') {
-          trackContextDestroyed(bidiHandlerDriver, event);
-        } else if (event.method === 'script.realmDestroyed') {
-          trackRealmDestroyed(bidiHandlerDriver, event);
-        }
       }
     });
     return queue;
@@ -344,14 +314,16 @@ interface BidiContextTreeNode {
   children?: BidiContextTreeNode[] | null;
 }
 
-/**
- * Bootstraps the ancestry map from the upstream browsing context tree that already exists when
- * the proxy connection is established (covers frames that predate this connection, which no
- * contextCreated event will ever be observed for), then subscribes upstream to context lifecycle
- * events so ancestry stays current for contexts created afterward. Failures are logged and
- * swallowed -- this is best-effort bookkeeping, not something that should fail session setup.
- */
-async function primeContextAncestry(driver: AnyDriver, bidiProxyClient: BidiProxyClient): Promise<void> {
+// Tracks each proxy client's browsingContext.getTree bootstrap so commands.ts can await it before
+// normalizing a subscription's contexts (a subscribe racing ahead of the bootstrap would compute
+// the wrong top-level context for a not-yet-known frame).
+const CONTEXT_TREE_READY: WeakMap<BidiProxyClient, Promise<void>> = new WeakMap();
+
+export function waitForContextTreeReady(bidiProxyClient: BidiProxyClient): Promise<void> {
+  return CONTEXT_TREE_READY.get(bidiProxyClient) ?? Promise.resolve();
+}
+
+async function bootstrapContextTree(driver: AnyDriver, bidiProxyClient: BidiProxyClient): Promise<void> {
   const parents = getContextParents(driver);
   const walk = (nodes: BidiContextTreeNode[] | null | undefined, parent?: string) => {
     for (const node of nodes ?? []) {
@@ -368,21 +340,56 @@ async function primeContextAncestry(driver: AnyDriver, bidiProxyClient: BidiProx
     walk(tree?.contexts);
   } catch (err) {
     driver.log.warn(
-      `Could not fetch the initial upstream BiDi browsing context tree for ancestry tracking: ` +
-        `${err instanceof Error ? err.message : err}`,
+      `Could not fetch the initial upstream BiDi browsing context tree: ${err instanceof Error ? err.message : err}`,
     );
   }
+}
+
+async function bootstrapRealms(driver: AnyDriver, bidiProxyClient: BidiProxyClient): Promise<void> {
   try {
+    const result = (await bidiProxyClient.executeCommand('script.getRealms', {})) as {
+      realms?: {realm?: string; context?: string}[];
+    };
+    const realmContexts = getRealmContexts(driver);
+    for (const realm of result?.realms ?? []) {
+      if (realm.realm && realm.context) {
+        realmContexts.set(realm.realm, realm.context);
+      }
+    }
+  } catch (err) {
+    driver.log.warn(`Could not fetch the initial upstream BiDi realms: ${err instanceof Error ? err.message : err}`);
+  }
+}
+
+async function subscribeInternalLifecycleEvents(driver: AnyDriver, bidiProxyClient: BidiProxyClient): Promise<void> {
+  try {
+    // no `contexts`/`userContexts` here -- omitting both is how BiDi expresses "every context";
+    // Appium's local '' wildcard is not a valid upstream context id
     await bidiProxyClient.executeCommand(SESSION_SUBSCRIBE, {
-      events: ['browsingContext.contextCreated', 'browsingContext.contextDestroyed'],
-      contexts: [''],
+      events: [
+        'browsingContext.contextCreated',
+        'browsingContext.contextDestroyed',
+        'script.realmCreated',
+        'script.realmDestroyed',
+      ],
     });
   } catch (err) {
     driver.log.warn(
-      `Could not subscribe to upstream BiDi context lifecycle events for ancestry tracking: ` +
-        `${err instanceof Error ? err.message : err}`,
+      `Could not subscribe to upstream BiDi lifecycle events: ${err instanceof Error ? err.message : err}`,
     );
   }
+}
+
+/**
+ * Keeps context/realm ancestry current independently of whatever the client itself subscribes
+ * to, by bootstrapping from the upstream context tree and realm list, then subscribing
+ * internally to lifecycle events. Best-effort: failures are logged, not surfaced.
+ */
+function primeAncestryTracking(driver: AnyDriver, bidiProxyClient: BidiProxyClient): void {
+  const treeReady = bootstrapContextTree(driver, bidiProxyClient);
+  CONTEXT_TREE_READY.set(bidiProxyClient, treeReady);
+  void bootstrapRealms(driver, bidiProxyClient);
+  void subscribeInternalLifecycleEvents(driver, bidiProxyClient);
 }
 
 /**
@@ -422,14 +429,8 @@ export function initBidiProxyHandlers(
       return;
     }
     const params = parsed.params ?? {};
-    // Standard BiDi event envelopes don't carry a top-level `context`. Most events nest it
-    // directly in `params.context` (e.g. `browsingContext.load`), but log events instead carry
-    // it in `params.source.context` (a log entry's context lives on its `source`, not the entry
-    // itself). Some events (e.g. script.realmDestroyed) identify only a `realm`, in which case
-    // the realm's context -- if we've observed the realm being created -- is used instead.
-    // Normalize a missing context to '' here (rather than leaving it undefined), matching how
-    // driver/plugin-origin events are normalized in initBidiEventListeners, so origin never
-    // changes what plugins see.
+    // context lives in params.context, or params.source.context for log events, or is resolved
+    // via a known realm (e.g. script.realmDestroyed); normalize a missing one to ''
     const source = params.source as {context?: string; realm?: string} | undefined;
     const realm = (params.realm as string | undefined) ?? source?.realm;
     const context =
@@ -441,13 +442,7 @@ export function initBidiProxyHandlers(
     void dispatchBidiEvent({method: parsed.method, params, context}, {type: 'proxy'});
   });
 
-  // Best-effort, and independent of whatever the client itself ends up subscribing to: keep the
-  // browsing-context ancestry map current so descendant-context matching (see isEventSubscribed)
-  // works even for a client that only ever subscribes to e.g. log.entryAdded and never to
-  // browsingContext.contextCreated/contextDestroyed. This subscription is internal bookkeeping
-  // only -- issued directly on the proxy client rather than through executeProxiedSubscribe -- so
-  // it never touches the client-facing dual-bookkeeping (bidiEventSubs) state.
-  void primeContextAncestry(bidiHandlerDriver, bidiProxyClient);
+  primeAncestryTracking(bidiHandlerDriver, bidiProxyClient);
 
   // If the upstream socket server closes the connection, should close the connection to the
   // client as well

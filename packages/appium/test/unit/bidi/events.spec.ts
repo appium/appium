@@ -281,35 +281,29 @@ describe('createBidiEventDispatcher', function () {
     assert.deepEqual(methods, ['e1', 'e2', 'e3']);
   });
 
-  it('retains context ancestry for an earlier-queued event, deleting it only after the destroy event is processed', async function () {
-    const {send, sent} = makeSend();
+  it('retains context ancestry after a contextDestroyed processed on a different connection sharing the same driver', async function () {
     const driver = makeDriver({browsingContext: ['tab-1']});
-    const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
+    const connectionA = makeSend();
+    const connectionB = makeSend();
+    const dispatchA = createBidiEventDispatcher(makeWs(), driver as any, [], connectionA.send, {});
+    const dispatchB = createBidiEventDispatcher(makeWs(), driver as any, [], connectionB.send, {});
 
-    await dispatch(
+    await dispatchA(
       {method: 'browsingContext.contextCreated', params: {context: 'frame-1', parent: 'tab-1'}, context: 'frame-1'},
       {type: 'proxy'},
     );
-    assert.equal(sent.length, 1);
 
-    // dispatch a child event and its destroy event back-to-back, without awaiting between them,
-    // so both are still in the FIFO when the destroy event's own ancestry cleanup would otherwise
-    // run ahead of the earlier-queued load event
-    const loadDispatched = dispatch({method: 'browsingContext.load', params: {}, context: 'frame-1'}, {type: 'proxy'});
-    const destroyDispatched = dispatch(
+    // connection B processes the destroy event first
+    await dispatchB(
       {method: 'browsingContext.contextDestroyed', params: {context: 'frame-1', parent: 'tab-1'}, context: 'frame-1'},
       {type: 'proxy'},
     );
-    await Promise.all([loadDispatched, destroyDispatched]);
 
-    // both the earlier-queued load event and the destroy event itself needed frame-1's ancestry
-    // to pass the gate (tab-1 is what's actually subscribed)
-    const methods = sent.map((s) => JSON.parse(s).method);
-    assert.deepEqual(methods, [
-      'browsingContext.contextCreated',
-      'browsingContext.load',
-      'browsingContext.contextDestroyed',
-    ]);
+    // connection A's own queued event for the same child still needs the ancestry -- must not
+    // have been removed by B's destroy handling
+    await dispatchA({method: 'browsingContext.load', params: {}, context: 'frame-1'}, {type: 'proxy'});
+
+    assert.equal(connectionA.sent.length, 2);
   });
 
   it('accepts events dispatched with origin type "proxy", using the same chain/gate logic', async function () {
@@ -416,33 +410,46 @@ describe('initBidiProxyHandlers', function () {
     assert.equal(JSON.parse(sent[0]).context, 'ctx-1');
   });
 
-  it('primes context ancestry from the upstream context tree, independently of the client subscribing to context lifecycle events', async function () {
-    const driver = makeDriver({browsingContext: ['tab-1']});
+  it('primes context/realm ancestry from the upstream bootstrap, independently of client subscriptions, with no contexts on the internal subscribe', async function () {
+    const driver = makeDriver({browsingContext: ['tab-1'], 'script.realmDestroyed': ['tab-1']});
     const {send, sent} = makeSend();
     const dispatch = createBidiEventDispatcher(makeWs(), driver as any, [], send, {});
-    const {client, executed} = makeFakeProxyClient(async (method) => {
+    let lastDispatched: Promise<void> = Promise.resolve();
+    const trackedDispatch: typeof dispatch = (event, origin) => {
+      lastDispatched = dispatch(event, origin);
+      return lastDispatched;
+    };
+    const {client, handlers, executed} = makeFakeProxyClient(async (method) => {
       if (method === 'browsingContext.getTree') {
         return {contexts: [{context: 'tab-1', children: [{context: 'frame-1', children: []}]}]};
+      }
+      if (method === 'script.getRealms') {
+        return {realms: [{realm: 'r1', context: 'tab-1'}]};
       }
       return {};
     });
 
-    initBidiProxyHandlers.call(driver as any, client, makeWs(), dispatch);
-    // primeContextAncestry is fire-and-forget; give its promise chain a couple of ticks to settle
+    initBidiProxyHandlers.call(driver as any, client, makeWs(), trackedDispatch);
+    // bootstrap/subscribe calls are fire-and-forget; give them a couple of ticks to settle
     await new Promise((resolve) => setImmediate(resolve));
     await new Promise((resolve) => setImmediate(resolve));
 
     assert.ok(executed.some((e) => e.method === 'browsingContext.getTree'));
-    assert.ok(
-      executed.some(
-        (e) => e.method === 'session.subscribe' && (e.params as any).events.includes('browsingContext.contextCreated'),
-      ),
+    assert.ok(executed.some((e) => e.method === 'script.getRealms'));
+    const internalSubscribe = executed.find(
+      (e) => e.method === 'session.subscribe' && (e.params as any).events.includes('browsingContext.contextCreated'),
     );
+    assert.ok(internalSubscribe);
+    assert.ok(!('contexts' in (internalSubscribe!.params as object)));
 
-    // frame-1's ancestry was learned from the tree bootstrap alone -- no contextCreated event for
-    // it was ever observed, since the client only subscribes to browsingContext (module-wide),
-    // scoped to tab-1
+    // frame-1's ancestry came from getTree alone -- no contextCreated event was ever observed
     await dispatch({method: 'browsingContext.load', params: {}, context: 'frame-1'}, {type: 'proxy'});
     assert.equal(sent.length, 1);
+
+    // r1's context came from getRealms alone -- no realmCreated event was ever observed
+    handlers.message?.(JSON.stringify({method: 'script.realmDestroyed', params: {realm: 'r1'}}));
+    await lastDispatched;
+    assert.equal(sent.length, 2);
+    assert.equal(JSON.parse(sent[1]).context, 'tab-1');
   });
 });

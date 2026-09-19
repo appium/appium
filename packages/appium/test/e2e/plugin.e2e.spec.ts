@@ -538,6 +538,22 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
                   ws.send(JSON.stringify({type: 'event', method: 'vendor.a', params: {}}));
                   ws.send(JSON.stringify({type: 'event', method: 'vendor.b', params: {}}));
                   break;
+                case 'vendor.triggerBrowsingContextEvents':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'browsingContext.load', params: {context: 'tab-x'}}));
+                  ws.send(
+                    JSON.stringify({
+                      type: 'event',
+                      method: 'browsingContext.domContentLoaded',
+                      params: {context: 'tab-x'},
+                    }),
+                  );
+                  break;
+                case 'vendor.triggerRaceAB':
+                  ws.send(JSON.stringify({id, type: 'success', result: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.raceA', params: {}}));
+                  ws.send(JSON.stringify({type: 'event', method: 'vendor.raceB', params: {}}));
+                  break;
                 default:
                   ws.send(
                     JSON.stringify({
@@ -869,6 +885,50 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
           await (driver as any).sessionUnsubscribe({events: ['vendor.multiCtxPing'], contexts: ['tab-2']});
         },
       );
+
+      it('should keep a standard sibling event covered when one member is narrowed out of a module-wide subscription', async function () {
+        const loadEvents: unknown[] = [];
+        const domContentLoadedEvents: unknown[] = [];
+        (driver as any).on('browsingContext.load', (ev: unknown) => loadEvents.push(ev));
+        (driver as any).on('browsingContext.domContentLoaded', (ev: unknown) => domContentLoadedEvents.push(ev));
+
+        await (driver as any).send({method: 'session.subscribe', params: {events: ['browsingContext']}});
+        await (driver as any).sessionUnsubscribe({events: ['browsingContext.load']});
+
+        await (driver as any).send({method: 'vendor.triggerBrowsingContextEvents', params: {}});
+        await sleep(300);
+
+        assert.strictEqual(loadEvents.length, 0);
+        assert.strictEqual(domContentLoadedEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['browsingContext']});
+      });
+
+      it('should process a concurrent subscribe/unsubscribe pair on the same connection in send order', async function () {
+        const aEvents: unknown[] = [];
+        const bEvents: unknown[] = [];
+        (driver as any).on('vendor.raceA', (ev: unknown) => aEvents.push(ev));
+        (driver as any).on('vendor.raceB', (ev: unknown) => bEvents.push(ev));
+
+        await (driver as any).send({method: 'session.subscribe', params: {events: ['vendor.raceA']}});
+
+        // unsubscribe A, then immediately subscribe [A, B] -- without serialized handling, the
+        // still-pending subscribe's placeholder could be corrupted by the unsubscribe before
+        // its own upstream response arrives and promotes it
+        await Promise.all([
+          (driver as any).sessionUnsubscribe({events: ['vendor.raceA']}),
+          (driver as any).send({method: 'session.subscribe', params: {events: ['vendor.raceA', 'vendor.raceB']}}),
+        ]);
+
+        await (driver as any).send({method: 'vendor.triggerRaceAB', params: {}});
+        await sleep(300);
+
+        // the subscribe, sent second, is the last word for A
+        assert.strictEqual(aEvents.length, 1);
+        assert.strictEqual(bEvents.length, 1);
+
+        await (driver as any).sessionUnsubscribe({events: ['vendor.raceA', 'vendor.raceB']});
+      });
 
       it('should close the upstream connection when the session ends', async function () {
         await driver?.deleteSession();

@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.0](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.0...@appium/storage-plugin@3.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** @appium/support&#x27;s fs.glob option shape changed from the glob package&#x27;s GlobOptions to a smaller, @appium/support-owned GlobOptions interface. Supported fields: cwd, withFileTypes, absolute, lazy. Options like nodir/ignore/nocase are no longer supported directly — callers needing directory filtering can pass withFileTypes: true and filter on .isFile()/.isDirectory(); callers needing path exclusion can filter the returned array by pattern.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* backport diff from master ([#22749](https://github.com/appium/appium/issues/22749)) ([6323df1](https://github.com/appium/appium/commit/6323df1d7354f85cc631508f5cb6a3e35270d4bd))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+
+### Bug Fixes
+
+* address code review cleanups (plist, env memoize, test reuse) ([#22740](https://github.com/appium/appium/issues/22740)) ([0df8834](https://github.com/appium/appium/commit/0df883463812d57d44a0d6d80e9b88f124361934))
+* Address several TODOs ([#22762](https://github.com/appium/appium/issues/22762)) ([d6ef7e3](https://github.com/appium/appium/commit/d6ef7e3f1240f161df622c850aea06637f9d1078))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([bcf1c57](https://github.com/appium/appium/commit/bcf1c579997b8dbb8292b1a77583aeef40b11ba4))
+
+### Code Refactoring
+
+* **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+
+
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.8...@appium/storage-plugin@2.0.0) (2026-08-24)
 
 ### ⚠ BREAKING CHANGES

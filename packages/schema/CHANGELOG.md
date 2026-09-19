@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.0](https://github.com/appium/appium/compare/@appium/schema@1.3.0...@appium/schema@2.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* users relying on the implicit debug default for console/file logs will now see info-level output unless they explicitly pass --log-level debug.
+* **appium:** The --allow-cors CLI flag and allow-cors config file property have been removed. Use --allow-insecure&#x3D;*:cors (or --relaxed-security, optionally overridden with --deny-insecure&#x3D;*:cors) instead.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* **appium:** The --nodeconfig server argument and the server.nodeconfig config file property no longer exist. Users who need to register with a Selenium Grid should use the Grid 4 relay feature instead (see the Grid guide).
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* **appium:** add --app-url-rules server arg to restrict remote app URLs ([#22753](https://github.com/appium/appium/issues/22753)) ([0b104f6](https://github.com/appium/appium/commit/0b104f6bf9b7180b111df40fd6a15b26d649eabd))
+* **appium:** remove Selenium Grid 3 support ([#22677](https://github.com/appium/appium/issues/22677)) ([8fcdcb3](https://github.com/appium/appium/commit/8fcdcb30b07c1ee582256fbef3538d6a3ceea5f2))
+* **appium:** replace --allow-cors flag with --allow-insecure&#x3D;*:cors ([#22731](https://github.com/appium/appium/issues/22731)) ([926a0a5](https://github.com/appium/appium/commit/926a0a594935a6cf2e7375eb174eeb15af964f12))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+* Change the default log level to &#x60;info&#x60; ([#22756](https://github.com/appium/appium/issues/22756)) ([5e644a3](https://github.com/appium/appium/commit/5e644a392fbf11e2ca985408853d7f51aa85be17))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([3516e50](https://github.com/appium/appium/commit/3516e50ce6d022f4c0dc539071c593bf2983325f))
+
+### Bug Fixes
+
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([bcf1c57](https://github.com/appium/appium/commit/bcf1c579997b8dbb8292b1a77583aeef40b11ba4))
+* **schema:** write trailing newline in generated schema JSON ([#22791](https://github.com/appium/appium/issues/22791)) ([b78454a](https://github.com/appium/appium/commit/b78454ab3e5904c4b633bb1e9883dd3623a54221))
+
+
 ## [1.3.0](https://github.com/appium/appium/compare/@appium/schema@1.2.1...@appium/schema@1.3.0) (2026-07-25)
 
 

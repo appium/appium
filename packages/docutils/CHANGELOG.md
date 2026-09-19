@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.0](https://github.com/appium/appium/compare/@appium/docutils@3.0.0...@appium/docutils@4.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **docutils:** new docs versions are now published with their canonical version set to &#x27;latest&#x27;. This value can be changed in mkdocs.yml using the &#x27;mike: canonical_version:&#x27; key. The previous behavior can be retained by setting the key value to null.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+* **docutils:** set &#x27;latest&#x27; as default canonical version ([#22752](https://github.com/appium/appium/issues/22752)) ([812ca2a](https://github.com/appium/appium/commit/812ca2a9af5e30b70a012503f8aaa452632ede3b))
+
+
 ## [3.0.0](https://github.com/appium/appium/compare/@appium/docutils@2.5.2...@appium/docutils@3.0.0) (2026-08-24)
 
 ### ⚠ BREAKING CHANGES

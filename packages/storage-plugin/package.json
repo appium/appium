@@ -1,6 +1,6 @@
 {
   "name": "@appium/storage-plugin",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.1",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Server-side storage plugin for Appium",
   "keywords": [

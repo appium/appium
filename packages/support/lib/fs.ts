@@ -80,7 +80,8 @@ export interface GlobOptions {
 
 /**
  * Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on
- * `withFileTypes`/`lazy`. When either flag is a non-literal `boolean` (e.g. a `GlobOptions`
+ * `withFileTypes`/`lazy`. Omitting both (or passing them as literal `false`) resolves to
+ * `Promise<string[]>`. When either flag is a non-literal `boolean` (e.g. a `GlobOptions`
  * variable), the return type widens to a union instead of picking a single (possibly wrong) shape.
  */
 export interface GlobFn {
@@ -94,6 +95,10 @@ export interface GlobFn {
     options: GlobOptions & {withFileTypes: true},
   ): Promise<Dirent[]> | AsyncGenerator<Dirent>;
   (pattern: string | readonly string[], options: GlobOptions & {lazy: true}): AsyncGenerator<string>;
+  (
+    pattern: string | readonly string[],
+    options?: GlobOptions & {withFileTypes?: false; lazy?: false},
+  ): Promise<string[]>;
   (
     pattern: string | readonly string[],
     options?: GlobOptions,

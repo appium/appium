@@ -171,7 +171,20 @@ describe('Driver CLI', {timeout: 90000}, function () {
       const penultimateFakeDriverVersionAsOfRightNow = sameLineVersions[sameLineVersions.length - 2];
 
       await resetAppiumHome();
-      await runInstall([`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm']);
+      try {
+        await runInstall([`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm']);
+      } catch (err) {
+        // The penultimate release in the line may predate a peerDependencies catch-up that
+        // followed a fresh major bootstrap, and so may not itself support the running server.
+        // Self-resolves once enough newer, compatible releases exist in the line.
+        if (isServerVersionIncompatibleError(err)) {
+          return ctx.skip(
+            `@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow} is not yet compatible with ` +
+              `Appium ${APPIUM_VER}: ${(err as Error).message}`,
+          );
+        }
+        throw err;
+      }
       const listResult = (await runList(['--updates'])) as Record<
         string,
         {updateVersion?: string; unsafeUpdateVersion?: string}

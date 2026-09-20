@@ -174,12 +174,16 @@ export class BaseDriver<
       }
     };
 
+    // exempt commands bypass the queue, so they can run while other commands are queued/running,
+    // without needing to wait their turn behind them
+    const isQueueExempt = this.queueExemptCommands.has(cmd);
+
     const synchronizationKey = BaseDriver.name;
     const commandsQueueGuard = this.commandsQueueGuard as AsyncLock & {
       queues?: Record<string, unknown[]>;
     };
     const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
-    if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
+    if (this.isCommandsQueueEnabled && !isQueueExempt && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
           `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
@@ -187,9 +191,10 @@ export class BaseDriver<
       );
     }
 
-    const res = this.isCommandsQueueEnabled
-      ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
-      : await runCommandPromise();
+    const res =
+      this.isCommandsQueueEnabled && !isQueueExempt
+        ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
+        : await runCommandPromise();
 
     // log timing information about this command
     const endTime = Date.now();

@@ -12,7 +12,9 @@ declare module '../driver' {
 const BidiCommands: IBidiCommands = {
   async bidiSubscribe<C extends Constraints>(this: BaseDriver<C>, events: string[], contexts: string[] = ['']) {
     for (const event of events) {
-      this.bidiEventSubs[event] = contexts;
+      // a later subscribe for the same event must keep existing contexts; the spec appends subscriptions
+      const existing = this.bidiEventSubs[event] ?? [];
+      this.bidiEventSubs[event] = util.uniq([...existing, ...contexts]);
     }
   },
 

@@ -5,6 +5,7 @@ import {describe, it, before, after, beforeEach, type TestContext} from 'node:te
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
 import type {ExtRecord} from 'appium/types';
+import {prerelease} from 'semver';
 import {exec} from 'teen_process';
 
 import {
@@ -116,7 +117,9 @@ describe('Driver CLI', {timeout: 90000}, function () {
         ).stdout,
       ) as string[];
 
-      const penultimateFakeDriverVersionAsOfRightNow = versions[versions.length - 2];
+      // Update checks skip prereleases, so pick from stable versions to guarantee an update exists.
+      const stableVersions = versions.filter((v) => !prerelease(v));
+      const penultimateFakeDriverVersionAsOfRightNow = stableVersions[stableVersions.length - 2];
 
       await resetAppiumHome();
       await runInstall([`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm']);

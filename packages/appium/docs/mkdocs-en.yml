@@ -57,6 +57,7 @@ nav:
           - reference/api/plugins.md
   - Guides:
       - Migration:
+          - guides/migrating-3-to-4.md
           - guides/migrating-2-to-3.md
           - guides/migrating-1-to-2.md
       - Server/Driver Configuration:

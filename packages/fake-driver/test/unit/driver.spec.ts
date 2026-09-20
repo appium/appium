@@ -165,9 +165,11 @@ describe('FakeDriver unit suite', function () {
 
     beforeEach(function () {
       d = new FakeDriver();
-      sandbox.stub(d, 'getStatus').callsFake(async () => {
+      // getWindowHandle (rather than getStatus) is used here because getStatus is exempt from
+      // the commands queue by default, which would make these ordering assertions meaningless
+      sandbox.stub(d, 'getWindowHandle').callsFake(async () => {
         await sleep(waitMs);
-        return Date.now();
+        return String(Date.now());
       });
       sandbox.stub(d, 'deleteSession').callsFake(async () => {
         await sleep(waitMs);
@@ -181,11 +183,11 @@ describe('FakeDriver unit suite', function () {
 
     it('should queue commands and.executeCommand/respond in the order received', async function () {
       const numCmds = 10;
-      const cmds: Promise<number>[] = [];
+      const cmds: Promise<string>[] = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      const results = (await Promise.all(cmds)) as number[];
+      const results = (await Promise.all(cmds)) as string[];
       for (let i = 1; i < numCmds; i++) {
         if (results[i] <= results[i - 1]) {
           throw new Error('Got result out of order');
@@ -195,12 +197,12 @@ describe('FakeDriver unit suite', function () {
 
     it('should handle errors correctly when queuing', async function () {
       const numCmds = 10;
-      const cmds: Promise<number | void>[] = [];
+      const cmds: Promise<string | void>[] = [];
       for (let i = 0; i < numCmds; i++) {
         if (i === 5) {
           cmds.push(d.executeCommand('deleteSession'));
         } else {
-          cmds.push(d.executeCommand('getStatus'));
+          cmds.push(d.executeCommand('getWindowHandle'));
         }
       }
       const results = await Promise.allSettled(cmds);
@@ -228,16 +230,16 @@ describe('FakeDriver unit suite', function () {
 
     it('should not care if queue empties for a bit', async function () {
       const numCmds = 10;
-      let cmds: Promise<number>[] = [];
+      let cmds: Promise<string>[] = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      (await Promise.all(cmds)) as number[];
+      (await Promise.all(cmds)) as string[];
       cmds = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      const results = (await Promise.all(cmds)) as number[];
+      const results = (await Promise.all(cmds)) as string[];
       for (let i = 1; i < numCmds; i++) {
         if (results[i] <= results[i - 1]) {
           throw new Error('Got result out of order');

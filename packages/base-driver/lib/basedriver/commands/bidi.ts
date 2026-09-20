@@ -14,7 +14,7 @@ const BidiCommands: IBidiCommands = {
     for (const event of events) {
       // a later subscribe for the same event must keep existing contexts; the spec appends subscriptions
       const existing = this.bidiEventSubs[event] ?? [];
-      this.bidiEventSubs[event] = [...new Set([...existing, ...contexts])];
+      this.bidiEventSubs[event] = util.uniq([...existing, ...contexts]);
     }
   },
 

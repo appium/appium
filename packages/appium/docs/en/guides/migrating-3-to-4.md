@@ -18,12 +18,13 @@ of specific removed flags/endpoints.
 
 ## Installation
 
-The installation method for Appium 4 remains the same as for Appium 3. If you want to upgrade, you
+Appium 4 is currently only available as a beta release, published under the `beta` npm dist-tag.
+The installation method otherwise remains the same as for Appium 3. If you want to upgrade, you
 can simply install Appium 4 on top of your existing installation:
 
 ```bash
 # optional: `appium setup reset`
-npm install -g appium
+npm install -g appium@beta
 ```
 
 ## Breaking Changes

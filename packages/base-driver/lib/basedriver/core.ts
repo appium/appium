@@ -16,12 +16,13 @@ import type {
 import AsyncLock from 'async-lock';
 
 import {DEFAULT_BASE_PATH, NEW_COMMAND_TIMEOUT_MS, PROTOCOLS, W3C_TIMEOUTS_MS} from '../constants.js';
-import {errors} from '../protocol/index.js';
+import {errors, GET_STATUS_COMMAND} from '../protocol/index.js';
 import {DeviceSettings} from './device-settings.js';
 import {ExtensionCore} from './extension-core.js';
 import * as helpers from './helpers/index.js';
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+const QUEUE_EXEMPT_COMMANDS: ReadonlySet<string> = new Set([GET_STATUS_COMMAND]);
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -109,6 +110,15 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    */
   get isCommandsQueueEnabled(): boolean {
     return true;
+  }
+
+  /**
+   * Command names which bypass the commands queue by default, so they can be answered without
+   * waiting behind other commands (e.g. `getStatus`, which clients may poll while a long-running
+   * command is in progress). Override for inherited classes to add/remove exemptions.
+   */
+  get queueExemptCommands(): ReadonlySet<string> {
+    return QUEUE_EXEMPT_COMMANDS;
   }
 
   /**

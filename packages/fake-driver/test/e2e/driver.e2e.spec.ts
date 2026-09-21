@@ -4,7 +4,8 @@ import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
 import type {AppiumServer, BaseNSCapabilities, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
-import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver.js';
+import {DeviceSettings, routeConfiguringFunction} from 'appium/driver.js';
+import {server} from '@appium/http-server';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';

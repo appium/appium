@@ -70,6 +70,7 @@
     "@appium/docutils": "4.0.0-beta.0",
     "@appium/logger": "3.0.0-beta.0",
     "@appium/schema": "2.0.0-beta.0",
+    "@appium/http-server": "1.0.0-beta.0",
     "@appium/support": "8.0.0-beta.0",
     "@appium/types": "2.0.0-beta.0",
     "@sidvind/better-ajv-errors": "7.0.0",

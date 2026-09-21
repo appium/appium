@@ -1,10 +1,56 @@
 // @ts-check
 
 /**
- * This module is here to re-export `@appium/base-driver` for Appium extensions.
+ * This module is here to re-export `@appium/base-driver` and `@appium/http-server`
+ * for Appium extensions.
  *
  * @see https://npm.im/@appium/base-driver
+ * @see https://npm.im/@appium/http-server
  * @example
  * import { BaseDriver, errors } from 'appium/driver.js';
  */
-export * from '@appium/base-driver';
+export {
+  ALL_COMMANDS,
+  AppiumIpc,
+  BaseDriver,
+  BIDI_COMMANDS,
+  calcSignature,
+  checkParams,
+  CREATE_SESSION_COMMAND,
+  DEFAULT_BASE_PATH,
+  DEFAULT_WS_PATHNAME_PREFIX,
+  DELETE_SESSION_COMMAND,
+  DeviceSettings,
+  DriverCore,
+  errorFromW3CJsonCode,
+  errors,
+  ExtensionCore,
+  generateDriverLogPrefix,
+  GET_STATUS_COMMAND,
+  getResponseForW3CError,
+  handleIdempotency,
+  isErrorType,
+  isSessionCommand,
+  isStandardCap,
+  isW3cCaps,
+  LIST_DRIVER_COMMANDS_COMMAND,
+  LIST_DRIVER_EXTENSIONS_COMMAND,
+  makeArgs,
+  MAX_LOG_BODY_LENGTH,
+  METHOD_MAP,
+  NEW_COMMAND_TIMEOUT_MS,
+  NO_SESSION_ID_COMMANDS,
+  PREFIXED_APPIUM_OPTS_CAP,
+  processCapabilities,
+  promoteAppiumOptions,
+  promoteAppiumOptionsForObject,
+  PROTOCOLS,
+  routeConfiguringFunction,
+  routeToCommandName,
+  STANDARD_CAPS,
+  validateCaps,
+  validateExecuteMethodParams,
+  W3C_ELEMENT_KEY,
+  W3C_TIMEOUTS_MS,
+  WebDriverProxy,
+} from '@appium/base-driver';

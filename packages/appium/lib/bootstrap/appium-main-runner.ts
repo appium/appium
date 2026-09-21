@@ -1,6 +1,6 @@
 import net from 'node:net';
 
-import type {ServerOpts} from '@appium/base-driver';
+import type {ServerOpts} from '@appium/http-server';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import type {

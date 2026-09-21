@@ -1,4 +1,5 @@
-import {routeConfiguringFunction, server as baseServer} from 'appium/driver.js';
+import {routeConfiguringFunction} from 'appium/driver.js';
+import {server as baseServer} from '@appium/http-server';
 
 import {FakeDriver} from './driver.js';
 import {log} from './logger.js';

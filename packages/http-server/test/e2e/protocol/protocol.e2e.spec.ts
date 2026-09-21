@@ -7,7 +7,8 @@ import type {Application, Request, Response} from 'express';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
 
-import {errors, WebDriverProxy} from '../../../lib/index.js';
+import {errors, WebDriverProxy} from '@appium/base-driver';
+
 import {createServer} from '../../helpers.js';
 import {FakeDriver} from './fake-driver.js';
 import {createProxyServer} from './helpers.js';

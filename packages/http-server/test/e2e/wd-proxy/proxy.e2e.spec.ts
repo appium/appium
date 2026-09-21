@@ -3,7 +3,7 @@ import {after, afterEach, before, describe, it} from 'node:test';
 
 import {TEST_HOST} from '@appium/driver-test-support';
 
-import {WebDriverProxy} from '../../../lib/index.js';
+import {WebDriverProxy} from '@appium/base-driver';
 import {createServer} from '../../helpers.js';
 import {FakeDriver} from '../protocol/fake-driver.js';
 

@@ -10,7 +10,9 @@ import type {AppiumServer, Constraints, Driver} from '@appium/types';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver, routeConfiguringFunction, server} from '../../../lib/index.js';
+import {BaseDriver, routeConfiguringFunction} from '@appium/base-driver';
+
+import {server} from '../../../lib/server.js';
 import {FakeDriver} from './fake-driver.js';
 
 class SessionDriver extends FakeDriver {

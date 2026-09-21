@@ -1,8 +1,6 @@
 import {util} from '@appium/support';
 import type {AppiumServer, WSServer} from '@appium/types';
 
-export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
-
 /**
  * Adds a WebSocket handler to this server's mapping.
  * @see AppiumServerExtension.addWebSocketHandler

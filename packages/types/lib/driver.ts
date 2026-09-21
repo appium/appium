@@ -71,6 +71,11 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   settings: IDeviceSettings<Settings>;
   log: AppiumLogger;
   isCommandsQueueEnabled: boolean;
+  /**
+   * Command names which bypass the commands queue by default (e.g. `getStatus`), so they can be
+   * answered without waiting behind other commands. Override to customize per driver.
+   */
+  queueExemptCommands: ReadonlySet<string>;
   eventHistory: EventHistory;
   bidiEventSubs: Record<string, string[]>;
   updateBidiCommands(cmds: BidiModuleMap): void;

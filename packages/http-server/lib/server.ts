@@ -5,7 +5,14 @@ import https from 'node:https';
 import {DEFAULT_BASE_PATH} from '@appium/base-driver';
 import type {RouteConfiguringFunction} from '@appium/base-driver';
 import {fs, timing} from '@appium/support';
-import type {AppiumServer, ExternalDriver, MethodMap, ServerArgs, StringRecord, UpdateServerCallback} from '@appium/types';
+import type {
+  AppiumServer,
+  ExternalDriver,
+  MethodMap,
+  ServerArgs,
+  StringRecord,
+  UpdateServerCallback,
+} from '@appium/types';
 import bodyParser from 'body-parser';
 import express from 'express';
 import type {Express, Router} from 'express';

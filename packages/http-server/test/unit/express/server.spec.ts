@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
 import {afterEach, before, beforeEach, describe, it} from 'node:test';
 
+import {routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
 import {createSandbox} from 'sinon';
-
-import {routeConfiguringFunction} from '@appium/base-driver';
 
 import {configureServer, normalizeBasePath, server} from '../../../lib/server.js';
 

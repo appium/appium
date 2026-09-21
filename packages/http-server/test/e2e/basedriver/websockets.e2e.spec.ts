@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
 import {after, before, describe, it} from 'node:test';
 
+import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {WebSocketServer} from 'ws';
-
-import {DEFAULT_WS_PATHNAME_PREFIX, routeConfiguringFunction} from '@appium/base-driver';
 
 import {server} from '../../../lib/server.js';
 import {FakeDriver} from '../protocol/fake-driver.js';

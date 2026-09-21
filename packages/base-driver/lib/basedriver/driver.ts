@@ -88,6 +88,10 @@ export class BaseDriver<
   serverPath?: string;
   supportedLogTypes: Readonly<LogDefRecord> = {};
 
+  // Number of commands (queued or queue-exempt) currently executing. Used so the new command
+  // timeout is only restarted once the driver is fully idle again, not after every exempt command.
+  private inFlightCommandCount = 0;
+
   /**
    * Contains the base constraints plus whatever the subclass wants to add.
    *
@@ -141,6 +145,7 @@ export class BaseDriver<
         wasSessionShutdownUnexpectedly = true;
         unexpectedShutdownRejecter?.(e);
       };
+      this.inFlightCommandCount++;
       try {
         return await Promise.race([
           command.call(this, ...args),
@@ -153,6 +158,8 @@ export class BaseDriver<
           }),
         ]);
       } finally {
+        this.inFlightCommandCount--;
+
         if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
           // This is needed to prevent memory leaks
           this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
@@ -166,8 +173,15 @@ export class BaseDriver<
         // the timer (which is done when a new command comes in), we will trigger
         // automatic session deletion in this.onCommandTimeout. Of course we don't
         // want to trigger the timer when the user is shutting down the session
-        // intentionally
-        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
+        // intentionally. Also, since queue-exempt commands can run concurrently with a
+        // still-executing command, only (re)start the timer once the driver is fully idle,
+        // otherwise we would prematurely time out the command that is still in flight.
+        if (
+          !wasSessionShutdownUnexpectedly &&
+          this.isCommandsQueueEnabled &&
+          cmd !== DELETE_SESSION_COMMAND &&
+          this.inFlightCommandCount === 0
+        ) {
           // resetting existing timeout
           await this.startNewCommandTimeout();
         }

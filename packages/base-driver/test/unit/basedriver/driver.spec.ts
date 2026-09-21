@@ -92,5 +92,21 @@ describe('BaseDriver', function () {
       assert.deepEqual(order, ['quickCommand', 'slowCommand']);
       await driver.clearNewCommandTimeout();
     });
+
+    it('should not restart the new command timeout while another command is still in flight', async function () {
+      const driver = new SlowCommandDriver({} as InitialOpts);
+      // short enough that a wrongly-restarted timer fires well before slowCommand finishes
+      driver.newCommandTimeoutMs = 50;
+
+      const slowPromise = driver.executeCommand('slowCommand');
+      // let slowCommand start and settle in, then run an exempt command while it's still pending
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      await driver.executeCommand('getStatus');
+
+      // if getStatus wrongly restarted the timer, slowCommand would be rejected by an
+      // unexpected shutdown well before its own 100ms completes
+      assert.equal(await slowPromise, 'slow-done');
+      await driver.clearNewCommandTimeout();
+    });
   });
 });

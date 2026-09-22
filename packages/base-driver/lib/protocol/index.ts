@@ -3,6 +3,7 @@ export {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from 
 export {handleIdempotency} from './idempotency.js';
 export {checkParams, makeArgs, validateExecuteMethodParams} from './params.js';
 export type {CheckParamsOptions} from './params.js';
+export {getProxyReq, runWithProxyReq, withoutProxyReq} from './proxy-context.js';
 export {routeConfiguringFunction} from './route-handler.js';
 export type {RouteConfiguringFunction, RouteConfiguringFunctionOpts} from './route-handler.js';
 export {

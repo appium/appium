@@ -1,4 +1,3 @@
-import type {NetworkInterfaceInfo} from 'node:os';
 import {inspect as dump, type InspectOptions} from 'node:util';
 
 import {routeConfiguringFunction as makeRouter} from '@appium/base-driver';
@@ -13,7 +12,6 @@ import type {AppiumDriver} from '../appium.js';
 import {BIDI_BASE_PATH, CORS_FEATURE, LONG_STACKTRACE_LIMIT} from '../constants.js';
 import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
-import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network.js';
 import {log as logger} from '../logger.js';
 import {validate as validateSchema} from '../schema/schema.js';
 import {checkNodeOk, requireDir} from './node-helpers.js';
@@ -57,28 +55,6 @@ export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): s
     return 'APPIUM_HOME environment variable';
   }
   return 'autodetected Appium home path';
-}
-
-/**
- * Logs the REST listener URL; if the bind address is a broadcast address, lists concrete interface URLs.
- */
-export function logServerAddress(url: string): void {
-  const urlObj = new URL(url);
-  logger.info(`Appium REST http interface listener started on ${url}`);
-  if (!isBroadcastIp(urlObj.hostname)) {
-    return;
-  }
-
-  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
-  const toLabel = (iface: NetworkInterfaceInfo) => {
-    const href = urlObj.href.replace(urlObj.hostname, iface.address);
-    return iface.internal ? `${href} (only accessible from the same host)` : href;
-  };
-  logger.info(
-    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
-      `in your client code to connect to this server:\n` +
-      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
-  );
 }
 
 /**

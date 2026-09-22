@@ -1,5 +1,3 @@
-import net from 'node:net';
-
 import type {ServerOpts} from '@appium/http-server';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
@@ -14,13 +12,7 @@ import type {
 import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
 import {log as logger} from '../logger.js';
 import type {InitResult, ServerInitData} from './init-types.js';
-import {
-  buildServerOpts,
-  createAppiumServer,
-  determineAppiumHomeSource,
-  logServerAddress,
-  logStartupInfo,
-} from './main-helpers.js';
+import {buildServerOpts, createAppiumServer, determineAppiumHomeSource, logStartupInfo} from './main-helpers.js';
 
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 
@@ -82,7 +74,6 @@ export class AppiumMainRunner {
     appiumDriver.server = server;
 
     this.attachSignalHandlers(appiumDriver, server);
-    this.logListeningUrl(server, parsedArgs, normalizedBasePath);
 
     driverConfig.print();
     pluginConfig.print([...pluginClasses.values()]);
@@ -135,15 +126,5 @@ export class AppiumMainRunner {
         }
       });
     }
-  }
-
-  private logListeningUrl(
-    server: AppiumServer,
-    parsedArgs: ServerInitData['parsedArgs'],
-    normalizedBasePath: string,
-  ): void {
-    const protocol = server.isSecure() ? 'https' : 'http';
-    const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
-    logServerAddress(`${protocol}://${address}:${parsedArgs.port}${normalizedBasePath}`);
   }
 }

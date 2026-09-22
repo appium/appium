@@ -4,6 +4,7 @@ import {promisify} from 'node:util';
 
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
+import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '@appium/http-server';
 import {util} from '@appium/support';
 import type {
   BiDiResultData,
@@ -17,7 +18,6 @@ import WebSocket from 'ws';
 
 import type {AppiumDriver} from './appium.js';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants.js';
-import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from './helpers/network.js';
 import {capitalize} from './utils/index.js';
 
 type ExtensionPlugin = Plugin & ExtensionCore;

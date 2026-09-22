@@ -68,7 +68,7 @@
     "@appium/base-driver": "11.0.0-beta.0",
     "@appium/base-plugin": "4.0.0-beta.0",
     "@appium/docutils": "4.0.0-beta.0",
-    "@appium/http-server": "1.0.0",
+    "@appium/http-server": "1.0.0-beta.0",
     "@appium/logger": "3.0.0-beta.0",
     "@appium/schema": "2.0.0-beta.0",
     "@appium/support": "8.0.0-beta.0",

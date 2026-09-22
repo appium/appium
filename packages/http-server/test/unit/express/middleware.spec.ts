@@ -4,8 +4,8 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import {match} from 'path-to-regexp';
 import sinon from 'sinon';
 
-import {log} from '../../../lib/express/logger.js';
-import {handleLogContext} from '../../../lib/express/middleware.js';
+import {log} from '../../../lib/logger.js';
+import {handleLogContext} from '../../../lib/middleware.js';
 
 describe('middleware', function () {
   describe('match', function () {

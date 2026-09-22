@@ -476,7 +476,7 @@ capability.
 
 You probably don't normally need to update the Appium server object (which is an
 [Express](https://expressjs.com/) server having already been
-[configured](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.js)
+[configured](https://github.com/appium/appium/blob/master/packages/http-server/lib/server.ts)
 in a variety of ways). But, for example, you could add new routes to the server to support your
 plugin's requirements. To update the server you must implement the `static async updateServer`
 method in your class. This method takes three parameters:

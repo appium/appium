@@ -1,8 +1,7 @@
 {
-  "name": "@appium/base-driver",
-  "version": "11.0.0-beta.0",
-  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
-  "description": "Base driver class for Appium drivers",
+  "name": "@appium/http-server",
+  "version": "1.0.0-beta.0",
+  "description": "The HTTP server that fronts an Appium driver's command protocol",
   "keywords": [
     "android",
     "automation",
@@ -22,14 +21,14 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/base-driver"
+    "directory": "packages/http-server"
   },
   "directories": {
-    "lib": "lib"
+    "lib": "./lib"
   },
   "files": [
-    "lib",
     "build/lib",
+    "lib",
     "tsconfig.json"
   ],
   "type": "module",
@@ -46,36 +45,27 @@
     "access": "public"
   },
   "scripts": {
-    "test": "run-p test:unit test:types",
+    "build": "tsc",
+    "test": "npm run test:unit",
     "test:e2e": "node --test --experimental-test-module-mocks --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./build/lib/index.js",
-    "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\"",
-    "test:types": "tsd"
+    "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
+    "@appium/base-driver": "11.0.0-beta.0",
     "@appium/support": "8.0.0-beta.0",
     "@appium/types": "2.0.0-beta.0",
-    "async-lock": "1.4.1",
-    "asyncbox": "6.4.2",
-    "axios": "1.19.0",
-    "fastest-levenshtein": "1.0.16",
-    "http-status-codes": "2.3.0",
-    "lru-cache": "11.5.2",
-    "picomatch": "4.0.7",
-    "type-fest": "5.8.0"
-  },
-  "devDependencies": {
-    "@types/express": "5.0.6"
-  },
-  "tsd": {
-    "compilerOptions": {
-      "composite": false,
-      "declarationMap": false
-    },
-    "directory": "test/types"
+    "@types/express": "5.0.6",
+    "body-parser": "2.3.0",
+    "express": "5.2.1",
+    "method-override": "3.0.0",
+    "morgan": "1.11.0",
+    "path-to-regexp": "8.4.2"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
-  }
+  },
+  "tags": [
+    "appium"
+  ]
 }

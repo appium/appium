@@ -1,8 +1,6 @@
+import {BaseDriver, errors, isW3cCaps, PROTOCOLS} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {Constraints, DefaultCreateSessionResult, InitialOpts, RouteMatcher, W3CDriverCaps} from '@appium/types';
-
-import {PROTOCOLS} from '../../../lib/constants.js';
-import {BaseDriver, errors, isW3cCaps} from '../../../lib/index.js';
 
 class FakeDriver extends BaseDriver<Constraints> {
   static newMethodMap = {

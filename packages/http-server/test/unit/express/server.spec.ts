@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import {afterEach, before, beforeEach, describe, it} from 'node:test';
 
+import {routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {configureServer, normalizeBasePath, server} from '../../../lib/express/server.js';
-import {routeConfiguringFunction} from '../../../lib/protocol/route-handler.js';
+import {configureServer, normalizeBasePath, server} from '../../../lib/server.js';
 
 // stand-in for the router `configureHttp` normally creates
 const fakeFrontRouter = {} as any;

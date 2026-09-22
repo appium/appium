@@ -1,17 +1,15 @@
 import type {IncomingMessage} from 'node:http';
 import type {Duplex} from 'node:stream';
 
+import {calcSignature, errors, getResponseForW3CError} from '@appium/base-driver';
 import {util} from '@appium/support';
-import type {NextFunction, Request, RequestHandler, Response} from 'express';
-
-import {errors} from '../protocol/index.js';
-import {log} from './logger.js';
-export {handleIdempotency} from './idempotency.js';
 import type {StringRecord, WSServer} from '@appium/types';
+import type {NextFunction, Request, RequestHandler, Response} from 'express';
 import {match} from 'path-to-regexp';
 
-import {calcSignature} from '../helpers/session.js';
-import {getResponseForW3CError} from '../protocol/errors.js';
+import {log} from './logger.js';
+
+export {handleIdempotency} from '@appium/base-driver';
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 

@@ -52,7 +52,7 @@
   "dependencies": {
     "@appium/opencv": "5.0.0",
     "@appium/support": "7.2.7",
-    "lru-cache": "11.5.2",
+    "lru-cache": "11.5.3",
     "sharp": "0.35.4"
   },
   "peerDependencies": {

@@ -1,6 +1,7 @@
 import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import https from 'node:https';
+import net from 'node:net';
 
 import {DEFAULT_BASE_PATH} from '@appium/base-driver';
 import type {RouteConfiguringFunction} from '@appium/base-driver';
@@ -30,6 +31,7 @@ import {
   handleUpgrade,
   tryHandleWebSocketUpgrade,
 } from './middleware.js';
+import {logServerAddress, V4_BROADCAST_IP} from './network.js';
 import {
   addWebSocketHandler,
   getWebSocketHandlers,
@@ -144,6 +146,11 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           keepAliveTimeout,
           requestTimeout,
         });
+
+        const protocol = appiumServer.isSecure() ? 'https' : 'http';
+        const displayAddress = hostname ?? V4_BROADCAST_IP;
+        const bracketedAddress = net.isIPv6(displayAddress) ? `[${displayAddress}]` : displayAddress;
+        logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizeBasePath(basePath)}`);
 
         resolve(appiumServer);
       } catch (err) {

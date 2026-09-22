@@ -9,18 +9,9 @@ export const LEVENSHTEIN_SUGGESTION_MAX_EDIT_DISTANCE = 2;
 /**
  * Levenshtein edit distance between two strings (classic O(n*m) DP, single-row optimized).
  * Inputs here are short command/capability names, so no need for a bit-vector algorithm.
+ * The DP base cases already cover empty/equal strings, so no special-casing is needed.
  */
 function distance(a: string, b: string): number {
-  if (a === b) {
-    return 0;
-  }
-  if (!a.length) {
-    return b.length;
-  }
-  if (!b.length) {
-    return a.length;
-  }
-
   let prevRow = Array.from({length: b.length + 1}, (_, i) => i);
   for (let i = 1; i <= a.length; i++) {
     const currRow = [i];

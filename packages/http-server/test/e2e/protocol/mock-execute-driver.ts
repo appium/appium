@@ -1,7 +1,5 @@
+import {BaseDriver, PROTOCOLS} from '@appium/base-driver';
 import type {Constraints, InitialOpts} from '@appium/types';
-
-import {PROTOCOLS} from '../../../lib/constants.js';
-import {BaseDriver} from '../../../lib/index.js';
 
 class MockExecuteDriver extends BaseDriver<Constraints> {
   static executeMethodMap = {

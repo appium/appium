@@ -2,11 +2,11 @@ import {EventEmitter} from 'node:events';
 import type {OutgoingHttpHeaders} from 'node:http';
 import type {Socket} from 'node:net';
 
-import {util} from '@appium/support';
+import {logger, util} from '@appium/support';
 import type {NextFunction, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
 
-import {log} from './logger.js';
+const log = logger.getLogger('HTTP');
 
 interface SessionResponse {
   statusCode: number;

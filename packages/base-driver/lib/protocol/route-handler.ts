@@ -1,13 +1,12 @@
 import {logger, util} from '@appium/support';
-import type {Constraints, Core, Driver, DriverMethodDef, MethodMap} from '@appium/types';
-import type {Application, Request, Response} from 'express';
+import type {Constraints, Core, Driver, DriverMethodDef, ExternalDriver, MethodMap} from '@appium/types';
+import type {Application, Express, Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
-import {preserveIdempotentSessionResponse} from '../express/idempotency.js';
-import type {RouteConfiguringFunction} from '../express/server.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
+import {preserveIdempotentSessionResponse} from './idempotency.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {tryWdProxy} from './proxy.js';
 import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
@@ -15,6 +14,19 @@ import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './sess
 import {getCommandValidator} from './validators.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
+
+/** Options for {@linkcode RouteConfiguringFunction} */
+export interface RouteConfiguringFunctionOpts {
+  basePath?: string;
+  extraMethodMap?: MethodMap<ExternalDriver>;
+}
+
+/**
+ * A function which configures routes on an Express app for a driver.
+ * The Express app is only referenced by type here; it's actually constructed and run by
+ * whichever component operates the HTTP server (the `appium` package).
+ */
+export type RouteConfiguringFunction = (app: Express, opts?: RouteConfiguringFunctionOpts) => void;
 
 /**
  * Returns a function that registers default (and plugin) HTTP routes on an Express app for a driver.

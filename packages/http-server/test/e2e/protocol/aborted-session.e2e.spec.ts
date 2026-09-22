@@ -5,12 +5,13 @@ import {Agent, request, type ServerResponse} from 'node:http';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import {setImmediate as nextTurn} from 'node:timers/promises';
 
+import {BaseDriver, routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {AppiumServer, Constraints, Driver} from '@appium/types';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver, routeConfiguringFunction, server} from '../../../lib/index.js';
+import {server} from '../../../lib/server.js';
 import {FakeDriver} from './fake-driver.js';
 
 class SessionDriver extends FakeDriver {

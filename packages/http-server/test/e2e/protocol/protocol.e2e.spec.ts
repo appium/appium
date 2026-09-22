@@ -5,12 +5,16 @@ import {errors, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import type {Application, Request, Response} from 'express';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createSandbox} from 'sinon';
 
 import {createServer} from '../../helpers.js';
 import {FakeDriver} from './fake-driver.js';
 import {createProxyServer} from './helpers.js';
+
+const HTTPStatusCodes = Object.freeze({
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+});
 
 describe('Protocol', function () {
   let sandbox: sinon.SinonSandbox;

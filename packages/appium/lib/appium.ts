@@ -15,6 +15,7 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  withoutProxyReq,
 } from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
@@ -674,7 +675,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdHandledBy,
       next: defaultBehavior,
     });
-    const res = await this.executeWrappedCommand({wrappedCmd, protocol});
+    // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
+    // re-enters executeCommand for a different command doesn't inherit and misuse this one
+    const res = await withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
 
     // if we had plugins, make sure to log out the helpful report about which plugins ended up
     // handling the command and which didn't

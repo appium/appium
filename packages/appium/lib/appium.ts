@@ -6,6 +6,7 @@ import {
   DriverCore,
   type ExtensionCore,
   generateDriverLogPrefix,
+  getProxyReq,
   GET_STATUS_COMMAND,
   isSessionCommand,
   isW3cCaps,
@@ -14,6 +15,7 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  withoutProxyReq,
 } from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {
@@ -21,6 +23,7 @@ import type {
   DriverCaps,
   DriverOpts,
   ExternalDriver,
+  HTTPMethod,
   IAppiumIpc,
   Plugin,
   PluginClass,
@@ -574,13 +577,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     const isUmbrellaCmd = isAppiumDriverCommand(cmd);
     const isSessionCmd = isSessionCommand(cmd);
 
-    // if a plugin override proxying for this command and that is why we are here instead of just
-    // letting the protocol proxy the command entirely, determine that, get the request object for
-    // use later on, then clean up the args
-    const reqForProxy = args.at(-1)?.reqForProxy;
-    if (reqForProxy) {
-      args.pop();
-    }
+    // if a plugin overrode proxying for this command and that is why we are here instead of just
+    // letting the protocol proxy the command entirely, get the request object for use later on
+    const reqForProxy = getProxyReq();
 
     // first do some error checking. If we're requesting a session command execution, then make
     // sure that session actually exists on the session driver, and set the session driver itself
@@ -644,7 +643,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         if (!dstSession?.proxyCommand) {
           throw new NoDriverProxyCommandError();
         }
-        return await dstSession.proxyCommand(reqForProxy.originalUrl, reqForProxy.method, reqForProxy.body);
+        return await dstSession.proxyCommand(
+          reqForProxy.originalUrl,
+          reqForProxy.method as HTTPMethod,
+          reqForProxy.body,
+        );
       }
 
       if (isGetStatus) {
@@ -672,7 +675,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdHandledBy,
       next: defaultBehavior,
     });
-    const res = await this.executeWrappedCommand({wrappedCmd, protocol});
+    // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
+    // re-enters executeCommand for a different command doesn't inherit and misuse this one
+    const res = await withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
 
     // if we had plugins, make sure to log out the helpful report about which plugins ended up
     // handling the command and which didn't

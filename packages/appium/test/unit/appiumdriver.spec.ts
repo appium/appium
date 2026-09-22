@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {BaseDriver} from '@appium/base-driver';
+import {BaseDriver, runWithProxyReq} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
 import {FakeDriver} from '@appium/fake-driver';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
@@ -338,6 +338,48 @@ describe('AppiumDriver', function () {
 
         // cleanup, since we faked the delete session call
         await (mockFakeDriver as any).object.deleteSession();
+      });
+    });
+    describe('executeCommand', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      beforeEach(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        (appium as any).sessions[SESSION_ID] = fakeDriver;
+      });
+      afterEach(function () {
+        mockFakeDriver.restore();
+      });
+
+      it('should not leak the ambient proxy request into a command a plugin re-enters via executeCommand', async function () {
+        // a plugin handling the outer (proxy-deferred) command, which re-enters dispatch for an
+        // unrelated command before deferring to the rest of the chain
+        class ReentrantPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            await appium.executeCommand('getWindowHandle', SESSION_ID);
+            return await next();
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new ReentrantPlugin('reentrant')];
+
+        // the re-entered command should run normally, not be proxied
+        mockFakeDriver
+          .expects('executeCommand')
+          .once()
+          .withExactArgs('getWindowHandle', SESSION_ID)
+          .resolves('a-handle');
+        // only the outer command, which the ambient context was actually set up for, gets proxied
+        mockFakeDriver
+          .expects('proxyCommand')
+          .once()
+          .withExactArgs('/session/x/context', 'POST', {name: 'NATIVE_APP'})
+          .resolves('<<proxied>>');
+
+        const fakeReq = {originalUrl: '/session/x/context', method: 'POST', body: {name: 'NATIVE_APP'}} as any;
+        const res = await runWithProxyReq(fakeReq, () => appium.executeCommand('getPageSource', SESSION_ID));
+
+        mockFakeDriver.verify();
+        assert.strictEqual(res.value, '<<proxied>>');
       });
     });
     describe('configureDriverFeatures', function () {

@@ -8,6 +8,7 @@ import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from 
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
+import {runWithProxyReq} from './proxy-context.js';
 import {tryWdProxy} from './proxy.js';
 import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
 import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './session.js';
@@ -102,14 +103,9 @@ function buildHandler(
         logger.markSensitive(util.truncateString(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH})),
       );
 
-      if (didPluginOverrideProxy) {
-        // TODO for now we add this information on the args list, but that's mixing purposes here.
-        // We really should add another 'options' parameter to 'executeCommand', but this would be
-        // a breaking change for all drivers so would need to be handled carefully.
-        args.push({reqForProxy: req});
-      }
-
-      const result = await runDriverCommand(driver, command, args, sessionId, currentProtocol);
+      const result = didPluginOverrideProxy
+        ? await runWithProxyReq(req, () => runDriverCommand(driver, command, args, sessionId, currentProtocol))
+        : await runDriverCommand(driver, command, args, sessionId, currentProtocol);
       currentProtocol = result.currentProtocol;
       newSessionId = result.newSessionId;
       httpResBody.value = result.driverRes;

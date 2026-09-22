@@ -17,6 +17,11 @@ export const PROTOCOLS = {
 // Before Appium 2.0, this default value was '/wd/hub' by historical reasons.
 export const DEFAULT_BASE_PATH = '';
 
+// Default path prefix under which drivers/plugins mount their own WebSocket handlers
+// (e.g. via `AppiumServer.addWebSocketHandler`). Kept independent of the HTTP server
+// implementation so drivers/plugins referencing it don't need to depend on that package.
+export const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
+
 // Default values for W3C WebDriver timeouts configuration
 // https://w3c.github.io/webdriver/#timeouts
 export const W3C_TIMEOUTS_MS = {

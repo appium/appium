@@ -8,6 +8,7 @@ export {AppiumIpc} from './basedriver/ipc.js';
 export {BaseDriver};
 export {
   DEFAULT_BASE_PATH,
+  DEFAULT_WS_PATHNAME_PREFIX,
   MAX_LOG_BODY_LENGTH,
   NEW_COMMAND_TIMEOUT_MS,
   PROTOCOLS,
@@ -16,9 +17,6 @@ export {
 } from './constants.js';
 
 export * from './protocol/index.js';
-
-// Express exports
-export {normalizeBasePath, server} from './express/server.js';
 
 // wd-proxy exports
 export {WebDriverProxy} from './wd-proxy/proxy.js';
@@ -34,13 +32,9 @@ export {
   validateCaps,
 } from './basedriver/capabilities.js';
 
-// Web socket helpers
-export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket.js';
-
 // BiDi exports
 export {BIDI_COMMANDS} from './protocol/bidi-commands/index.js';
 
 export {isW3cCaps} from './helpers/capabilities.js';
 export {generateDriverLogPrefix} from './helpers/log-prefix.js';
-
-export type {ServerOpts} from './express/server.js';
+export {calcSignature} from './helpers/session.js';

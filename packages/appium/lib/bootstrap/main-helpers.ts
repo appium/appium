@@ -1,12 +1,9 @@
 import type {NetworkInterfaceInfo} from 'node:os';
 import {inspect as dump, type InspectOptions} from 'node:util';
 
-import {
-  normalizeBasePath,
-  routeConfiguringFunction as makeRouter,
-  server as baseServer,
-  type ServerOpts,
-} from '@appium/base-driver';
+import {routeConfiguringFunction as makeRouter} from '@appium/base-driver';
+import {normalizeBasePath, server as baseServer} from '@appium/http-server';
+import type {ServerOpts} from '@appium/http-server';
 import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
 import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';

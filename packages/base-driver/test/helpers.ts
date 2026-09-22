@@ -1,10 +1,6 @@
 import nodePath from 'node:path';
 
-import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {node, util} from '@appium/support';
-import type {AppiumServer, Constraints, Driver, MethodMap, ServerArgs} from '@appium/types';
-
-import {routeConfiguringFunction, server} from '../lib/index.js';
 
 const BASE_DRIVER_MODULE_NAME = '@appium/base-driver';
 
@@ -33,38 +29,6 @@ export function resolveSourceSnapshotPath(testFilePath: string | undefined): str
   const root = getModuleRootPath(BASE_DRIVER_MODULE_NAME, testFilePath);
   const relativePath = nodePath.relative(nodePath.join(root, 'build', 'test'), testFilePath);
   return `${nodePath.join(root, 'test', relativePath).replace(/\.js$/, '.ts')}.snapshot`;
-}
-
-export async function createServer<T extends Driver<Constraints>>(
-  driver: T,
-  options: {
-    extraMethodMap?: MethodMap<T>;
-    hostname?: string;
-    cliArgs?: Partial<ServerArgs>;
-    port?: number;
-  } = {},
-): Promise<{
-  port: number;
-  baseUrl: string;
-  setup: () => Promise<void>;
-  teardown: () => Promise<void>;
-}> {
-  const port = options.port ?? (await getTestPort());
-  const baseUrl = `http://${TEST_HOST}:${port}`;
-  let appiumServer: AppiumServer | undefined;
-  const setup = async () => {
-    appiumServer = await server({
-      routeConfiguringFunction: routeConfiguringFunction(driver),
-      port,
-      extraMethodMap: options.extraMethodMap,
-      hostname: options.hostname,
-      cliArgs: options.cliArgs,
-    });
-  };
-  const teardown = async () => {
-    await appiumServer?.close();
-  };
-  return {port, baseUrl, setup, teardown};
 }
 
 /**

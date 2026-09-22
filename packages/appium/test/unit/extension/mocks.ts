@@ -50,6 +50,7 @@ export type MockAppiumSupportUtil = typeof supportUtil & {
 
 export interface MockAppiumSupportConsole {
   CliConsole: SinonStub;
+  styleText: typeof supportConsole.styleText;
 }
 
 export interface MockAppiumSupport {
@@ -111,6 +112,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     },
     console: {
       CliConsole: sandbox.stub().returns(sandbox.createStubInstance(supportConsole.CliConsole)),
+      styleText: supportConsole.styleText,
     },
   };
 

@@ -1,8 +1,10 @@
 export {BIDI_COMMANDS} from './bidi-commands/index.js';
 export {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
+export {handleIdempotency} from './idempotency.js';
 export {checkParams, makeArgs, validateExecuteMethodParams} from './params.js';
 export type {CheckParamsOptions} from './params.js';
 export {routeConfiguringFunction} from './route-handler.js';
+export type {RouteConfiguringFunction, RouteConfiguringFunctionOpts} from './route-handler.js';
 export {
   ALL_COMMANDS,
   CREATE_SESSION_COMMAND,

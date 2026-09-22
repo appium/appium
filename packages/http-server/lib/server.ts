@@ -2,6 +2,8 @@ import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import https from 'node:https';
 
+import {DEFAULT_BASE_PATH} from '@appium/base-driver';
+import type {RouteConfiguringFunction} from '@appium/base-driver';
 import {fs, timing} from '@appium/support';
 import type {
   AppiumServer,
@@ -16,7 +18,6 @@ import express from 'express';
 import type {Express, Router} from 'express';
 import methodOverride from 'method-override';
 
-import {DEFAULT_BASE_PATH} from '../constants.js';
 import {endLogFormatter, startLogFormatter} from './express-logging.js';
 import {log} from './logger.js';
 import {
@@ -37,15 +38,6 @@ import {
 } from './websocket.js';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
-
-/** Options for {@linkcode RouteConfiguringFunction} */
-export interface RouteConfiguringFunctionOpts {
-  basePath?: string;
-  extraMethodMap?: MethodMap<ExternalDriver>;
-}
-
-/** A function which configures routes */
-export type RouteConfiguringFunction = (app: Express, opts?: RouteConfiguringFunctionOpts) => void;
 
 /** Options for {@linkcode server} */
 export interface ServerOpts {

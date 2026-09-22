@@ -1,8 +1,8 @@
+import {MAX_LOG_BODY_LENGTH} from '@appium/base-driver';
 import {console, logger, util} from '@appium/support';
 import type {Request, RequestHandler, Response} from 'express';
 import morgan from 'morgan';
 
-import {MAX_LOG_BODY_LENGTH} from '../constants.js';
 import {log} from './logger.js';
 
 /**

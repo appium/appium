@@ -1,6 +1,7 @@
 import {logger, util} from '@appium/support';
 import type {Class, ErrorBiDiCommandResponse} from '@appium/types';
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+
+import {HTTPStatusCodes} from '../helpers/http-status-codes.js';
 
 const w3cLog = logger.getLogger('W3C');
 

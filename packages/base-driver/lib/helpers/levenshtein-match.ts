@@ -1,11 +1,37 @@
 import type {StringRecord} from '@appium/types';
-import {distance} from 'fastest-levenshtein';
 
 /**
  * Inclusive maximum Levenshtein edit distance for offering a "did you mean" hint.
  * Matches with distance greater than this value are treated as unrelated.
  */
 export const LEVENSHTEIN_SUGGESTION_MAX_EDIT_DISTANCE = 2;
+
+/**
+ * Levenshtein edit distance between two strings (classic O(n*m) DP, single-row optimized).
+ * Inputs here are short command/capability names, so no need for a bit-vector algorithm.
+ */
+function distance(a: string, b: string): number {
+  if (a === b) {
+    return 0;
+  }
+  if (!a.length) {
+    return b.length;
+  }
+  if (!b.length) {
+    return a.length;
+  }
+
+  let prevRow = Array.from({length: b.length + 1}, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const currRow = [i];
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      currRow.push(Math.min(prevRow[j] + 1, currRow[j - 1] + 1, prevRow[j - 1] + cost));
+    }
+    prevRow = currRow;
+  }
+  return prevRow[b.length];
+}
 
 export interface LevenshteinRankResult {
   /** Candidates sorted by ascending edit distance from `target`, then alphabetically within ties. */

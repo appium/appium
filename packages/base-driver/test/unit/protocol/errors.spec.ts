@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
-
+import {HTTPStatusCodes} from '../../../lib/helpers/http-status-codes.js';
 import {errorFromW3CJsonCode, errors, isErrorType} from '../../../lib/index.js';
 import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors.js';
 

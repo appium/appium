@@ -125,46 +125,25 @@ describe('parseCapsArray', function () {
 });
 
 describe('filenameFromContentDisposition', function () {
-  it('should read a quoted filename', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; filename="quoted-app.apk"'), 'quoted-app.apk');
-  });
-
-  it('should read an unquoted filename', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; filename=unquoted-app.apk'), 'unquoted-app.apk');
-  });
-
-  it('should prefer RFC 5987 filename* over filename', function () {
-    assert.strictEqual(
-      filenameFromContentDisposition(`attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`),
-      'from-star.apk',
-    );
-  });
-
-  it('should decode a percent-encoded filename*', function () {
-    assert.strictEqual(filenameFromContentDisposition(`attachment; filename*=UTF-8''My%20App.apk`), 'My App.apk');
-  });
-
-  it('should not let an unquoted token swallow later parameters', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; filename=app.apk; size=42'), 'app.apk');
-  });
-
-  it('should keep a quoted filename containing a semicolon', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; filename="a;b.apk"'), 'a;b.apk');
-  });
-
-  it('should ignore a parameter which merely ends with filename', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; x-filename=sneaky.apk'), undefined);
-  });
-
-  it('should return undefined for an empty quoted filename', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment; filename=""'), undefined);
-  });
-
-  it('should return undefined when filename* is not decodable', function () {
-    assert.strictEqual(filenameFromContentDisposition(`attachment; filename*=UTF-8''%E0%A4%A`), undefined);
-  });
-
-  it('should return undefined when the header has no filename', function () {
-    assert.strictEqual(filenameFromContentDisposition('attachment'), undefined);
+  it('should compute the expected filename for each Content-Disposition header variant', function () {
+    const cases: [desc: string, header: string, expected: string | undefined][] = [
+      ['a quoted filename', 'attachment; filename="quoted-app.apk"', 'quoted-app.apk'],
+      ['an unquoted filename', 'attachment; filename=unquoted-app.apk', 'unquoted-app.apk'],
+      [
+        'RFC 5987 filename* preferred over filename',
+        `attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`,
+        'from-star.apk',
+      ],
+      ['a percent-encoded filename*', `attachment; filename*=UTF-8''My%20App.apk`, 'My App.apk'],
+      ['an unquoted token not swallowing later parameters', 'attachment; filename=app.apk; size=42', 'app.apk'],
+      ['a quoted filename containing a semicolon', 'attachment; filename="a;b.apk"', 'a;b.apk'],
+      ['a parameter which merely ends with filename', 'attachment; x-filename=sneaky.apk', undefined],
+      ['an empty quoted filename', 'attachment; filename=""', undefined],
+      ['a non-decodable filename*', `attachment; filename*=UTF-8''%E0%A4%A`, undefined],
+      ['a header with no filename', 'attachment', undefined],
+    ];
+    for (const [desc, header, expected] of cases) {
+      assert.strictEqual(filenameFromContentDisposition(header), expected, desc);
+    }
   });
 });

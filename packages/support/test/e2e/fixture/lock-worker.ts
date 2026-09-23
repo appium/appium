@@ -14,6 +14,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((e) => {
-  console.error(e);
+  process.stderr.write(`${e instanceof Error ? e.stack : e}\n`);
   process.exitCode = 1;
 });

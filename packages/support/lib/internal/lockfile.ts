@@ -13,16 +13,26 @@ export class LockFile {
     this.lockFile = lockFile;
   }
 
-  /** Atomically creates the lock file; throws an EEXIST error if it already exists. */
+  /**
+   * Atomically creates the lock file (recording our pid in it); throws an EEXIST error if it
+   * already exists and is not a stale lock left behind by a since-terminated process.
+   */
   acquireSync(): void {
-    let fd: number;
-    try {
-      fd = fs.openSync(this.lockFile, 'wx');
-    } catch (e) {
-      const err = e as NodeJS.ErrnoException;
-      throw err.code === 'EEXIST' ? this.eexistError() : err;
+    for (;;) {
+      try {
+        fs.writeFileSync(this.lockFile, String(process.pid), {flag: 'wx'});
+        return;
+      } catch (e) {
+        const err = e as NodeJS.ErrnoException;
+        if (err.code !== 'EEXIST') {
+          throw err;
+        }
+        if (!this.reclaimIfAbandoned()) {
+          throw this.eexistError();
+        }
+        // The stale lock was just removed -- loop back and grab it ourselves.
+      }
     }
-    fs.closeSync(fd);
   }
 
   /** Polls for up to `waitMs` to atomically create the lock file; throws EEXIST on timeout. */
@@ -79,5 +89,34 @@ export class LockFile {
     const err = new Error(`EEXIST: lock file already exists, open '${this.lockFile}'`) as NodeJS.ErrnoException;
     err.code = 'EEXIST';
     return err;
+  }
+
+  /** Removes the lock file and returns `true` if it was left behind by a now-dead process. */
+  private reclaimIfAbandoned(): boolean {
+    let pid: number;
+    try {
+      pid = Number(fs.readFileSync(this.lockFile, 'utf8').trim());
+    } catch {
+      // Vanished, unreadable, or written by an incompatible version -- leave it to the normal
+      // wait/retry (or explicit tryRecovery) path rather than guessing.
+      return false;
+    }
+    if (!Number.isInteger(pid) || pid <= 0 || this.isProcessAlive(pid)) {
+      return false;
+    }
+    this.releaseSync();
+    return true;
+  }
+
+  /** Returns whether a process with the given pid is currently running. */
+  private isProcessAlive(pid: number): boolean {
+    try {
+      process.kill(pid, 0);
+      return true;
+    } catch (e) {
+      // ESRCH means no such process; anything else (e.g. EPERM) means it exists but we can't
+      // signal it, so assume it's alive rather than risk stealing an active lock.
+      return (e as NodeJS.ErrnoException).code !== 'ESRCH';
+    }
   }
 }

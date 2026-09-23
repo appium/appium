@@ -184,10 +184,8 @@ jobs:
           cd "packages/${{ matrix.package_dir }}"
           npm run test:e2e
 
-  test-support-lock-windows:
-    needs:
-      - prepare_matrix
-    name: Support Lock File E2E Tests (Windows)
+  test-e2e-support-windows:
+    name: E2E Tests - support (Windows)
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: windows-latest
     steps:
@@ -198,11 +196,12 @@ jobs:
           node-version: lts/*
           install-command: npm ci --foreground-scripts
           run-build: 'true'
-      - name: Run support lock file E2E tests
+      - name: Run E2E tests for support
         shell: bash
         run: |
+          set -o pipefail
           cd packages/support
-          node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 "./build/test/e2e/util.e2e.spec.js"
+          npm run test:e2e
 
   lint:
     name: Lint

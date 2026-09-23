@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import path from 'node:path';
 import stream from 'node:stream';
-import {isDeepStrictEqual, promisify} from 'node:util';
+import {isDeepStrictEqual} from 'node:util';
 
 import {asyncmap} from 'asyncbox';
 import pluralizeLib from 'pluralize';
@@ -9,10 +9,9 @@ import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
 
 import {fs} from './fs.js';
-import {createBase64EncodeStream} from './internal/index.js';
+import {createBase64EncodeStream, LockFile} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
-import * as _lockfile from 'lockfile';
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
@@ -560,10 +559,7 @@ export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = 
  */
 export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
   const {timeout = 120, tryRecovery = false} = opts;
-
-  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: {wait: number}) => Promise<void>;
-  const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
-  const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
+  const lock = new LockFile(lockFile);
 
   const guard: LockFileGuard<T> = Object.assign(
     async (behavior: () => Promise<T> | T): Promise<T> => {
@@ -572,7 +568,7 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
       while (!acquired) {
         try {
           try {
-            _lockfile.lockSync(lockFile);
+            lock.acquireSync();
           } catch (e) {
             const lockErr = e as NodeJS.ErrnoException;
             if (lockErr.code !== 'EEXIST') {
@@ -580,13 +576,13 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
             }
             // Someone else is holding the lock (possibly grabbed it between us checking and
             // locking) -- wait for them to release it instead of failing outright.
-            await lock(lockFile, {wait: timeout * 1000});
+            await lock.acquire(timeout * 1000);
           }
           acquired = true;
         } catch (e) {
-          const err = e as Error;
-          if (err.message?.includes('EEXIST') && tryRecovery && !triedRecovery) {
-            _lockfile.unlockSync(lockFile);
+          const err = e as NodeJS.ErrnoException;
+          if (err.code === 'EEXIST' && tryRecovery && !triedRecovery) {
+            lock.releaseSync();
             triedRecovery = true;
           } else {
             throw new Error(
@@ -599,10 +595,10 @@ export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}
       try {
         return await behavior();
       } finally {
-        await unlock(lockFile);
+        await lock.release();
       }
     },
-    {check: () => checkLock(lockFile)},
+    {check: () => lock.isLocked()},
   );
 
   return guard;

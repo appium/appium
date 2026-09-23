@@ -26,7 +26,7 @@ import which from 'which';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {pluralize} from './util.js';
+import {isSameDestination, isSubPath, pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -251,6 +251,13 @@ export const fs = {
         });
       }
       throw err;
+    }
+    // moving a path onto itself deletes it, and a destination inside the source never returns
+    if (await isSameDestination(from, to)) {
+      return;
+    }
+    if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
+      throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
     }
     if (fromStat.isFile()) {
       const dstRootWasCreated = await ensureDestination(path.dirname(to));

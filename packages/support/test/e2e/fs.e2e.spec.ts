@@ -58,6 +58,26 @@ describe('fs', function () {
       assert.strictEqual((await fs.readFile(dstPath)).toString(), 'foo');
     });
 
+    it('should keep a file when the source and destination are the same path', async function () {
+      const srcPath = path.join(srcRoot!, 'src.file');
+      await fs.writeFile(srcPath, Buffer.from('bar'));
+      await fs.mv(srcPath, path.join(srcRoot!, '.', 'src.file'));
+      assert.strictEqual(await fs.exists(srcPath), true);
+      assert.strictEqual((await fs.readFile(srcPath)).toString(), 'bar');
+    });
+
+    it('should reject moving a directory into itself', async function () {
+      const srcPath = path.join(srcRoot!, 'foo', 'src.file');
+      await fs.mkdirp(path.dirname(srcPath));
+      await fs.writeFile(srcPath, Buffer.from('bar'));
+      await assert.rejects(
+        fs.mv(path.dirname(srcPath), path.join(path.dirname(srcPath), 'child'), {mkdirp: true}),
+        /inside the source/,
+      );
+      assert.strictEqual(await fs.exists(srcPath), true);
+      assert.strictEqual((await fs.readFile(srcPath)).toString(), 'bar');
+    });
+
     it('should override a file if already exists by default', async function () {
       const srcPath = path.join(srcRoot!, 'src.file');
       await fs.writeFile(srcPath, Buffer.from('bar'));

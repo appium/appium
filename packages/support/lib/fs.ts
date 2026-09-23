@@ -30,7 +30,7 @@ import {type NormalizedPackageJson, type NormalizeOptions, packageDirectorySync,
 import log from './logger';
 import {isWindows} from './system';
 import {Timer} from './timing';
-import {memoize, pluralize} from './util';
+import {isSameDestination, isSubPath, memoize, pluralize} from './util';
 
 const findRootCached = memoize(packageDirectorySync, (opts: {cwd?: string} | undefined) => opts?.cwd);
 
@@ -252,6 +252,13 @@ export const fs = {
         });
       }
       throw err;
+    }
+    // moving a path onto itself deletes it, and a destination inside the source never returns
+    if (await isSameDestination(from, to)) {
+      return;
+    }
+    if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
+      throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
     }
     if (fromStat.isFile()) {
       const dstRootWasCreated = await ensureDestination(path.dirname(to));

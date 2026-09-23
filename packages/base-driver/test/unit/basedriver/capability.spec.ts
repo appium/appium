@@ -227,6 +227,32 @@ describe('Desired Capabilities', function () {
       assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).newCommandTimeout, 1.1);
     });
 
+    it('should keep the default timeout when newCommandTimeout is null', async function () {
+      const defaultMs = d.newCommandTimeoutMs;
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': null},
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
+      assert.strictEqual(d.newCommandTimeoutMs, defaultMs);
+    });
+
+    it('should keep the default timeout when newCommandTimeout is blank', async function () {
+      const defaultMs = d.newCommandTimeoutMs;
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': ''},
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
+      assert.strictEqual(d.newCommandTimeoutMs, defaultMs);
+    });
+
+    it('should disable the timeout when newCommandTimeout is 0', async function () {
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': 0},
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
+      assert.strictEqual(d.newCommandTimeoutMs, 0);
+    });
+
     it('should allow a string "1" in string capabilities', async function () {
       await d.createSession({
         alwaysMatch: {platformName: 'iOS', 'appium:language': '1'},

@@ -342,8 +342,10 @@ export class BaseDriver<
       delete this.opts.app;
     }
 
-    if (this.caps.newCommandTimeout !== undefined) {
-      this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
+    // null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout
+    const newCommandTimeout = this.caps.newCommandTimeout;
+    if (typeof newCommandTimeout === 'number' && Number.isFinite(newCommandTimeout)) {
+      this.newCommandTimeoutMs = newCommandTimeout * 1000;
     }
 
     this._log.prefix = helpers.generateDriverLogPrefix(this);

@@ -99,9 +99,11 @@ export async function uploadFile(
         `Only http/https protocols are supported.`,
     );
   }
-  // Matches uploadFileToHttp()'s own default: `undefined` means multipart, and this raw-file-size
-  // Content-Length only applies to the non-multipart (explicitly falsy `fileFieldName`) case.
-  if (!(uploadOptions.fileFieldName ?? 'file')) {
+  // Matches uploadFileToHttp()'s own default: only an absent name becomes the multipart default,
+  // so an explicitly falsy one (e.g. `null`) still means a raw body that needs Content-Length.
+  const fileFieldName =
+    uploadOptions.fileFieldName === undefined ? DEFAULT_FILE_FIELD_NAME : uploadOptions.fileFieldName;
+  if (!fileFieldName) {
     uploadOptions.headers = {
       ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
       'Content-Length': size,

@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {duplicateKeys, isPackageOrBundle, parseCapsArray} from '../../../lib/basedriver/helpers/index.js';
+import {
+  duplicateKeys,
+  filenameFromContentDisposition,
+  isPackageOrBundle,
+  parseCapsArray,
+} from '../../../lib/basedriver/helpers/index.js';
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {
@@ -117,4 +122,28 @@ describe('parseCapsArray', function () {
   it('should fail if an invalid JSON array is provided', function () {
     assert.throws(() => parseCapsArray(`['*']`));
   });
+});
+
+describe('filenameFromContentDisposition', function () {
+  const cases: [desc: string, header: string, expected: string | undefined][] = [
+    ['should read a quoted filename', 'attachment; filename="quoted-app.apk"', 'quoted-app.apk'],
+    ['should read an unquoted filename', 'attachment; filename=unquoted-app.apk', 'unquoted-app.apk'],
+    [
+      'should prefer RFC 5987 filename* over filename',
+      `attachment; filename="wrong.apk"; filename*=UTF-8''from-star.apk`,
+      'from-star.apk',
+    ],
+    ['should decode a percent-encoded filename*', `attachment; filename*=UTF-8''My%20App.apk`, 'My App.apk'],
+    ['should not let an unquoted token swallow later parameters', 'attachment; filename=app.apk; size=42', 'app.apk'],
+    ['should keep a quoted filename containing a semicolon', 'attachment; filename="a;b.apk"', 'a;b.apk'],
+    ['should ignore a parameter which merely ends with filename', 'attachment; x-filename=sneaky.apk', undefined],
+    ['should return undefined for an empty quoted filename', 'attachment; filename=""', undefined],
+    ['should return undefined when filename* is not decodable', `attachment; filename*=UTF-8''%E0%A4%A`, undefined],
+    ['should return undefined when the header has no filename', 'attachment', undefined],
+  ];
+  for (const [desc, header, expected] of cases) {
+    it(desc, function () {
+      assert.strictEqual(filenameFromContentDisposition(header), expected);
+    });
+  }
 });

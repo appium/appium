@@ -15,7 +15,7 @@ import {createBase64EncodeStream} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {GiB, memoize, toReadableSizeString} from './util.js';
+import {GiB, isSubPath, memoize, toReadableSizeString} from './util.js';
 
 const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
@@ -133,7 +133,7 @@ class ZipExtractor {
         }
 
         const dest = path.resolve(dir, fileName);
-        if (!isContainedPath(dest, dir)) {
+        if (!isSubPath(dest, dir)) {
           throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
         }
 
@@ -179,7 +179,7 @@ class ZipExtractor {
     if (isSymlink) {
       const link = await text(readStream);
       const resolvedLink = path.resolve(realDestDir, link);
-      if (!isContainedPath(resolvedLink, dir)) {
+      if (!isSubPath(resolvedLink, dir)) {
         throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
       }
       await fs.symlink(link, dest);
@@ -191,7 +191,7 @@ class ZipExtractor {
 
   private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
     const {dir} = this.opts;
-    if (!isContainedPath(dirPath, dir)) {
+    if (!isSubPath(dirPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
     }
 
@@ -205,7 +205,7 @@ class ZipExtractor {
       currentPath = path.join(currentPath, segment);
       try {
         const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
-        if (!isContainedPath(realPath, dir)) {
+        if (!isSubPath(realPath, dir)) {
           throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
         }
         if (!stats.isDirectory() && !stats.isSymbolicLink()) {
@@ -220,7 +220,7 @@ class ZipExtractor {
     }
 
     const realPath = await fs.realpath(dirPath);
-    if (!isContainedPath(realPath, dir)) {
+    if (!isSubPath(realPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
     }
     return realPath;
@@ -238,7 +238,7 @@ class ZipExtractor {
     }
 
     realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
-    if (!isContainedPath(realDest, dir)) {
+    if (!isSubPath(realDest, dir)) {
       throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
     }
   }
@@ -318,7 +318,7 @@ export async function _extractEntryTo(
 ): Promise<void> {
   const fileName = toEntryFileName(entry);
   const dstPath = path.resolve(destDir, fileName);
-  if (!isContainedPath(dstPath, destDir)) {
+  if (!isSubPath(dstPath, destDir)) {
     throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
   }
 
@@ -648,17 +648,6 @@ const getExecutablePath = memoize(
     return fullPath;
   },
 );
-
-function isContainedPath(originalPath: string, root: string): boolean {
-  for (const p of [originalPath, root]) {
-    if (!path.isAbsolute(p)) {
-      throw new Error(`'${p}' is expected to be an absolute path`);
-    }
-  }
-
-  const relativePath = path.relative(root, originalPath);
-  return !relativePath || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
-}
 
 export default {
   extractAllTo,

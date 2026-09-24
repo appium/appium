@@ -86,6 +86,20 @@ describe('#zip', function () {
             assert.strictEqual(await fs.exists(path.resolve(escapePath, 'owned.txt')), false);
           },
         );
+
+        it('should extract an entry whose name starts with dots but stays in the destination', async function () {
+          const outputPath = path.resolve(tmpRoot, 'output-dotdot');
+          const dstPath = path.resolve(tmpRoot, 'dotdot-name.zip');
+          await createStoredZip(dstPath, [
+            {
+              name: '..foo.txt',
+              contents: 'safe\n',
+              mode: 0o100644,
+            },
+          ]);
+          await zip.extractAllTo(dstPath, outputPath, options);
+          assert.strictEqual(await fs.readFile(path.resolve(outputPath, '..foo.txt'), {encoding: 'utf8'}), 'safe\n');
+        });
       });
 
       describe('assertValidZip', function () {

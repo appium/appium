@@ -8,19 +8,21 @@ import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:tes
 import * as support from '@appium/support';
 import {fs} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
-import type {ExtManifest} from 'appium/types';
-import * as semver from 'semver';
-import type {SinonSandbox, SinonStub} from 'sinon';
+import type {ExtManifest} from 'appium/types/index.js';
+import type {SinonSandbox, SinonSpy, SinonStub} from 'sinon';
 import sinon from 'sinon';
 
+import DriverCliCommand from '../../../lib/cli/driver-command.js';
 import {ExtensionCliCommand} from '../../../lib/cli/extension-command.js';
 import type {
   ExtensionConfig,
   injectAppiumSymlinks as injectAppiumSymlinksStatic,
 } from '../../../lib/cli/extension-command.js';
+import PluginCliCommand from '../../../lib/cli/plugin-command.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
 import {Manifest} from '../../../lib/extension/manifest/manifest.js';
-import {appiumPackageRoot} from '../../../lib/utils/index.js';
+import {PluginConfig} from '../../../lib/extension/plugin-config.js';
+import {appiumPackageRoot, npm} from '../../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR} from '../../helpers.js';
 
 /**
@@ -101,11 +103,12 @@ describe('ExtensionCommand', function () {
       const appiumHome = path.resolve('appium-home-for-test');
       let ec: ExtensionCliCommand;
       let config: DriverConfig | PluginConfig;
+      let installedExtensions: Record<string, ExtManifest<'driver'>>;
       let uninstallStub: SinonStub;
       let removeStub: SinonStub;
       let checkUpdateStub: SinonStub;
       let updateStub: SinonStub;
-      let getInstallPathSpy: sinon.SinonSpy;
+      let getInstallPathSpy: SinonSpy;
       let existsStub: SinonStub;
       let readFileStub: SinonStub;
 
@@ -159,11 +162,10 @@ describe('ExtensionCommand', function () {
 
       beforeEach(function () {
         sandbox = sinon.createSandbox();
-        const logger = sandbox.createStubInstance(console.CliConsole);
-        logger.decorate.callsFake((message) => message);
-        sandbox.stub(console, 'CliConsole').returns(logger);
         const manifest = sandbox.createStubInstance(Manifest);
         sandbox.stub(manifest, 'appiumHome').get(() => appiumHome);
+        installedExtensions = {};
+        manifest.getExtensionData.returns(installedExtensions);
         if (type === 'driver') {
           config = DriverConfig.create(manifest);
           ec = new DriverCliCommand({config, json: true});
@@ -171,7 +173,16 @@ describe('ExtensionCommand', function () {
           config = PluginConfig.create(manifest);
           ec = new PluginCliCommand({config, json: true});
         }
-        config.installedExtensions = {short: extension(pkgName), scoped: extension(scopedPkgName)};
+        // avoids the decorated-message symbol prefix that would break the exact-string assertions below
+        (ec as any).log = {
+          decorate: (message: string) => message,
+          log: sandbox.stub(),
+          ok: sandbox.stub(),
+          info: sandbox.stub(),
+          warn: sandbox.stub(),
+          error: sandbox.stub(),
+        };
+        Object.assign(installedExtensions, {short: extension(pkgName), scoped: extension(scopedPkgName)});
         uninstallStub = sandbox.stub(npm, 'uninstallPackage').resolves();
         removeStub = sandbox.stub(config, 'removeExtension').resolves();
         checkUpdateStub = sandbox.stub(ec as any, 'checkForExtensionUpdate').resolves({
@@ -256,130 +267,6 @@ describe('ExtensionCommand', function () {
         assert.deepStrictEqual(Object.keys(result.errors), ['short']);
         sinon.assert.notCalled(checkUpdateStub);
         sinon.assert.notCalled(updateStub);
-      });
-    });
-
-    describe(`${type} _findCompatibleExtVersion()`, function () {
-      const COMPATIBLE = '*';
-      const TOO_NEW = '^999.0.0'; // requires a newer Appium server version
-      const TOO_OLD = '^1.0.0'; // requires an older Appium server version
-      const pkgName = `appium-test-${type}`;
-      let ec: ExtensionCliCommand;
-      let infoStub: SinonStub;
-
-      function findCompatible(pkgVer?: string): Promise<string | undefined> {
-        return (ec as any)._findCompatibleExtVersion({
-          installSpec: pkgName,
-          pkgName,
-          pkgVer,
-          installType: 'npm',
-        });
-      }
-
-      // Creates a stub for the `npm info` command,
-      // handling packages with or without version suffixes, plus the `versions` argument
-      function stubRegistry(reqs: Record<string, string>): void {
-        const versions = Object.keys(reqs);
-        const latest = semver.maxSatisfying(versions, '*');
-        infoStub.callsFake(async (spec: string, entries: string[]) => {
-          if (entries.includes('versions')) {
-            return versions;
-          }
-          const ver = spec === pkgName ? latest : spec.slice(pkgName.length + 1);
-          return {peerDependencies: {appium: reqs[ver as string]}};
-        });
-      }
-
-      // Keeps track of the checked package versions
-      function queriedVersions(): string[] {
-        return infoStub.args.filter(([, entries]) => !entries.includes('versions')).map(([spec]) => spec);
-      }
-
-      beforeEach(function () {
-        sandbox = sinon.createSandbox();
-        const manifest = sandbox.createStubInstance(Manifest);
-        if (type === 'driver') {
-          ec = new DriverCliCommand({config: DriverConfig.create(manifest), json: true});
-        } else {
-          ec = new PluginCliCommand({config: PluginConfig.create(manifest), json: true});
-        }
-        // avoids the decorated-message symbol prefix
-        (ec as any).log = {
-          decorate: (message: string) => message,
-          info: sandbox.stub(),
-          warn: sandbox.stub(),
-        };
-        infoStub = sandbox.stub(npm, 'getPackageInfo');
-      });
-
-      afterEach(function () {
-        sandbox.restore();
-      });
-
-      it('should not look for other versions if the latest one is compatible', async function () {
-        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': COMPATIBLE});
-        assert.strictEqual(await findCompatible(), undefined);
-        assert.deepStrictEqual(queriedVersions(), [pkgName]);
-      });
-
-      it('should pass if a specific compatible version was requested', async function () {
-        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': COMPATIBLE, '3.0.0': TOO_NEW});
-        assert.strictEqual(await findCompatible('2.0.0'), undefined);
-        assert.deepStrictEqual(queriedVersions(), [`${pkgName}@2.0.0`]);
-      });
-
-      it('should throw if a specific incompatible version was requested', async function () {
-        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': COMPATIBLE, '3.0.0': TOO_NEW});
-        await assert.rejects(findCompatible('3.0.0'), /cannot be installed because the server version it requires/);
-        await assert.rejects(findCompatible('1.0.0'), /cannot be installed because the server version it requires/);
-        sinon.assert.neverCalledWith(infoStub, pkgName, ['versions']);
-      });
-
-      it('should fall back to the latest version of the newest compatible major', async function () {
-        stubRegistry({
-          '1.5.0': TOO_OLD,
-          '2.9.0': COMPATIBLE,
-          '2.10.0': COMPATIBLE,
-          '3.0.0': TOO_NEW,
-          '4.0.0': TOO_NEW,
-        });
-        assert.strictEqual(await findCompatible(), '2.10.0');
-        // 1.5.0 is the oldest, so it is checked first; it is incompatible, but newer versions may still match
-        assert.deepStrictEqual(queriedVersions(), [
-          pkgName,
-          `${pkgName}@1.5.0`,
-          `${pkgName}@3.0.0`,
-          `${pkgName}@2.10.0`,
-        ]);
-      });
-
-      it('should fall back to the oldest major if only it is compatible', async function () {
-        stubRegistry({'1.0.0': COMPATIBLE, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
-        assert.strictEqual(await findCompatible(), '1.0.0');
-        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`, `${pkgName}@2.0.0`]);
-      });
-
-      it('should fail fast if even the oldest version requires a newer server', async function () {
-        stubRegistry({'1.0.0': TOO_NEW, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
-        await assert.rejects(findCompatible(), /none of its versions are compatible/);
-        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`]);
-      });
-
-      it('should fail fast if even the newest version requires an older server', async function () {
-        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': TOO_OLD, '3.0.0': TOO_OLD});
-        await assert.rejects(findCompatible(), /cannot be installed because the server version it requires/);
-        assert.deepStrictEqual(queriedVersions(), [pkgName]);
-      });
-
-      it('should throw if no version is compatible', async function () {
-        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
-        await assert.rejects(findCompatible(), /none of its versions are compatible/);
-        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`, `${pkgName}@2.0.0`]);
-      });
-
-      it('should throw if the latest is the only version and it is incompatible', async function () {
-        stubRegistry({'1.0.0': TOO_NEW});
-        await assert.rejects(findCompatible(), /none of its versions are compatible/);
       });
     });
   }

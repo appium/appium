@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.0...@appium/storage-plugin@2.0.1) (2026-09-24)
+
+### Bug Fixes
+
+* **storage-plugin:** map StorageArgumentError to InvalidArgumentError ([#22734](https://github.com/appium/appium/issues/22734)) ([f522b64](https://github.com/appium/appium/commit/f522b64456509d078a81c2d214cd99f9a3090205))
+
+
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.8...@appium/storage-plugin@2.0.0) (2026-08-24)
 
 ### ⚠ BREAKING CHANGES

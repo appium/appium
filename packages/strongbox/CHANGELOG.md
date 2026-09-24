@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/appium/appium/compare/@appium/strongbox@2.0.0...@appium/strongbox@2.0.1) (2026-09-24)
+
+### Bug Fixes
+
+* **strongbox:** reject item names that slugify to an empty path ([#22717](https://github.com/appium/appium/issues/22717)) ([afa4837](https://github.com/appium/appium/commit/afa4837530a814e3ddf3b901574cf2b12e1e3d11))
+
+
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/strongbox@1.1.3...@appium/strongbox@2.0.0) (2026-08-24)
 
 ### ⚠ BREAKING CHANGES

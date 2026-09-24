@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.1](https://github.com/appium/appium/compare/@appium/base-driver@10.8.0...@appium/base-driver@10.8.1) (2026-09-24)
+
+### Bug Fixes
+
+* **base-driver:** honor unquoted and RFC 5987 Content-Disposition filenames ([#22755](https://github.com/appium/appium/issues/22755)) ([81c8b9d](https://github.com/appium/appium/commit/81c8b9da0aeba9d013a35c39127374477b24cc81))
+* **base-driver:** keep existing contexts when session.subscribe is called again ([#22780](https://github.com/appium/appium/issues/22780)) ([3423e36](https://github.com/appium/appium/commit/3423e366897e6a540a4aefc0802e81c74678f51f))
+* **base-driver:** reject invalid timeout with InvalidArgumentError ([#22679](https://github.com/appium/appium/issues/22679)) ([9c00b86](https://github.com/appium/appium/commit/9c00b86ce759f84428cfa508f94261042893a6e7))
+* **base-driver:** skip unknown events in session.unsubscribe ([#22671](https://github.com/appium/appium/issues/22671)) ([0c4da64](https://github.com/appium/appium/commit/0c4da64aeabb66588241bf5824fa1c42b96b3f3d))
+
+
 ## [10.8.0](https://github.com/appium/appium/compare/@appium/base-driver@10.7.2...@appium/base-driver@10.8.0) (2026-08-24)
 
 ### Features

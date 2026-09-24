@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.8](https://github.com/appium/appium/compare/@appium/support@7.2.7...@appium/support@7.2.8) (2026-09-24)
+
+### Bug Fixes
+
+* **support:** avoid TOCTOU race in getLockFileGuard() acquisition ([#22807](https://github.com/appium/appium/issues/22807)) ([7df378f](https://github.com/appium/appium/commit/7df378f4010c63d01b526876f60c72694b5fa0da))
+* **support:** do not delete a path when fs.mv destination is the source or inside it ([#22806](https://github.com/appium/appium/issues/22806)) ([4dd2e2d](https://github.com/appium/appium/commit/4dd2e2d47dbae909f6e69202a9b5f4aa4576bef1))
+* **support:** do not set file-sized Content-Length on default multipart uploads ([#22766](https://github.com/appium/appium/issues/22766)) ([9a70a44](https://github.com/appium/appium/commit/9a70a44c83734fef535a1e651320828ddc7c1846))
+* **support:** extract zip entries whose names start with dots ([#22772](https://github.com/appium/appium/issues/22772)) ([dc16d69](https://github.com/appium/appium/commit/dc16d6970f9806d46f92c41510bdeec4bee07702))
+
+
 ## [7.2.7](https://github.com/appium/appium/compare/@appium/support@7.2.6...@appium/support@7.2.7) (2026-08-24)
 
 ### Bug Fixes

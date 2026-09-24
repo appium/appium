@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.0](https://github.com/appium/appium/compare/appium@3.7.0...appium@3.8.0) (2026-09-24)
+
+### Features
+
+* **appium:** accept package names for installed extension commands ([#22747](https://github.com/appium/appium/issues/22747)) ([6c911de](https://github.com/appium/appium/commit/6c911debd72cb7fe094d27671d1cf14098ff537a))
+
+### Bug Fixes
+
+* **appium:** do not treat a directory as a CLI argument file ([#22709](https://github.com/appium/appium/issues/22709)) ([6ba6faf](https://github.com/appium/appium/commit/6ba6faf6f533192afbdf9462dbbb3a5c1e5d85c5))
+* **appium:** filter prerelease versions in driver update e2e test ([#22794](https://github.com/appium/appium/issues/22794)) ([4e8e334](https://github.com/appium/appium/commit/4e8e334cbc0ae910f521ae7ff7d3ed15f9be0a6a))
+* **appium:** match insecure feature prefixes by automationName, case-insensitively ([#22710](https://github.com/appium/appium/issues/22710)) ([6ab17fe](https://github.com/appium/appium/commit/6ab17feb71d74c1f349616f22896faeb256a66ec))
+
+
 ## [3.7.0](https://github.com/appium/appium/compare/appium@3.6.0...appium@3.7.0) (2026-08-24)
 
 ### Features

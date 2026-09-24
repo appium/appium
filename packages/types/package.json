@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Various type declarations used across Appium",
   "keywords": [
@@ -45,7 +45,7 @@
     "type-fest": "5.10.0"
   },
   "devDependencies": {
-    "@appium/logger": "2.0.11",
+    "@appium/logger": "2.0.12",
     "@appium/tsconfig": "1.2.1"
   },
   "peerDependencies": {

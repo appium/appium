@@ -95,10 +95,8 @@ describe('app download and configuration', function () {
               res.end();
               return;
             }
-            // for testing zip file content types
-            const contentType = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search).get(
-              'content-type',
-            );
+            const params = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search);
+            const contentType = params.get('content-type');
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
             }

@@ -160,8 +160,11 @@ describe('Driver CLI', {timeout: 90000}, function () {
       // Compare within the release line the running (possibly prerelease) Appium is actually
       // compatible with, rather than blindly against the last-published version ever - which,
       // right after a fresh major bootstrap, may be a still-incompatible `latest`.
+      // Update checks skip prereleases, so also exclude those to guarantee an update exists.
       const referenceVersion = IS_PRERELEASE_SERVER ? distTags.beta : distTags.latest;
-      const sameLineVersions = versions.filter((v) => semver.major(v) === semver.major(referenceVersion));
+      const sameLineVersions = versions.filter(
+        (v) => semver.major(v) === semver.major(referenceVersion) && !semver.prerelease(v),
+      );
       if (sameLineVersions.length < 2) {
         // Only the just-bootstrapped version exists in this release line so far; there's nothing
         // older-but-compatible to install as a baseline yet. Self-resolves once a second release

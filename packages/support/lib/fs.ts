@@ -26,7 +26,7 @@ import which from 'which';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {pluralize} from './util.js';
+import {isSameDestination, isSubPath, pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.

@@ -14,7 +14,7 @@ import {createBase64EncodeStream} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {GiB, memoize, toReadableSizeString} from './util.js';
+import {GiB, isSubPath, memoize, toReadableSizeString} from './util.js';
 
 const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
@@ -143,7 +143,7 @@ class ZipExtractor {
         }
 
         const dest = path.resolve(dir, fileName);
-        if (!isContainedPath(dest, dir)) {
+        if (!isSubPath(dest, dir)) {
           throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
         }
 
@@ -185,17 +185,69 @@ class ZipExtractor {
     }
 
     if (isSymlink) {
-      const linkTarget = await text(await this.openReadStream(entry));
-      await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
-    } else {
-      await assertFileDestinationWithinRoot(dir, dest, realDestDir, fileName);
-      const readStream = await this.openReadStream(entry);
-      try {
-        await writeFileNoFollow(readStream, dest, procMode);
-      } finally {
-        // Opening the output may fail before pipeline takes ownership of the input.
-        readStream.destroy();
+      const link = await text(readStream);
+      const resolvedLink = path.resolve(realDestDir, link);
+      if (!isSubPath(resolvedLink, dir)) {
+        throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
       }
+      await fs.symlink(link, dest);
+    } else {
+      await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
+      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
+    }
+  }
+
+  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
+    const {dir} = this.opts;
+    if (!isSubPath(dirPath, dir)) {
+      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+    }
+
+    const relativePath = path.relative(dir, dirPath);
+    if (!relativePath) {
+      return dir;
+    }
+
+    let currentPath = dir;
+    for (const segment of relativePath.split(path.sep)) {
+      currentPath = path.join(currentPath, segment);
+      try {
+        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
+        if (!isSubPath(realPath, dir)) {
+          throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
+        }
+        if (!stats.isDirectory() && !stats.isSymbolicLink()) {
+          throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
+        }
+      } catch (err: any) {
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
+        await fs.mkdir(currentPath, {mode});
+      }
+    }
+
+    const realPath = await fs.realpath(dirPath);
+    if (!isSubPath(realPath, dir)) {
+      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+    }
+    return realPath;
+  }
+
+  private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
+    const {dir} = this.opts;
+    let realDest: string | null = null;
+    try {
+      realDest = await fs.realpath(dest);
+    } catch (err: any) {
+      if (err.code !== 'ENOENT') {
+        throw err;
+      }
+    }
+
+    realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
+    if (!isSubPath(realDest, dir)) {
+      throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
     }
   }
 
@@ -475,7 +527,7 @@ export async function _extractEntryTo(
 ): Promise<void> {
   const fileName = toEntryFileName(entry);
   const dstPath = path.resolve(destDir, fileName);
-  if (!isContainedPath(dstPath, destDir)) {
+  if (!isSubPath(dstPath, destDir)) {
     throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
   }
 
@@ -808,11 +860,6 @@ const getExecutablePath = memoize(
     return fullPath;
   },
 );
-
-function isContainedPath(originalPath: string, root: string): boolean {
-  // `startsWith('..')` would reject a safe name like `..foo`; isSubPath only treats `..` as a parent
-  return isSubPath(originalPath, root);
-}
 
 export default {
   extractAllTo,

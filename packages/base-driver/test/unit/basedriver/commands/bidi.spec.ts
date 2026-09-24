@@ -24,4 +24,31 @@ describe('bidi commands -', function () {
       assert.deepStrictEqual(driver.bidiEventSubs, {});
     });
   });
+
+  describe('bidiSubscribe', function () {
+    it('should keep previously subscribed contexts when the same event is subscribed again', async function () {
+      await driver.bidiSubscribe(['log.entryAdded'], ['ctx-a']);
+      await driver.bidiSubscribe(['log.entryAdded'], ['ctx-b']);
+      assert.deepStrictEqual(driver.bidiEventSubs, {
+        'log.entryAdded': ['ctx-a', 'ctx-b'],
+      });
+    });
+
+    it('should not duplicate a context that is already subscribed', async function () {
+      await driver.bidiSubscribe(['log.entryAdded'], ['ctx-a']);
+      await driver.bidiSubscribe(['log.entryAdded'], ['ctx-a', 'ctx-b']);
+      assert.deepStrictEqual(driver.bidiEventSubs, {
+        'log.entryAdded': ['ctx-a', 'ctx-b'],
+      });
+    });
+
+    it('should not mix contexts across different events', async function () {
+      await driver.bidiSubscribe(['log.entryAdded'], ['ctx-a']);
+      await driver.bidiSubscribe(['browsingContext.load'], ['ctx-b']);
+      assert.deepStrictEqual(driver.bidiEventSubs, {
+        'log.entryAdded': ['ctx-a'],
+        'browsingContext.load': ['ctx-b'],
+      });
+    });
+  });
 });

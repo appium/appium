@@ -8,17 +8,21 @@ import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:tes
 import * as support from '@appium/support';
 import {fs} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
-import type {SinonSandbox, SinonStub} from 'sinon';
+import type {ExtManifest} from 'appium/types/index.js';
+import type {SinonSandbox, SinonSpy, SinonStub} from 'sinon';
 import sinon from 'sinon';
 
+import DriverCliCommand from '../../../lib/cli/driver-command.js';
 import {ExtensionCliCommand} from '../../../lib/cli/extension-command.js';
 import type {
   ExtensionConfig,
   injectAppiumSymlinks as injectAppiumSymlinksStatic,
 } from '../../../lib/cli/extension-command.js';
+import PluginCliCommand from '../../../lib/cli/plugin-command.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
 import {Manifest} from '../../../lib/extension/manifest/manifest.js';
-import {appiumPackageRoot} from '../../../lib/utils/index.js';
+import {PluginConfig} from '../../../lib/extension/plugin-config.js';
+import {appiumPackageRoot, npm} from '../../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR} from '../../helpers.js';
 
 /**
@@ -89,6 +93,183 @@ describe('ExtensionCommand', function () {
       });
     });
   });
+
+  for (const type of ['driver', 'plugin'] as const) {
+    describe(`installed ${type} names`, function () {
+      const commands = ['uninstall', 'update', 'run', 'doctor'] as const;
+      type Command = (typeof commands)[number];
+      const pkgName = `appium-test-${type}`;
+      const scopedPkgName = `@example/${pkgName}`;
+      const appiumHome = path.resolve('appium-home-for-test');
+      let ec: ExtensionCliCommand;
+      let config: DriverConfig | PluginConfig;
+      let installedExtensions: Record<string, ExtManifest<'driver'>>;
+      let uninstallStub: SinonStub;
+      let removeStub: SinonStub;
+      let checkUpdateStub: SinonStub;
+      let updateStub: SinonStub;
+      let getInstallPathSpy: SinonSpy;
+      let existsStub: SinonStub;
+      let readFileStub: SinonStub;
+
+      function extension(packageName: string): ExtManifest<'driver'> {
+        return {
+          pkgName: packageName,
+          version: '1.0.0',
+          installType: 'npm',
+          installSpec: packageName,
+          installPath: path.join(appiumHome, 'node_modules', packageName),
+          mainClass: 'TestExtension',
+          automationName: 'Test',
+          platformNames: ['Test'],
+          scripts: {sample: 'scripts/sample.js'},
+        };
+      }
+
+      function invoke(command: Command, name: string): Promise<unknown> {
+        return ec.execute({[`${type}Command`]: command, [type]: name, unsafe: false});
+      }
+
+      async function assertHandles(command: Command, input: string, expectedName: string): Promise<void> {
+        const expected = config.installedExtensions[expectedName];
+        const result = await invoke(command, input);
+        switch (command) {
+          case 'uninstall':
+            sinon.assert.calledOnceWithExactly(uninstallStub, appiumHome, expected.pkgName);
+            sinon.assert.calledOnceWithExactly(removeStub, expectedName);
+            assert.strictEqual(result, config.installedExtensions);
+            break;
+          case 'update':
+            sinon.assert.calledOnceWithExactly(checkUpdateStub, expectedName);
+            sinon.assert.calledOnceWithExactly(updateStub, expectedName, '1.1.0');
+            assert.deepStrictEqual(result, {
+              updates: {[expectedName]: {from: '1.0.0', to: '1.1.0'}},
+              errors: {},
+            });
+            break;
+          case 'run':
+            sinon.assert.calledOnceWithExactly(getInstallPathSpy, expectedName);
+            sinon.assert.calledOnceWithExactly(existsStub, path.join(expected.installPath, 'scripts/sample.js'));
+            assert.deepStrictEqual(result, {});
+            break;
+          case 'doctor':
+            sinon.assert.calledOnceWithExactly(getInstallPathSpy, expectedName);
+            sinon.assert.calledOnceWithExactly(readFileStub, path.join(expected.installPath, 'package.json'), 'utf8');
+            assert.strictEqual(result, 0);
+            break;
+        }
+      }
+
+      beforeEach(function () {
+        sandbox = sinon.createSandbox();
+        const manifest = sandbox.createStubInstance(Manifest);
+        sandbox.stub(manifest, 'appiumHome').get(() => appiumHome);
+        installedExtensions = {};
+        manifest.getExtensionData.returns(installedExtensions);
+        if (type === 'driver') {
+          config = DriverConfig.create(manifest);
+          ec = new DriverCliCommand({config, json: true});
+        } else {
+          config = PluginConfig.create(manifest);
+          ec = new PluginCliCommand({config, json: true});
+        }
+        // avoids the decorated-message symbol prefix that would break the exact-string assertions below
+        (ec as any).log = {
+          decorate: (message: string) => message,
+          log: sandbox.stub(),
+          ok: sandbox.stub(),
+          info: sandbox.stub(),
+          warn: sandbox.stub(),
+          error: sandbox.stub(),
+        };
+        Object.assign(installedExtensions, {short: extension(pkgName), scoped: extension(scopedPkgName)});
+        uninstallStub = sandbox.stub(npm, 'uninstallPackage').resolves();
+        removeStub = sandbox.stub(config, 'removeExtension').resolves();
+        checkUpdateStub = sandbox.stub(ec as any, 'checkForExtensionUpdate').resolves({
+          current: '1.0.0',
+          safeUpdate: '1.1.0',
+          unsafeUpdate: null,
+        });
+        updateStub = sandbox.stub(ec as any, 'updateExtension').resolves();
+        getInstallPathSpy = sandbox.spy(config, 'getInstallPath');
+        existsStub = sandbox.stub(fs, 'exists').resolves(true);
+        readFileStub = sandbox.stub(fs, 'readFile').resolves('{"appium":{}}');
+      });
+
+      afterEach(function () {
+        sandbox.restore();
+      });
+
+      for (const command of commands) {
+        describe(command, function () {
+          for (const [input, expectedName] of [
+            ['short', 'short'],
+            [pkgName, 'short'],
+            [scopedPkgName, 'scoped'],
+          ]) {
+            it(`should accept ${input} as the installed extension`, async function () {
+              await assertHandles(command, input, expectedName);
+            });
+          }
+
+          it('should prefer an extension name over another extension package name', async function () {
+            config.installedExtensions[pkgName] = extension('another-package');
+            await assertHandles(command, pkgName, pkgName);
+          });
+
+          for (const input of ['unknown', pkgName.slice(0, -1), `${pkgName}@1.0.0`, `${scopedPkgName}@1.0.0`]) {
+            it(`should reject ${input} without changing the installed-extension error`, async function () {
+              const message =
+                command === 'uninstall'
+                  ? `Can't uninstall ${type} '${input}'; it is not installed`
+                  : command === 'update'
+                    ? `The ${type} "${input}" was not installed, so can't be updated`
+                    : `The ${type} "${input}" is not installed`;
+              await assert.rejects(invoke(command, input), {message});
+              sinon.assert.notCalled(uninstallStub);
+              sinon.assert.notCalled(removeStub);
+              sinon.assert.notCalled(checkUpdateStub);
+              sinon.assert.notCalled(updateStub);
+              sinon.assert.notCalled(getInstallPathSpy);
+            });
+          }
+        });
+      }
+
+      it('should update all extensions for installed even when it matches an extension and a package', async function () {
+        config.installedExtensions.short.pkgName = 'installed';
+        config.installedExtensions.installed = extension('another-package');
+
+        assert.deepStrictEqual(await invoke('update', 'installed'), {
+          updates: {
+            short: {from: '1.0.0', to: '1.1.0'},
+            scoped: {from: '1.0.0', to: '1.1.0'},
+            installed: {from: '1.0.0', to: '1.1.0'},
+          },
+          errors: {},
+        });
+        assert.deepStrictEqual(checkUpdateStub.args, [['short'], ['scoped'], ['installed']]);
+      });
+
+      it('should preserve the development extension uninstall restriction for a package name', async function () {
+        config.installedExtensions.short.installType = 'dev';
+
+        assert.strictEqual(await invoke('uninstall', pkgName), config.installedExtensions);
+        sinon.assert.notCalled(uninstallStub);
+        sinon.assert.notCalled(removeStub);
+      });
+
+      it('should preserve the non-npm extension update restriction for a package name', async function () {
+        config.installedExtensions.short.installType = 'local';
+
+        const result = (await invoke('update', pkgName)) as {updates: object; errors: Record<string, Error>};
+        assert.deepStrictEqual(result.updates, {});
+        assert.deepStrictEqual(Object.keys(result.errors), ['short']);
+        sinon.assert.notCalled(checkUpdateStub);
+        sinon.assert.notCalled(updateStub);
+      });
+    });
+  }
 
   describe('injectAppiumSymlinks', function () {
     let fsExistsStub: SinonStub;

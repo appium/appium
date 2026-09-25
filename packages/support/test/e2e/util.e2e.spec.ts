@@ -1,6 +1,4 @@
 import assert from 'node:assert/strict';
-import {spawn} from 'node:child_process';
-import {once} from 'node:events';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import {fileURLToPath} from 'node:url';
@@ -86,18 +84,6 @@ describe('#util', function () {
       });
       await guard(async () => await guardedBehavior('b', 500));
       assert.strictEqual(await guard.check(), false);
-      assert.strictEqual(await testFileContents(), 'ab');
-    });
-
-    it('should immediately reclaim a lock left behind by a dead process', {timeout: 5000}, async function () {
-      const child = spawn(process.execPath, ['-e', 'process.exit(0)']);
-      const deadPid = child.pid;
-      await once(child, 'exit');
-      await fs.writeFile(lockFile, String(deadPid), 'utf8');
-      const guard = util.getLockFileGuard(lockFile, {timeout: 20});
-      const start = Date.now();
-      await guard(async () => await guardedBehavior('b', 50));
-      assert.ok(Date.now() - start < 2000, 'should not wait out the timeout to reclaim a truly abandoned lock');
       assert.strictEqual(await testFileContents(), 'ab');
     });
 

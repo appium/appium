@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {existsSync} from 'node:fs';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it, mock} from 'node:test';
 
@@ -27,6 +28,11 @@ const FAKE_DRIVER_MANIFEST = {
 };
 
 let executeCalls: any[];
+let errAndQuitCalls: any[];
+// Set by each test right before invoking `runExtensionCommand`, so the mocked `errAndQuit` below
+// can check -- synchronously, at the exact moment it's invoked -- whether the manifest lock has
+// already been released by then.
+let lockFileUnderTest: string;
 
 /** Stands in for `DriverCliCommand`/`PluginCliCommand` so `execute()` never touches npm/network. */
 class FakeExtensionCommand {
@@ -56,12 +62,22 @@ describe('runExtensionCommand', function () {
   let runExtensionCommand: (typeof import('../../../lib/cli/extension.js'))['runExtensionCommand'];
   let appiumHome: string;
 
-  // `driver-command.js`/`plugin-command.js` are mocked once here (before the first import of
-  // `extension.js`, which statically imports both) so every test below shares the same fake
-  // command class; per-test behavior is driven entirely through the `args` passed at call time.
+  // `driver-command.js`/`plugin-command.js`/`utils.js` must be mocked before the first import of
+  // `extension.js`, which statically imports all three; per-test behavior is driven entirely
+  // through the `args` passed at call time. `errAndQuit` is stubbed so the non-suppressed error
+  // path can be exercised without actually calling `process.exit`.
   before(async function () {
     mock.module('../../../lib/cli/driver-command.js', {defaultExport: FakeExtensionCommand});
     mock.module('../../../lib/cli/plugin-command.js', {defaultExport: FakeExtensionCommand});
+    mock.module('../../../lib/cli/utils.js', {
+      namedExports: {
+        errAndQuit(json: boolean, msg: unknown) {
+          errAndQuitCalls.push({json, msg, lockFileExistedWhenCalled: existsSync(lockFileUnderTest)});
+          throw new Error('errAndQuit called');
+        },
+        JSON_SPACES: 4,
+      },
+    });
     ({runExtensionCommand} = await import('../../../lib/cli/extension.js'));
   });
 
@@ -71,6 +87,7 @@ describe('runExtensionCommand', function () {
 
   beforeEach(async function () {
     executeCalls = [];
+    errAndQuitCalls = [];
     appiumHome = await tempDir.openDir();
     Manifest.getInstance.cache = new Map();
   });
@@ -104,6 +121,27 @@ describe('runExtensionCommand', function () {
       /boom/,
     );
     assert.strictEqual(await fs.exists(lockFile), false);
+  });
+
+  it('releases the lock before handing a non-suppressed error to errAndQuit', async function () {
+    const {driverConfig} = await loadExtensions(appiumHome);
+    lockFileUnderTest = await resolveManifestLockfilePath(appiumHome);
+
+    // suppressOutput: false takes the errAndQuit path, which terminates the process -- it must
+    // never do so while the manifest lock is still held (regression test for #22809). The mocked
+    // errAndQuit checks this synchronously, at the exact moment it's invoked, since a plain throw
+    // (unlike a real process.exit()) would unwind through the lock's `finally` either way and
+    // couldn't otherwise tell a correct call site from a buggy one.
+    await assert.rejects(
+      runExtensionCommand(
+        {subcommand: DRIVER_TYPE, driverCommand: 'list', suppressOutput: false, throwError: 'boom'} as any,
+        driverConfig,
+      ),
+      /errAndQuit called/,
+    );
+    assert.strictEqual(errAndQuitCalls.length, 1);
+    assert.strictEqual(errAndQuitCalls[0].lockFileExistedWhenCalled, false);
+    assert.strictEqual(await fs.exists(lockFileUnderTest), false);
   });
 
   it('re-reads the manifest under the lock, picking up changes written after the initial load', async function () {

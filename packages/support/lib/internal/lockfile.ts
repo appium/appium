@@ -7,11 +7,7 @@ const POLL_INTERVAL_MS = 50;
 
 /** Cross-platform, dependency-free exclusive file lock, keyed by a single lock file path. */
 export class LockFile {
-  private readonly lockFile: string;
-
-  constructor(lockFile: string) {
-    this.lockFile = lockFile;
-  }
+  constructor(private readonly lockFile: string) {}
 
   /**
    * Atomically creates the lock file (recording our pid in it); throws an EEXIST error if it

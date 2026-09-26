@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {promisify} from 'node:util';
 
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
@@ -449,6 +451,19 @@ describe('util', function () {
   });
 
   describe('quote', function () {
+    it('preserves exclamation marks in strings containing apostrophes', function () {
+      assert.strictEqual(util.quote("O'Brien!"), `'O'"'"'Brien!'`);
+      assert.strictEqual(util.quote(['plain', "O'Brien!", '']), `plain 'O'"'"'Brien!' ''`);
+    });
+    it(
+      'round-trips apostrophes and exclamation marks through a POSIX shell',
+      {skip: process.platform === 'win32'},
+      async function () {
+        const values = ["O'Brien!", "'!", "a\\'!b", 'O\'Brien! "$HOME" `printf unexpected`;\n[*]'];
+        const {stdout} = await promisify(execFile)('/bin/sh', ['-c', `printf '%s\\0' ${util.quote(values)}`]);
+        assert.deepStrictEqual(stdout.split('\0').slice(0, -1), values);
+      },
+    );
     it('should quote a string with a space', function () {
       assert.strictEqual(util.quote(['a', 'b', 'c d']), "a b 'c d'");
     });

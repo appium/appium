@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {existsSync} from 'node:fs';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it, mock} from 'node:test';
 
@@ -27,6 +28,8 @@ const FAKE_DRIVER_MANIFEST = {
 };
 
 let executeCalls: any[];
+let errAndQuitCalls: any[];
+let lockFileUnderTest: string;
 
 /** Stands in for `DriverCliCommand`/`PluginCliCommand` so `execute()` never touches npm/network. */
 class FakeExtensionCommand {
@@ -62,6 +65,18 @@ describe('runExtensionCommand', function () {
   before(async function () {
     mock.module('../../../lib/cli/driver-command.js', {defaultExport: FakeExtensionCommand});
     mock.module('../../../lib/cli/plugin-command.js', {defaultExport: FakeExtensionCommand});
+    // Records the lock file's existence synchronously, at the exact moment `errAndQuit` is
+    // invoked -- the real `errAndQuit` calls `process.exit()`, which (unlike a plain `throw`)
+    // never unwinds through a pending `finally`, so only a same-tick check can tell whether the
+    // lock was actually released before this ran.
+    mock.module('../../../lib/cli/utils.js', {
+      namedExports: {
+        errAndQuit(json: boolean, msg: unknown) {
+          errAndQuitCalls.push({json, msg, lockFileExistedAtCallTime: existsSync(lockFileUnderTest)});
+        },
+        JSON_SPACES: 4,
+      },
+    });
     ({runExtensionCommand} = await import('../../../lib/cli/extension.js'));
   });
 
@@ -71,6 +86,7 @@ describe('runExtensionCommand', function () {
 
   beforeEach(async function () {
     executeCalls = [];
+    errAndQuitCalls = [];
     appiumHome = await tempDir.openDir();
     Manifest.getInstance.cache = new Map();
   });
@@ -104,6 +120,20 @@ describe('runExtensionCommand', function () {
       /boom/,
     );
     assert.strictEqual(await fs.exists(lockFile), false);
+  });
+
+  it('releases the lock before handing a non-suppressed error to errAndQuit', async function () {
+    const {driverConfig} = await loadExtensions(appiumHome);
+    lockFileUnderTest = await resolveManifestLockfilePath(appiumHome);
+
+    await runExtensionCommand(
+      {subcommand: DRIVER_TYPE, driverCommand: 'list', throwError: 'boom'} as any,
+      driverConfig,
+    );
+
+    assert.strictEqual(errAndQuitCalls.length, 1);
+    assert.strictEqual(errAndQuitCalls[0].lockFileExistedAtCallTime, false);
+    assert.strictEqual(await fs.exists(lockFileUnderTest), false);
   });
 
   it('re-reads the manifest under the lock, picking up changes written after the initial load', async function () {

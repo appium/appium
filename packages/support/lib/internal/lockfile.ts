@@ -4,55 +4,6 @@ import {promises as fsp} from 'node:fs';
 import {waitForCondition} from 'asyncbox';
 
 const POLL_INTERVAL_MS = 50;
-const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP'];
-
-// Different installed drivers/plugins may each carry their own separate copy of this module, so a
-// module-level Set/flag would not actually be process-wide. Keyed off the shared `process` object
-// via a global symbol instead, so all copies install exactly one set of listeners between them.
-const CLEANUP_STATE_KEY = Symbol.for('@appium/support:lockfile-cleanup-state');
-
-interface CleanupState {
-  heldLockFiles: Set<string>;
-}
-
-function getCleanupState(): CleanupState {
-  const proc = process as unknown as Record<symbol, CleanupState | undefined>;
-  let state = proc[CLEANUP_STATE_KEY];
-  if (state) {
-    return state;
-  }
-
-  state = {heldLockFiles: new Set<string>()};
-  proc[CLEANUP_STATE_KEY] = state;
-
-  const releaseAllHeldLocks = (): void => {
-    for (const lockFile of state!.heldLockFiles) {
-      try {
-        fs.unlinkSync(lockFile);
-      } catch {
-        // best effort
-      }
-    }
-    state!.heldLockFiles.clear();
-  };
-
-  const onTerminationSignal = (signal: NodeJS.Signals): void => {
-    releaseAllHeldLocks();
-    // Remove our own listeners and re-raise, so default/other handlers (e.g. a graceful
-    // server shutdown) still run as if we were never here.
-    for (const sig of TERMINATION_SIGNALS) {
-      process.removeListener(sig, onTerminationSignal);
-    }
-    process.kill(process.pid, signal);
-  };
-
-  process.once('exit', releaseAllHeldLocks);
-  for (const signal of TERMINATION_SIGNALS) {
-    process.on(signal, onTerminationSignal);
-  }
-
-  return state;
-}
 
 /** Cross-platform, dependency-free exclusive file lock, keyed by a single lock file path. */
 export class LockFile {
@@ -126,4 +77,54 @@ export class LockFile {
     err.code = 'EEXIST';
     return err;
   }
+}
+
+const TERMINATION_SIGNALS: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+
+// Different installed drivers/plugins may each carry their own separate copy of this module, so a
+// module-level Set/flag would not actually be process-wide. Keyed off the shared `process` object
+// via a global symbol instead, so all copies install exactly one set of listeners between them.
+const CLEANUP_STATE_KEY = Symbol.for('@appium/support:lockfile-cleanup-state');
+
+interface CleanupState {
+  heldLockFiles: Set<string>;
+}
+
+function getCleanupState(): CleanupState {
+  const proc = process as unknown as Record<symbol, CleanupState | undefined>;
+  let state = proc[CLEANUP_STATE_KEY];
+  if (state) {
+    return state;
+  }
+
+  state = {heldLockFiles: new Set<string>()};
+  proc[CLEANUP_STATE_KEY] = state;
+
+  const releaseAllHeldLocks = (): void => {
+    for (const lockFile of state!.heldLockFiles) {
+      try {
+        fs.unlinkSync(lockFile);
+      } catch {
+        // best effort
+      }
+    }
+    state!.heldLockFiles.clear();
+  };
+
+  const onTerminationSignal = (signal: NodeJS.Signals): void => {
+    releaseAllHeldLocks();
+    // Remove our own listeners and re-raise, so default/other handlers (e.g. a graceful
+    // server shutdown) still run as if we were never here.
+    for (const sig of TERMINATION_SIGNALS) {
+      process.removeListener(sig, onTerminationSignal);
+    }
+    process.kill(process.pid, signal);
+  };
+
+  process.once('exit', releaseAllHeldLocks);
+  for (const signal of TERMINATION_SIGNALS) {
+    process.on(signal, onTerminationSignal);
+  }
+
+  return state;
 }

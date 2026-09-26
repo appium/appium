@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {once} from 'node:events';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import {fileURLToPath} from 'node:url';
@@ -164,6 +166,32 @@ describe('#util', function () {
 
           await firstRun;
           assert.strictEqual(await testFileContents(), 'afirstsecond');
+        },
+      );
+    });
+
+    describe('signal handling', function () {
+      const holdWorkerScript = path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        'fixture',
+        'lock-hold-worker.js',
+      );
+
+      it(
+        'should release the lock if the holding process is interrupted by SIGINT',
+        {
+          timeout: 10000,
+          skip: process.platform === 'win32' && 'Windows does not deliver POSIX signals to spawned child processes',
+        },
+        async function () {
+          const child = spawn(process.execPath, [holdWorkerScript, lockFile]);
+          await once(child.stdout!, 'data');
+          assert.strictEqual(await util.getLockFileGuard(lockFile).check(), true);
+
+          child.kill('SIGINT');
+          await once(child, 'exit');
+
+          assert.strictEqual(await util.getLockFileGuard(lockFile).check(), false);
         },
       );
     });

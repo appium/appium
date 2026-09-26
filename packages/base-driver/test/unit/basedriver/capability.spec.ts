@@ -190,6 +190,28 @@ describe('Desired Capabilities', function () {
       assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
     });
 
+    it('should allow a string "True" and cast it to boolean', async function () {
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:noReset': 'True'},
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
+      assert.strictEqual(logWarnSpy.called, true);
+
+      const sessionCaps = await d.getAppiumSessionCapabilities();
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
+    });
+
+    it('should allow a string "FALSE" and cast it to boolean', async function () {
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:noReset': 'FALSE'},
+        firstMatch: [{}],
+      } as unknown as TestW3CCaps);
+      assert.strictEqual(logWarnSpy.called, true);
+
+      const sessionCaps = await d.getAppiumSessionCapabilities();
+      assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, false);
+    });
+
     it('should allow a string "true" in string capabilities', async function () {
       await d.createSession({
         alwaysMatch: {platformName: 'iOS', 'appium:language': 'true'},

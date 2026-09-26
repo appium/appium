@@ -42,8 +42,8 @@ export class Validator {
         return options ? null : 'must not be of type boolean';
       }
 
-      // allow a string value
-      if (options && typeof value === 'string' && ['true', 'false', ''].includes(value)) {
+      // allow a string value. fixCaps treats this case-insensitively, so "True" must pass here too
+      if (options && typeof value === 'string' && ['true', 'false', ''].includes(value.toLowerCase())) {
         return null;
       }
 

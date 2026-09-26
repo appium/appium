@@ -476,7 +476,19 @@ export function compareVersions(ver1: string, operator: string, ver2: string): b
  * @returns Quoted string suitable for shell parsing
  */
 export function quote(args: string | string[]): string {
-  return shellQuote(Array.isArray(args) ? args : [args]);
+  return (Array.isArray(args) ? args : [args])
+    .map((arg) => {
+      // shell-quote escapes ! inside double quotes when the argument contains an
+      // apostrophe. Non-interactive POSIX shells preserve that extra backslash.
+      // Temporary workaround; remove once the dependency includes the released fix:
+      // https://github.com/KazuCocoa/shell-quote/commit/9a70e24
+      // Keep the regression tests when switching back to shellQuote.
+      if (typeof arg === 'string' && arg.includes("'") && arg.includes('!')) {
+        return `'${arg.replace(/'/g, `'"'"'`)}'`;
+      }
+      return shellQuote([arg]);
+    })
+    .join(' ');
 }
 
 /**

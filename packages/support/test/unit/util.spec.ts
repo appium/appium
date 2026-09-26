@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {promisify} from 'node:util';

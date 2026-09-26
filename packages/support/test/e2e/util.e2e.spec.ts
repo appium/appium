@@ -171,18 +171,15 @@ describe('#util', function () {
     });
 
     describe('signal handling', function () {
-      const holdWorkerScript = path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        'fixture',
-        'lock-hold-worker.js',
-      );
+      const fixtureDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixture');
+      const holdWorkerScript = path.join(fixtureDir, 'lock-hold-worker.js');
+      const holdWithHandlerWorkerScript = path.join(fixtureDir, 'lock-hold-with-handler-worker.js');
+      const skipOnWindows =
+        process.platform === 'win32' && 'Windows does not deliver POSIX signals to spawned child processes';
 
       it(
         'should release the lock if the holding process is interrupted by SIGINT',
-        {
-          timeout: 10000,
-          skip: process.platform === 'win32' && 'Windows does not deliver POSIX signals to spawned child processes',
-        },
+        {timeout: 10000, skip: skipOnWindows},
         async function () {
           const child = spawn(process.execPath, [holdWorkerScript, lockFile]);
           await once(child.stdout!, 'data');
@@ -192,6 +189,32 @@ describe('#util', function () {
           await once(child, 'exit');
 
           assert.strictEqual(await util.getLockFileGuard(lockFile).check(), false);
+        },
+      );
+
+      it(
+        'should defer to an existing SIGINT handler instead of releasing the lock immediately',
+        {timeout: 10000, skip: skipOnWindows},
+        async function () {
+          const child = spawn(process.execPath, [holdWithHandlerWorkerScript, lockFile]);
+          await once(child.stdout!, 'data');
+          assert.strictEqual(await util.getLockFileGuard(lockFile).check(), true);
+
+          const sigintPromise = once(child.stdout!, 'data');
+          child.kill('SIGINT');
+          const [sigintData] = await sigintPromise;
+          assert.match(sigintData.toString(), /sigint:1/);
+
+          await sleep(300);
+          assert.strictEqual(child.exitCode, null, 'expected the process to still be running');
+          assert.strictEqual(
+            await util.getLockFileGuard(lockFile).check(),
+            true,
+            'expected the lock to still be held while the app handler keeps the process alive',
+          );
+
+          child.kill('SIGKILL');
+          await once(child, 'exit');
         },
       );
     });

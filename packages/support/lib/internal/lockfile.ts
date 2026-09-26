@@ -112,9 +112,17 @@ function getCleanupState(): CleanupState {
   };
 
   const onTerminationSignal = (signal: NodeJS.Signals): void => {
+    // Receiving the signal doesn't necessarily mean the process is about to exit -- some other
+    // part of the app may already be handling it (e.g. a graceful, possibly long-running
+    // shutdown). Defer entirely to it in that case; our `exit` listener still cleans up once/if
+    // it actually terminates the process.
+    const hasOtherHandler = process.listeners(signal).some((listener) => listener !== onTerminationSignal);
+    if (hasOtherHandler) {
+      return;
+    }
     releaseAllHeldLocks();
-    // Remove our own listeners and re-raise, so default/other handlers (e.g. a graceful
-    // server shutdown) still run as if we were never here.
+    // Remove our own listeners and re-raise, so default termination still happens as if we
+    // were never here.
     for (const sig of TERMINATION_SIGNALS) {
       process.removeListener(sig, onTerminationSignal);
     }

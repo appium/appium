@@ -562,6 +562,9 @@ export function quote(args: string | string[]): string {
     .map((arg) => {
       // shell-quote escapes ! inside double quotes when the argument contains an
       // apostrophe. Non-interactive POSIX shells preserve that extra backslash.
+      // Temporary workaround; remove once the dependency includes the released fix:
+      // https://github.com/KazuCocoa/shell-quote/commit/9a70e24
+      // Keep the regression tests when switching back to shellQuote.
       if (typeof arg === 'string' && arg.includes("'") && arg.includes('!')) {
         return `'${arg.replace(/'/g, `'"'"'`)}'`;
       }

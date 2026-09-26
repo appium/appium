@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import {execFileSync} from 'node:child_process';
+import {execFile} from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {promisify} from 'node:util';
 
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
@@ -457,10 +458,10 @@ describe('util', function () {
     it(
       'round-trips apostrophes and exclamation marks through a POSIX shell',
       {skip: process.platform === 'win32'},
-      function () {
+      async function () {
         const values = ["O'Brien!", "'!", "a\\'!b", 'O\'Brien! "$HOME" `printf unexpected`;\n[*]'];
-        const output = execFileSync('/bin/sh', ['-c', `printf '%s\\0' ${util.quote(values)}`]);
-        assert.deepStrictEqual(output.toString().split('\0').slice(0, -1), values);
+        const {stdout} = await promisify(execFile)('/bin/sh', ['-c', `printf '%s\\0' ${util.quote(values)}`]);
+        assert.deepStrictEqual(stdout.split('\0').slice(0, -1), values);
       },
     );
     it('should quote a string with a space', function () {

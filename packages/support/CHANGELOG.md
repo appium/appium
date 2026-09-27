@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.1](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.0...@appium/support@8.0.0-beta.1) (2026-09-27)
+
+### Bug Fixes
+
+* **support:** narrow fs.glob overload for default withFileTypes/lazy ([#22795](https://github.com/appium/appium/issues/22795)) ([09a04f4](https://github.com/appium/appium/commit/09a04f48831e17b9b7f3b8dc0a72f0df5096ae51))
+* **support:** preserve exclamation marks with apostrophes ([#22816](https://github.com/appium/appium/issues/22816)) ([#22822](https://github.com/appium/appium/issues/22822)) ([fb89bb7](https://github.com/appium/appium/commit/fb89bb74235d0d7e5bc16768500338933fcb1607))
+
+
 ## [8.0.0-beta.0](https://github.com/appium/appium/compare/@appium/support@7.2.7...@appium/support@8.0.0-beta.0) (2026-09-19)
 
 ### ⚠ BREAKING CHANGES

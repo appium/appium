@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.0...@appium/types@2.0.0-beta.1) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** exempt getStatus from the commands queue by default (#22796)
+
+### Features
+
+* **base-driver:** exempt getStatus from the commands queue by default ([#22796](https://github.com/appium/appium/issues/22796)) ([22a00c7](https://github.com/appium/appium/commit/22a00c7a553d73fc4c57711bb56985a51047507c))
+
+
 ## [2.0.0-beta.0](https://github.com/appium/appium/compare/@appium/types@1.7.0...@appium/types@2.0.0-beta.0) (2026-09-19)
 
 ### ⚠ BREAKING CHANGES

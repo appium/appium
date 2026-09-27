@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Automation for Apps.",
   "keywords": [
@@ -65,14 +65,14 @@
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "11.0.0-beta.0",
-    "@appium/base-plugin": "4.0.0-beta.0",
-    "@appium/docutils": "4.0.0-beta.0",
-    "@appium/http-server": "1.0.0-beta.0",
+    "@appium/base-driver": "11.0.0-beta.1",
+    "@appium/base-plugin": "4.0.0-beta.1",
+    "@appium/docutils": "4.0.0-beta.1",
+    "@appium/http-server": "1.0.0-beta.1",
     "@appium/logger": "3.0.0-beta.0",
     "@appium/schema": "2.0.0-beta.0",
-    "@appium/support": "8.0.0-beta.0",
-    "@appium/types": "2.0.0-beta.0",
+    "@appium/support": "8.0.0-beta.1",
+    "@appium/types": "2.0.0-beta.1",
     "@sidvind/better-ajv-errors": "7.0.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

@@ -6,8 +6,8 @@ import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
 import {fs} from '../../../lib/index.js';
-import {isWindows} from '../../../lib/system.js';
 import {Walker, walk, type WalkItem, type WalkOptions} from '../../../lib/internal/walker.js';
+import {isWindows} from '../../../lib/system.js';
 
 async function collect(root: string, options?: WalkOptions): Promise<WalkItem[]> {
   const items: WalkItem[] = [];

@@ -21,11 +21,11 @@ import {promisify} from 'node:util';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
+import {walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
 import {isSameDestination, isSubPath, pluralize} from './util.js';
-import {walk, Walker, type WalkItem, type WalkOptions} from './internal/index.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.

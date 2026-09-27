@@ -18,8 +18,6 @@ import {
 import path from 'node:path';
 import {promisify} from 'node:util';
 
-import klaw from 'klaw';
-import type {Walker} from 'klaw';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
@@ -27,6 +25,7 @@ import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
 import {isSameDestination, isSubPath, pluralize} from './util.js';
+import {walk, Walker, type WalkItem, type WalkOptions} from './internal/index.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -327,12 +326,9 @@ export const fs = {
     });
   },
 
-  /**
-   * Returns a Walker instance (readable stream / async iterator).
-   * @see https://www.npmjs.com/package/klaw
-   */
-  walk(dir: string, opts?: klaw.Options): Walker {
-    return klaw(dir, opts);
+  /** Returns a Walker instance (readable stream / async iterator). */
+  walk(dir: string, opts?: WalkOptions): Walker {
+    return walk(dir, opts);
   },
 
   /** Recursively create a directory. */
@@ -366,11 +362,11 @@ export const fs = {
     const timer = new Timer().start();
     return await new Promise<string | null>(function (resolve, reject) {
       let lastFileProcessed: Promise<string | undefined> = Promise.resolve(undefined);
-      walker = klaw(dir, {
+      walker = walk(dir, {
         depthLimit: recursive ? -1 : 0,
       });
       walker
-        .on('data', function (item: klaw.Item) {
+        .on('data', function (item: WalkItem) {
           if (walker) {
             walker.pause();
           }

@@ -1,8 +1,6 @@
-import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray} from 'type-fest';
-
 import type {Driver, DriverCommand} from './driver.js';
 import type {Plugin, PluginCommand} from './plugin.js';
-import type {StringRecord} from './util.js';
+import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray, StringRecord} from './util.js';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.

@@ -2,7 +2,7 @@ import nodeFs from 'node:fs';
 import path from 'node:path';
 
 import {node} from '@appium/support';
-import type {PackageJson} from 'type-fest';
+import type {PackageJson} from '@appium/types';
 
 // for compat with running tests transpiled and in-place
 export const BASEDRIVER_VER = readBaseDriverVersion();

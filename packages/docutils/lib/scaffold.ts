@@ -6,8 +6,8 @@
 import path from 'node:path';
 
 import {fs, util} from '@appium/support';
+import type {JsonObject, JsonValue} from '@appium/types';
 import {createPatch} from 'diff';
-import type {JsonObject, JsonValue} from 'type-fest';
 
 import {NAME_ERR_ENOENT} from './constants.js';
 import {DocutilsError} from './error.js';

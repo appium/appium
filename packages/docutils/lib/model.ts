@@ -4,7 +4,7 @@
  * @module
  */
 
-import type {Jsonify, JsonValue} from 'type-fest';
+import type {Jsonify, JsonValue} from '@appium/types';
 
 /**
  * The `nav` prop of an `mkdocs.yml` file

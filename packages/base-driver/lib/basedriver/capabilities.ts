@@ -1,6 +1,13 @@
 import {util} from '@appium/support';
-import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
-import type {KeyAsString, MergeExclusive} from 'type-fest';
+import type {
+  Capabilities,
+  Constraints,
+  KeyAsString,
+  MergeExclusive,
+  NSCapabilities,
+  StandardCapabilities,
+  W3CCapabilities,
+} from '@appium/types';
 
 import {log} from '../helpers/logger.js';
 import {errors} from '../protocol/errors.js';

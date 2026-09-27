@@ -4,8 +4,8 @@
  * @module
  */
 
+import type {Simplify} from '@appium/types';
 import {exec} from 'teen_process';
-import type {Simplify} from 'type-fest';
 import * as YAML from 'yaml';
 
 import {NAME_MKDOCS_YML, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants.js';

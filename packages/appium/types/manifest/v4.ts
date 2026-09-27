@@ -1,6 +1,5 @@
-import type {DriverType, ExtensionType, PluginType} from '@appium/types';
+import type {DriverType, ExtensionType, PackageJson, PluginType, SetRequired} from '@appium/types';
 import type {SchemaObject} from 'ajv';
-import type {PackageJson, SetRequired} from 'type-fest';
 
 /**
  * One of the possible extension installation stratgies

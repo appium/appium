@@ -6,9 +6,6 @@ import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import {fs, node} from '@appium/support';
 import {sleep} from 'asyncbox';
-import contentDisposition from 'content-disposition';
-import finalhandler from 'finalhandler';
-import serveStatic from 'serve-static';
 
 import {appUrlRules} from '../../../lib/basedriver/helpers/app-url-rules.js';
 import {configureApp} from '../../../lib/basedriver/helpers/index.js';
@@ -64,15 +61,6 @@ describe('app download and configuration', function () {
         let server: HttpServerWithAsyncClose;
 
         before(function () {
-          const serve = serveStatic(FIXTURE_ROOT, {
-            index: false,
-            setHeaders: (res, filePath) => {
-              if (!res.getHeader('Content-Disposition')) {
-                res.setHeader('Content-Disposition', contentDisposition(filePath));
-              }
-            },
-          });
-
           const httpServer = http.createServer(function (req, res) {
             if (req.url?.indexOf('missing') !== -1) {
               res.writeHead(404);
@@ -95,16 +83,34 @@ describe('app download and configuration', function () {
               res.end();
               return;
             }
-            const params = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search);
-            const contentType = params.get('content-type');
+            const reqUrl = new URL(req.url ?? '', 'http://localhost');
+            const contentType = reqUrl.searchParams.get('content-type');
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
             }
-            const disposition = params.get('disposition');
+            const disposition = reqUrl.searchParams.get('disposition');
             if (disposition !== null) {
               res.setHeader('Content-Disposition', disposition);
             }
-            serve(req, res, finalhandler(req, res));
+            // serve a fixture file directly; no need for a full static file server here
+            const filePath = path.join(FIXTURE_ROOT, decodeURIComponent(reqUrl.pathname));
+            if (path.relative(FIXTURE_ROOT, filePath).startsWith('..')) {
+              res.writeHead(403);
+              res.end();
+              return;
+            }
+            fs.readFile(filePath)
+              .then((data) => {
+                if (!res.getHeader('Content-Disposition')) {
+                  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
+                }
+                res.writeHead(200);
+                res.end(data);
+              })
+              .catch(() => {
+                res.writeHead(404);
+                res.end();
+              });
           });
           const close = httpServer.close.bind(httpServer);
           // Replace close with async version; type assertion needed for method replacement

@@ -59,8 +59,7 @@
     "asyncbox": "6.4.2",
     "axios": "1.19.0",
     "lru-cache": "11.5.2",
-    "picomatch": "4.0.7",
-    "type-fest": "5.8.0"
+    "picomatch": "4.0.7"
   },
   "devDependencies": {
     "@types/express": "5.0.6"

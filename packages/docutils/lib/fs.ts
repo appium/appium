@@ -6,8 +6,8 @@
 import path from 'node:path';
 
 import {fs, util} from '@appium/support';
+import type {JsonValue, PackageJson} from '@appium/types';
 import {exec} from 'teen_process';
-import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
 
 import {
@@ -21,13 +21,7 @@ import {
 import {DocutilsError} from './error.js';
 import {getLogger} from './logger.js';
 import type {MkDocsYml} from './model.js';
-import {
-  findPackageRoot,
-  type NormalizedPackageJson,
-  type PackageJson,
-  mergeDefaultsDeep,
-  readPackage,
-} from './utils/index.js';
+import {findPackageRoot, type NormalizedPackageJson, mergeDefaultsDeep, readPackage} from './utils/index.js';
 
 const log = getLogger('fs');
 

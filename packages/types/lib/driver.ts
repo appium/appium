@@ -1,8 +1,6 @@
 import type {EventEmitter} from 'node:events';
 import type internal from 'node:stream';
 
-import type {Merge} from 'type-fest';
-
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities.js';
 import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {
@@ -21,7 +19,7 @@ import type {Constraints} from './constraints.js';
 import type {HTTPHeaders, HTTPMethod} from './http.js';
 import type {AppiumLogger} from './logger.js';
 import type {AppiumServer, UpdateServerCallback} from './server.js';
-import type {Class, StringRecord} from './util.js';
+import type {Class, Merge, StringRecord} from './util.js';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
  */

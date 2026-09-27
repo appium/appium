@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.1](https://github.com/appium/appium/compare/@appium/base-plugin@4.0.0-beta.0...@appium/base-plugin@4.0.0-beta.1) (2026-09-27)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
 ## [4.0.0-beta.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.3.4...@appium/base-plugin@4.0.0-beta.0) (2026-09-19)
 
 ### ⚠ BREAKING CHANGES

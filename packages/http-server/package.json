@@ -1,6 +1,6 @@
 {
   "name": "@appium/http-server",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "description": "The HTTP server that fronts an Appium driver's command protocol",
   "keywords": [
     "android",
@@ -51,9 +51,9 @@
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "11.0.0-beta.0",
-    "@appium/support": "8.0.0-beta.0",
-    "@appium/types": "2.0.0-beta.0",
+    "@appium/base-driver": "11.0.0-beta.1",
+    "@appium/support": "8.0.0-beta.1",
+    "@appium/types": "2.0.0-beta.1",
     "@types/express": "5.0.6",
     "body-parser": "2.3.0",
     "express": "5.2.1",

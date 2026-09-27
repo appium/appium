@@ -1,6 +1,5 @@
 import {util} from '@appium/support';
-import type {PayloadParams} from '@appium/types';
-import type {MultidimensionalReadonlyArray} from 'type-fest';
+import type {MultidimensionalReadonlyArray, PayloadParams} from '@appium/types';
 
 import {log} from '../helpers/logger.js';
 import {omitKeys} from '../utils.js';

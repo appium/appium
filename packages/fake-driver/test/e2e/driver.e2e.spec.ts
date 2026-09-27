@@ -4,13 +4,19 @@ import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
 import {server} from '@appium/http-server';
-import type {AppiumServer, BaseNSCapabilities, Capabilities, Constraints, W3CCapabilities} from '@appium/types';
+import type {
+  AppiumServer,
+  BaseNSCapabilities,
+  Capabilities,
+  Constraints,
+  RequireAtLeastOne,
+  W3CCapabilities,
+} from '@appium/types';
 import {DeviceSettings, routeConfiguringFunction} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import sinon from 'sinon';
-import type {RequireAtLeastOne} from 'type-fest';
 
 import {FakeDriver, startServer} from '../../lib/index.js';
 import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';

@@ -4,7 +4,7 @@ import {pathToFileURL} from 'node:url';
 import {inspect} from 'node:util';
 
 import {console, fs, system, util} from '@appium/support';
-import type {ExtensionType, IDoctorCheck} from '@appium/types';
+import type {ExtensionType, IDoctorCheck, PackageJson} from '@appium/types';
 import type {
   ExtInstallReceipt as AppiumExtInstallReceipt,
   ExtManifest as AppiumExtManifest,
@@ -16,7 +16,6 @@ import type {
 import {asyncfilter, asyncmap} from 'asyncbox';
 import * as semver from 'semver';
 import {SubProcess} from 'teen_process';
-import type {PackageJson} from 'type-fest';
 
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor.js';
 import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config.js';

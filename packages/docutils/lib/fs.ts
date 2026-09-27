@@ -6,8 +6,8 @@
 import path from 'node:path';
 
 import {fs, util} from '@appium/support';
+import type {JsonValue} from '@appium/types';
 import {exec} from 'teen_process';
-import type {JsonValue} from 'type-fest';
 import * as YAML from 'yaml';
 
 import {

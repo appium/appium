@@ -1,7 +1,7 @@
 import nodeFs from 'node:fs';
 import path from 'node:path';
 
-import type {PackageJson} from 'type-fest';
+import type {PackageJson} from '@appium/types';
 
 type AppiumPackageJson = PackageJson & {
   name: string;

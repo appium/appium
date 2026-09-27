@@ -6,7 +6,7 @@ import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
 import {fs} from '../../../lib/index.js';
-import {Walker, walk, type WalkItem, type WalkOptions} from '../../../lib/internal/walker.js';
+import {Walker, walk, type WalkFs, type WalkItem, type WalkOptions} from '../../../lib/internal/walker.js';
 import {isWindows} from '../../../lib/system.js';
 
 async function collect(root: string, options?: WalkOptions): Promise<WalkItem[]> {
@@ -245,5 +245,29 @@ describe('internal/walker', function () {
         await rm(root, {recursive: true, force: true});
       }
     });
+  });
+
+  describe('type safety', function () {
+    it('should accept a minimal WalkFs implementation', function () {
+      const {stat, lstat, readdir} = nodeFs;
+      const minimalFs: WalkFs = {stat, lstat, readdir};
+      assert.ok(walk('.', {fs: minimalFs}).destroy());
+    });
+
+    // Compile-time only, deliberately never invoked: proves read()/the async iterator stay typed
+    // as WalkItem instead of widening to `any` (regression check for a prior review comment).
+    function typeCheckWalkerResultsStayNarrow(walker: Walker): void {
+      const readResult = walker.read();
+      // @ts-expect-error WalkItem has no `nonexistentMethod`
+      readResult.nonexistentMethod();
+
+      void (async () => {
+        for await (const item of walker) {
+          // @ts-expect-error WalkItem has no `nonexistentMethod`
+          item.nonexistentMethod();
+        }
+      })();
+    }
+    void typeCheckWalkerResultsStayNarrow;
   });
 });

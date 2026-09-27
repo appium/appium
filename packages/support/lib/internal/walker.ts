@@ -8,9 +8,29 @@ import {fileURLToPath} from 'node:url';
  * A recursive, stream-based filesystem walker.
  *
  * Vendored (and simplified for our own usage) from the `klaw` package
- * (MIT license, https://github.com/jprichardson/node-klaw) to drop the
- * external dependency; only the surface used by {@linkcode fs.walk} and
+ * (https://github.com/jprichardson/node-klaw) to drop the external
+ * dependency; only the surface used by {@linkcode fs.walk} and
  * {@linkcode fs.walkDir} is kept.
+ *
+ * klaw's original license (https://github.com/jprichardson/node-klaw/blob/4.1.0/LICENSE):
+ *
+ * (The MIT License)
+ *
+ * Copyright (c) 2015-2016 JP Richardson
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the 'Software'), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+ * the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
  */
 
 export interface WalkItem {
@@ -20,13 +40,20 @@ export interface WalkItem {
 
 export type WalkQueueMethod = 'shift' | 'pop';
 
+/** The subset of `node:fs`'s callback API this walker relies on. */
+export interface WalkFs {
+  stat: typeof nodeFs.stat;
+  lstat: typeof nodeFs.lstat;
+  readdir: typeof nodeFs.readdir;
+}
+
 export interface WalkOptions extends ReadableOptions {
   /** Order in which queued paths are visited. Defaults to `'shift'` (breadth-first). */
   queueMethod?: WalkQueueMethod;
   /** Sorts each directory's entries before they are queued. */
   pathSorter?: (pathA: string, pathB: string) => number;
-  /** Custom `fs`-like implementation (e.g. for mocking). Defaults to `node:fs`. */
-  fs?: typeof nodeFs;
+  /** Custom `fs`-like implementation (e.g. for mocking). Only `stat`/`lstat`/`readdir` are used. Defaults to `node:fs`. */
+  fs?: WalkFs;
   /** Only queues entries for which this returns `true`. */
   filter?: (path: string) => boolean;
   /** How many levels below the root to recurse into. `-1` (default) means unlimited. */
@@ -44,7 +71,7 @@ export class Walker extends Readable {
   private readonly root: string;
   private readonly options: NormalizedWalkOptions;
   private readonly rootDepth?: number;
-  private readonly walkFs: typeof nodeFs;
+  private readonly walkFs: WalkFs;
   private paths: string[];
 
   constructor(dir: string | URL, options?: WalkOptions) {
@@ -117,6 +144,14 @@ export class Walker extends Readable {
         this.push(item);
       });
     });
+  }
+
+  override read(size?: number): WalkItem {
+    return super.read(size);
+  }
+
+  override [Symbol.asyncIterator](): NodeJS.AsyncIterator<WalkItem> {
+    return super[Symbol.asyncIterator]() as NodeJS.AsyncIterator<WalkItem>;
   }
 }
 

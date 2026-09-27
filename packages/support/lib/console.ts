@@ -2,7 +2,7 @@ import {Console as NodeConsole} from 'node:console';
 import {Writable} from 'node:stream';
 import {type InspectOptions, styleText as nodeStyleText} from 'node:util';
 
-import type {JsonValue} from 'type-fest';
+import type {JsonValue} from '@appium/types';
 
 /** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
 export type TextStyle =

@@ -1,10 +1,8 @@
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 
+import type {PackageJson} from '@appium/types';
 import normalizePackageData from 'normalize-package-data';
-import type {PackageJson as TypeFestPackageJson} from 'type-fest';
-
-export type PackageJson = TypeFestPackageJson;
 
 export type NormalizedPackageJson = PackageJson & {
   name: string;

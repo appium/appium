@@ -1,5 +1,3 @@
-import type {AsyncReturnType} from 'type-fest';
-
 import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {DriverCommand, ExternalDriver} from './driver.js';
 import type {UpdateServerCallback} from './server.js';
@@ -52,7 +50,7 @@ export interface PluginStatic<P extends Plugin> {
 export type DriverCommandToPluginCommand<
   DC extends DriverCommand,
   TArgs extends readonly any[] = Parameters<DC>,
-  TReturn = AsyncReturnType<DC>,
+  TReturn = Awaited<ReturnType<DC>>,
   NextRetval = unknown,
 > = PluginCommand<ExternalDriver, TArgs, TReturn, NextRetval>;
 

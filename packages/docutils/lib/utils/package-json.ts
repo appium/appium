@@ -5,8 +5,6 @@ import {fs} from '@appium/support';
 import type {PackageJson} from '@appium/types';
 import normalizePackageData from 'normalize-package-data';
 
-export type {PackageJson};
-
 export type NormalizedPackageJson = PackageJson & {
   name: string;
   version: string;

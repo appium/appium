@@ -80,7 +80,7 @@
     "zip-and-upload": "run-s zip upload"
   },
   "devDependencies": {
-    "@appium/oxc-config": "1.0.0",
+    "@appium/oxc-config": "2.0.0-beta.0",
     "@tsconfig/node22": "22.0.0",
     "@types/async-lock": "1.4.2",
     "@types/express": "5.0.6",

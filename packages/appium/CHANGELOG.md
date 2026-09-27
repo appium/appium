@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.2](https://github.com/appium/appium/compare/appium@4.0.0-beta.1...appium@4.0.0-beta.2) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** @appium/base-driver no longer exports server, normalizeBasePath, configureServer, ServerOpts, ConfigureServerOpts, ConfigureHttpOpts, or StartServerOpts, and no longer depends on express/morgan/body-parser/ method-override/path-to-regexp. Use the new @appium/http-server package instead.
+* **base-driver:** appium/driver.js and driver.d.ts no longer re-export server/normalizeBasePath/configureServer/ServerOpts (or their types), and no longer use a blanket export *. Import from @appium/http-server directly if you were relying on this undocumented path.
+
+### Features
+
+* **appium:** accept package names for installed extension commands ([#22747](https://github.com/appium/appium/issues/22747)) ([#22812](https://github.com/appium/appium/issues/22812)) ([b7356ee](https://github.com/appium/appium/commit/b7356ee53eec3e322707eef0d2bd37976a47cfd2))
+
+### Bug Fixes
+
+* **appium:** release the manifest lock before errAndQuit exits ([#22821](https://github.com/appium/appium/issues/22821)) ([dc0568b](https://github.com/appium/appium/commit/dc0568bc658961f5d6a28fb955d8092d51cf9523))
+* **base-driver:** carry proxy req via AsyncLocalStorage instead of args ([#22799](https://github.com/appium/appium/issues/22799)) ([2596da0](https://github.com/appium/appium/commit/2596da02d201d7e5fbfd24cf9dd2801302f8abc7))
+* **support:** narrow fs.glob overload for default withFileTypes/lazy ([#22795](https://github.com/appium/appium/issues/22795)) ([09a04f4](https://github.com/appium/appium/commit/09a04f48831e17b9b7f3b8dc0a72f0df5096ae51))
+
+### Code Refactoring
+
+* **base-driver:** extract the HTTP/Express server into @appium/http-server ([#22800](https://github.com/appium/appium/issues/22800)) ([225a1c6](https://github.com/appium/appium/commit/225a1c6d9d24fa2696699d4b61436a49b847d666))
+
+
 ## [4.0.0-beta.1](https://github.com/appium/appium/compare/appium@4.0.0-beta.0...appium@4.0.0-beta.1) (2026-09-19)
 
 ### Bug Fixes

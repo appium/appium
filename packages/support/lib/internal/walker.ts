@@ -40,11 +40,24 @@ export interface WalkItem {
 
 export type WalkQueueMethod = 'shift' | 'pop';
 
+/**
+ * Plain callback signatures (not `typeof nodeFs.*`, which also demands internal members like
+ * `__promisify__` from a conforming implementation) for the `node:fs` calls this walker makes.
+ */
+type WalkStatCallback = (
+  path: nodeFs.PathLike,
+  callback: (err: NodeJS.ErrnoException | null, stats: nodeFs.Stats) => void,
+) => void;
+type WalkReaddirCallback = (
+  path: nodeFs.PathLike,
+  callback: (err: NodeJS.ErrnoException | null, files: string[]) => void,
+) => void;
+
 /** The subset of `node:fs`'s callback API this walker relies on. */
 export interface WalkFs {
-  stat: typeof nodeFs.stat;
-  lstat: typeof nodeFs.lstat;
-  readdir: typeof nodeFs.readdir;
+  stat: WalkStatCallback;
+  lstat: WalkStatCallback;
+  readdir: WalkReaddirCallback;
 }
 
 export interface WalkOptions extends ReadableOptions {

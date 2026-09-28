@@ -254,6 +254,29 @@ describe('internal/walker', function () {
       assert.ok(walk('.', {fs: minimalFs}).destroy());
     });
 
+    it('should accept a WalkFs whose readdir wraps node:fs behind a plain callback', async function () {
+      // Regression check: `typeof nodeFs.readdir` also demands internal members (e.g.
+      // `__promisify__`), which a plain wrapper function like this one doesn't have.
+      const root = await mkdtemp(path.join(os.tmpdir(), 'walker-wrapped-fs-'));
+      try {
+        await writeFile(path.join(root, 'a.txt'), 'a');
+
+        const wrappedFs: WalkFs = {
+          stat: nodeFs.stat,
+          lstat: nodeFs.lstat,
+          readdir(p: nodeFs.PathLike, cb: (err: NodeJS.ErrnoException | null, names: string[]) => void) {
+            nodeFs.readdir(p, cb);
+          },
+        };
+
+        const paths = (await collect(root, {fs: wrappedFs})).map((item) => item.path);
+        assert.ok(paths.includes(root));
+        assert.ok(paths.includes(path.join(root, 'a.txt')));
+      } finally {
+        await rm(root, {recursive: true, force: true});
+      }
+    });
+
     // Compile-time only, deliberately never invoked: proves read()/the async iterator stay typed
     // as WalkItem instead of widening to `any` (regression check for a prior review comment).
     function typeCheckWalkerResultsStayNarrow(walker: Walker): void {

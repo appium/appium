@@ -276,6 +276,11 @@ export class BaseDriver<
     // make sure there are no rogue timeouts
     await this.clearNewCommandTimeout();
 
+    // arming this while a command is still running shuts that command down
+    if (this.inFlightCommandCount > 0) {
+      return;
+    }
+
     // if command timeout is 0, it is disabled
     if (!this.newCommandTimeoutMs) {
       return;

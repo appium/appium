@@ -153,18 +153,8 @@ export async function downloadFile(
     responseStream = response.data as Readable;
     responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
     // opening the file first would leave an empty destination behind when the request fails
-    const fileWriter = fs.createWriteStream(dstPath);
-    writer = fileWriter;
-    responseStream.pipe(fileWriter);
-
-    await new Promise<void>((resolve, reject) => {
-      responseStream?.once('error', reject);
-      fileWriter.once('finish', () => resolve());
-      fileWriter.once('error', (e: Error) => {
-        responseStream?.unpipe(fileWriter);
-        reject(e);
-      });
-    });
+    writer = fs.createWriteStream(dstPath);
+    await pipeToFile(responseStream, writer);
   } catch (err) {
     if (writer) {
       responseStream?.destroy();
@@ -197,6 +187,18 @@ export async function downloadFile(
 }
 
 // #region Private helpers
+
+async function pipeToFile(src: Readable, dst: WriteStream): Promise<void> {
+  src.pipe(dst);
+  await new Promise<void>((resolve, reject) => {
+    src.once('error', reject);
+    dst.once('finish', () => resolve());
+    dst.once('error', (e: Error) => {
+      src.unpipe(dst);
+      reject(e);
+    });
+  });
+}
 
 async function closeStream(stream: WriteStream): Promise<void> {
   if (stream.closed) {

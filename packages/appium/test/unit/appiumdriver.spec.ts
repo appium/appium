@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import type {AddressInfo} from 'node:net';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import {BaseDriver, runWithProxyReq} from '@appium/base-driver';
@@ -8,6 +9,7 @@ import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@
 import {sleep} from 'asyncbox';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox, stub} from 'sinon';
+import WebSocket, {WebSocketServer} from 'ws';
 
 import type * as AppiumModule from '../../lib/appium.js';
 import {CORS_FEATURE, PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
@@ -548,6 +550,51 @@ describe('AppiumDriver', function () {
         // let event loop spin so rejection is handled
         await sleep(1);
         assert.ok(!Object.keys(appium.sessions).includes(sessionId));
+      });
+    });
+    describe('proxied bidi socket', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      let upstreamServer: WebSocketServer;
+      let appiumServer: WebSocketServer;
+      let client: WebSocket;
+      let upstreamSocket: WebSocket;
+
+      async function listen(): Promise<WebSocketServer> {
+        const server = new WebSocketServer({port: 0, host: '127.0.0.1'});
+        await new Promise((resolve) => server.once('listening', resolve));
+        return server;
+      }
+
+      beforeEach(async function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        upstreamServer = await listen();
+        (fakeDriver as any)._bidiProxyUrl = `ws://127.0.0.1:${(upstreamServer.address() as AddressInfo).port}`;
+        const upstreamConnected = new Promise<WebSocket>((resolve) => upstreamServer.once('connection', resolve));
+        appiumServer = await listen();
+        appiumServer.on('connection', (ws, req) => appium.onBidiConnection(ws, req));
+        client = new WebSocket(`ws://127.0.0.1:${(appiumServer.address() as AddressInfo).port}/bidi/${sessionId}`);
+        await new Promise((resolve) => client.once('open', resolve));
+        upstreamSocket = await upstreamConnected;
+      });
+      afterEach(async function () {
+        client.terminate();
+        await new Promise((resolve) => appiumServer.close(resolve));
+        await new Promise((resolve) => upstreamServer.close(resolve));
+        await (mockFakeDriver as any).object.deleteSession();
+        mockFakeDriver.restore();
+      });
+
+      it('should close the upstream socket when the client drops without a close frame', async function () {
+        const upstreamClosed = new Promise((resolve) => upstreamSocket.once('close', resolve));
+        client.terminate();
+        assert.strictEqual(await upstreamClosed, 1011);
+      });
+      it('should close the client socket when the upstream drops without a close frame', async function () {
+        const clientClosed = new Promise((resolve) => client.once('close', resolve));
+        upstreamSocket.terminate();
+        assert.strictEqual(await clientClosed, 1011);
       });
     });
     describe('createPluginInstances', function () {

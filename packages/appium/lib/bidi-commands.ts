@@ -33,8 +33,6 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-const MIN_WS_CODE_VAL = 1000;
-const MAX_WS_CODE_VAL = 1015;
 const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
@@ -338,15 +336,14 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
       `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
         `Closing proxy connection to client`,
     );
-    const intCode: number = typeof code === 'number' ? (code as number) : parseInt(code, 10);
-    if (Number.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
+    const closeCode = toSendableCloseCode(code);
+    if (closeCode !== code) {
       driverLog.warn(
         `Received code ${code} from upstream socket, but this is not a valid ` +
-          `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
+          `websocket code. Rewriting to ${closeCode} for ws compatibility`,
       );
-      code = WS_FALLBACK_CODE;
     }
-    ws.close(code, reason);
+    ws.close(closeCode, reason);
   });
 
   proxyClient.on('error', (err) => {
@@ -413,7 +410,7 @@ function initBidiSocketHandlers(
     // If we're proxying, might as well close the upstream connection and clean it up
     if (proxyClient) {
       driverLog.debug('Also closing BiDi proxy socket connection');
-      proxyClient.close(code, reason);
+      proxyClient.close(toSendableCloseCode(code), reason);
     }
 
     const eventLogCounts = BIDI_EVENTS_MAP.get(bidiHandlerDriver);
@@ -544,6 +541,16 @@ async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<We
     }
   }
   return ws;
+}
+
+/**
+ * Codes like 1005 and 1006 are reported by 'close' events but may not be sent in a close frame,
+ * and ws throws if asked to, so replace anything ws would reject with the fallback code
+ */
+function toSendableCloseCode(code: number): number {
+  const isSendable =
+    (code >= 1000 && code <= 1014 && ![1004, 1005, 1006].includes(code)) || (code >= 3000 && code <= 4999);
+  return isSendable ? code : WS_FALLBACK_CODE;
 }
 
 // #endregion

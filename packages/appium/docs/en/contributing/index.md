@@ -5,88 +5,83 @@ hide:
 title: Contributing to Appium
 ---
 
-The Appium project would not exist without the many contributions of code, documentation,
-maintenance, and support from companies and volunteers. As such, we welcome contributions!
+Appium welcomes contributions of all kinds. You do not need to know Appium internals to help, and all participation is governed by our [Code of Conduct](https://github.com/appium/.github/blob/master/CODE_OF_CONDUCT.md). This guide covers how to find work, set up the repository, develop and validate changes, and submit a pull request.
 
-There are a lot of different ways to help the project - see below for everything you can do and the
-processes to follow for each contribution method. Note that no matter how you contribute, your
-participation is governed by our [Code of Conduct](https://github.com/appium/.github/blob/master/CODE_OF_CONDUCT.md).
+## Community and Questions
 
-## Join the Discussion Forum
+Use the Appium forum for general questions rather than the issue tracker. The repository's issue templates direct questions to [discuss.appium.io](https://discuss.appium.io/).
 
-You don't need to know the internals of Appium to be able to contribute! If you have experience with
-using Appium and feel like sharing your knowledge with others, consider helping out users on the
-Appium forums at [discuss.appium.io](https://discuss.appium.io/). Hop on over and see if there are
-any questions that you can answer.
+If you use Appium and want to share your knowledge, browse the forum questions and answer any you can. GitHub Discussions are also available at [github.com/appium/appium/discussions](https://github.com/appium/appium/discussions). Maintainer-provided categories include:
 
-## Report Bugs or Feature Requests
+- **General** — chat about anything and everything
+- **Ideas** — share ideas for new features
+- **Polls** — take a vote from the community
+- **Q&A** — ask the community for help
+- **Release**
+- **Show and tell** — show off something you've made
 
-If you've encountered a bug, or have a cool feature in mind that you think Appium should support,
-make sure to let us know at our [GitHub issue tracker](https://github.com/appium/appium/issues).
-Please use the appropriate issue form template when creating your issue.
+## Ways to Contribute
 
-## Triage Issues
+- **Report bugs or request features.** Use the [GitHub issue tracker](https://github.com/appium/appium/issues) and the appropriate issue form template.
+- **Triage issues.** If you are familiar enough with Appium to reproduce bugs, help investigate reported issues. Start with issues labeled `Needs Triage` or `Needs Info`. Check the issue tracker and leave relevant comments: link duplicates to the original issue, ask for missing information such as Appium logs, and provide details if you can reproduce the problem. For further help triaging Appium issues across any Appium project repository, contact a member of the [Technical Committee](https://github.com/appium/appium/blob/master/GOVERNANCE.md#the-technical-committee).
+- **Contribute code or documentation.** Pull requests for improving the Appium code or documentation are welcome.
+- **Look for `help needed` issues.** Browse the issue tracker for issues labeled `help needed` to find contributions that are wanted.
 
-In addition to creating issues, you can also help us investigate already reported issues. All you
-need is enough familiarity with Appium to try and reproduce bugs.
+Developer information may not be kept up to date as frequently as user-facing information, or it may be most relevant in its current form on the repository rather than in the published version. Check the repository or discuss with maintainers; we are glad to help new contributors get started. For a relatively large or complex change, start a discussion before implementing.
 
-You can get started by checking our [GitHub issue tracker](https://github.com/appium/appium/issues)
-for issues with labels such as `Needs Triage` or `Needs Info`, and leaving relevant comments:
+## Set Up Your Development Environment
 
--   If the issue is a duplicate, drop a link to the original issue
--   If the user has not provided enough information (such as Appium logs), ask them for more details
--   If you can reproduce the problem on your own environment, provide all the information that you think
-    would help us track down the cause of the issue
+Use a Node.js version matching `^20.19.0 || ^22.12.0 || >=24.0.0` and npm `>=10`.
 
-For further information on triaging Appium issues (for any Appium project repository), please contact
-any member of the [Technical Committee](https://github.com/appium/appium/blob/master/GOVERNANCE.md#the-technical-committee).
+Forking the repository is recommended. Clone the repository and enter the project directory:
 
-## Contribute Code
-
-We are always open to pull requests for improving the Appium code or documentation!
-
-!!! info
-
-    Developer information may not be kept up to date as frequently as user-facing information, or
-    it may be most relevant in its current form on the online repository, not in this published
-    version. Make sure to check the repo or discuss with maintainers. We would be glad to help
-    new contributors get started!
-
-Start by cloning the repository (we recommend [forking](https://github.com/appium/appium/fork)
-it first):
-```sh
+```bash
 git clone https://github.com/appium/appium.git
 cd appium
 ```
 
-!!! info
-
-    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
-
 Install dependencies:
-```sh
+
+```bash
 npm install
 ```
 
-From here on there are several things you can do.
-
 Build the project:
-```sh
+
+```bash
 npm run build
 ```
 
-Build the project and watch for changes:
-```sh
-npm run dev
-```
-
 Start the locally built Appium server:
-```sh
+
+```bash
 npm start
 ```
 
-Run various tests:
-```sh
+For an iterative development state, run the watch build:
+
+```bash
+npm run dev
+```
+
+VS Code users can also check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
+
+## Develop and Validate
+
+### Code Guidelines
+
+- Follow `.editorconfig`: two-space indentation, LF line endings, UTF-8, a final newline, no trailing whitespace, and a 120-character maximum line length for JavaScript, TypeScript, JSON, and related files. Markdown files are exempt from trailing-whitespace trimming.
+- Use type-only imports consistently in TypeScript files. ESLint enforces `@typescript-eslint/consistent-type-imports` with separate type imports.
+- Keep code compatible with the Node.js and npm versions listed in [Set Up Your Development Environment](#set-up-your-development-environment).
+- When adding or changing Node.js built-in APIs or options, verify that they exist and are stable across all supported Node.js versions. If a supported version lacks the API, only supports it experimentally, or has different behavior, use the existing dependency, add a fallback, avoid the API, or raise the engine requirement.
+
+### Run Checks and Tests
+
+Before submitting, validate changes with the repository's configured lint, type, unit, smoke, and end-to-end checks. Run the relevant tests, confirm lint and unit tests pass locally with your changes, and add tests that demonstrate your fix is effective or your feature works.
+
+From the repository root, run the checks relevant to your changes:
+
+```bash
 npm run lint
 npm run test:unit
 npm run test:types
@@ -96,55 +91,51 @@ npm run test:quick # unit and types
 npm run test:slow # everything
 ```
 
-You can also run tests for specific workspaces, e.g.:
+To run unit tests for a specific workspace, set `APPIUM_WORKSPACE` to the package you are working on and run:
 
-```sh
+```bash
 export APPIUM_WORKSPACE=@appium/base-driver
 npm run test:unit -w $APPIUM_WORKSPACE
 ```
 
-### Documentation
+Also ensure any dependent changes have been merged and published in downstream modules.
 
-The documentation for this project is [available in the project repository itself](https://github.com/appium/appium/tree/master/packages/appium/docs).
-It is contained in Markdown files, which are built by our documentation system in the
-`@appium/docutils` module. This module is based on [MkDocs](https://www.mkdocs.org/) and therefore
-requires [Python](https://www.python.org/) to be installed on your system.
+## Documentation Contributions
 
-Install Python dependencies:
-```sh
-npm run install-docs-deps
-```
+Documentation lives in the repository as Markdown files under [`packages/appium/docs`](https://github.com/appium/appium/tree/master/packages/appium/docs) and is built by `@appium/docutils`. The documentation system is based on [MkDocs](https://www.mkdocs.org/) and requires [Python](https://www.python.org/).
 
-After making your changes, you can run the documentation server in dev mode:
-```sh
-npm run dev:docs
-```
+To work on documentation:
 
-You can then view the documentation at `http://127.0.0.1:8000/docs/en`.
+1. Install documentation dependencies:
 
-## Translating Appium Documentation
+   ```bash
+   npm run install-docs-deps
+   ```
 
-The process of Appium documents localization into languages other than English is automated and is done via
-the [Crowdin Translations Management System](https://crowdin.com). Do not edit any translated documents
-directly in the GitHub Appium repository as they are going to be replaced with ones exported from Crowdin
-during an upcoming sync.
+2. Start the docs dev server:
 
-### Where To Start
+   ```bash
+   npm run dev:docs
+   ```
 
-If you would like to contribute to the translation of Appium documents into your language then simply join
-the translators group for the [Appium Documentation](https://crowdin.com/project/appium-documentation)
-Crowdin project, and start translating documents there. If you see that your language is missing from
-the list of available Crowdin languages then simply let us know by creating an
-[issue](https://github.com/appium/appium/issues).
+3. View the docs at http://127.0.0.1:8000/docs/en.
 
-### Source Language Updates
+Add necessary documentation when appropriate. Document important behavior or usage details in the relevant developer documentation. Prefer documenting existing behavior over changing it when a change could break existing scripts or API compatibility.
 
-Changes in documents are synchronized to Crowdin automatically via the `Update Crowdin English Docs` GitHub action.
-This action is triggered automatically as soon as there are any changes under `packages/appium/docs/en/**.md`
-or `packages/appium/docs/mkdocs-en.yml`.
+### Documentation Localization
 
-### Fetching Translated Documents
+Appium documentation localization is automated via [Crowdin](https://crowdin.com). Do not edit translated documents directly in the GitHub Appium repository; they are replaced during a Crowdin sync.
 
-In order to fetch translated files from Crowdin to the GitHub repository it is necessary to trigger
-the `Sync Crowdin Docs Translations` action. This action should also automatically create a PR with
-corresponding translated resources included.
+To translate, join the translators group for the [Appium Documentation](https://crowdin.com/project/appium-documentation) Crowdin project. If your language is missing, let us know by creating an [issue](https://github.com/appium/appium/issues).
+
+Source-language docs changes are synced to Crowdin automatically by the `Update Crowdin English Docs` GitHub Action when files under `packages/appium/docs/en/**.md` or `packages/appium/docs/mkdocs-en.yml` change. To fetch translated files from Crowdin, trigger the `Sync Crowdin Docs Translations` action; it should create a PR with the translated resources.
+
+## Submit a Pull Request
+
+Before opening a pull request, review the requirements below and sign the CLA.
+
+1. Use the pull request template to describe the big picture of your changes and why they should be accepted. If your change fixes a bug or resolves a feature request, link to the relevant issue.
+2. Mark the type of change: bugfix, new feature, breaking change, or documentation update.
+3. For large or complex changes, use the Further comments section to explain why you chose the solution and what alternatives you considered.
+4. Give your pull request a Conventional Commits-compliant title; pull request titles are linted with the Angular preset. Use Conventional Commits for commit messages as well.
+5. Complete the pull request checklist. You can also fill it out after creating the pull request. If you are unsure about any checklist item, ask.

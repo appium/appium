@@ -1,5 +1,7 @@
-import {openAsBlob} from 'node:fs';
+import {openAsBlob, type WriteStream} from 'node:fs';
 import path from 'node:path';
+import type {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 
 import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
@@ -145,21 +147,21 @@ export async function downloadFile(
 
   const timer = new Timer().start();
   let responseLength: number;
+  let responseStream: Readable | undefined;
+  let writer: WriteStream | undefined;
   try {
-    const writer = fs.createWriteStream(dstPath);
-    const {data: responseStream, headers: responseHeaders} = await axios(requestOpts);
-    responseLength = parseInt(String(responseHeaders['content-length'] ?? '0'), 10);
-    (responseStream as NodeJS.ReadableStream).pipe(writer);
-
-    await new Promise<void>((resolve, reject) => {
-      (responseStream as NodeJS.ReadableStream).once('error', reject);
-      writer.once('finish', () => resolve());
-      writer.once('error', (e: Error) => {
-        (responseStream as NodeJS.ReadableStream).unpipe(writer);
-        reject(e);
-      });
-    });
+    const response = await axios(requestOpts);
+    responseStream = response.data as Readable;
+    responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
+    // opening the file first would leave an empty destination behind when the request fails
+    writer = fs.createWriteStream(dstPath);
+    await pipeline(responseStream, writer);
   } catch (err) {
+    if (writer) {
+      responseStream?.destroy();
+      await closeStream(writer);
+      await fs.rimraf(dstPath);
+    }
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }
@@ -186,6 +188,16 @@ export async function downloadFile(
 }
 
 // #region Private helpers
+
+async function closeStream(stream: WriteStream): Promise<void> {
+  if (stream.closed) {
+    return;
+  }
+  await new Promise<void>((resolve) => {
+    stream.once('close', () => resolve());
+    stream.destroy();
+  });
+}
 
 function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (!auth || !isPlainObject(auth)) {

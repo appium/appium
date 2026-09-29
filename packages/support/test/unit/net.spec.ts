@@ -155,19 +155,33 @@ describe('net', function () {
       assert.strictEqual(await fs.exists(dstPath), false);
     });
 
-    it('should not leave a file behind when the response stream fails', async function () {
+    it('should close the file and not leave it behind when the response stream fails', async function () {
       const dstPath = path.join(tmpDir, 'partial.bin');
-      await assert.rejects(
-        withServer(
-          (res) => {
-            res.writeHead(200, {'Content-Type': 'application/octet-stream', 'Content-Length': '1000'});
-            res.write(Buffer.alloc(20, 1));
-            res.destroy();
-          },
-          (url) => downloadFile(url, dstPath, {isMetered: false}),
-        ),
-        /download the file/,
-      );
+      const originalCreateWriteStream = fs.createWriteStream;
+      const writers: ReturnType<typeof fs.createWriteStream>[] = [];
+      fs.createWriteStream = ((...args: Parameters<typeof fs.createWriteStream>) => {
+        const writer = originalCreateWriteStream(...args);
+        writers.push(writer);
+        return writer;
+      }) as typeof fs.createWriteStream;
+      try {
+        await assert.rejects(
+          withServer(
+            (res) => {
+              res.writeHead(200, {'Content-Type': 'application/octet-stream', 'Content-Length': '1000'});
+              res.flushHeaders();
+              res.write(Buffer.alloc(20, 1));
+              setTimeout(() => res.destroy(), 100);
+            },
+            (url) => downloadFile(url, dstPath, {isMetered: false}),
+          ),
+          /download the file/,
+        );
+      } finally {
+        fs.createWriteStream = originalCreateWriteStream;
+      }
+      assert.strictEqual(writers.length, 1);
+      assert.strictEqual(writers[0].closed, true);
       assert.strictEqual(await fs.exists(dstPath), false);
     });
   });

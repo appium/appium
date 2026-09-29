@@ -1,6 +1,7 @@
 import {openAsBlob, type WriteStream} from 'node:fs';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 
 import type {HTTPHeaders} from '@appium/types';
 import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
@@ -154,7 +155,7 @@ export async function downloadFile(
     responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
     // opening the file first would leave an empty destination behind when the request fails
     writer = fs.createWriteStream(dstPath);
-    await pipeToFile(responseStream, writer);
+    await pipeline(responseStream, writer);
   } catch (err) {
     if (writer) {
       responseStream?.destroy();
@@ -187,18 +188,6 @@ export async function downloadFile(
 }
 
 // #region Private helpers
-
-async function pipeToFile(src: Readable, dst: WriteStream): Promise<void> {
-  src.pipe(dst);
-  await new Promise<void>((resolve, reject) => {
-    src.once('error', reject);
-    dst.once('finish', () => resolve());
-    dst.once('error', (e: Error) => {
-      src.unpipe(dst);
-      reject(e);
-    });
-  });
-}
 
 async function closeStream(stream: WriteStream): Promise<void> {
   if (stream.closed) {

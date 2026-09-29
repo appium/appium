@@ -108,5 +108,32 @@ describe('BaseDriver', function () {
       assert.equal(await slowPromise, 'slow-done');
       await driver.clearNewCommandTimeout();
     });
+
+    it('should not arm the idle timer when an unknown command arrives during another command', async function () {
+      const driver = new SlowCommandDriver({} as InitialOpts);
+      driver.newCommandTimeoutMs = 50;
+
+      const slowPromise = driver.executeCommand('slowCommand');
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      await assert.rejects(driver.executeCommand('notARealCommand'), /not yet been implemented/);
+
+      assert.equal(await slowPromise, 'slow-done');
+      await driver.clearNewCommandTimeout();
+    });
+
+    it('should arm the idle timer after an unknown command when the driver is idle', async function () {
+      const driver = new BaseDriver({} as InitialOpts);
+      driver.newCommandTimeoutMs = 30;
+      let expired = false;
+      driver.onUnexpectedShutdown(() => {
+        expired = true;
+      });
+
+      await assert.rejects(driver.executeCommand('notARealCommand'), /not yet been implemented/);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      assert.equal(expired, true);
+      await driver.clearNewCommandTimeout();
+    });
   });
 });

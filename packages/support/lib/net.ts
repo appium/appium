@@ -145,10 +145,13 @@ export async function downloadFile(
 
   const timer = new Timer().start();
   let responseLength: number;
+  let writerOpened = false;
   try {
-    const writer = fs.createWriteStream(dstPath);
     const {data: responseStream, headers: responseHeaders} = await axios(requestOpts);
     responseLength = parseInt(String(responseHeaders['content-length'] ?? '0'), 10);
+    // opening the file first would leave an empty destination behind when the request fails
+    const writer = fs.createWriteStream(dstPath);
+    writerOpened = true;
     (responseStream as NodeJS.ReadableStream).pipe(writer);
 
     await new Promise<void>((resolve, reject) => {
@@ -160,6 +163,9 @@ export async function downloadFile(
       });
     });
   } catch (err) {
+    if (writerOpened) {
+      await fs.rimraf(dstPath);
+    }
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }

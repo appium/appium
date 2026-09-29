@@ -5,7 +5,7 @@ import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 
 import {fs, tempDir} from '../../lib/index.js';
-import {uploadFile} from '../../lib/net.js';
+import {downloadFile, uploadFile} from '../../lib/net.js';
 
 const FILE_BYTES = 100;
 
@@ -113,4 +113,82 @@ describe('net', function () {
       });
     });
   });
+
+  describe('downloadFile()', function () {
+    let tmpDir: string;
+
+    before(async function () {
+      tmpDir = await tempDir.openDir();
+    });
+
+    after(async function () {
+      await fs.rimraf(tmpDir);
+    });
+
+    it('should save a complete body', async function () {
+      const body = Buffer.from('plain body');
+      const dstPath = path.join(tmpDir, 'plain.bin');
+      await withServer(
+        (res) => {
+          res.writeHead(200, {'Content-Type': 'text/plain', 'Content-Length': String(body.length)});
+          res.end(body);
+        },
+        async (url) => {
+          await downloadFile(url, dstPath, {isMetered: false});
+        },
+      );
+      assert.deepEqual(await fs.readFile(dstPath), body);
+    });
+
+    it('should not leave a file behind when the request fails', async function () {
+      const dstPath = path.join(tmpDir, 'missing.bin');
+      await assert.rejects(
+        withServer(
+          (res) => {
+            res.writeHead(404, {'Content-Type': 'text/plain', 'Content-Length': '9'});
+            res.end('not found');
+          },
+          (url) => downloadFile(url, dstPath, {isMetered: false}),
+        ),
+        /404/,
+      );
+      assert.strictEqual(await fs.exists(dstPath), false);
+    });
+
+    it('should not leave a file behind when the response stream fails', async function () {
+      const dstPath = path.join(tmpDir, 'partial.bin');
+      await assert.rejects(
+        withServer(
+          (res) => {
+            res.writeHead(200, {'Content-Type': 'application/octet-stream', 'Content-Length': '1000'});
+            res.write(Buffer.alloc(20, 1));
+            res.destroy();
+          },
+          (url) => downloadFile(url, dstPath, {isMetered: false}),
+        ),
+        /download the file/,
+      );
+      assert.strictEqual(await fs.exists(dstPath), false);
+    });
+  });
 });
+
+async function withServer(
+  respond: (res: http.ServerResponse) => void,
+  run: (url: string) => Promise<void>,
+): Promise<void> {
+  const server = http.createServer((_req, res) => {
+    respond(res);
+  });
+  await new Promise<void>((resolve) => {
+    server.listen(0, '127.0.0.1', () => resolve());
+  });
+  const {port} = server.address() as AddressInfo;
+  try {
+    await run(`http://127.0.0.1:${port}/file`);
+  } finally {
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
+  }
+}

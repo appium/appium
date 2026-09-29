@@ -33,7 +33,27 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
+/**
+ * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
+ * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number)
+ */
+const WebSocketCloseCode = {
+  NORMAL_CLOSURE: 1000,
+  GOING_AWAY: 1001,
+  RESERVED: 1004,
+  NO_STATUS_RECEIVED: 1005,
+  ABNORMAL_CLOSURE: 1006,
+  INTERNAL_ERROR: 1011,
+  BAD_GATEWAY: 1014,
+} as const;
+// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+const MIN_APPLICATION_CLOSE_CODE = 3000;
+const MAX_APPLICATION_CLOSE_CODE = 4999;
+const RESERVED_CLOSE_CODES: readonly number[] = [
+  WebSocketCloseCode.RESERVED,
+  WebSocketCloseCode.NO_STATUS_RECEIVED,
+  WebSocketCloseCode.ABNORMAL_CLOSURE,
+];
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
 
@@ -166,8 +186,7 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   try {
     this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
     for (const ws of this.bidiSockets[sessionId]) {
-      // 1001 means server is going away
-      ws.close(1001);
+      ws.close(WebSocketCloseCode.GOING_AWAY);
     }
   } catch {}
   delete this.bidiSockets[sessionId];
@@ -178,8 +197,8 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   }
   this.log.debug(`Also closing proxy connection to upstream bidi server`);
   try {
-    // 1000 means normal closure, which seems correct when Appium is acting as the client
-    proxyClient.close(1000);
+    // normal closure seems correct when Appium is acting as the client
+    proxyClient.close(WebSocketCloseCode.NORMAL_CLOSURE);
   } catch {}
   delete this.bidiProxyClients[sessionId];
 }
@@ -544,13 +563,16 @@ async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<We
 }
 
 /**
- * Codes like 1005 and 1006 are reported by 'close' events but may not be sent in a close frame,
- * and ws throws if asked to, so replace anything ws would reject with the fallback code
+ * 'close' events can report reserved codes like 1005 and 1006, which RFC 6455 forbids in a close
+ * frame and ws throws on, so anything ws would reject is replaced with an internal error
  */
 function toSendableCloseCode(code: number): number {
-  const isSendable =
-    (code >= 1000 && code <= 1014 && ![1004, 1005, 1006].includes(code)) || (code >= 3000 && code <= 4999);
-  return isSendable ? code : WS_FALLBACK_CODE;
+  const isStandard =
+    code >= WebSocketCloseCode.NORMAL_CLOSURE &&
+    code <= WebSocketCloseCode.BAD_GATEWAY &&
+    !RESERVED_CLOSE_CODES.includes(code);
+  const isApplication = code >= MIN_APPLICATION_CLOSE_CODE && code <= MAX_APPLICATION_CLOSE_CODE;
+  return isStandard || isApplication ? code : WebSocketCloseCode.INTERNAL_ERROR;
 }
 
 // #endregion

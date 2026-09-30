@@ -121,7 +121,7 @@
     "tsd": "0.33.0",
     "typescript": "6.0.3",
     "webdriverio": "9.32.0",
-    "ws": "8.21.3"
+    "ws": "8.22.0"
   },
   "overrides": {
     "@sidvind/better-ajv-errors": {

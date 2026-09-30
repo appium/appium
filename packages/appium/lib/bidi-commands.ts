@@ -34,8 +34,8 @@ interface InitBiDiSocketResult {
 }
 
 /**
- * Close codes defined by RFC 6455, section 7.4.1 and the IANA registry.
- * https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1
+ * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
+ * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number)
  */
 const WebSocketCloseCode = {
   NORMAL_CLOSURE: 1000,
@@ -186,8 +186,7 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   try {
     this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
     for (const ws of this.bidiSockets[sessionId]) {
-      // 1001 means server is going away
-      ws.close(1001);
+      ws.close(WebSocketCloseCode.GOING_AWAY);
     }
   } catch {}
   delete this.bidiSockets[sessionId];
@@ -198,8 +197,8 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   }
   this.log.debug(`Also closing proxy connection to upstream bidi server`);
   try {
-    // 1000 means normal closure, which seems correct when Appium is acting as the client
-    proxyClient.close(1000);
+    // normal closure seems correct when Appium is acting as the client
+    proxyClient.close(WebSocketCloseCode.NORMAL_CLOSURE);
   } catch {}
   delete this.bidiProxyClients[sessionId];
 }
@@ -566,7 +565,8 @@ async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<We
 }
 
 /**
- * Replace close codes that cannot be sent in a WebSocket close frame.
+ * 'close' events can report reserved codes like 1005 and 1006, which RFC 6455 forbids in a close
+ * frame and ws throws on, so anything ws would reject is replaced with an internal error
  */
 function toSendableCloseCode(code: number): number {
   const isStandard =

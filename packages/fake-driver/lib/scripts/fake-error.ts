@@ -1,8 +1,8 @@
-import ora from 'ora';
+import yoctoSpinner from 'yocto-spinner';
 
-const spinner = ora('Running fake-error...').start();
+const spinner = yoctoSpinner({text: 'Running fake-error...'}).start();
 
 setTimeout(() => {
-  spinner.fail('Oh nooooooo!');
+  spinner.error('Oh nooooooo!');
   throw Error('Unsuccessfully ran the script');
 }, 1000);

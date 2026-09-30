@@ -50,8 +50,8 @@
     "@appium/http-server": "1.0.0-beta.1",
     "@xmldom/xmldom": "0.9.12",
     "asyncbox": "6.4.2",
-    "ora": "5.4.1",
-    "xpath": "0.0.34"
+    "xpath": "0.0.34",
+    "yocto-spinner": "1.2.2"
   },
   "devDependencies": {
     "@appium/driver-test-support": "4.0.0-beta.1",

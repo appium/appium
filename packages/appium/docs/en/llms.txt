@@ -1,0 +1,138 @@
+# Appium
+
+> Appium is an open-source framework for UI automation of many app platforms - mobile (iOS, Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS, Android TV, Samsung) and more - driven over the W3C WebDriver protocol.
+
+Appium is split into four parts: the Appium server, which defines the core APIs; drivers, which
+implement connectivity to a specific platform; clients, which implement Appium's API in a specific
+programming language; and plugins, which change or extend the server's behaviour. To automate
+anything you need the server, at least one driver, and a client.
+
+Notes for tools generating Appium code from this documentation:
+
+- Appium 3 is the current major version, and this documentation covers Appium 2 and 3. Appium 1 is
+  no longer supported. `DesiredCapabilities`, `MobileBy`, the `findElementByAccessibilityId` family
+  of methods, and the `/wd/hub` server base path are all Appium 1 era patterns - the default base
+  path has been `/` since Appium 2.
+- Drivers are not bundled with the server. Install them explicitly, for example
+  `appium driver install uiautomator2` or `appium driver install xcuitest`.
+- Appium 3 requires Node.js in the range `^20.19.0 || ^22.12.0 || >=24.0.0`, and npm 10 or newer.
+- Only `browserName`, `browserVersion` and `platformName` are standard W3C capabilities. Every
+  other Appium capability needs the `appium:` vendor prefix - `appium:automationName`, `appium:app`,
+  `appium:udid` - or must be nested, unprefixed, inside an `appium:options` object.
+- Capabilities cannot be changed once a session has started. Parameters that are adjustable during
+  a session are exposed through the Settings API instead.
+- Driver-specific commands are usually Execute Methods rather than new client methods: call the
+  standard `Execute Script` command with a known command name such as `mobile: terminateApp`, and
+  pass a *single* object whose keys are the parameter names. Do not invent client-side method names
+  for these.
+- Beyond the small common set documented here, capabilities, execute methods, settings and locator
+  strategies are defined by each driver and documented on that driver's own site. Refer users to
+  the driver's documentation rather than guessing names.
+- Appium 3 removed many endpoints that were deprecated in Appium 2. Check the Appium 3 migration
+  guide before using an endpoint carried over from older code.
+- `GET /sessions` was removed. Session discovery is now `GET /appium/sessions`, and requires
+  starting the server with `--allow-insecure=*:session_discovery`.
+- In Appium 3, every `--allow-insecure` feature name must carry a scope prefix: either a driver
+  name (`uiautomator2:adb_shell`) or the wildcard (`*:adb_shell`).
+- WebDriver BiDi support is opt-in per session, via the standard `webSocketUrl` capability.
+- Contexts model the difference between native and webview modes. `Get Contexts` always returns at
+  least one context, conventionally named `NATIVE_APP`.
+
+## Getting started
+
+- [Appium Documentation](https://appium.io/docs/en/latest/): documentation home for the Appium server and its ecosystem.
+- [Appium in a Nutshell](https://appium.io/docs/en/latest/intro/): how the server, drivers, clients and plugins fit together, and what you need to install.
+- [How Does Appium Work?](https://appium.io/docs/en/latest/intro/appium/): the goals and architecture of the Appium project.
+- [Intro to Appium Drivers](https://appium.io/docs/en/latest/intro/drivers/): what a driver is, and how Appium supports unrelated platforms through them.
+- [Intro to Appium Clients](https://appium.io/docs/en/latest/intro/clients/): Appium's client-server architecture and its relationship to the W3C WebDriver specification.
+- [Getting Started](https://appium.io/docs/en/latest/quickstart/): the quickstart path - install Appium, install a driver, install a client, run a first script.
+- [System Requirements](https://appium.io/docs/en/latest/quickstart/requirements/): supported operating systems and the required Node.js and npm versions.
+- [Install Appium](https://appium.io/docs/en/latest/quickstart/install/): installing the Appium server with npm.
+- [Install the UiAutomator2 Driver](https://appium.io/docs/en/latest/quickstart/uiauto2-driver/): installing an Android driver and its Android SDK prerequisites.
+- [Write a Test (JS)](https://appium.io/docs/en/latest/quickstart/test-js/): a first Appium script in JavaScript with WebdriverIO.
+- [Write a Test (Python)](https://appium.io/docs/en/latest/quickstart/test-py/): a first Appium script in Python.
+- [Write a Test (Java)](https://appium.io/docs/en/latest/quickstart/test-java/): a first Appium script in Java.
+- [Write a Test (Ruby)](https://appium.io/docs/en/latest/quickstart/test-rb/): a first Appium script in Ruby.
+- [Write a Test (.NET)](https://appium.io/docs/en/latest/quickstart/test-dotnet/): a first Appium script in C#.
+- [Next Steps](https://appium.io/docs/en/latest/quickstart/next-steps/): where to go after the quickstart.
+
+## Drivers, clients and plugins
+
+Which driver you install determines which platform you can automate, and the driver's own
+documentation is the authoritative source for its capabilities and commands.
+
+- [The Appium Ecosystem](https://appium.io/docs/en/latest/ecosystem/): index of officially-supported and community-supported Appium projects.
+- [Appium Drivers](https://appium.io/docs/en/latest/ecosystem/drivers/): every known driver with its install command and documentation link. Official drivers include UiAutomator2 and Espresso (Android), XCUITest (iOS, iPadOS, tvOS), Mac2 (macOS), Windows, Chromium, Gecko and Safari.
+- [Appium Clients](https://appium.io/docs/en/latest/ecosystem/clients/): official clients for Java, Python, Ruby and .NET, plus community clients including WebdriverIO, Nightwatch.js, Robot Framework, Rust and Swift.
+- [Appium Plugins](https://appium.io/docs/en/latest/ecosystem/plugins/): optional extensions that modify or extend server behaviour. Not required for standard automation.
+- [Appium-Related Tools](https://appium.io/docs/en/latest/ecosystem/tools/): tools for installation, test development and inspection, such as Appium Inspector.
+- [Managing Drivers and Plugins](https://appium.io/docs/en/latest/guides/managing-exts/): installing, listing, updating and removing extensions, and installing from sources other than the official index.
+
+## Sessions and capabilities
+
+- [Session Capabilities](https://appium.io/docs/en/latest/guides/caps/): how capabilities work, the `appium:` vendor prefix, `appium:options` grouping, BiDi opt-in via `webSocketUrl`, and always-match versus first-match.
+- [Session Properties](https://appium.io/docs/en/latest/reference/session/): the key properties of a session - capabilities, execute methods, settings and locator strategies - and which are defined by the server versus the driver.
+- [Capabilities](https://appium.io/docs/en/latest/reference/session/caps/): the full list of capabilities recognized by the Appium server and base driver, and therefore supported by every driver.
+- [Session Settings](https://appium.io/docs/en/latest/guides/settings/): parameters that, unlike capabilities, can be adjusted while a session is running.
+- [Execute Methods](https://appium.io/docs/en/latest/guides/execute-methods/): the `mobile:` command convention that drivers use to expose commands beyond the WebDriver spec, with examples in every official client language.
+- [Managing Contexts](https://appium.io/docs/en/latest/guides/context/): switching between native and webview modes with the Get Contexts, Get Current Context and Set Context commands.
+- [Caching of Application Bundles](https://appium.io/docs/en/latest/guides/caching/): how the base driver caches application builds, and how to use it for faster suite execution.
+- [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): the `appium:eventTimings` capability for startup and command timing information.
+
+## Server configuration and the command line
+
+- [Command Line Interface](https://appium.io/docs/en/latest/reference/cli/): the `appium` executable and its `server`, `driver`, `plugin` and `setup` subcommands.
+- [appium server](https://appium.io/docs/en/latest/reference/cli/server/): the complete set of server command-line arguments.
+- [appium driver/plugin](https://appium.io/docs/en/latest/reference/cli/extensions/): the extension management subcommands - `install`, `list`, `update`, `uninstall`, `run` and `doctor`.
+- [appium setup](https://appium.io/docs/en/latest/reference/cli/setup/): installing a preset bundle of extensions for mobile, browser or desktop automation.
+- [Environment Variables](https://appium.io/docs/en/latest/reference/cli/env-vars/): advanced behaviour toggled through the environment rather than CLI arguments.
+- [The Appium Config File](https://appium.io/docs/en/latest/guides/config/): supplying server arguments through a config file instead of the command line. CLI arguments take precedence.
+- [Filtering the Appium Log](https://appium.io/docs/en/latest/guides/log-filters/): redacting passwords, device identifiers and other sensitive values from server logs with `--log-filters`.
+- [Header Handling](https://appium.io/docs/en/latest/guides/headers/): request ID tracking through the `x-request-id` header.
+- [SSL/TLS/SPDY Support](https://appium.io/docs/en/latest/guides/tls/): starting the server with secure connections enabled.
+- [Appium and Selenium Grid](https://appium.io/docs/en/latest/guides/grid/): relaying commands from a Selenium Grid to an Appium server.
+
+## Security
+
+- [Appium Server Security](https://appium.io/docs/en/latest/guides/security/): the insecure-feature mechanism, and the `--allow-insecure`, `--deny-insecure` and `--relaxed-security` flags. In Appium 3 every feature name requires a scope prefix.
+- [Insecure Features](https://appium.io/docs/en/latest/reference/cli/insecure-features/): the features defined at the server and official-plugin level, including `session_discovery` and `execute_driver_script`. Drivers define their own in their own documentation.
+
+## API endpoints
+
+- [Reference](https://appium.io/docs/en/latest/reference/): index of the core interfaces supported by the Appium server.
+- [API Endpoints](https://appium.io/docs/en/latest/reference/api/): endpoints exposed by the base driver, and therefore inherited by every driver.
+- [WebDriver Protocol](https://appium.io/docs/en/latest/reference/api/webdriver/): the W3C WebDriver endpoints Appium supports.
+- [WebDriver BiDi Protocol](https://appium.io/docs/en/latest/reference/api/bidi/): the W3C WebDriver BiDi commands Appium supports. These are commands over a WebSocket, not URL endpoints, and require the `webSocketUrl` capability.
+- [Appium Protocol](https://appium.io/docs/en/latest/reference/api/appium/): endpoints defined by Appium's own extension of the WebDriver protocol.
+- [Plugin Endpoints](https://appium.io/docs/en/latest/reference/api/plugins/): endpoints added or modified by the official plugins.
+- [Other Protocols](https://appium.io/docs/en/latest/reference/api/others/): additional supported endpoints, including the Chromedriver protocol extension.
+
+## Migrating between major versions
+
+- [Migrating to Appium 3](https://appium.io/docs/en/latest/guides/migrating-2-to-3/): every breaking change from Appium 2 to 3 - the Node 20 minimum, removed and modified endpoints, the mandatory `--allow-insecure` scope prefix, and the move from `GET /sessions` to `GET /appium/sessions`.
+- [Migrating to Appium 2](https://appium.io/docs/en/latest/guides/migrating-1-to-2/): the Appium 1 to 2 changes, including drivers becoming separately installed extensions and the default base path changing from `/wd/hub` to `/`.
+
+## Building drivers and plugins
+
+- [Developing Appium Extensions](https://appium.io/docs/en/latest/developing/): overview of building your own driver or plugin against Appium's modular structure.
+- [Building Drivers](https://appium.io/docs/en/latest/developing/build-drivers/): writing a driver, including command definitions, capability constraints and execute methods.
+- [Building Plugins](https://appium.io/docs/en/latest/developing/build-plugins/): writing a plugin that modifies or extends server behaviour.
+- [Building Doctor Checks](https://appium.io/docs/en/latest/developing/build-doctor-checks/): shipping preconditions checks that `appium driver doctor` can run for your extension.
+- [Building Documentation](https://appium.io/docs/en/latest/developing/build-docs/): using `@appium/docutils` to build an MkDocs site for your extension.
+- [Masking Sensitive Log Data](https://appium.io/docs/en/latest/developing/sensitive/): marking values as sensitive so they are redacted from extension logs.
+- [Appium's Config System](https://appium.io/docs/en/latest/developing/config-system/): how the schema-driven config file and CLI argument system works internally.
+- [Local Validation Of Extension PRs](https://appium.io/docs/en/latest/guides/branch-testing/): installing a driver or plugin from an unmerged branch to test it locally.
+
+## Contributing
+
+- [Contributing to Appium](https://appium.io/docs/en/latest/contributing/): how to contribute code, documentation, maintenance and support to the project.
+
+## Optional
+
+- [Appium Blog](https://appium.io/docs/en/latest/blog/): release announcements and project news.
+- [Additional Resources](https://appium.io/docs/en/latest/resources/): third-party courses, books, talks and tutorials.
+- [Appium Project History](https://appium.io/docs/en/latest/intro/history/): how the project evolved since 2012, of interest mostly for background.
+- [Sponsors & Backers](https://appium.io/docs/en/latest/sponsors/): the project's sponsorship program.
+- [Source repository](https://github.com/appium/appium): the Appium server implementation.
+- [JSON Wire Protocol](https://appium.io/docs/en/latest/reference/api/jsonwp/): legacy pre-W3C protocol, listed for historical reference. Do not base new code on it.
+- [Mobile JSON Wire Protocol](https://appium.io/docs/en/latest/reference/api/mjsonwp/): legacy pre-W3C mobile protocol extension, listed for historical reference. Do not base new code on it.

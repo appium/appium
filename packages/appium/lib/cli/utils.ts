@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import {console as supportConsole} from '@appium/support';
-import ora from 'ora';
+import yoctoSpinner from 'yocto-spinner';
 
 export const JSON_SPACES = 4;
 
@@ -82,13 +82,13 @@ export async function spinWith<T>(json: boolean, msg: string, fn: () => T | Prom
   if (json) {
     return await fn();
   }
-  const spinner = ora(msg).start();
+  const spinner = yoctoSpinner({text: msg}).start();
   try {
     const res = await fn();
-    spinner.succeed();
+    spinner.success();
     return res;
   } catch (err) {
-    spinner.fail();
+    spinner.error();
     throw err;
   }
 }

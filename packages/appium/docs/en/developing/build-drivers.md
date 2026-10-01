@@ -80,8 +80,9 @@ The required subfields are:
   capability to tell Appium to use *your* driver.
 * `platformNames`: this is an array of one or more platform names considered valid for your driver.
   When a user sends in the `platformName` capability to start a session, it must be included in
-  this list for your driver to handle the session. Known platform name strings include: `iOS`,
-  `tvOS`, `macOS`, `Windows`, `Android`.
+  this list for your driver to handle the session. These names should generally include the
+  operating systems your driver is targeting - for example, a driver targeting iOS would include
+  `iOS`, while a driver targeting the Chrome browser on Windows would include `Windows`.
 * `mainClass`: this is a named export (in CommonJS style) from your `main` field. It must be a
   class which extends Appium's `BaseDriver` (see below).
 

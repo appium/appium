@@ -27,7 +27,7 @@ appium driver install chromium
 ### [Espresso](https://appium.github.io/appium-espresso-driver/)
 
 * Target: Android applications (mobile, TV, Wear, XR, Automotive)
-* Mode: Native
+* Mode: Native, Hybrid, Web
 
 ```sh title="Install This Driver"
 appium driver install espresso

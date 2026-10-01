@@ -3,4 +3,5 @@
 .DS_Store
 npm*.log
 node_modules
+packages
 .idea

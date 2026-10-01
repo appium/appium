@@ -43,6 +43,11 @@ labels:
     matcher:
       files: ['packages/appium/**']
 
+  - label: '@appium/http-server'
+    sync: true
+    matcher:
+      files: ['packages/http-server/**']
+
   - label: '@appium/base-driver'
     sync: true
     matcher:

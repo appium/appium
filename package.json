@@ -48,7 +48,6 @@
     "docs": "npm run -w packages/appium build:docs",
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "docs:publish": "npm run -w packages/appium publish:docs",
-    "doctor": "node ./scripts/doctor-stub.mjs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
     "format": "oxfmt -c oxfmt.config.mjs .",
     "format:check": "oxfmt -c oxfmt.config.mjs --check .",

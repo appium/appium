@@ -36,7 +36,7 @@ labels:
     sync: true
     matcher:
       files: ['**/package.json', 'package-lock.json', '**/requirements.txt']
-      author: 'renovate'
+      author: 'dependabot'
 
   - label: 'appium core'
     sync: true

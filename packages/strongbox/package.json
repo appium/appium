@@ -53,7 +53,7 @@
     "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.e2e.spec.js\""
   },
   "dependencies": {
-    "env-paths": "4.0.0"
+    "env-paths": "^4.0.0"
   },
   "tsd": {
     "compilerOptions": {

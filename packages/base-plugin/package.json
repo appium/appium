@@ -52,9 +52,9 @@
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "11.0.0-beta.1",
-    "@appium/support": "8.0.0-beta.1",
-    "@appium/types": "2.0.0-beta.1"
+    "@appium/base-driver": "~11.0.0-beta.1",
+    "@appium/support": "~8.0.0-beta.1",
+    "@appium/types": "~2.0.0-beta.1"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

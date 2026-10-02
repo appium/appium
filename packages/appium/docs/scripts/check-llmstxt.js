@@ -1,8 +1,8 @@
 /**
  * Validates `docs/en/llms.txt` against the documentation sources.
  *
- * `llms.txt` is hand-written, so nothing regenerates it when a page is renamed or removed. This
- * check fails the build when it points at a page that no longer exists, and warns when a page has
+ * `llms.txt` is hand-written, so nothing regenerates it when a page is added, renamed or removed.
+ * This check fails the build when it points at a page that no longer exists, and when a page has
  * been added without being listed.
  *
  * For simplicity this file is not transpiled and is run directly via an npm script.
@@ -81,7 +81,11 @@ async function findAllPages() {
 async function findBrokenLinks(links) {
   const errors = [];
   for (const link of links) {
-    if (link.includes('appium.io/docs/') && !link.startsWith(SITE_BASE_URL)) {
+    const isOurDocs = link.includes('appium.io/docs/') || link.startsWith('/docs/');
+    // relative and site-relative links do not survive being read out of context, and a link to our
+    // docs that is not under the `latest` alias goes stale as soon as a new version is released
+    const isAbsolute = /^[a-z][a-z\d+.-]*:/i.test(link);
+    if ((!isAbsolute || isOurDocs) && !link.startsWith(SITE_BASE_URL)) {
       errors.push(`${link}\n    must be an absolute link under ${SITE_BASE_URL}`);
       continue;
     }
@@ -125,11 +129,9 @@ function findUnlistedPages(links, pages) {
 }
 
 /**
- * Validates `llms.txt`. Broken links always fail; unlisted pages only fail under `--strict`.
+ * Validates `llms.txt`. Both broken links and unlisted pages fail the build.
  */
 async function main() {
-  const strict = process.argv.includes('--strict');
-
   const contents = await fs.readFile(LLMS_TXT_PATH, 'utf-8');
   const links = extractLinks(contents);
   const pages = await findAllPages();
@@ -138,12 +140,12 @@ async function main() {
   const unlistedPages = findUnlistedPages(links, pages);
 
   if (unlistedPages.length) {
-    console.warn(
-      `\nWARNING: ${unlistedPages.length} page(s) are not listed in llms.txt. Consider adding ` +
-        `them, or adding them to UNLISTED_PAGES in this script if they are intentionally omitted:`
+    console.error(
+      `\nERROR: ${unlistedPages.length} page(s) are not listed in llms.txt. Add them, or add ` +
+        `them to UNLISTED_PAGES in this script if they are intentionally omitted:`
     );
     for (const page of unlistedPages) {
-      console.warn(`  - ${page}`);
+      console.error(`  - ${page}`);
     }
   }
 
@@ -152,11 +154,13 @@ async function main() {
     for (const error of brokenLinks) {
       console.error(`  - ${error}`);
     }
-    throw new Error(`llms.txt has ${brokenLinks.length} broken link(s)`);
   }
 
-  if (strict && unlistedPages.length) {
-    throw new Error(`llms.txt is missing ${unlistedPages.length} page(s)`);
+  if (brokenLinks.length || unlistedPages.length) {
+    throw new Error(
+      `llms.txt has ${brokenLinks.length} broken link(s) and is missing ` +
+        `${unlistedPages.length} page(s)`
+    );
   }
 
   console.log(`\nllms.txt is valid: ${links.length} link(s) checked, ${pages.length} page(s) found`);

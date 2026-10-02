@@ -9,16 +9,20 @@ anything you need the server, at least one driver, and a client.
 
 Notes for tools generating Appium code from this documentation:
 
-- Appium 3 is the current major version, and this documentation covers Appium 2 and 3. Appium 1 is
-  no longer supported. `DesiredCapabilities`, `MobileBy`, the `findElementByAccessibilityId` family
-  of methods, and the `/wd/hub` server base path are all Appium 1 era patterns - the default base
-  path has been `/` since Appium 2.
+- Appium 3 is the current major version, and these pages describe Appium 3. Appium 2 is still
+  supported but is documented separately, under its own version of this site, reachable from the
+  version selector. Appium 1 is no longer supported: `DesiredCapabilities`, `MobileBy`, the
+  `findElementByAccessibilityId` family of methods, and the `/wd/hub` server base path are all
+  Appium 1 era patterns - the default base path has been `/` since Appium 2.
 - Drivers are not bundled with the server. Install them explicitly, for example
   `appium driver install uiautomator2` or `appium driver install xcuitest`.
 - Appium 3 requires Node.js in the range `^20.19.0 || ^22.12.0 || >=24.0.0`, and npm 10 or newer.
-- Only `browserName`, `browserVersion` and `platformName` are standard W3C capabilities. Every
-  other Appium capability needs the `appium:` vendor prefix - `appium:automationName`, `appium:app`,
-  `appium:udid` - or must be nested, unprefixed, inside an `appium:options` object.
+- Standard W3C capabilities are written without a prefix. `platformName`, `browserName` and
+  `browserVersion` are the ones used most often with Appium, and the rest of the specification's
+  set - `acceptInsecureCerts`, `pageLoadStrategy`, `timeouts`, `webSocketUrl` and so on - is also
+  accepted, mostly by the browser drivers. Every Appium-specific capability needs the `appium:`
+  vendor prefix - `appium:automationName`, `appium:app`, `appium:udid` - or must be nested,
+  unprefixed, inside an `appium:options` object.
 - Capabilities cannot be changed once a session has started. Parameters that are adjustable during
   a session are exposed through the Settings API instead.
 - Driver-specific commands are usually Execute Methods rather than new client methods: call the
@@ -62,10 +66,10 @@ Which driver you install determines which platform you can automate, and the dri
 documentation is the authoritative source for its capabilities and commands.
 
 - [The Appium Ecosystem](https://appium.io/docs/en/latest/ecosystem/): index of officially-supported and community-supported Appium projects.
-- [Appium Drivers](https://appium.io/docs/en/latest/ecosystem/drivers/): every known driver with its install command and documentation link. Official drivers include UiAutomator2 and Espresso (Android), XCUITest (iOS, iPadOS, tvOS), Mac2 (macOS), Windows, Chromium, Gecko and Safari.
+- [Appium Drivers](https://appium.io/docs/en/latest/ecosystem/drivers/): every known driver with its install command and documentation link. Official drivers include UiAutomator2 and Espresso (Android), XCUITest (iOS, iPadOS, tvOS, watchOS), Mac2 (macOS), Windows, Chromium, Gecko and Safari.
 - [Appium Clients](https://appium.io/docs/en/latest/ecosystem/clients/): official clients for Java, Python, Ruby and .NET, plus community clients including WebdriverIO, Nightwatch.js, Robot Framework, Rust and Swift.
 - [Appium Plugins](https://appium.io/docs/en/latest/ecosystem/plugins/): optional extensions that modify or extend server behaviour. Not required for standard automation.
-- [Appium-Related Tools](https://appium.io/docs/en/latest/ecosystem/tools/): tools for installation, test development and inspection, such as Appium Inspector.
+- [Appium-Related Tools](https://appium.io/docs/en/latest/ecosystem/tools/): tools for installation, test development and inspection, such as Appium Inspector, and tools for driving Appium from an AI agent, such as the Appium MCP server and the Appium agent skills.
 - [Managing Drivers and Plugins](https://appium.io/docs/en/latest/guides/managing-exts/): installing, listing, updating and removing extensions, and installing from sources other than the official index.
 
 ## Sessions and capabilities
@@ -77,7 +81,7 @@ documentation is the authoritative source for its capabilities and commands.
 - [Execute Methods](https://appium.io/docs/en/latest/guides/execute-methods/): the `mobile:` command convention that drivers use to expose commands beyond the WebDriver spec, with examples in every official client language.
 - [Managing Contexts](https://appium.io/docs/en/latest/guides/context/): switching between native and webview modes with the Get Contexts, Get Current Context and Set Context commands.
 - [Caching of Application Bundles](https://appium.io/docs/en/latest/guides/caching/): how the base driver caches application builds, and how to use it for faster suite execution.
-- [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): the `appium:eventTimings` capability for startup and command timing information.
+- [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): startup and command timing information, retrieved from the `POST /session/:sessionId/appium/events` endpoint. The `appium:eventTimings` capability described on that page is not required for the endpoint to work, and is being removed in Appium 4.
 
 ## Server configuration and the command line
 

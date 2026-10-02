@@ -46,6 +46,7 @@
     "dev": "run-s build:compile \"build:workspaces\" \"build:compile -- --watch\"",
     "dev:docs": "npm run -w packages/appium dev:docs",
     "docs": "npm run -w packages/appium build:docs",
+    "docs:check-llmstxt": "npm run -w packages/appium check:docs:llmstxt",
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "docs:publish": "npm run -w packages/appium publish:docs",
     "doctor": "node ./scripts/doctor-stub.mjs",

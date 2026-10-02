@@ -30,3 +30,18 @@ jobs:
         run: npm run install-docs-deps
       - name: Publish docs
         run: npm run docs:publish
+      # The docs are deployed by mike into docs/<lang>/<version>, but crawlers look for
+      # /llms.txt at the domain root. The file's links are absolute, so the same file serves
+      # both locations.
+      - name: Publish llms.txt to the site root
+        run: |
+          cp packages/appium/docs/en/llms.txt "${RUNNER_TEMP}/llms.txt"
+          git checkout -f gh-pages
+          cp "${RUNNER_TEMP}/llms.txt" llms.txt
+          git add llms.txt
+          if git diff --cached --quiet -- llms.txt; then
+            echo "Root llms.txt is already up to date"
+          else
+            git commit -m "docs: update root llms.txt"
+            git push origin gh-pages
+          fi

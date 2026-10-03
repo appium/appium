@@ -337,7 +337,7 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
   // client as well
   proxyClient.on('close', (code, reason) => {
     driverLog.debug(
-      `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
+      `Upstream bidi socket closed connection (code ${code}, reason: '${reason.toString()}'). ` +
         `Closing proxy connection to client`,
     );
     const closeCode = toSendableCloseCode(code);
@@ -409,7 +409,7 @@ function initBidiSocketHandlers(
     // Probably if a session was started via the socket, and the socket closes, we should end the
     // associated session to free up resources. But otherwise, for sockets attached to existing
     // sessions, doing nothing is probably right.
-    driverLog.debug(`BiDi socket connection closed (code ${code}, reason: '${reason}')`);
+    driverLog.debug(`BiDi socket connection closed (code ${code}, reason: '${reason.toString()}')`);
 
     // If we're proxying, might as well close the upstream connection and clean it up
     if (proxyClient) {

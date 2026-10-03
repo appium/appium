@@ -126,7 +126,7 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
   const hostObj: object =
     cached ??
     (() => {
-      /* eslint-disable promise/prefer-await-to-then -- thenable facade over a host Promise */
+      /* eslint-disable unicorn/no-thenable -- thenable facade over a host Promise */
       const o = Object.assign(Object.create(null), {
         then(onFulfilled?: unknown, onRejected?: unknown) {
           const adaptFulfill =
@@ -152,7 +152,7 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
           return wrapIfNeeded(p.finally(onFinally as () => void | PromiseLike<void> | undefined));
         },
       });
-      /* eslint-enable promise/prefer-await-to-then */
+      /* eslint-enable unicorn/no-thenable */
       promiseToThenableHost.set(p, o);
       return o;
     })();

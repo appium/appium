@@ -24,7 +24,7 @@ export interface InstallPackageOpts {
   /** Name of the package to install */
   pkgName: string;
   /** Whether to install from a local path or from npm */
-  installType?: 'local' | string;
+  installType?: string;
   /** Whether `cwd` (or an ancestor) already declares a dependency on `appium` */
   hasAppiumDependency: boolean;
 }
@@ -91,7 +91,7 @@ export class NPM {
         // ignore
       }
     } catch (e) {
-      const {stdout = '', stderr = '', code = null} = e as ExecError;
+      const {stdout, stderr, code} = e as ExecError;
       throw new Error(
         `npm command '${argsCopy.join(
           ' ',

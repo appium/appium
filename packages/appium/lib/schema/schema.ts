@@ -17,6 +17,7 @@ type ArgSpecDefaultValue = ArgSpec['defaultValue'];
 type NestedArgSpecDefaultValue = Record<string, Record<string, ArgSpecDefaultValue>>;
 type DefaultValues<Flattened extends boolean | undefined> = Record<
   string,
+  // oxlint-disable-next-line typescript/no-redundant-type-constituents
   Flattened extends true ? ArgSpecDefaultValue : ArgSpecDefaultValue | NestedArgSpecDefaultValue
 >;
 type AllowedSchemaExtension = '.json' | '.js' | '.cjs';

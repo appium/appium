@@ -2,14 +2,13 @@
 title: 构建文档
 ---
 
-一旦你为 Appium 构建了 [驱动](./build-drivers.md) 或 [插件](./build-plugins.md)，通常也会希望为用户说明这个扩展是如何工作的。 最基础的方式就是编写一个简短的 `README.md`，并将它放在项目仓库的根目录中。
-不过，这样做可能会耗费不少精力。
+一旦你为 Appium 构建了 [驱动](./build-drivers.md) 或 [插件](./build-plugins.md)，通常也会希望为用户说明这个扩展是如何工作的。最基础的方式就是编写一个简短的 `README.md`，并将它放在项目仓库的根目录中。不过，这样做可能会耗费不少精力。
 
-Appium 项目已经提供了辅助工具，并且我们把这些工具打包好了，以便生态系统中的驱动和插件开发者也能使用。 这些工具最好的入门方式是查看一个现有的 Appium 驱动仓库，看看它是如何组织文档的，例如 [XCUITest 驱动仓库](https://github.com/appium/appium-xcuitest-driver)。 不过，本指南会先介绍基本的实现思路。
+Appium 项目已经提供了辅助工具，并且我们把这些工具打包好了，以便生态系统中的驱动和插件开发者也能使用。这些工具最好的入门方式是查看一个现有的 Appium 驱动仓库，看看它是如何组织文档的，例如 [XCUITest 驱动仓库](https://github.com/appium/appium-xcuitest-driver)。不过，本指南会先介绍基本的实现思路。
 
 ### 概念架构
 
-Appium 采用 [MkDocs](https://www.mkdocs.org/) 作为基于 Markdown 的文档站点的生成工具。 它使用 Python 工具链（而不是 Node.js），但这恰好是我们当前需求下最合适的选择。 你可以自行调整，不过默认情况下，Appium 的工具链也会假设你使用 [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) 主题与扩展来搭建 MkDocs。
+Appium 采用 [MkDocs](https://www.mkdocs.org/) 作为基于 Markdown 的文档站点的生成工具。它使用 Python 工具链（而不是 Node.js），但这恰好是我们当前需求下最合适的选择。你可以自行调整，不过默认情况下，Appium 的工具链也会假设你使用 [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) 主题与扩展来搭建 MkDocs。
 
 为了让你的文档能够支持不同版本（通常是每个小版本一个），我们还会捆绑 [Mike](https://github.com/jimporter/mike)。
 
@@ -37,18 +36,45 @@ npx appium-docs init
 
 这一步会：
 
-1. 创建一个 `tsconfig.json`（如果当前还没有的话）。 即使你的扩展并不是 TypeScript 编写的，这也是必需的。
+1. 创建一个 `tsconfig.json`（如果当前还没有的话）。即使你的扩展并不是 TypeScript 编写的，这也是必需的。
 2. 创建一个 `mkdocs.yml`，其中包含 MkDocs 所需的配置。
 
 ### 为你的扩展编写文档
 
-此时你就可以开始为扩展编写文档了。 默认情况下，MkDocs 会在 `docs` 目录中查找 Markdown 文件。 因此，你可以创建文档文件并放入 `docs`，然后在 `mkdocs.yml` 里添加相应链接。
+此时你就可以开始为扩展编写文档了。默认情况下，MkDocs 会在 `docs` 目录中查找 Markdown 文件。因此，你可以创建文档文件并放入 `docs`，然后在 `mkdocs.yml` 里添加相应链接。
 
 请参考 [MkDocs 文档](https://www.mkdocs.org/user-guide/writing-your-docs/) 来了解如何组织与构建你的文档结构。
 
+### Helping LLMs Use Your Documentation
+
+The [`/llms.txt` convention](https://llmstxt.org/) is a Markdown file at the root of a
+documentation site, listing its most useful pages so that large language models can navigate the
+site without crawling it. Appium's own documentation provides one at
+[appium.io/docs/en/latest/llms.txt](https://appium.io/docs/en/latest/llms.txt), and you may want to
+do the same for your extension.
+
+MkDocs copies any non-Markdown file in your `docs` directory to the built site as-is, so all you
+need to do is write an `llms.txt` and place it alongside your Markdown files. No plugin or build
+configuration is required.
+
+The value of this file lies in the parts a crawler could not have worked out on its own, so it is
+worth writing by hand rather than generating it from your navigation:
+
+- A short description of what your extension automates, and which platforms it targets
+- The handful of things models reliably get wrong about your extension - removed capabilities,
+  renamed commands, patterns from an older major version that no longer apply
+- Links to the pages that matter, with a description of each
+
+Because links in `llms.txt` are read out of context, they must be absolute URLs. If you use Mike
+for versioning, point them at your version alias (for example `latest`) rather than at a pinned
+version, so that the file does not go stale. Note that a hand-written file can drift as pages are
+renamed; Appium validates its own with a
+[script](https://github.com/appium/appium/blob/master/packages/appium/docs/scripts/check-llmstxt.js)
+that runs in CI, which you are welcome to adapt.
+
 ### 构建文档
 
-在这个阶段，你可以使用 `appium-docs` CLI 工具。 运行这个工具时不传任何参数，可以看到完整的帮助信息，以及所有可用的子命令与参数。 下面是几个常见用法示例：
+在这个阶段，你可以使用 `appium-docs` CLI 工具。运行这个工具时不传任何参数，可以看到完整的帮助信息，以及所有可用的子命令与参数。下面是几个常见用法示例：
 
 ```bash
 # 生成参考文档并将 mkdocs 站点构建到 site 目录

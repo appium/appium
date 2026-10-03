@@ -551,6 +551,22 @@ describe('AppiumDriver', function () {
         await sleep(1);
         assert.ok(!Object.keys(appium.sessions).includes(sessionId));
       });
+      it('should close bidi sockets if the inner driver unexpectedly exits', async function () {
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        const closed: number[] = [];
+        const track = (code?: number) => {
+          closed.push(code ?? -1);
+        };
+        appium.bidiSockets[sessionId] = [{close: track} as WebSocket];
+        appium.bidiProxyClients[sessionId] = {close: track} as WebSocket;
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        assert.deepEqual(closed, [1001, 1000]);
+        assert.strictEqual(appium.bidiSockets[sessionId], undefined);
+        assert.strictEqual(appium.bidiProxyClients[sessionId], undefined);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
+      });
     });
     describe('proxied bidi socket', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;

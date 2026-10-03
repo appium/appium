@@ -429,6 +429,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       }
 
       this.log.info(`Removing session '${innerSessionId}' from our master session list`);
+      this.cleanupBidiSockets(innerSessionId);
       this.deleteLinkedSessionObjects(innerSessionId);
     };
 

@@ -182,10 +182,10 @@ describe('caps', function () {
       assert.deepStrictEqual(parseCaps(caps as TestW3CCaps).allFirstMatchCaps, [{}]);
     });
 
-    it('returns invalid argument error if "firstMatch" is not an array and is not undefined (3.2)', function () {
-      for (const arg of [null, 1, true, 'string']) {
+    it('returns invalid argument error if "firstMatch" is not a non-empty array and is not undefined (3.2)', function () {
+      for (const arg of [null, 1, true, 'string', []]) {
         caps.firstMatch = arg;
-        assert.throws(() => parseCaps(caps as TestW3CCaps), /must be a JSON array or undefined/);
+        assert.throws(() => parseCaps(caps as TestW3CCaps), /must be a non-empty JSON array or undefined/);
       }
     });
 

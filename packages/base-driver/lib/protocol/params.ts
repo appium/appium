@@ -185,7 +185,7 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
     );
   }
   const specToUse = {
-    ...(paramSpec ?? {}),
+    ...paramSpec,
     required: paramSpec?.required ?? [],
     optional: paramSpec?.optional ?? [],
   };

@@ -153,7 +153,7 @@ export class WebDriverProxy {
         'content-type': 'application/json; charset=utf-8',
         'user-agent': 'appium',
         accept: 'application/json, */*',
-        ...(this.headers ?? {}),
+        ...this.headers,
       },
       proxy: false,
       timeout: this.timeout,
@@ -215,7 +215,7 @@ export class WebDriverProxy {
       const isSessionCreationRequest = url.endsWith('/session') && method === 'POST';
       if (isSessionCreationRequest && status === 200) {
         const raw = (data.value as Record<string, unknown> | undefined)?.sessionId;
-        this.sessionId = typeof raw === 'string' ? raw : raw != null ? String(raw) : null;
+        this.sessionId = typeof raw === 'string' ? raw : raw != null ? JSON.stringify(raw) : null;
       }
       return [
         {

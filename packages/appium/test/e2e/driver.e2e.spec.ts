@@ -103,7 +103,7 @@ describe('FakeDriver via HTTP', function () {
     let server: AppiumServer | void;
     return {
       setup: async (args?: Partial<ParsedArgs>) => {
-        const merged = {...(args ?? {}), appiumHome, port, address: TEST_HOST};
+        const merged = {...args, appiumHome, port, address: TEST_HOST};
         if (shouldStartServer) {
           server = await appiumServer(merged);
         }

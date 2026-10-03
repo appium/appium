@@ -111,7 +111,7 @@ describe(`FakeDriver E2E`, function () {
         sessionIds.push(sessionId);
         times++;
       } while (times < 2);
-      assert.strictEqual([...new Set(sessionIds)].length, 1);
+      assert.strictEqual(new Set(sessionIds).size, 1);
 
       const {status, data} = await endSession(sessionIds[0]);
       assert.strictEqual(status, 200);
@@ -143,7 +143,7 @@ describe(`FakeDriver E2E`, function () {
         times++;
       } while (times < 2);
       const sessionIds = (await Promise.all(reqs)).map((r) => r.sessionId);
-      assert.strictEqual([...new Set(sessionIds)].length, 1);
+      assert.strictEqual(new Set(sessionIds).size, 1);
 
       const {status, data} = await endSession(sessionIds[0]);
       assert.strictEqual(status, 200);

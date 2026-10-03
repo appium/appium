@@ -3,7 +3,7 @@ import nativeFs, {type Dirent} from 'node:fs';
 import path from 'node:path';
 import type Stream from 'node:stream';
 
-import {fs, timing, util} from '@appium/support';
+import {fs, net, timing, util} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import AsyncLock from 'async-lock';
@@ -15,7 +15,6 @@ import type {ItemOptions, StorageItem} from './types.js';
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const ADDITION_LOCK = new AsyncLock();
-const WS_SERVER_ERROR = 1011;
 const SHA1_HASH_LEN = 40;
 
 export class Storage {
@@ -171,7 +170,7 @@ export class Storage {
           }
           destination.write(data, (e) => {
             if (e) {
-              source.close(WS_SERVER_ERROR);
+              source.close(net.WebSocketCloseCode.INTERNAL_ERROR);
               reject(e);
             }
           });
@@ -187,7 +186,7 @@ export class Storage {
         });
         source.once('error', reject);
         destination.once('error', (e) => {
-          source.close(WS_SERVER_ERROR);
+          source.close(net.WebSocketCloseCode.INTERNAL_ERROR);
           reject(e);
         });
       });

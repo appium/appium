@@ -5,7 +5,7 @@ import {promisify} from 'node:util';
 import type {ExtensionCore} from '@appium/base-driver';
 import {errors} from '@appium/base-driver';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '@appium/http-server';
-import {util} from '@appium/support';
+import {net, util} from '@appium/support';
 import type {
   BiDiResultData,
   ErrorBiDiCommandResponse,
@@ -33,22 +33,7 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-/**
- * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
- * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number)
- */
-const WebSocketCloseCode = {
-  NORMAL_CLOSURE: 1000,
-  GOING_AWAY: 1001,
-  RESERVED: 1004,
-  NO_STATUS_RECEIVED: 1005,
-  ABNORMAL_CLOSURE: 1006,
-  INTERNAL_ERROR: 1011,
-  BAD_GATEWAY: 1014,
-} as const;
-// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
-const MIN_APPLICATION_CLOSE_CODE = 3000;
-const MAX_APPLICATION_CLOSE_CODE = 4999;
+const {WebSocketCloseCode, MIN_APPLICATION_CLOSE_CODE, MAX_APPLICATION_CLOSE_CODE} = net;
 const RESERVED_CLOSE_CODES: readonly number[] = [
   WebSocketCloseCode.RESERVED,
   WebSocketCloseCode.NO_STATUS_RECEIVED,

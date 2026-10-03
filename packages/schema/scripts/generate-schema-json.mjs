@@ -76,5 +76,5 @@ async function main() {
 
 // Check if this module is being run directly
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+  void main();
 }

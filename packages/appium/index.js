@@ -9,7 +9,7 @@ import * as appium from './build/lib/main.js';
 // while `import.meta.url` always reflects the resolved real path; realpath() both sides so this
 // still matches when `appium` is launched via its installed bin symlink.
 if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
-  appium.main();
+  void appium.main();
 }
 
 export * from './build/lib/main.js';

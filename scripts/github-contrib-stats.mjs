@@ -329,7 +329,7 @@ async function main() {
   log.info('All done!');
 }
 
-(async () => await main())();
+void (async () => await main())();
 
 // Type definitions
 

@@ -130,7 +130,7 @@ describe('app download and configuration', function () {
           server = httpServer as HttpServerWithAsyncClose;
         });
         after(async function () {
-          await server.close();
+          server.close();
         });
 
         it('should download apk file with query string', async function () {

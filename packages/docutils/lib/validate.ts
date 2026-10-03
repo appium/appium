@@ -255,7 +255,8 @@ export class DocutilsValidator extends EventEmitter {
     try {
       ({stdout: rawMkDocsVersion} = await exec(pythonPath, ['-m', NAME_MKDOCS, '--version']));
     } catch (err) {
-      return this.fail(`Failed to get MkDocs version: ${err}`);
+      const message = err instanceof Error ? err.message : String(err);
+      return this.fail(`Failed to get MkDocs version: ${message}`);
     }
     const match = rawMkDocsVersion.match(MKDOCS_VERSION_REGEX);
     if (!match) {

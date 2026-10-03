@@ -332,7 +332,7 @@ describe('Protocol', function () {
         });
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
-          (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
+          (driver as any).performActions = (actions: string[]) => 'It works ' + actions.join('');
           const {status, value, sessionId} = (
             await httpPost(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],
@@ -366,7 +366,7 @@ describe('Protocol', function () {
 
           afterEach(async function () {
             delete (driver as any).performActions;
-            await server.close();
+            server.close();
           });
 
           it('should work if a proxied request returns a successful W3C response', async function () {

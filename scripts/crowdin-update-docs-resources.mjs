@@ -44,7 +44,7 @@ function toCrowdinPath(fullPath) {
 
 /**
  * @param {string} name
- * @param {string|null|undefined} [parentId]
+ * @param {string|null} [parentId]
  * @returns {Promise<number>}
  */
 async function addDirectory(name, parentId) {
@@ -61,7 +61,7 @@ async function addDirectory(name, parentId) {
 /**
  * @param {string} name
  * @param {number} storageId
- * @param {string|null|undefined} [parentDirectoryId]
+ * @param {string|null} [parentDirectoryId]
  * @returns {Promise<number>}
  */
 async function addFile(name, storageId, parentDirectoryId) {
@@ -309,4 +309,4 @@ async function main() {
   log.info('All done');
 }
 
-(async () => await main())();
+void (async () => await main())();

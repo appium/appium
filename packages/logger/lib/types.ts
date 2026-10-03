@@ -42,7 +42,7 @@ export interface Logger extends EventEmitter {
    * @param message message of the log which will be formatted using utils.format()
    * @param args additional arguments appended to the log message also formatted using utils.format()
    */
-  log(level: LogLevel | string, prefix: string, message: any, ...args: any[]): void;
+  log(level: string, prefix: string, message: any, ...args: any[]): void;
 
   /**
    * @param prefix

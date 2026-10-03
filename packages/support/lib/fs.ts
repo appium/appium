@@ -291,7 +291,7 @@ export const fs = {
    * segments. Prefer a manual `readdir`-based walk over a glob pattern for callers that must
    * traverse through symlinks.
    */
-  glob: ((pattern: string | readonly string[], options: GlobOptions = {}) => {
+  glob: ((pattern: string | readonly string[], options: GlobOptions) => {
     const {cwd, withFileTypes, absolute, lazy} = options;
     async function* generate(): AsyncGenerator<string | Dirent> {
       for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {

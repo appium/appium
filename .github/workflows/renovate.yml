@@ -6,14 +6,12 @@ on:
     paths:
       - '.github/workflows/renovate.yml' # this file
       - '.renovaterc.json'
-      - 'renovate/default.json'
   pull_request:
     branches:
       - master
     paths:
       - '.github/workflows/renovate.yml' # this file
       - '.renovaterc.json'
-      - 'renovate/default.json'
 
 permissions:
   contents: read
@@ -27,4 +25,4 @@ jobs:
       - name: Validate Renovate Config
         uses: rinchsan/renovate-config-validator@v0.2.1
         with:
-          pattern: '{.renovaterc.json,renovate/default.json}'
+          pattern: '.renovaterc.json'

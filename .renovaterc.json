@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>appium/appium-workflows//renovate/default"],
-  "rangeStrategy": "update-lockfile",
   "schedule": ["after 10pm", "before 5:00am"],
   "timezone": "America/Vancouver"
 }

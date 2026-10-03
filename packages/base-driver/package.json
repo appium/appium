@@ -53,16 +53,16 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/support": "8.0.0-beta.1",
-    "@appium/types": "2.0.0-beta.1",
-    "async-lock": "1.4.1",
-    "asyncbox": "6.4.2",
-    "axios": "1.19.0",
-    "lru-cache": "11.5.2",
-    "picomatch": "4.0.7"
+    "@appium/support": "~8.0.0-beta.1",
+    "@appium/types": "~2.0.0-beta.1",
+    "async-lock": "^1.4.1",
+    "asyncbox": "^6.4.2",
+    "axios": "^1.19.0",
+    "lru-cache": "^11.5.2",
+    "picomatch": "^4.0.7"
   },
   "devDependencies": {
-    "@types/express": "5.0.6"
+    "@types/express": "^5.0.6"
   },
   "tsd": {
     "compilerOptions": {

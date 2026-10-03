@@ -51,15 +51,15 @@
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=10000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "11.0.0-beta.1",
-    "@appium/support": "8.0.0-beta.1",
-    "@appium/types": "2.0.0-beta.1",
-    "@types/express": "5.0.6",
-    "body-parser": "2.3.0",
-    "express": "5.2.1",
-    "method-override": "3.0.0",
-    "morgan": "1.11.0",
-    "path-to-regexp": "8.4.2"
+    "@appium/base-driver": "~11.0.0-beta.1",
+    "@appium/support": "~8.0.0-beta.1",
+    "@appium/types": "~2.0.0-beta.1",
+    "@types/express": "^5.0.6",
+    "body-parser": "^2.3.0",
+    "express": "^5.2.1",
+    "method-override": "^3.0.0",
+    "morgan": "^1.11.0",
+    "path-to-regexp": "^8.4.2"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

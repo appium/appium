@@ -4,7 +4,6 @@ import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
 import type {BaseDriver} from '../driver.js';
 
 declare module '../driver.js' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IBidiCommands {}
 }
 

@@ -32,7 +32,6 @@ export class RoachHotelMap<K, V> extends Map<K, V> {
     return super.set(key, value);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override delete(_key: K): boolean {
     return false;
   }

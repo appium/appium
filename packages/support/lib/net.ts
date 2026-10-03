@@ -12,6 +12,34 @@ import log from './logger.js';
 import {Timer} from './timing.js';
 import {isPlainObject, toReadableSizeString} from './util.js';
 
+/**
+ * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
+ * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number).
+ * RESERVED, NO_STATUS_RECEIVED, ABNORMAL_CLOSURE and TLS_HANDSHAKE are reported by close events
+ * but must not be sent in a close frame.
+ */
+export const WebSocketCloseCode = {
+  NORMAL_CLOSURE: 1000,
+  GOING_AWAY: 1001,
+  PROTOCOL_ERROR: 1002,
+  UNSUPPORTED_DATA: 1003,
+  RESERVED: 1004,
+  NO_STATUS_RECEIVED: 1005,
+  ABNORMAL_CLOSURE: 1006,
+  INVALID_PAYLOAD: 1007,
+  POLICY_VIOLATION: 1008,
+  MESSAGE_TOO_BIG: 1009,
+  MANDATORY_EXTENSION: 1010,
+  INTERNAL_ERROR: 1011,
+  SERVICE_RESTART: 1012,
+  TRY_AGAIN_LATER: 1013,
+  BAD_GATEWAY: 1014,
+  TLS_HANDSHAKE: 1015,
+} as const;
+// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+export const MIN_APPLICATION_CLOSE_CODE = 3000;
+export const MAX_APPLICATION_CLOSE_CODE = 4999;
+
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 const DEFAULT_FILE_FIELD_NAME = 'file';
 

@@ -3289,6 +3289,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#helping-llms-use-your-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helping LLMs Use Your Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#building-the-docs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3673,6 +3684,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#helping-llms-use-your-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helping LLMs Use Your Documentation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#building-the-docs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3804,6 +3826,29 @@ files in the <code>docs</code> directory. You can therefore create your Markdown
 them in <code>docs</code>, and add links to these files in <code>mkdocs.yml</code>.</p>
 <p>Refer to the <a href="https://www.mkdocs.org/user-guide/writing-your-docs/">MkDocs documentation</a> for
 information on how to organize and structure your documentation. </p>
+<h3 id="helping-llms-use-your-documentation">Helping LLMs Use Your Documentation<a class="headerlink" href="#helping-llms-use-your-documentation" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://llmstxt.org/"><code>/llms.txt</code> convention</a> is a Markdown file at the root of a
+documentation site, listing its most useful pages so that large language models can navigate the
+site without crawling it. Appium's own documentation provides one at
+<a href="https://appium.io/docs/en/latest/llms.txt">appium.io/docs/en/latest/llms.txt</a>, and you may want to
+do the same for your extension.</p>
+<p>MkDocs copies any non-Markdown file in your <code>docs</code> directory to the built site as-is, so all you
+need to do is write an <code>llms.txt</code> and place it alongside your Markdown files. No plugin or build
+configuration is required.</p>
+<p>The value of this file lies in the parts a crawler could not have worked out on its own, so it is
+worth writing by hand rather than generating it from your navigation:</p>
+<ul>
+<li>A short description of what your extension automates, and which platforms it targets</li>
+<li>The handful of things models reliably get wrong about your extension - removed capabilities,
+  renamed commands, patterns from an older major version that no longer apply</li>
+<li>Links to the pages that matter, with a description of each</li>
+</ul>
+<p>Because links in <code>llms.txt</code> are read out of context, they must be absolute URLs. If you use Mike
+for versioning, point them at your version alias (for example <code>latest</code>) rather than at a pinned
+version, so that the file does not go stale. Note that a hand-written file can drift as pages are
+renamed; Appium validates its own with a
+<a href="https://github.com/appium/appium/blob/master/packages/appium/docs/scripts/check-llmstxt.js">script</a>
+that runs in CI, which you are welcome to adapt.</p>
 <h3 id="building-the-docs">Building the Docs<a class="headerlink" href="#building-the-docs" title="Permanent link">&para;</a></h3>
 <p>At this point, you can use the <code>appium-docs</code> CLI tool. Run this tool with no arguments to get the
 full help output and see all the available subcommands and parameters. Here are a few usage
@@ -3843,7 +3888,7 @@ examples:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="December 6, 2023 17:35:41 UTC"><span class="timeago" datetime="2023-12-06T17:35:41+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="December 6, 2023 17:35:41 UTC">2023-12-06</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 2, 2026 10:18:58 UTC"><span class="timeago" datetime="2026-10-02T10:18:58+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 2, 2026 10:18:58 UTC">2026-10-02</span>
   </span>
 
     

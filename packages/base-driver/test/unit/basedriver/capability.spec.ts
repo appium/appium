@@ -190,6 +190,16 @@ describe('Desired Capabilities', function () {
       assert.strictEqual((sessionCaps.capabilities as Record<string, unknown>).noReset, true);
     });
 
+    it('should reject noReset and fullReset set together', async function () {
+      await assert.rejects(
+        d.createSession({
+          alwaysMatch: {platformName: 'iOS', 'appium:noReset': true, 'appium:fullReset': true},
+          firstMatch: [{}],
+        } as unknown as TestW3CCaps),
+        {name: 'SessionNotCreatedError', message: /mutually exclusive/},
+      );
+    });
+
     it('should allow a string "true" in string capabilities', async function () {
       await d.createSession({
         alwaysMatch: {platformName: 'iOS', 'appium:language': 'true'},

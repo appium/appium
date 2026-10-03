@@ -96,7 +96,7 @@ async function run(
       stderr: strip(retval.stderr),
     };
   } catch (err) {
-    const {stdout = '', stderr = ''} = err as ExecError & {stdout?: string; stderr?: string};
+    const {stdout, stderr} = err as ExecError & {stdout?: string; stderr?: string};
     const execErr = err as ExecError;
     const baseErr = err instanceof Error ? err : new Error(String(err));
     const runErr = Object.assign(baseErr, {

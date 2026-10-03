@@ -174,8 +174,8 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
         strippedCaps[strippedCapName] = caps[prefixedCap as keyof typeof caps];
       } else {
         log.warn(
-          `Ignoring capability '${prefixedCap}=${caps[prefixedCap as keyof typeof caps]}' and ` +
-            `using capability '${strippedCapName}=${strippedCaps[strippedCapName]}'`,
+          `Ignoring capability '${prefixedCap}=${JSON.stringify(caps[prefixedCap as keyof typeof caps])}' and ` +
+            `using capability '${strippedCapName}=${JSON.stringify(strippedCaps[strippedCapName])}'`,
         );
       }
     } else {
@@ -256,7 +256,7 @@ export function parseCaps<C extends Constraints>(
   const nonPrefixedCaps = findNonPrefixedCaps(caps);
   if (!util.isEmpty(nonPrefixedCaps)) {
     throw new errors.InvalidArgumentError(
-      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps}`,
+      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps.join(', ')}`,
     );
   }
 
@@ -368,7 +368,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   const verifyIfAcceptable = (capName: string) => {
     if (typeof capName !== 'string') {
       throw new errors.SessionNotCreatedError(
-        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`,
+        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${String(capName)}' is unexpected`,
       );
     }
     if (isStandardCap(capName)) {

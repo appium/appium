@@ -575,7 +575,7 @@ describe('FakeDriver via HTTP', function () {
         assert.strictEqual(status, 200);
       } finally {
         if (sessionId) {
-          await httpDelete(`${testServerBaseSessionUrl}/${sessionId}`);
+          await httpDelete(`${testServerBaseSessionUrl}/${sessionId as string}`);
         }
         createSessionStub.restore();
       }

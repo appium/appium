@@ -136,7 +136,7 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
       : (toBufferDeep(plistParse(binaryLikeData.toString())) as object);
   }
 
-  throw new Error(`Unknown type of plist, data: ${truncateString(String(data), {length: 200})}`);
+  throw new Error(`Unknown type of plist, data: ${truncateString(String(data as unknown), {length: 200})}`);
 }
 
 function toBufferIfBinaryLike(data: unknown): Buffer | null {

@@ -268,24 +268,25 @@ export class ArgParser {
       dest: `setupCommand`,
     });
 
+    const defaultPluginsString = DEFAULT_PLUGINS.join(', ');
     const parserSpecs = [
       {
         command: SUBCOMMAND_MOBILE,
         help:
           `The preset for mobile devices ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_BROWSER,
         help:
           `The preset for desktop browsers ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_DESKTOP,
         help:
           `The preset for desktop applications ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_RESET,

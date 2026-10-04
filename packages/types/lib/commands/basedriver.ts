@@ -3,7 +3,7 @@ import type {Constraints} from '../constraints.js';
 import type {Element, StringRecord} from '../util.js';
 
 export interface IBidiCommands {
-  bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
+  bidiSubscribe(events: string[], contexts?: string[], userContexts?: string[]): Promise<void>;
   bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
   bidiStatus(): Promise<DriverStatus>;
 }

@@ -200,6 +200,36 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      for (const cleanupFails of [false, true]) {
+        it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
+          const originalError = new Error('unsupported initial setting');
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          mockFakeDriver
+            .expects('createSession')
+            .once()
+            .returns([SESSION_ID, {...BASE_CAPS}]);
+          sandbox.stub(fakeDriver, 'updateSettings').rejects(originalError);
+          const deleteSession = cleanupFails
+            ? sandbox.stub(fakeDriver, 'deleteSession').rejects(new Error('cleanup failed'))
+            : sandbox.spy(fakeDriver, 'deleteSession');
+          const result = await appium.createSession({
+            ...W3C_CAPS,
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {invalid: true}},
+          } as any);
+          assert.equal(result.error, originalError);
+          assert.equal(deleteSession.calledOnceWithExactly(SESSION_ID), true);
+          assert.equal(fakeDriver.noCommandTimer, null);
+          assert.deepEqual(Object.keys(appium.sessions), []);
+          assert.deepEqual(Object.keys(appium.sessionIpcs), []);
+          assert.deepEqual(Object.keys(appium.sessionPlugins), []);
+          if (!cleanupFails) {
+            assert.equal(fakeDriver.sessionId, null);
+          }
+          mockFakeDriver.verify();
+        });
+      }
+
       const initialSettingsCases = [
         {
           name: 'only the selected firstMatch candidate',
@@ -269,36 +299,6 @@ describe('AppiumDriver', function () {
             false,
           );
           assert.deepEqual(caps, originalCaps);
-        });
-      }
-
-      for (const cleanupFails of [false, true]) {
-        it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
-          const originalError = new Error('unsupported initial setting');
-          fakeDriver.setProtocolW3C();
-          fakeDriver.sessionId = SESSION_ID;
-          mockFakeDriver
-            .expects('createSession')
-            .once()
-            .returns([SESSION_ID, {...BASE_CAPS}]);
-          sandbox.stub(fakeDriver, 'updateSettings').rejects(originalError);
-          const deleteSession = cleanupFails
-            ? sandbox.stub(fakeDriver, 'deleteSession').rejects(new Error('cleanup failed'))
-            : sandbox.spy(fakeDriver, 'deleteSession');
-          const result = await appium.createSession({
-            ...W3C_CAPS,
-            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {invalid: true}},
-          } as any);
-          assert.equal(result.error, originalError);
-          assert.equal(deleteSession.calledOnceWithExactly(SESSION_ID), true);
-          assert.equal(fakeDriver.noCommandTimer, null);
-          assert.deepEqual(Object.keys(appium.sessions), []);
-          assert.deepEqual(Object.keys(appium.sessionIpcs), []);
-          assert.deepEqual(Object.keys(appium.sessionPlugins), []);
-          if (!cleanupFails) {
-            assert.equal(fakeDriver.sessionId, null);
-          }
-          mockFakeDriver.verify();
         });
       }
 

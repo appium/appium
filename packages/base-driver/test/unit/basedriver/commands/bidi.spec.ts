@@ -60,6 +60,35 @@ describe('bidi commands -', function () {
       assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['']});
     });
 
+    it('should reject mixed arguments in direct ID-based unsubscribe calls without removing subscriptions', async function () {
+      const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+      for (const contexts of [[], [''], ['a']]) {
+        await assert.rejects(driver.bidiUnsubscribe(undefined, contexts, [subscription]), /cannot be combined/);
+      }
+      await assert.rejects(driver.bidiUnsubscribe(['log.entryAdded'], undefined, [subscription]), /cannot be combined/);
+      assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['']});
+      await driver.bidiUnsubscribe(undefined, undefined, [subscription]);
+      assert.deepEqual(driver.bidiEventSubs, {});
+    });
+
+    it('should default legacy unsubscribe to the global context', async function () {
+      await driver.bidiSubscribe(['log.entryAdded']);
+      await driver.bidiUnsubscribe(['log.entryAdded']);
+      assert.deepEqual(driver.bidiEventSubs, {});
+    });
+
+    it('should safely aggregate event names matching Object prototype properties', async function () {
+      const events = ['__proto__', 'constructor', 'hasOwnProperty'];
+      const first = await driver.bidiSubscribe(events, ['a']);
+      const second = await driver.bidiSubscribe(events, ['a', 'b']);
+      assert.deepEqual(driver.bidiEventSubs, Object.fromEntries(events.map((event) => [event, ['a', 'b']])));
+      assert.equal(Object.getPrototypeOf(driver.bidiEventSubs), Object.prototype);
+      await driver.bidiUnsubscribe(undefined, undefined, [second.subscription]);
+      assert.deepEqual(driver.bidiEventSubs, Object.fromEntries(events.map((event) => [event, ['a']])));
+      await driver.bidiUnsubscribe(undefined, undefined, [first.subscription]);
+      assert.deepEqual(driver.bidiEventSubs, {});
+    });
+
     it('should clear subscription IDs when the session is deleted', async function () {
       const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
       await driver.deleteSession();

@@ -1,7 +1,47 @@
 import {util} from '@appium/support';
 import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
 
+import {errors} from '../../protocol/errors.js';
 import type {BaseDriver} from '../driver.js';
+
+// Keep each subscription separate: removing one ID must not remove overlapping subscriptions.
+const subscriptionsByDriver = new WeakMap<object, Map<string, Map<string, string[]>>>();
+
+function getSubscriptions(driver: object): Map<string, Map<string, string[]>> {
+  let subscriptions = subscriptionsByDriver.get(driver);
+  if (!subscriptions) {
+    subscriptions = new Map();
+    subscriptionsByDriver.set(driver, subscriptions);
+  }
+  return subscriptions;
+}
+
+function assertStringList(value: unknown, name: string): asserts value is string[] {
+  if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
+    throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
+  }
+}
+
+function refreshEventSubscriptions(driver: {bidiEventSubs: Record<string, string[]>}): void {
+  const events: Record<string, string[]> = {};
+  for (const subscription of getSubscriptions(driver).values()) {
+    for (const [event, contexts] of subscription) {
+      const existing = Object.hasOwn(events, event) ? events[event] : [];
+      Object.defineProperty(events, event, {
+        value: util.uniq([...existing, ...contexts]),
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+  driver.bidiEventSubs = events;
+}
+
+export function clearBidiSubscriptions(driver: {bidiEventSubs: Record<string, string[]>}): void {
+  subscriptionsByDriver.delete(driver);
+  driver.bidiEventSubs = {};
+}
 
 declare module '../driver.js' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,34 +58,62 @@ export async function bidiSubscribe<C extends Constraints>(
   this: BaseDriver<C>,
   events: string[],
   contexts: string[] = [''],
-): Promise<void> {
-  for (const event of events) {
-    // a later subscribe for the same event must keep existing contexts; the spec appends subscriptions
-    const existing = this.bidiEventSubs[event] ?? [];
-    this.bidiEventSubs[event] = util.uniq([...existing, ...contexts]);
+): Promise<{subscription: string}> {
+  assertStringList(events, 'events');
+  if (!Array.isArray(contexts) || contexts.some((context) => typeof context !== 'string')) {
+    throw new errors.InvalidArgumentError('contexts must be an array of strings');
   }
+  const subscription = util.uuidV4();
+  getSubscriptions(this).set(subscription, new Map(events.map((event) => [event, [...contexts]])));
+  refreshEventSubscriptions(this);
+  return {subscription};
 }
 
 /**
  * Unsubscribe the current BiDi connection from one or more events, optionally scoped to contexts
  *
- * @param events - the names of the events to unsubscribe from
+ * @param events - the names of the events to unsubscribe from (legacy attribute-based form)
  * @param contexts - the context ids to remove from the subscription; an empty string means all contexts
+ * @param subscriptions - previously returned subscription ids, instead of event names
  */
 export async function bidiUnsubscribe<C extends Constraints>(
   this: BaseDriver<C>,
-  events: string[],
+  events?: string[],
   contexts: string[] = [''],
+  subscriptions?: string[],
 ): Promise<void> {
-  for (const event of events) {
-    if (!this.bidiEventSubs[event]) {
-      continue;
+  const registered = getSubscriptions(this);
+  if (subscriptions !== undefined) {
+    assertStringList(subscriptions, 'subscriptions');
+    if (events !== undefined) {
+      throw new errors.InvalidArgumentError('subscriptions cannot be combined with events');
     }
-    this.bidiEventSubs[event] = this.bidiEventSubs[event].filter((c) => !contexts.includes(c));
-    if (this.bidiEventSubs[event].length === 0) {
-      delete this.bidiEventSubs[event];
+    // Validate the entire request before removing anything.
+    for (const id of subscriptions) {
+      if (!registered.has(id)) {
+        throw new errors.InvalidArgumentError(`Unknown subscription id: ${id}`);
+      }
+    }
+    for (const id of subscriptions) {
+      registered.delete(id);
+    }
+  } else {
+    assertStringList(events, 'events');
+    if (!Array.isArray(contexts) || contexts.some((context) => typeof context !== 'string')) {
+      throw new errors.InvalidArgumentError('contexts must be an array of strings');
+    }
+    for (const subscription of registered.values()) {
+      for (const event of events) {
+        const remaining = subscription.get(event)?.filter((context) => !contexts.includes(context));
+        if (remaining?.length) {
+          subscription.set(event, remaining);
+        } else {
+          subscription.delete(event);
+        }
+      }
     }
   }
+  refreshEventSubscriptions(this);
 }
 
 /**

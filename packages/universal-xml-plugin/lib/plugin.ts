@@ -1,4 +1,4 @@
-import type {Element, ExternalDriver, NextPluginCallback} from '@appium/types';
+import type {Element, ExecuteMethodMap, ExternalDriver, NextPluginCallback} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {BasePlugin} from 'appium/plugin.js';
 
@@ -7,6 +7,47 @@ import type {TransformMetadata} from './types.js';
 import {transformQuery} from './xpath.js';
 
 export class UniversalXMLPlugin extends BasePlugin {
+  static executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
+    'universalXml: setEnabled': {
+      command: 'setTranslationEnabled',
+      params: {required: ['enabled']},
+    },
+    'universalXml: isEnabled': {
+      command: 'isTranslationEnabled',
+    },
+  };
+
+  /**
+   * Whether page source and XPath queries are translated in this session. Plugin instances are
+   * created per session, so this is per-session state.
+   */
+  private translationEnabled = true;
+
+  async execute(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    script: string,
+    args: readonly unknown[],
+  ): Promise<unknown> {
+    return await this.executeMethod(next, driver, script, args);
+  }
+
+  /**
+   * Turns translation on or off for the current session. While it's off, page source and
+   * `findElement(s)` are passed on unchanged.
+   */
+  async setTranslationEnabled(_next: NextPluginCallback, _driver: ExternalDriver, enabled: boolean): Promise<void> {
+    if (typeof enabled !== 'boolean') {
+      throw new errors.InvalidArgumentError(`'enabled' must be a boolean, got ${JSON.stringify(enabled)}`);
+    }
+    this.translationEnabled = enabled;
+    this.log.info(`Universal XML translation is now ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  async isTranslationEnabled(): Promise<boolean> {
+    return this.translationEnabled;
+  }
+
   async getPageSource(
     next: NextPluginCallback | null,
     driver: ExternalDriver,
@@ -15,6 +56,9 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<string> {
     void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
+    if (!this.translationEnabled) {
+      return source;
+    }
     const metadata: TransformMetadata = {};
     const platformName = getPlatformName(driver);
     if (platformName.toLowerCase() === 'android') {
@@ -83,6 +127,7 @@ export class UniversalXMLPlugin extends BasePlugin {
     selector: string,
   ): Promise<Element | Element[]> {
     if (
+      !this.translationEnabled ||
       strategy.toLowerCase() !== 'xpath' ||
       !driver.getCurrentContext ||
       (await driver.getCurrentContext()) !== 'NATIVE_APP'

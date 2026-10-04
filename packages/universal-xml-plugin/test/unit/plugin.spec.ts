@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import {describe, it} from 'node:test';
+import {beforeEach, describe, it} from 'node:test';
 
 import type {Constraints} from '@appium/types';
-import {BaseDriver} from 'appium/driver.js';
+import {BaseDriver, errors} from 'appium/driver.js';
 
 import {UniversalXMLPlugin} from '../../lib/plugin.js';
 import {getNodeAttrVal, runQuery} from '../../lib/xpath.js';
@@ -85,6 +85,92 @@ describe('UniversalXMLPlugin', function () {
       const node = await p.findElement(next, driver as any, 'xpath', selector);
       assert.equal(getNodeAttrVal(node as any, 'id'), 'section-1');
       assert.equal((node as any).nodeName, 'div');
+    });
+  });
+
+  describe('universalXml: setEnabled / universalXml: isEnabled', function () {
+    let plugin: UniversalXMLPlugin;
+    let driver: BaseDriver<Constraints>;
+    const unexpectedNext = async () => {
+      throw new Error('next() should not have been called');
+    };
+    const isEnabled = async () => await plugin.execute(unexpectedNext, driver as any, 'universalXml: isEnabled', []);
+    const setEnabled = async (enabled: unknown) =>
+      await plugin.execute(unexpectedNext, driver as any, 'universalXml: setEnabled', [{enabled}]);
+
+    beforeEach(function () {
+      plugin = new UniversalXMLPlugin('test');
+      driver = new BaseDriver<Constraints>({} as any);
+      (driver as any).getCurrentContext = () => 'NATIVE_APP';
+      (driver as any).caps = {platformName: 'iOS'};
+    });
+
+    it('should have translation enabled by default', async function () {
+      assert.equal(await isEnabled(), true);
+    });
+
+    it('should turn translation off and back on', async function () {
+      assert.equal(await setEnabled(false), undefined);
+      assert.equal(await isEnabled(), false);
+      await setEnabled(true);
+      assert.equal(await isEnabled(), true);
+    });
+
+    it('should keep the setting to its own plugin instance', async function () {
+      await setEnabled(false);
+      const otherSessionPlugin = new UniversalXMLPlugin('test');
+      assert.equal(
+        await otherSessionPlugin.execute(unexpectedNext, driver as any, 'universalXml: isEnabled', []),
+        true,
+      );
+    });
+
+    it('should reject a value that is not a boolean', async function () {
+      await assert.rejects(setEnabled('false'), errors.InvalidArgumentError);
+      assert.equal(await isEnabled(), true);
+    });
+
+    it('should reject a call without the enabled param', async function () {
+      await assert.rejects(
+        plugin.execute(unexpectedNext, driver as any, 'universalXml: setEnabled', []),
+        errors.InvalidArgumentError,
+      );
+      assert.equal(await isEnabled(), true);
+    });
+
+    it('should pass other execute methods on to next', async function () {
+      const result = await plugin.execute(async () => 'from next', driver as any, 'mobile: getContexts', []);
+      assert.equal(result, 'from next');
+    });
+
+    it('should return the page source untouched while disabled', async function () {
+      await setEnabled(false);
+      const source = await readFixture(FIXTURES.XML_IOS);
+      assert.equal(await plugin.getPageSource(() => readFixture(FIXTURES.XML_IOS), driver as any), source);
+    });
+
+    it('should translate the page source again once re-enabled', async function () {
+      await setEnabled(false);
+      await setEnabled(true);
+      assert.equal(
+        await plugin.getPageSource(() => readFixture(FIXTURES.XML_IOS), driver as any),
+        await readFixture(FIXTURES.XML_IOS_TRANSFORMED),
+      );
+    });
+
+    it('should pass xpath queries on unchanged while disabled', async function () {
+      await setEnabled(false);
+      const fail = () => {
+        throw new Error('the driver should not have been called');
+      };
+      (driver as any).getCurrentContext = fail;
+      (driver as any).getPageSource = fail;
+      (driver as any).findElement = fail;
+      (driver as any).findElements = fail;
+      const element = {'element-6066-11e4-a52e-4f735466cecf': 'from-next'};
+      const selector = '//TextInput[@axId="username"]';
+      assert.equal(await plugin.findElement(async () => element, driver as any, 'xpath', selector), element);
+      assert.deepEqual(await plugin.findElements(async () => [element], driver as any, 'xpath', selector), [element]);
     });
   });
 });

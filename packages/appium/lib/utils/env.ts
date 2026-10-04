@@ -3,6 +3,7 @@ import {homedir} from 'node:os';
 import path from 'node:path';
 
 import {fs, util} from '@appium/support';
+import {lock} from 'proper-lockfile';
 import * as semver from 'semver';
 
 import {type NormalizedPackageJson, readPackage} from './read-package.js';
@@ -177,5 +178,30 @@ export async function withManifestLock<T>(appiumHome: string, behavior: () => Pr
   // The locks directory lives under the user's home dir, independent of `appiumHome`'s own
   // permissions, but may not exist yet on first use.
   await fs.mkdirp(path.dirname(lockFile));
-  return util.getLockFileGuard<T>(lockFile)(behavior);
+  const existingLock = await fs.lstat(lockFile).catch((err: NodeJS.ErrnoException) => {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+    return undefined;
+  });
+  if (existingLock && !existingLock.isDirectory()) {
+    // Older Appium 4 builds used an empty file with no owner/heartbeat information. We cannot
+    // distinguish an abandoned file from one held by a still-running older process safely.
+    throw new Error(
+      `Found a legacy manifest lock at '${lockFile}'. Stop other Appium processes using this ` +
+        `APPIUM_HOME, remove that lock file, and retry.`,
+    );
+  }
+  const release = await lock(lockFile, {
+    realpath: false,
+    lockfilePath: lockFile,
+    stale: 10000,
+    update: 2000,
+    retries: {retries: 120, factor: 1, minTimeout: 1000, maxTimeout: 1000},
+  });
+  try {
+    return await behavior();
+  } finally {
+    await release();
+  }
 }

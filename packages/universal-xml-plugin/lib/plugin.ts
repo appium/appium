@@ -23,6 +23,10 @@ export class UniversalXMLPlugin extends BasePlugin {
    */
   private translationEnabled = true;
 
+  /**
+   * Handles the plugin's execute methods (`universalXml: setEnabled`, `universalXml: isEnabled`)
+   * and passes any other script on to the next handler.
+   */
   async execute(
     next: NextPluginCallback,
     driver: ExternalDriver,
@@ -36,7 +40,9 @@ export class UniversalXMLPlugin extends BasePlugin {
    * Turns translation on or off for the current session. While it's off, page source and
    * `findElement(s)` are passed on unchanged.
    */
-  async setTranslationEnabled(_next: NextPluginCallback, _driver: ExternalDriver, enabled: boolean): Promise<void> {
+  async setTranslationEnabled(next: NextPluginCallback, driver: ExternalDriver, enabled: boolean): Promise<void> {
+    void next;
+    void driver;
     if (typeof enabled !== 'boolean') {
       throw new errors.InvalidArgumentError(`'enabled' must be a boolean, got ${JSON.stringify(enabled)}`);
     }
@@ -44,10 +50,17 @@ export class UniversalXMLPlugin extends BasePlugin {
     this.log.info(`Universal XML translation is now ${enabled ? 'enabled' : 'disabled'}`);
   }
 
+  /**
+   * Returns whether translation is currently enabled for this session.
+   */
   async isTranslationEnabled(): Promise<boolean> {
     return this.translationEnabled;
   }
 
+  /**
+   * Returns the page source, translated to universal XML when translation is enabled.
+   * `addIndexPath` adds an index path attribute to every node, which the XPath transformer uses.
+   */
   async getPageSource(
     next: NextPluginCallback | null,
     driver: ExternalDriver,
@@ -87,6 +100,10 @@ export class UniversalXMLPlugin extends BasePlugin {
     return xml;
   }
 
+  /**
+   * Finds an element. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
   async findElement(
     next: NextPluginCallback,
     driver: ExternalDriver,
@@ -96,6 +113,10 @@ export class UniversalXMLPlugin extends BasePlugin {
     return (await this._find(false, next, driver, strategy, selector)) as Element;
   }
 
+  /**
+   * Finds elements. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
   async findElements(
     next: NextPluginCallback,
     driver: ExternalDriver,

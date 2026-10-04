@@ -59,6 +59,7 @@
     "asyncbox": "^6.4.2",
     "axios": "^1.19.0",
     "lru-cache": "^11.5.2",
+    "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7"
   },
   "devDependencies": {

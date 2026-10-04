@@ -31,6 +31,26 @@ describe('BaseDriver', function () {
   });
 
   describe('executeCommand', function () {
+    it('should only time out after the last queued command finishes', async function () {
+      const driver = new SlowCommandDriver({} as InitialOpts);
+      driver.sessionId = 'queued-timeout-test';
+      driver.newCommandTimeoutMs = 50;
+      try {
+        assert.deepEqual(
+          await Promise.all([driver.executeCommand('slowCommand'), driver.executeCommand('slowCommand')]),
+          ['slow-done', 'slow-done'],
+        );
+        assert.equal(driver.sessionId, 'queued-timeout-test');
+        const shutdown = new Promise<void>((resolve) => driver.eventEmitter.once('onUnexpectedShutdown', resolve));
+        await shutdown;
+        // The shutdown event is emitted before deleteSession completes.
+        await new Promise((resolve) => setImmediate(resolve));
+        assert.equal(driver.sessionId, null);
+      } finally {
+        await driver.clearNewCommandTimeout();
+      }
+    });
+
     it('should not make getStatus wait behind a command already in the queue', async function () {
       const driver = new SlowCommandDriver({} as InitialOpts);
       const order: string[] = [];

@@ -52,7 +52,7 @@ export const findAppiumDependencyPackage = util.memoize(async function findAppiu
       const version = semver.minVersion(
         String(pkg.dependencies?.appium ?? pkg.devDependencies?.appium ?? pkg.peerDependencies?.appium),
       );
-      return version && semver.satisfies(version, acceptableVersionRange) ? root : undefined;
+      return version && semver.satisfies(version, acceptableVersionRange, {includePrerelease: true}) ? root : undefined;
     } catch {
       return undefined;
     }

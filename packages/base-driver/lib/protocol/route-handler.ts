@@ -331,15 +331,15 @@ function normalizeError(err: unknown, driver: Core<any>, sessionId: string | und
 function buildErrorResponse(err: unknown, driver: Core<any>, sessionId: string | undefined): [number, any] {
   let actualErr = normalizeError(err, driver, sessionId);
 
-  const stacktrace = (err as {stacktrace?: string}).stacktrace;
+  const stacktrace = (actualErr as Error & {stacktrace?: string}).stacktrace;
   let errMsg = stacktrace || actualErr.stack || '';
   if (!errMsg.includes(actualErr.message)) {
     // if the message has more information, add it. but often the message
     // is the first part of the stack trace
     errMsg = `${actualErr.message}${errMsg ? '\n' + errMsg : ''}`;
   }
-  if (isErrorType(err, errors.ProxyRequestError)) {
-    actualErr = err.getActualError();
+  if (isErrorType(actualErr, errors.ProxyRequestError)) {
+    actualErr = actualErr.getActualError();
   } else {
     getLogger(driver, sessionId).debug(`Encountered internal error running command: ${errMsg}`);
   }

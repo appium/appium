@@ -68,32 +68,19 @@ export async function bidiSubscribe<C extends Constraints>(
 export async function bidiUnsubscribe<C extends Constraints>(
   this: BaseDriver<C>,
   events?: string[],
-  contexts: string[] = [''],
+  contexts?: string[],
   subscriptions?: string[],
 ): Promise<void> {
   const registered = getSubscriptions(this);
-  if (subscriptions !== undefined) {
-    assertStringList(subscriptions, 'subscriptions');
-    if (events !== undefined) {
-      throw new errors.InvalidArgumentError('subscriptions cannot be combined with events');
-    }
-    // Validate the entire request before removing anything.
-    for (const id of subscriptions) {
-      if (!registered.has(id)) {
-        throw new errors.InvalidArgumentError(`Unknown subscription id: ${id}`);
-      }
-    }
-    for (const id of subscriptions) {
-      registered.delete(id);
-    }
-  } else {
+  if (subscriptions === undefined) {
+    const contextsToRemove = contexts === undefined ? [''] : contexts;
     assertStringList(events, 'events');
-    if (!Array.isArray(contexts) || contexts.some((context) => typeof context !== 'string')) {
+    if (!Array.isArray(contextsToRemove) || contextsToRemove.some((context) => typeof context !== 'string')) {
       throw new errors.InvalidArgumentError('contexts must be an array of strings');
     }
     for (const subscription of registered.values()) {
       for (const event of events) {
-        const remaining = subscription.get(event)?.filter((context) => !contexts.includes(context));
+        const remaining = subscription.get(event)?.filter((context) => !contextsToRemove.includes(context));
         if (remaining?.length) {
           subscription.set(event, remaining);
         } else {
@@ -101,6 +88,22 @@ export async function bidiUnsubscribe<C extends Constraints>(
         }
       }
     }
+    refreshEventSubscriptions(this);
+    return;
+  }
+
+  assertStringList(subscriptions, 'subscriptions');
+  if (events !== undefined || contexts !== undefined) {
+    throw new errors.InvalidArgumentError('subscriptions cannot be combined with events or contexts');
+  }
+  // Validate the entire request before removing anything.
+  for (const id of subscriptions) {
+    if (!registered.has(id)) {
+      throw new errors.InvalidArgumentError(`Unknown subscription id: ${id}`);
+    }
+  }
+  for (const id of subscriptions) {
+    registered.delete(id);
   }
   refreshEventSubscriptions(this);
 }
@@ -136,17 +139,12 @@ function assertStringList(value: unknown, name: string): asserts value is string
 }
 
 function refreshEventSubscriptions(driver: BidiSubscriptionDriver): void {
-  const events: Record<string, string[]> = {};
+  const events = new Map<string, string[]>();
   for (const subscription of getSubscriptions(driver).values()) {
     for (const [event, contexts] of subscription) {
-      const existing = Object.hasOwn(events, event) ? events[event] : [];
-      Object.defineProperty(events, event, {
-        value: util.uniq([...existing, ...contexts]),
-        enumerable: true,
-        configurable: true,
-        writable: true,
-      });
+      const existing = events.get(event) ?? [];
+      events.set(event, util.uniq([...existing, ...contexts]));
     }
   }
-  driver.bidiEventSubs = events;
+  driver.bidiEventSubs = Object.fromEntries(events);
 }

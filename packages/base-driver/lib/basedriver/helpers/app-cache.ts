@@ -335,7 +335,9 @@ async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): P
   url.username = '';
   url.password = '';
   const axiosUrl = url.href;
-  const axiosAuth = username ? {username, password} : undefined;
+  const axiosAuth = username
+    ? {username: decodeURIComponent(username), password: decodeURIComponent(password)}
+    : undefined;
   const requestOpts: AxiosRequestConfig = {
     url: axiosUrl,
     auth: axiosAuth,

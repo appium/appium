@@ -33,9 +33,10 @@
     "access": "public"
   },
   "scripts": {
-    "test:smoke": "node scripts/test-smoke.mjs"
+    "test:smoke": "node scripts/test-smoke.mjs && node --test scripts/member-ordering.spec.mjs"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "8.71.0",
     "oxfmt": "0.71.0",
     "oxlint": "1.86.0",
     "oxlint-tsgolint": "7.0.2003"

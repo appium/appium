@@ -59,6 +59,7 @@ npx oxfmt -c oxfmt.config.mjs .
 ## Notes
 
 - **Type-aware linting**: Oxlint config enables `options.typeAware` via the bundled `oxlint-tsgolint` dependency.
+- **Class member ordering**: The bundled `@typescript-eslint/eslint-plugin` runs `member-ordering` through Oxlint's [JS plugins](https://oxc.rs/docs/guide/usage/linter/js-plugins.html), under the alias `typescript-eslint-js/member-ordering`. It preserves the legacy warning level and default class/class-expression ordering; interfaces and type literals are excluded. This rule reports violations but does not reorder members with `--fix`. Consumers do not need to install the plugin separately.
 - **`.editorconfig`**: Oxfmt reads `.editorconfig` for unset formatting options (`printWidth`, `tabWidth`, `useTabs`, `endOfLine`, `insertFinalNewline`). The shared Oxfmt config applies Appium fallbacks only for options not defined in the nearest `.editorconfig`; defined options stay unset so Oxfmt can still apply section-specific values at format time.
 - **`.gitignore`**: Oxlint and Oxfmt respect `.gitignore` automatically.
 - **`ignorePatterns`**: Oxlint does not inherit `ignorePatterns` via `extends` — import and spread the exported arrays in your root config.
@@ -67,7 +68,6 @@ npx oxfmt -c oxfmt.config.mjs .
 
 | Legacy rule | Notes |
 | --- | --- |
-| `@typescript-eslint/member-ordering` | Class member ordering |
 | `n/no-deprecated-api` | Node.js deprecated API usage |
 | `jsdoc/require-jsdoc` | JSDoc on exported functions |
 | `perfectionist/sort-modules` | Export-before-non-export module ordering |

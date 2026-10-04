@@ -1,4 +1,8 @@
+import {createRequire} from 'node:module';
+
 export {defineConfig} from 'oxlint';
+
+const require = createRequire(import.meta.url);
 
 /**
  * Default ignore patterns for Appium Oxlint projects.
@@ -12,10 +16,10 @@ export const ignorePatterns = ['**/.*', '**/*-d.ts', '**/build/**', '**/coverage
  * Shared Oxlint configuration for Appium projects.
  *
  * Migrated from @appium/eslint-config-appium-ts via @oxlint/migrate.
- * Stylistic rules are intentionally omitted; use `@appium/oxc-config/oxfmt` instead.
+ * Formatting rules are intentionally omitted; use `@appium/oxc-config/oxfmt` instead.
+ * Class member ordering uses the TypeScript ESLint JS plugin.
  *
  * Rules not available in Oxlint (no equivalent yet):
- * - @typescript-eslint/member-ordering
  * - n/no-deprecated-api
  * - jsdoc/require-jsdoc
  * - perfectionist/sort-modules
@@ -23,6 +27,14 @@ export const ignorePatterns = ['**/.*', '**/*-d.ts', '**/build/**', '**/coverage
 /** @type {import('oxlint').OxlintConfig} */
 const config = {
   plugins: [],
+  jsPlugins: [
+    {
+      // Keep the JS rule separate from Oxlint's native TypeScript rules. Resolve from this
+      // package so consumers do not need to install the plugin as a direct dependency.
+      name: 'typescript-eslint-js',
+      specifier: require.resolve('@typescript-eslint/eslint-plugin'),
+    },
+  ],
   categories: {
     correctness: 'off',
   },
@@ -156,6 +168,13 @@ const config = {
     ],
     'typescript/no-non-null-assertion': 'warn',
     'typescript/dot-notation': 'error',
+    'typescript-eslint-js/member-ordering': [
+      'warn',
+      {
+        interfaces: 'never',
+        typeLiterals: 'never',
+      },
+    ],
 
     // --- Appium custom rules ---
     curly: 'error',

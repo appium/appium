@@ -3,6 +3,8 @@ import http from 'node:http';
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
+import {promisify} from 'node:util';
+import {gzip} from 'node:zlib';
 
 import {fs, tempDir} from '../../lib/index.js';
 import {downloadFile, uploadFile} from '../../lib/net.js';
@@ -153,6 +155,37 @@ describe('net', function () {
         },
       );
       assert.deepEqual(await fs.readFile(dstPath), body);
+    });
+
+    it('should save a decompressed body with a compressed Content-Length', async function () {
+      const body = Buffer.from('compressible download payload '.repeat(100));
+      const compressed = await promisify(gzip)(body);
+      const dstPath = path.join(tmpDir, 'compressed.bin');
+      await withServer(
+        (res) => {
+          res.writeHead(200, {'Content-Encoding': 'gzip', 'Content-Length': String(compressed.length)});
+          res.end(compressed);
+        },
+        (url) => downloadFile(url, dstPath, {isMetered: false}),
+      );
+      assert.deepEqual(await fs.readFile(dstPath), body);
+    });
+
+    it('should still reject and remove a truncated compressed download', async function () {
+      const compressed = await promisify(gzip)(Buffer.from('compressed payload '.repeat(100)));
+      const dstPath = path.join(tmpDir, 'truncated-compressed.bin');
+      await assert.rejects(
+        withServer(
+          (res) => {
+            res.writeHead(200, {'Content-Encoding': 'gzip', 'Content-Length': String(compressed.length)});
+            res.write(compressed.subarray(0, -4));
+            setTimeout(() => res.destroy(), 100);
+          },
+          (url) => downloadFile(url, dstPath, {isMetered: false}),
+        ),
+        /download the file/,
+      );
+      assert.equal(await fs.exists(dstPath), false);
     });
 
     it('should not leave a file behind when the request fails', async function () {

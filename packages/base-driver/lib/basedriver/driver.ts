@@ -133,7 +133,9 @@ export class BaseDriver<
     const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
     if (!command) {
-      await this.startNewCommandTimeout();
+      if (this.isCommandsQueueEnabled && this.inFlightCommandCount === 0) {
+        await this.startNewCommandTimeout();
+      }
       throw new errors.NotYetImplementedError();
     }
 
@@ -147,6 +149,8 @@ export class BaseDriver<
       };
       this.inFlightCommandCount++;
       try {
+        // The preceding queued command may have armed the timer after this request arrived.
+        await this.clearNewCommandTimeout();
         return await Promise.race([
           command.call(this, ...args),
           // This promise is needed to monitor if the session has been

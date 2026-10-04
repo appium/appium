@@ -177,5 +177,22 @@ export async function withManifestLock<T>(appiumHome: string, behavior: () => Pr
   // The locks directory lives under the user's home dir, independent of `appiumHome`'s own
   // permissions, but may not exist yet on first use.
   await fs.mkdirp(path.dirname(lockFile));
-  return util.getLockFileGuard<T>(lockFile)(behavior);
+  let acquired = false;
+  try {
+    return await util.getLockFileGuard<T>(lockFile)(() => {
+      acquired = true;
+      return behavior();
+    });
+  } catch (err) {
+    if (!acquired && err instanceof Error && (err.cause as NodeJS.ErrnoException | undefined)?.code === 'EEXIST') {
+      // A timeout does not prove the lock is abandoned. Never remove a potentially active lock.
+      throw new Error(
+        `${err.message} Another process may still be using APPIUM_HOME '${appiumHome}'. ` +
+          `If a previous process exited unexpectedly, stop all Appium servers and extension CLI ` +
+          `commands using this APPIUM_HOME before manually removing '${lockFile}', then retry.`,
+        {cause: err},
+      );
+    }
+    throw err;
+  }
 }

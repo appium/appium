@@ -197,7 +197,7 @@ export async function withManifestLock<T>(appiumHome: string, behavior: () => Pr
     lockfilePath: lockFile,
     stale: 10000,
     update: 2000,
-    retries: {retries: 120, factor: 1, minTimeout: 1000, maxTimeout: 1000},
+    retries: {retries: 1200, factor: 1, minTimeout: 100, maxTimeout: 100},
   });
   try {
     return await behavior();

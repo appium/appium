@@ -177,18 +177,27 @@ export async function downloadFile(
   let responseLength: number;
   let responseStream: Readable | undefined;
   let writer: WriteStream | undefined;
+  let destinationOpened = false;
   try {
     const response = await axios(requestOpts);
     responseStream = response.data as Readable;
     responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
     // opening the file first would leave an empty destination behind when the request fails
     writer = fs.createWriteStream(dstPath);
+    writer.once('open', () => {
+      destinationOpened = true;
+    });
     await pipeline(responseStream, writer);
   } catch (err) {
     if (writer) {
       responseStream?.destroy();
       await closeStream(writer);
-      await fs.rimraf(dstPath);
+      if (destinationOpened) {
+        // Never recursively remove a caller-supplied path, including one that failed to open.
+        await fs.unlink(dstPath).catch((cleanupError) => {
+          log.warn(`Cannot remove incomplete download at '${dstPath}': ${cleanupError}`);
+        });
+      }
     }
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
@@ -196,7 +205,7 @@ export async function downloadFile(
 
   const {size} = await fs.stat(dstPath);
   if (responseLength && size !== responseLength) {
-    await fs.rimraf(dstPath);
+    await fs.unlink(dstPath);
     throw new Error(
       `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
         `differs from the one in Content-Length response header (${responseLength} bytes)`,

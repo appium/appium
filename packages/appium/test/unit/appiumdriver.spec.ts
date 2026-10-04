@@ -200,6 +200,78 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      const initialSettingsCases = [
+        {
+          name: 'only the selected firstMatch candidate',
+          caps: {
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {shared: true, choice: 'always'}},
+            firstMatch: [
+              {'appium:settings': {choice: 'first'}},
+              {'appium:settings': {choice: 'last', unselected: true}},
+            ],
+          },
+          expected: {shared: true, choice: 'first'},
+        },
+        {
+          name: 'the next valid firstMatch candidate',
+          caps: {
+            alwaysMatch: {platformName: 'Fake'},
+            firstMatch: [
+              {'appium:automationName': 42, 'appium:settings': {rejected: true}},
+              {'appium:automationName': 'Fake', 'appium:settings': {selected: true}},
+            ],
+          },
+          expected: {selected: true},
+        },
+        {
+          name: 'settings inside appium:options with nested values taking precedence',
+          caps: {
+            alwaysMatch: {
+              ...W3C_CAPS.alwaysMatch,
+              'appium:settings': {choice: 'outer'},
+              'appium:options': {settings: {choice: 'nested'}, 'settings[flag]': true},
+            },
+          },
+          expected: {choice: 'nested', flag: true},
+        },
+        {
+          name: 'settings inside firstMatch appium:options',
+          caps: {
+            alwaysMatch: W3C_CAPS.alwaysMatch,
+            firstMatch: [{'appium:options': {settings: {choice: 'nested'}}}],
+          },
+          expected: {choice: 'nested'},
+        },
+        {
+          name: 'default settings without overwriting requested settings',
+          defaults: {'appium:options': {settings: {defaultOnly: true, choice: 'default'}}},
+          caps: {alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings[choice]': 'requested'}},
+          expected: {defaultOnly: true, choice: 'requested'},
+        },
+      ];
+      for (const {name, caps, defaults, expected} of initialSettingsCases) {
+        it(`should apply ${name}`, async function () {
+          const originalCaps = structuredClone(caps);
+          appium.args.defaultCapabilities = defaults;
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          const create = sandbox.stub(fakeDriver, 'createSession').resolves([SESSION_ID, {...BASE_CAPS}] as any);
+          const update = sandbox.stub(fakeDriver, 'updateSettings').resolves();
+
+          const {error} = await appium.createSession(caps as any);
+
+          assert.equal(error, undefined);
+          assert.equal(update.calledOnceWithExactly(expected), true);
+          const forwarded = create.firstCall.args[0];
+          assert.ok(forwarded);
+          assert.equal(
+            Object.keys(forwarded.alwaysMatch ?? {}).some((key) => key.includes('settings')),
+            false,
+          );
+          assert.deepEqual(caps, originalCaps);
+        });
+      }
+
       for (const cleanupFails of [false, true]) {
         it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
           const originalError = new Error('unsupported initial setting');

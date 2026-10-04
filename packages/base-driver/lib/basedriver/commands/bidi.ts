@@ -4,41 +4,12 @@ import type {Constraints, DriverStatus, IBidiCommands} from '@appium/types';
 import {errors} from '../../protocol/errors.js';
 import type {BaseDriver} from '../driver.js';
 
+type BidiSubscriptionDriver = {bidiEventSubs: Record<string, string[]>};
+
 // Keep each subscription separate: removing one ID must not remove overlapping subscriptions.
 const subscriptionsByDriver = new WeakMap<object, Map<string, Map<string, string[]>>>();
 
-function getSubscriptions(driver: object): Map<string, Map<string, string[]>> {
-  let subscriptions = subscriptionsByDriver.get(driver);
-  if (!subscriptions) {
-    subscriptions = new Map();
-    subscriptionsByDriver.set(driver, subscriptions);
-  }
-  return subscriptions;
-}
-
-function assertStringList(value: unknown, name: string): asserts value is string[] {
-  if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
-    throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
-  }
-}
-
-function refreshEventSubscriptions(driver: {bidiEventSubs: Record<string, string[]>}): void {
-  const events: Record<string, string[]> = {};
-  for (const subscription of getSubscriptions(driver).values()) {
-    for (const [event, contexts] of subscription) {
-      const existing = Object.hasOwn(events, event) ? events[event] : [];
-      Object.defineProperty(events, event, {
-        value: util.uniq([...existing, ...contexts]),
-        enumerable: true,
-        configurable: true,
-        writable: true,
-      });
-    }
-  }
-  driver.bidiEventSubs = events;
-}
-
-export function clearBidiSubscriptions(driver: {bidiEventSubs: Record<string, string[]>}): void {
+export function clearBidiSubscriptions(driver: BidiSubscriptionDriver): void {
   subscriptionsByDriver.delete(driver);
   driver.bidiEventSubs = {};
 }
@@ -147,4 +118,35 @@ export async function bidiStatus<C extends Constraints>(this: BaseDriver<C>): Pr
     ready: 'ready' in base ? (base.ready as boolean) : true,
     message: 'message' in base ? (base.message as string) : `${this.constructor.name} is ready to accept commands`,
   };
+}
+
+function getSubscriptions(driver: object): Map<string, Map<string, string[]>> {
+  let subscriptions = subscriptionsByDriver.get(driver);
+  if (!subscriptions) {
+    subscriptions = new Map();
+    subscriptionsByDriver.set(driver, subscriptions);
+  }
+  return subscriptions;
+}
+
+function assertStringList(value: unknown, name: string): asserts value is string[] {
+  if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
+    throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
+  }
+}
+
+function refreshEventSubscriptions(driver: BidiSubscriptionDriver): void {
+  const events: Record<string, string[]> = {};
+  for (const subscription of getSubscriptions(driver).values()) {
+    for (const [event, contexts] of subscription) {
+      const existing = Object.hasOwn(events, event) ? events[event] : [];
+      Object.defineProperty(events, event, {
+        value: util.uniq([...existing, ...contexts]),
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
+    }
+  }
+  driver.bidiEventSubs = events;
 }

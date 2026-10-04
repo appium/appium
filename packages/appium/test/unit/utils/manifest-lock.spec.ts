@@ -4,7 +4,7 @@ import * as os from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it, mock, type TestContext} from 'node:test';
 
-import * as support from '@appium/support';
+import support from '@appium/support';
 
 import type * as Env from '../../../lib/utils/env.js';
 
@@ -23,6 +23,7 @@ describe('manifest lock recovery guidance', function () {
     acquisitionError = undefined;
     t.mock.module('node:os', {namedExports: {homedir: () => root}});
     t.mock.module('@appium/support', {
+      defaultExport: support,
       namedExports: {
         ...support,
         util: {

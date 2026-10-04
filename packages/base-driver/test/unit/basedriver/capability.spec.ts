@@ -198,6 +198,13 @@ describe('Desired Capabilities', function () {
         } as unknown as TestW3CCaps),
         {name: 'SessionNotCreatedError', message: /mutually exclusive/},
       );
+      assert.equal(d.sessionId, null);
+      const [sessionId] = await d.createSession({
+        alwaysMatch: {platformName: 'iOS', 'appium:fullReset': true},
+      } as unknown as TestW3CCaps);
+      assert.equal(d.sessionId, sessionId);
+      assert.equal(d.opts.fullReset, true);
+      assert.equal(d.opts.noReset, false);
     });
 
     it('should allow a string "true" in string capabilities', async function () {

@@ -91,19 +91,7 @@ export class BaseDriver<
   // Number of commands (queued or queue-exempt) currently executing. Used so the new command
   // timeout is only restarted once the driver is fully idle again, not after every exempt command.
   private inFlightCommandCount = 0;
-
-  /**
-   * Contains the base constraints plus whatever the subclass wants to add.
-   *
-   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
-   * an issue:
-   * @see {@link https://github.com/appium/appium/issues/new}
-   */
-  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
-    return Object.freeze(
-      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
-    );
-  }
+  private readonly pendingCommandControllers = new Set<AbortController>();
 
   /**
    * This is the main command handler for the driver. It wraps command
@@ -211,7 +199,7 @@ export class BaseDriver<
 
     const res =
       this.isCommandsQueueEnabled && !isQueueExempt
-        ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
+        ? await this.runQueuedCommand(synchronizationKey, runCommandPromise)
         : await runCommandPromise();
 
     // log timing information about this command
@@ -421,14 +409,10 @@ export class BaseDriver<
   async deleteSession(sessionId?: string | null): Promise<void> {
     void sessionId;
     await this.clearNewCommandTimeout();
-    if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
-      // simple hack to release pending commands if they exist
-      // @ts-expect-error private API
-      const queues = this.commandsQueueGuard.queues;
-      for (const key of Object.keys(queues)) {
-        queues[key] = [];
-      }
+    for (const controller of this.pendingCommandControllers) {
+      controller.abort(new errors.NoSuchDriverError('The session was deleted before this command could run'));
     }
+    this.pendingCommandControllers.clear();
     this.sessionId = null;
   }
 
@@ -502,6 +486,43 @@ export class BaseDriver<
       throw this.log.errorWithException('Cannot get settings; settings object not found');
     }
     return this.settings.getSettings();
+  }
+
+  /**
+   * Contains the base constraints plus whatever the subclass wants to add.
+   *
+   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
+   * an issue:
+   * @see {@link https://github.com/appium/appium/issues/new}
+   */
+  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
+    return Object.freeze(
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
+    );
+  }
+
+  /**
+   * Reject waiting commands when their session ends without interrupting a running command.
+   */
+  private async runQueuedCommand<T>(key: string, command: () => Promise<T>): Promise<T> {
+    const controller = new AbortController();
+    const {signal} = controller;
+    const cancellation = Promise.withResolvers<never>();
+    const onAbort = () => cancellation.reject(signal.reason);
+    signal.addEventListener('abort', onAbort, {once: true});
+    this.pendingCommandControllers.add(controller);
+    try {
+      const execution = this.commandsQueueGuard.acquire(key, async () => {
+        this.pendingCommandControllers.delete(controller);
+        signal.removeEventListener('abort', onAbort);
+        signal.throwIfAborted();
+        return await command();
+      });
+      return await Promise.race([execution, cancellation.promise]);
+    } finally {
+      this.pendingCommandControllers.delete(controller);
+      signal.removeEventListener('abort', onAbort);
+    }
   }
 }
 

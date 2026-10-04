@@ -174,19 +174,19 @@ export async function downloadFile(
   }
 
   const timer = new Timer().start();
-  let responseLength: number;
   let responseStream: Readable | undefined;
   let writer: WriteStream | undefined;
   let destinationOpened = false;
   try {
     const response = await axios(requestOpts);
     responseStream = response.data as Readable;
-    responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
     // opening the file first would leave an empty destination behind when the request fails
     writer = fs.createWriteStream(dstPath);
     writer.once('open', () => {
       destinationOpened = true;
     });
+    // The HTTP stream detects truncated transfers. Axios may decompress the body,
+    // so the saved size cannot be compared with the wire Content-Length.
     await pipeline(responseStream, writer);
   } catch (err) {
     if (writer) {
@@ -204,13 +204,6 @@ export async function downloadFile(
   }
 
   const {size} = await fs.stat(dstPath);
-  if (responseLength && size !== responseLength) {
-    await fs.unlink(dstPath);
-    throw new Error(
-      `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
-        `differs from the one in Content-Length response header (${responseLength} bytes)`,
-    );
-  }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
     log.debug(

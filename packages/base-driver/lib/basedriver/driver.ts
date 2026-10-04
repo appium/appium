@@ -91,6 +91,7 @@ export class BaseDriver<
   // Number of commands (queued or queue-exempt) currently executing. Used so the new command
   // timeout is only restarted once the driver is fully idle again, not after every exempt command.
   private inFlightCommandCount = 0;
+  private readonly pendingCommandCancellations = new Set<() => void>();
 
   /**
    * Contains the base constraints plus whatever the subclass wants to add.
@@ -207,7 +208,7 @@ export class BaseDriver<
 
     const res =
       this.isCommandsQueueEnabled && !isQueueExempt
-        ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
+        ? await this.runQueuedCommand(synchronizationKey, runCommandPromise)
         : await runCommandPromise();
 
     // log timing information about this command
@@ -237,6 +238,30 @@ export class BaseDriver<
    * @param args - Arguments passed to the command
    * @returns A potentially updated command name
    */
+  private async runQueuedCommand<T>(key: string, command: () => Promise<T>): Promise<T> {
+    let cancelled = false;
+    let cancel!: () => void;
+    const cancellation = new Promise<never>((_resolve, reject) => {
+      cancel = () => {
+        cancelled = true;
+        reject(new errors.NoSuchDriverError('The session was deleted before this command could run'));
+      };
+    });
+    this.pendingCommandCancellations.add(cancel);
+    try {
+      const execution = this.commandsQueueGuard.acquire(key, async () => {
+        this.pendingCommandCancellations.delete(cancel);
+        if (cancelled) {
+          throw new errors.NoSuchDriverError('The session was deleted before this command could run');
+        }
+        return await command();
+      });
+      return await Promise.race([execution, cancellation]);
+    } finally {
+      this.pendingCommandCancellations.delete(cancel);
+    }
+  }
+
   clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
@@ -416,14 +441,10 @@ export class BaseDriver<
   async deleteSession(sessionId?: string | null): Promise<void> {
     void sessionId;
     await this.clearNewCommandTimeout();
-    if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
-      // simple hack to release pending commands if they exist
-      // @ts-expect-error private API
-      const queues = this.commandsQueueGuard.queues;
-      for (const key of Object.keys(queues)) {
-        queues[key] = [];
-      }
+    for (const cancel of this.pendingCommandCancellations) {
+      cancel();
     }
+    this.pendingCommandCancellations.clear();
     this.sessionId = null;
   }
 

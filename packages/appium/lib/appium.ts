@@ -296,6 +296,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     const protocol = PROTOCOLS.W3C;
     let innerSessionId: string;
+    let registeredSessionId: string | undefined;
     let dCaps: DriverCapsWithBidiUrl;
     try {
       // Parse the caps into a format that the InnerDriver will accept
@@ -353,6 +354,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         DriverCapsWithBidiUrl,
       ];
       this.sessions[innerSessionId] = driverInstance;
+      registeredSessionId = innerSessionId;
       // create an IPC channel for the driver and all plugins on this session
       this.sessionIpcs[innerSessionId] = new AppiumIpc({
         maxObjSize: this.args.maxIpcDataSize,
@@ -396,6 +398,19 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         dCaps.webSocketUrl = bidiUrl;
       }
     } catch (error: unknown) {
+      if (registeredSessionId) {
+        try {
+          // A failed initialization must not leave a registered session or an idle timer,
+          // even if the driver's own deleteSession also fails.
+          try {
+            await this.sessions[registeredSessionId]?.clearNewCommandTimeout();
+          } finally {
+            await this.deleteSession(registeredSessionId);
+          }
+        } catch (cleanupError) {
+          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${cleanupError}`);
+        }
+      }
       return {
         protocol,
         error: error instanceof Error ? error : new Error(String(error)),

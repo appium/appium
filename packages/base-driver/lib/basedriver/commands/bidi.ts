@@ -53,12 +53,30 @@ declare module '../driver.js' {
  *
  * @param events - the names of the events to subscribe to
  * @param contexts - the context ids to scope the subscription to; an empty string means all contexts
+ * @param userContexts - user context ids; requires a driver-specific implementation
  */
 export async function bidiSubscribe<C extends Constraints>(
   this: BaseDriver<C>,
   events: string[],
-  contexts: string[] = [''],
+  contexts?: string[],
+  userContexts?: string[],
 ): Promise<{subscription: string}> {
+  if (userContexts !== undefined) {
+    if (contexts !== undefined) {
+      throw new errors.InvalidArgumentError('contexts and userContexts are mutually exclusive');
+    }
+    if (
+      !Array.isArray(userContexts) ||
+      !userContexts.length ||
+      userContexts.some((context) => typeof context !== 'string' || !context.length)
+    ) {
+      throw new errors.InvalidArgumentError('userContexts must be a non-empty array of non-empty strings');
+    }
+    // BaseDriver only tracks browsing-context IDs. A driver with user contexts must override
+    // this command to resolve their membership instead of silently creating a global subscription.
+    throw new errors.UnsupportedOperationError('This driver does not support subscriptions scoped to userContexts');
+  }
+  contexts ??= [''];
   assertStringList(events, 'events');
   if (!Array.isArray(contexts) || contexts.some((context) => typeof context !== 'string')) {
     throw new errors.InvalidArgumentError('contexts must be an array of strings');

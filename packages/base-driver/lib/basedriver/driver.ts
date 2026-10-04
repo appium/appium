@@ -362,7 +362,7 @@ export class BaseDriver<
     // some people like to do weird things by setting noReset and fullReset
     // both to true, but this is misguided and strange, so error here instead
     if (this.opts.noReset && this.opts.fullReset) {
-      throw new Error(
+      throw new errors.SessionNotCreatedError(
         "The 'noReset' and 'fullReset' capabilities are mutually " +
           'exclusive and should not both be set to true. You ' +
           "probably meant to just use 'fullReset' on its own",

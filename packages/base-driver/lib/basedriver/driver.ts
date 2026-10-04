@@ -352,22 +352,23 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
 
-    this.sessionId = util.uuidV4();
-    this.sessionCreationTimestampMs = Date.now();
-    this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {...this.initialOpts, ...this.caps};
+    const opts = {...this.initialOpts, ...caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
     // both to true, but this is misguided and strange, so error here instead
-    if (this.opts.noReset && this.opts.fullReset) {
+    if (opts.noReset && opts.fullReset) {
       throw new errors.SessionNotCreatedError(
         "The 'noReset' and 'fullReset' capabilities are mutually " +
           'exclusive and should not both be set to true. You ' +
           "probably meant to just use 'fullReset' on its own",
       );
     }
+    this.sessionId = util.uuidV4();
+    this.sessionCreationTimestampMs = Date.now();
+    this.caps = caps;
+    this.opts = opts;
     if (this.opts.noReset === true) {
       this.opts.fullReset = false;
     }

@@ -200,6 +200,29 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      for (const address of ['::1', '2001:db8::1', '127.0.0.1', 'localhost']) {
+        for (const secure of [false, true]) {
+          it(`should return a valid BiDi URL for ${address} with TLS=${secure}`, async function () {
+            appium.args.address = address;
+            appium.args.port = 4723;
+            appium.args.basePath = '/wd/hub';
+            appium.server = {isSecure: () => secure} as any;
+            mockFakeDriver
+              .expects('createSession')
+              .once()
+              .returns([SESSION_ID, {...BASE_CAPS, webSocketUrl: true}]);
+            const {value, error} = await appium.createSession(W3C_CAPS);
+            assert.equal(error, undefined);
+            const url = new URL(String(value![1].webSocketUrl));
+            assert.equal(url.protocol, secure ? 'wss:' : 'ws:');
+            assert.equal(url.hostname, address.includes(':') ? `[${address}]` : address);
+            assert.equal(url.port, '4723');
+            assert.equal(url.pathname, `/wd/hub/bidi/${SESSION_ID}`);
+            mockFakeDriver.verify();
+          });
+        }
+      }
+
       it(`should call inner driver's createSession with desired capabilities`, async function () {
         mockFakeDriver
           .expects('createSession')

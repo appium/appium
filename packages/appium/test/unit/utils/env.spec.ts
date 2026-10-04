@@ -172,6 +172,20 @@ describe('utils/env', function () {
   });
 
   describe('hasAppiumDependency()', function () {
+    for (const version of ['^4.0.0-beta.2', '~3.0.0-rc.1', '4.0.0', '^1.22.0-beta.1']) {
+      it(`should detect supported dependency versions including prereleases: ${version}`, async function () {
+        readPackage.resolves({dependencies: {appium: version}});
+        const root = path.resolve('/project');
+        const expected = version.startsWith('^1.') ? env.DEFAULT_APPIUM_HOME : root;
+        assert.equal(await env.resolveAppiumHome(root), expected);
+      });
+    }
+
+    it('should respect an explicit upper bound when matching a prerelease', async function () {
+      readPackage.resolves({dependencies: {appium: '^4.0.0-beta.2'}});
+      assert.equal(await env.findAppiumDependencyPackage(path.resolve('/project'), '>=2.0.0 <4.0.0-0'), undefined);
+    });
+
     describe('when `appium` is not a dependency of the local package', function () {
       beforeEach(function () {
         readPackage.rejects(missingPackageJsonError());

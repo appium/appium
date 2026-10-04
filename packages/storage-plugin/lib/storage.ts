@@ -243,6 +243,9 @@ export function validateStorageItemName(name: string): void {
   if (util.isEmpty(name)) {
     throw new StorageArgumentError(`The provided file name '${name}' must not be empty`);
   }
+  if (name.startsWith('.')) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not start with a dot`);
+  }
 
   const sanitizedName = fs.sanitizeName(name, {
     replacement: '_',

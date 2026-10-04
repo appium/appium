@@ -141,6 +141,19 @@ describe('storage', function () {
       );
     });
 
+    it('should reject file names starting with a dot', function () {
+      for (const name of ['.env', '.DS_Store']) {
+        assert.throws(
+          () => validateStorageItemName(name),
+          (err: unknown) => {
+            assert.ok(err instanceof StorageArgumentError);
+            assert.strictEqual((err as Error).message, `The provided file name '${name}' must not start with a dot`);
+            return true;
+          },
+        );
+      }
+    });
+
     it('should be reported as a W3C invalid argument', function () {
       try {
         validateStorageItemName('foo/bar');

@@ -125,6 +125,21 @@ describe('net', function () {
       await fs.rimraf(tmpDir);
     });
 
+    it('should preserve a directory and its contents when the destination cannot be opened', async function () {
+      const directory = path.join(tmpDir, 'existing-directory');
+      await fs.mkdir(directory);
+      const existingFile = path.join(directory, 'keep.txt');
+      await fs.writeFile(existingFile, 'keep me');
+      await assert.rejects(
+        withServer(
+          (res) => res.end('download'),
+          (url) => downloadFile(url, directory, {isMetered: false}),
+        ),
+        /EISDIR/,
+      );
+      assert.equal(await fs.readFile(existingFile, 'utf8'), 'keep me');
+    });
+
     it('should save a complete body', async function () {
       const body = Buffer.from('plain body');
       const dstPath = path.join(tmpDir, 'plain.bin');

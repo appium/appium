@@ -103,6 +103,18 @@ export APPIUM_WORKSPACE=@appium/base-driver
 npm run test:unit -w $APPIUM_WORKSPACE
 ```
 
+### Code Style
+
+#### Class Member Ordering
+
+When adding or moving class methods, follow these conventions:
+
+- Order methods by visibility: public → protected → private. Methods without an explicit visibility
+  modifier belong to the public group.
+- Place private helper methods at the end of the class.
+- Preserve existing order within each visibility group.
+- Before finishing, check the ordering of methods you added or moved.
+
 ### Documentation
 
 The documentation for this project is [available in the project repository itself](https://github.com/appium/appium/tree/master/packages/appium/docs).

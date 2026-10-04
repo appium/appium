@@ -52,6 +52,17 @@ describe('Protocol', function () {
       await teardown?.();
     });
 
+    for (const thrownValue of [null, undefined, 'plain error', 42]) {
+      it(`should return a WebDriver error when a driver rejects with ${String(thrownValue)}`, async function () {
+        sandbox.stub(driver, 'getStatus').callsFake(() => Promise.reject(thrownValue));
+        const {status, data} = await httpGet(`${baseUrl}/status`, {throwOnError: false});
+        assert.equal(status, 500);
+        assert.equal(data.value.error, 'unknown error');
+        assert.match(data.value.message, new RegExp(String(thrownValue ?? 'unknown')));
+        assert.equal(typeof data.value.stacktrace, 'string');
+      });
+    }
+
     it('should proxy to driver and return a valid response', async function () {
       const {data} = await httpPost(`${baseUrl}/session/foo/url`, {url: 'http://google.com'});
       assert.deepStrictEqual(data, {

@@ -484,8 +484,12 @@ function initBidiEventListeners(
         return;
       }
 
-      const eventSubs = bidiHandlerDriver.bidiEventSubs[method];
-      if (Array.isArray(eventSubs) && eventSubs.includes(context)) {
+      const moduleName = method.split('.')[0];
+      const isSubscribed = [method, moduleName].some((event) => {
+        const contexts = bidiHandlerDriver.bidiEventSubs[event];
+        return Array.isArray(contexts) && (contexts.includes('') || contexts.includes(context));
+      });
+      if (isSubscribed) {
         if (method in eventLogCounts) {
           ++eventLogCounts[method];
         } else {

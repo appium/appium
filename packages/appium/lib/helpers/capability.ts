@@ -74,6 +74,7 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
         w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
       } else {
+        // @ts-ignore firstMatch cannot be undefined due to the earlier util.isEmpty check
         (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
     }

@@ -105,6 +105,15 @@ npm run test:unit -w $APPIUM_WORKSPACE
 
 ### Code Style
 
+#### JSDoc
+
+Add concise JSDoc to all public class methods and exported functions.
+
+#### Module Ordering
+
+Place exported functions and classes before non-exported functions and classes in each module.
+This rule does not apply to constants or variables.
+
 #### Class Member Ordering
 
 When adding or moving class methods, follow these conventions:

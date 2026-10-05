@@ -607,7 +607,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
 }
 
 /**
- * Resolves a package `exports` field (string, `"."`, or `"import"`) to a relative entry path for ESM packages.
+ * Resolves a package `exports` field (string, `"."`, `"import"`, or `"default"`) to an ESM entry path.
  *
  * @param exportsValue - `package.json` `exports` value or nested fragment
  */
@@ -620,9 +620,16 @@ export function resolveEsmEntryPoint(exportsValue: unknown): string | undefined 
   }
 
   const obj = exportsValue as Record<string, unknown>;
-  for (const key of ['.', 'import'] as const) {
-    if (obj[key]) {
-      return resolveEsmEntryPoint(obj[key]);
+  if ('.' in obj) {
+    return resolveEsmEntryPoint(obj['.']);
+  }
+  // Matching conditions are evaluated in package.json order, including an early default.
+  for (const [condition, target] of Object.entries(obj)) {
+    if (condition === 'import' || condition === 'default') {
+      const entryPoint = resolveEsmEntryPoint(target);
+      if (entryPoint) {
+        return entryPoint;
+      }
     }
   }
 }

@@ -265,6 +265,43 @@ preserved, and only the incomplete uploads will be stopped.
 
 ## Universal XML Plugin
 
+Translation is on by default. It can be turned off and on during a session with the
+[execute methods](../../guides/execute-methods.md) below, and applies only to the current session.
+
+### execute
+
+```
+POST /session/:sessionId/execute/sync
+```
+
+Modifies the [`execute`](./webdriver.md#execute) endpoint:
+
+* Adds the `universalXml: setEnabled` and `universalXml: isEnabled` execute methods. Any other
+  script is passed on unchanged
+
+#### universalXml: setEnabled
+
+Turns translation on or off for the current session. While it is off, `findElement`,
+`findElements` and `getPageSource` are passed on unchanged.
+
+##### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`enabled`|Whether node/attribute names should be translated|boolean|
+
+##### Response
+
+`null`
+
+#### universalXml: isEnabled
+
+Returns whether translation is on for the current session.
+
+##### Response
+
+`boolean` - `true` if translation is on
+
 ### findElement
 
 ```

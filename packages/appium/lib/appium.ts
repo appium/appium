@@ -1,3 +1,5 @@
+import {isIPv6} from 'node:net';
+
 import {
   AppiumIpc,
   BaseDriver,
@@ -278,35 +280,45 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * @param rawW3cCapabilities - the new session capabilities in W3C format
    */
   async createSession(rawW3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult> {
-    const defaultCapabilities = structuredClone(this.args.defaultCapabilities);
-    const defaultSettings = pullSettings((defaultCapabilities ?? {}) as StringRecord);
+    const defaultCapabilities = promoteAppiumOptionsForObject(structuredClone(this.args.defaultCapabilities ?? {}));
+    const defaultSettings = pullSettings(defaultCapabilities as StringRecord);
     if (!isW3cCaps(rawW3cCapabilities)) {
       throw makeNonW3cCapsError();
     }
-    const w3cCapabilities = structuredClone(rawW3cCapabilities);
-    const w3cSettings = {
+    const w3cCapabilities = promoteAppiumOptions(structuredClone(rawW3cCapabilities));
+    const sharedSettings = {
       ...defaultSettings,
       ...pullSettings(w3cCapabilities.alwaysMatch ?? {}),
     };
+    if (w3cCapabilities.firstMatch === undefined) {
+      w3cCapabilities.firstMatch = [{}];
+    }
+    // Carry each candidate's settings through capability selection independently.
     for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
-      Object.assign(w3cSettings, pullSettings(firstMatchEntry));
+      const settings = {...sharedSettings, ...pullSettings(firstMatchEntry)};
+      if (util.isPlainObject(firstMatchEntry) && !util.isEmpty(settings)) {
+        (firstMatchEntry as StringRecord)['appium:settings'] = settings;
+      }
     }
 
     const protocol = PROTOCOLS.W3C;
     let innerSessionId: string;
+    let registeredSessionId: string | undefined;
     let dCaps: DriverCapsWithBidiUrl;
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver<AppiumDriverConstraints>(
-        promoteAppiumOptions(w3cCapabilities),
+        w3cCapabilities,
         this.desiredCapConstraints,
-        defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined,
+        defaultCapabilities,
       );
 
       if ('error' in parsedCaps && parsedCaps.error) {
         throw parsedCaps.error;
       }
       const {desiredCaps, processedW3CCapabilities} = parsedCaps as ParsedDriverCaps<AppiumDriverConstraints>;
+      const w3cSettings = pullSettings(desiredCaps);
+      pullSettings(processedW3CCapabilities.alwaysMatch);
 
       const {
         driver: InnerDriver,
@@ -351,6 +363,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         DriverCapsWithBidiUrl,
       ];
       this.sessions[innerSessionId] = driverInstance;
+      registeredSessionId = innerSessionId;
       // create an IPC channel for the driver and all plugins on this session
       this.sessionIpcs[innerSessionId] = new AppiumIpc({
         maxObjSize: this.args.maxIpcDataSize,
@@ -367,9 +380,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           `${innerSessionId} added to master session list`,
       );
 
-      // set the New Command Timeout for the inner driver
-      await driverInstance.startNewCommandTimeout();
-
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !util.isEmpty(w3cSettings)) {
         this.log.info(
@@ -385,14 +395,31 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const host = bidiCommands.determineBiDiHost(address);
-        const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
+        const urlHost = isIPv6(host) ? `[${host}]` : host;
+        const bidiUrl = `${scheme}://${urlHost}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
             `${bidiUrl} for response to client`,
         );
         dCaps.webSocketUrl = bidiUrl;
       }
+
+      // The session becomes idle only after all initialization has completed.
+      await driverInstance.startNewCommandTimeout();
     } catch (error: unknown) {
+      if (registeredSessionId) {
+        try {
+          // A failed initialization must not leave a registered session or an idle timer,
+          // even if the driver's own deleteSession also fails.
+          try {
+            await this.sessions[registeredSessionId]?.clearNewCommandTimeout();
+          } finally {
+            await this.deleteSession(registeredSessionId);
+          }
+        } catch (cleanupError) {
+          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${cleanupError}`);
+        }
+      }
       return {
         protocol,
         error: error instanceof Error ? error : new Error(String(error)),

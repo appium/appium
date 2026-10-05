@@ -76,9 +76,12 @@ jobs:
 
           BETA_FLAGS=""
           DIST_TAG_FLAGS=""
+          NPM_TAG_FLAGS=""
           if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
             BETA_FLAGS="--conventional-prerelease --preid beta $LEGACY_PEER_DEPS_FLAGS"
             DIST_TAG_FLAGS="--dist-tag beta"
+            # `npm publish` takes --tag; --dist-tag is lerna-only
+            NPM_TAG_FLAGS="--tag beta"
           fi
 
           # Prints "<pkg_name>@<pkg_version>" to stdout for each non-private workspace package
@@ -141,7 +144,7 @@ jobs:
 
               echo "Publishing ${pkg_spec}"
               set +e
-              (cd "$pkg_dir" && npm publish $DIST_TAG_FLAGS)
+              (cd "$pkg_dir" && npm publish $NPM_TAG_FLAGS)
               publish_exit_code=$?
               set -e
               if [ $publish_exit_code -ne 0 ]; then

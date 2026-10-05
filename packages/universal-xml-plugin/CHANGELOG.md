@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.3](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.2...@appium/universal-xml-plugin@4.0.0-beta.3) (2026-10-05)
+
+### Features
+
+* **universal-xml-plugin:** add execute methods to toggle translation ([#22862](https://github.com/appium/appium/issues/22862)) ([b95aaac](https://github.com/appium/appium/commit/b95aaac60bed065ce0a0d1e4f7baf9c5e60572b1)), closes [#21630](https://github.com/appium/appium/issues/21630)
+
+
 ## [4.0.0-beta.2](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.1...@appium/universal-xml-plugin@4.0.0-beta.2) (2026-09-27)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin

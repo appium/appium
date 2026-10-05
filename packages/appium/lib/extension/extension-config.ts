@@ -2,7 +2,7 @@ import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-import {fs, system, util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 import {satisfies} from 'semver';
@@ -125,8 +125,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         // syntax for; parsing directly avoids that entirely.
         moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
       } else {
-        // https://github.com/nodejs/node/issues/31710
-        const importPath = system.isWindows() ? pathToFileURL(schemaPath).href : schemaPath;
+        // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+        // POSIX paths also need URL escaping for characters such as '#' and '%'.
+        const importPath = pathToFileURL(schemaPath).href;
         const mod = (await import(importPath)) as Record<string, any>;
         moduleObject = 'default' in mod ? mod.default : mod;
       }
@@ -305,8 +306,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async requireAsync(extName: ExtName<ExtType>): Promise<ExtClass<ExtType>> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
-    // https://github.com/nodejs/node/issues/31710
-    let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+    // POSIX paths also need URL escaping for characters such as '#' and '%'.
+    let importPath = pathToFileURL(reqPath).href;
     // note: this will only reload the entry point, not files it imports internally
     if (process.env.APPIUM_RELOAD_EXTENSIONS) {
       // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by
@@ -607,7 +609,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
 }
 
 /**
- * Resolves a package `exports` field (string, `"."`, or `"import"`) to a relative entry path for ESM packages.
+ * Resolves a package `exports` field (string, `"."`, `"import"`, or `"default"`) to an ESM entry path.
  *
  * @param exportsValue - `package.json` `exports` value or nested fragment
  */
@@ -620,9 +622,16 @@ export function resolveEsmEntryPoint(exportsValue: unknown): string | undefined 
   }
 
   const obj = exportsValue as Record<string, unknown>;
-  for (const key of ['.', 'import'] as const) {
-    if (obj[key]) {
-      return resolveEsmEntryPoint(obj[key]);
+  if ('.' in obj) {
+    return resolveEsmEntryPoint(obj['.']);
+  }
+  // Matching conditions are evaluated in package.json order, including an early default.
+  for (const [condition, target] of Object.entries(obj)) {
+    if (condition === 'import' || condition === 'default') {
+      const entryPoint = resolveEsmEntryPoint(target);
+      if (entryPoint) {
+        return entryPoint;
+      }
     }
   }
 }

@@ -232,7 +232,8 @@ export const fs = {
         await fsPromises.rename(src, dst);
       } catch (err) {
         if (isErrnoException(err) && err.code === 'EXDEV') {
-          await this.copyFile(String(src), String(dst));
+          // Preserve relative and dangling links when rename crosses filesystems.
+          await fsPromises.cp(String(src), String(dst), {verbatimSymlinks: true});
           await this.rimraf(src);
         } else {
           throw err;
@@ -269,7 +270,7 @@ export const fs = {
         const destPath = path.join(to, item.name);
         if (item.isDirectory()) {
           await this.mv(srcPath, destPath, opts);
-        } else if (item.isFile()) {
+        } else if (item.isFile() || item.isSymbolicLink()) {
           await renameFile(srcPath, destPath, dstRootWasCreated);
         }
       }

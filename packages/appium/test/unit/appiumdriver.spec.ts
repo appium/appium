@@ -200,6 +200,160 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      it('should start the idle timeout after applying initial settings', async function () {
+        const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+        fakeDriver.setProtocolW3C();
+        fakeDriver.sessionId = SESSION_ID;
+        fakeDriver.newCommandTimeoutMs = 1000;
+        sandbox.stub(fakeDriver, 'onIpcInit').resolves();
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .returns([SESSION_ID, {...BASE_CAPS}]);
+        sandbox.stub(fakeDriver, 'updateSettings').callsFake(async () => {
+          await clock.tickAsync(2000);
+        });
+
+        const {value, error} = await appium.createSession({
+          ...W3C_CAPS,
+          alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {initial: true}},
+        } as any);
+
+        assert.equal(error, undefined);
+        assert.equal(value?.[0], SESSION_ID);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(999);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(1);
+        assert.equal(appium.sessions[SESSION_ID], undefined);
+        mockFakeDriver.verify();
+      });
+
+      for (const cleanupFails of [false, true]) {
+        it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
+          const originalError = new Error('unsupported initial setting');
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          mockFakeDriver
+            .expects('createSession')
+            .once()
+            .returns([SESSION_ID, {...BASE_CAPS}]);
+          sandbox.stub(fakeDriver, 'updateSettings').rejects(originalError);
+          const deleteSession = cleanupFails
+            ? sandbox.stub(fakeDriver, 'deleteSession').rejects(new Error('cleanup failed'))
+            : sandbox.spy(fakeDriver, 'deleteSession');
+          const result = await appium.createSession({
+            ...W3C_CAPS,
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {invalid: true}},
+          } as any);
+          assert.equal(result.error, originalError);
+          assert.equal(deleteSession.calledOnceWithExactly(SESSION_ID), true);
+          assert.equal(fakeDriver.noCommandTimer, null);
+          assert.deepEqual(Object.keys(appium.sessions), []);
+          assert.deepEqual(Object.keys(appium.sessionIpcs), []);
+          assert.deepEqual(Object.keys(appium.sessionPlugins), []);
+          if (!cleanupFails) {
+            assert.equal(fakeDriver.sessionId, null);
+          }
+          mockFakeDriver.verify();
+        });
+      }
+
+      const initialSettingsCases = [
+        {
+          name: 'only the selected firstMatch candidate',
+          caps: {
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {shared: true, choice: 'always'}},
+            firstMatch: [
+              {'appium:settings': {choice: 'first'}},
+              {'appium:settings': {choice: 'last', unselected: true}},
+            ],
+          },
+          expected: {shared: true, choice: 'first'},
+        },
+        {
+          name: 'the next valid firstMatch candidate',
+          caps: {
+            alwaysMatch: {platformName: 'Fake'},
+            firstMatch: [
+              {'appium:automationName': 42, 'appium:settings': {rejected: true}},
+              {'appium:automationName': 'Fake', 'appium:settings': {selected: true}},
+            ],
+          },
+          expected: {selected: true},
+        },
+        {
+          name: 'settings inside appium:options with nested values taking precedence',
+          caps: {
+            alwaysMatch: {
+              ...W3C_CAPS.alwaysMatch,
+              'appium:settings': {choice: 'outer'},
+              'appium:options': {settings: {choice: 'nested'}, 'settings[flag]': true},
+            },
+          },
+          expected: {choice: 'nested', flag: true},
+        },
+        {
+          name: 'settings inside firstMatch appium:options',
+          caps: {
+            alwaysMatch: W3C_CAPS.alwaysMatch,
+            firstMatch: [{'appium:options': {settings: {choice: 'nested'}}}],
+          },
+          expected: {choice: 'nested'},
+        },
+        {
+          name: 'default settings without overwriting requested settings',
+          defaults: {'appium:options': {settings: {defaultOnly: true, choice: 'default'}}},
+          caps: {alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings[choice]': 'requested'}},
+          expected: {defaultOnly: true, choice: 'requested'},
+        },
+      ];
+      for (const {name, caps, defaults, expected} of initialSettingsCases) {
+        it(`should apply ${name}`, async function () {
+          const originalCaps = structuredClone(caps);
+          appium.args.defaultCapabilities = defaults;
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          const create = sandbox.stub(fakeDriver, 'createSession').resolves([SESSION_ID, {...BASE_CAPS}] as any);
+          const update = sandbox.stub(fakeDriver, 'updateSettings').resolves();
+
+          const {error} = await appium.createSession(caps as any);
+
+          assert.equal(error, undefined);
+          assert.equal(update.calledOnceWithExactly(expected), true);
+          const forwarded = create.firstCall.args[0];
+          assert.ok(forwarded);
+          assert.equal(
+            Object.keys(forwarded.alwaysMatch ?? {}).some((key) => key.includes('settings')),
+            false,
+          );
+          assert.deepEqual(caps, originalCaps);
+        });
+      }
+
+      for (const address of ['::1', '2001:db8::1', '127.0.0.1', 'localhost']) {
+        for (const secure of [false, true]) {
+          it(`should return a valid BiDi URL for ${address} with TLS=${secure}`, async function () {
+            appium.args.address = address;
+            appium.args.port = 4723;
+            appium.args.basePath = '/wd/hub';
+            appium.server = {isSecure: () => secure} as any;
+            mockFakeDriver
+              .expects('createSession')
+              .once()
+              .returns([SESSION_ID, {...BASE_CAPS, webSocketUrl: true}]);
+            const {value, error} = await appium.createSession(W3C_CAPS);
+            assert.equal(error, undefined);
+            const url = new URL(String(value![1].webSocketUrl));
+            assert.equal(url.protocol, secure ? 'wss:' : 'ws:');
+            assert.equal(url.hostname, address.includes(':') ? `[${address}]` : address);
+            assert.equal(url.port, '4723');
+            assert.equal(url.pathname, `/wd/hub/bidi/${SESSION_ID}`);
+            mockFakeDriver.verify();
+          });
+        }
+      }
+
       it(`should call inner driver's createSession with desired capabilities`, async function () {
         mockFakeDriver
           .expects('createSession')

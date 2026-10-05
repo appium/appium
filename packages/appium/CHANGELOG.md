@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.3](https://github.com/appium/appium/compare/appium@4.0.0-beta.2...appium@4.0.0-beta.3) (2026-10-05)
+
+### Features
+
+* **universal-xml-plugin:** add execute methods to toggle translation ([#22862](https://github.com/appium/appium/issues/22862)) ([b95aaac](https://github.com/appium/appium/commit/b95aaac60bed065ce0a0d1e4f7baf9c5e60572b1)), closes [#21630](https://github.com/appium/appium/issues/21630)
+
+### Bug Fixes
+
+* **appium:** apply initial settings from selected capabilities ([#22882](https://github.com/appium/appium/issues/22882)) ([95c0461](https://github.com/appium/appium/commit/95c04611e7d1cd8acfa4c6ce51276899938588d3))
+* **appium:** bracket IPv6 hosts in BiDi websocket URLs ([#22872](https://github.com/appium/appium/issues/22872)) ([3875344](https://github.com/appium/appium/commit/3875344e111dc23e4c99310ad918b769dbb38927))
+* **appium:** close bidi sockets when a session ends unexpectedly ([#22854](https://github.com/appium/appium/issues/22854)) ([3cdc69b](https://github.com/appium/appium/commit/3cdc69b198e85607b4f35a5b3f57b542b0ae9b80))
+* **appium:** detect project homes with prerelease dependencies ([#22871](https://github.com/appium/appium/issues/22871)) ([11d9904](https://github.com/appium/appium/commit/11d9904166c9e692e6fa8491acfce4ac892c1a8e))
+* **appium:** do not crash when a proxied bidi socket closes without a sendable code ([#22835](https://github.com/appium/appium/issues/22835)) ([66ab396](https://github.com/appium/appium/commit/66ab396a71c419f1fb456b8a1ddf23bc3491baf8))
+* **appium:** explain manual recovery after manifest lock timeouts ([#22875](https://github.com/appium/appium/issues/22875)) ([b9c020c](https://github.com/appium/appium/commit/b9c020c6ebf88643ffe6b6d5e302b43673bbb028))
+* **appium:** import extensions through escaped file URLs ([#22884](https://github.com/appium/appium/issues/22884)) ([8312252](https://github.com/appium/appium/commit/83122525db72f2d6ff06e27cd3da5269318be3a8))
+* **appium:** match global and module BiDi event subscriptions ([#22883](https://github.com/appium/appium/issues/22883)) ([879873b](https://github.com/appium/appium/commit/879873bad5669c9b264f3fcb60d05562f6ca3b1e))
+* **appium:** resolve default extension export conditions ([#22885](https://github.com/appium/appium/issues/22885)) ([3188c9f](https://github.com/appium/appium/commit/3188c9fbab17c16192a6e75ff62f69f4d844be8f))
+* **appium:** roll back sessions when initialization fails ([#22873](https://github.com/appium/appium/issues/22873)) ([f24e704](https://github.com/appium/appium/commit/f24e7046eb2815822f655a644aee9786d90fd4e8))
+* **appium:** start idle timeout after session initialization ([#22881](https://github.com/appium/appium/issues/22881)) ([e37f1c1](https://github.com/appium/appium/commit/e37f1c158394617bcaa474da25f1650b9b24ebd1))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22876](https://github.com/appium/appium/issues/22876)) ([b791915](https://github.com/appium/appium/commit/b791915ffcf322e1cc84dbde606be55d34f020b3))
+* use native ESM entrypoint detection ([#22868](https://github.com/appium/appium/issues/22868)) ([e391bb2](https://github.com/appium/appium/commit/e391bb249fec5f700a6d63a747ff921a80689fb5))
+
+
 ## [4.0.0-beta.2](https://github.com/appium/appium/compare/appium@4.0.0-beta.1...appium@4.0.0-beta.2) (2026-09-27)
 
 ### ⚠ BREAKING CHANGES

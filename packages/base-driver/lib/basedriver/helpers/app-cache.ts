@@ -1,5 +1,7 @@
+import type {WriteStream} from 'node:fs';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 
 import {fs, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
@@ -328,6 +330,16 @@ function toCacheKey(app: string): string {
   return parsed.search ? parsed.href.replace(parsed.search, '') : parsed.href;
 }
 
+async function closeWriter(writer: WriteStream): Promise<void> {
+  if (writer.closed) {
+    return;
+  }
+  await new Promise<void>((resolve) => {
+    writer.once('close', () => resolve());
+    writer.destroy();
+  });
+}
+
 async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): Promise<RemoteAppData> {
   const url = new URL(appLink);
   // Extract credentials, then remove them from the URL for axios
@@ -335,7 +347,9 @@ async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): P
   url.username = '';
   url.password = '';
   const axiosUrl = url.href;
-  const axiosAuth = username ? {username, password} : undefined;
+  const axiosAuth = username
+    ? {username: decodeURIComponent(username), password: decodeURIComponent(password)}
+    : undefined;
   const requestOpts: AxiosRequestConfig = {
     url: axiosUrl,
     auth: axiosAuth,
@@ -357,20 +371,24 @@ async function queryAppLink(appLink: URL, reqHeaders: RawAxiosRequestHeaders): P
 
 async function fetchApp(srcStream: Readable, dstPath: string): Promise<string> {
   const timer = new timing.Timer().start();
+  const writer = fs.createWriteStream(dstPath);
+  let destinationOpened = false;
+  writer.once('open', () => {
+    destinationOpened = true;
+  });
   try {
-    const writer = fs.createWriteStream(dstPath);
-    srcStream.pipe(writer);
-
-    await new Promise<void>((resolve, reject) => {
-      srcStream.once('error', reject);
-      writer.once('finish', () => resolve());
-      writer.once('error', (e: Error) => {
-        srcStream.unpipe(writer);
-        reject(e);
-      });
-    });
+    await pipeline(srcStream, writer);
   } catch (err) {
-    throw new Error(`Cannot fetch the application: ${(err as Error).message}`, {cause: err});
+    await closeWriter(writer);
+    if (destinationOpened) {
+      // This file is not in the app cache yet, so nothing else will remove it.
+      await fs.unlink(dstPath).catch((cleanupError: unknown) => {
+        const cleanupMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+        logger.warn(`Cannot remove incomplete application download at '${dstPath}': ${cleanupMessage}`);
+      });
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Cannot fetch the application: ${message}`, {cause: err});
   }
 
   const secondsElapsed = timer.getDuration().asSeconds;

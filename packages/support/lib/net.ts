@@ -174,34 +174,36 @@ export async function downloadFile(
   }
 
   const timer = new Timer().start();
-  let responseLength: number;
   let responseStream: Readable | undefined;
   let writer: WriteStream | undefined;
+  let destinationOpened = false;
   try {
     const response = await axios(requestOpts);
     responseStream = response.data as Readable;
-    responseLength = parseInt(String(response.headers['content-length'] ?? '0'), 10);
     // opening the file first would leave an empty destination behind when the request fails
     writer = fs.createWriteStream(dstPath);
+    writer.once('open', () => {
+      destinationOpened = true;
+    });
+    // The HTTP stream detects truncated transfers. Axios may decompress the body,
+    // so the saved size cannot be compared with the wire Content-Length.
     await pipeline(responseStream, writer);
   } catch (err) {
     if (writer) {
       responseStream?.destroy();
       await closeStream(writer);
-      await fs.rimraf(dstPath);
+      if (destinationOpened) {
+        // Never recursively remove a caller-supplied path, including one that failed to open.
+        await fs.unlink(dstPath).catch((cleanupError) => {
+          log.warn(`Cannot remove incomplete download at '${dstPath}': ${cleanupError}`);
+        });
+      }
     }
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }
 
   const {size} = await fs.stat(dstPath);
-  if (responseLength && size !== responseLength) {
-    await fs.rimraf(dstPath);
-    throw new Error(
-      `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
-        `differs from the one in Content-Length response header (${responseLength} bytes)`,
-    );
-  }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
     log.debug(

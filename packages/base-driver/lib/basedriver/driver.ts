@@ -24,7 +24,7 @@ import {calcSignature} from '../helpers/session.js';
 import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
-import {bidiStatus, bidiSubscribe, bidiUnsubscribe} from './commands/bidi.js';
+import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
 import {getLogEvents, logCustomEvent} from './commands/event.js';
 import {executeMethod} from './commands/execute.js';
 import {
@@ -91,19 +91,7 @@ export class BaseDriver<
   // Number of commands (queued or queue-exempt) currently executing. Used so the new command
   // timeout is only restarted once the driver is fully idle again, not after every exempt command.
   private inFlightCommandCount = 0;
-
-  /**
-   * Contains the base constraints plus whatever the subclass wants to add.
-   *
-   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
-   * an issue:
-   * @see {@link https://github.com/appium/appium/issues/new}
-   */
-  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
-    return Object.freeze(
-      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
-    );
-  }
+  private readonly pendingCommandControllers = new Set<AbortController>();
 
   /**
    * This is the main command handler for the driver. It wraps command
@@ -133,7 +121,9 @@ export class BaseDriver<
     const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
     if (!command) {
-      await this.startNewCommandTimeout();
+      if (this.isCommandsQueueEnabled && this.inFlightCommandCount === 0) {
+        await this.startNewCommandTimeout();
+      }
       throw new errors.NotYetImplementedError();
     }
 
@@ -147,6 +137,8 @@ export class BaseDriver<
       };
       this.inFlightCommandCount++;
       try {
+        // The preceding queued command may have armed the timer after this request arrived.
+        await this.clearNewCommandTimeout();
         return await Promise.race([
           command.call(this, ...args),
           // This promise is needed to monitor if the session has been
@@ -207,7 +199,7 @@ export class BaseDriver<
 
     const res =
       this.isCommandsQueueEnabled && !isQueueExempt
-        ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
+        ? await this.runQueuedCommand(synchronizationKey, runCommandPromise)
         : await runCommandPromise();
 
     // log timing information about this command
@@ -352,22 +344,23 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
 
-    this.sessionId = util.uuidV4();
-    this.sessionCreationTimestampMs = Date.now();
-    this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {...this.initialOpts, ...this.caps};
+    const opts = {...this.initialOpts, ...caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
     // both to true, but this is misguided and strange, so error here instead
-    if (this.opts.noReset && this.opts.fullReset) {
-      throw new Error(
+    if (opts.noReset && opts.fullReset) {
+      throw new errors.SessionNotCreatedError(
         "The 'noReset' and 'fullReset' capabilities are mutually " +
           'exclusive and should not both be set to true. You ' +
           "probably meant to just use 'fullReset' on its own",
       );
     }
+    this.sessionId = util.uuidV4();
+    this.sessionCreationTimestampMs = Date.now();
+    this.caps = caps;
+    this.opts = opts;
     if (this.opts.noReset === true) {
       this.opts.fullReset = false;
     }
@@ -416,15 +409,12 @@ export class BaseDriver<
   async deleteSession(sessionId?: string | null): Promise<void> {
     void sessionId;
     await this.clearNewCommandTimeout();
-    if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
-      // simple hack to release pending commands if they exist
-      // @ts-expect-error private API
-      const queues = this.commandsQueueGuard.queues;
-      for (const key of Object.keys(queues)) {
-        queues[key] = [];
-      }
+    for (const controller of this.pendingCommandControllers) {
+      controller.abort(new errors.NoSuchDriverError('The session was deleted before this command could run'));
     }
+    this.pendingCommandControllers.clear();
     this.sessionId = null;
+    clearBidiSubscriptions(this);
   }
 
   /**
@@ -497,6 +487,43 @@ export class BaseDriver<
       throw this.log.errorWithException('Cannot get settings; settings object not found');
     }
     return this.settings.getSettings();
+  }
+
+  /**
+   * Contains the base constraints plus whatever the subclass wants to add.
+   *
+   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
+   * an issue:
+   * @see {@link https://github.com/appium/appium/issues/new}
+   */
+  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
+    return Object.freeze(
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
+    );
+  }
+
+  /**
+   * Reject waiting commands when their session ends without interrupting a running command.
+   */
+  private async runQueuedCommand<T>(key: string, command: () => Promise<T>): Promise<T> {
+    const controller = new AbortController();
+    const {signal} = controller;
+    const cancellation = Promise.withResolvers<never>();
+    const onAbort = () => cancellation.reject(signal.reason);
+    signal.addEventListener('abort', onAbort, {once: true});
+    this.pendingCommandControllers.add(controller);
+    try {
+      const execution = this.commandsQueueGuard.acquire(key, async () => {
+        this.pendingCommandControllers.delete(controller);
+        signal.removeEventListener('abort', onAbort);
+        signal.throwIfAborted();
+        return await command();
+      });
+      return await Promise.race([execution, cancellation.promise]);
+    } finally {
+      this.pendingCommandControllers.delete(controller);
+      signal.removeEventListener('abort', onAbort);
+    }
   }
 }
 

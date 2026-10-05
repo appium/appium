@@ -52,6 +52,19 @@ describe('ExtensionConfig', function () {
   });
 
   describe('ESM module resolution', function () {
+    it('resolves a default condition when other conditions do not match', function () {
+      assert.equal(resolveEsmEntryPoint({'.': {browser: './browser.js', default: './default.js'}}), './default.js');
+    });
+
+    it('respects the declaration order of import and default conditions', function () {
+      assert.equal(resolveEsmEntryPoint({default: './default.js', import: './import.js'}), './default.js');
+      assert.equal(resolveEsmEntryPoint({import: './import.js', default: './default.js'}), './import.js');
+    });
+
+    it('resolves nested default conditions', function () {
+      assert.equal(resolveEsmEntryPoint({'.': {import: {default: './entry.js'}}}), './entry.js');
+    });
+
     it('resolves ESM entry point with simple export', function () {
       assert.strictEqual(resolveEsmEntryPoint('./index.js'), './index.js');
     });
@@ -361,6 +374,24 @@ describe('ExtensionConfig', function () {
     });
 
     describe('require()', function () {
+      it('loads an ESM extension exposing only a default export condition', async function () {
+        const root = await realFs.mkdtemp(path.join(os.tmpdir(), 'appium-default-export-'));
+        try {
+          const packageJson = {type: 'module', exports: {'.': {default: './entry.js'}}};
+          const packageJsonPath = path.join(root, 'package.json');
+          await realFs.writeFile(packageJsonPath, JSON.stringify(packageJson));
+          await realFs.writeFile(path.join(root, 'entry.js'), 'export class DefaultDriver {}');
+          config.installedExtensions.default = {pkgName: 'default-driver', mainClass: 'DefaultDriver'};
+          mocks.sandbox.stub(config, 'getInstallPath').returns(root);
+          MockAppiumSupport.fs.readFile.withArgs(packageJsonPath, 'utf8').resolves(JSON.stringify(packageJson));
+          MockAppiumSupport.fs.exists.withArgs(path.join(root, 'entry.js')).resolves(true);
+
+          assert.equal((await config.requireAsync('default')).name, 'DefaultDriver');
+        } finally {
+          await realFs.rm(root, {recursive: true, force: true});
+        }
+      });
+
       beforeEach(function () {
         // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
         // loaded yet.  all we need for the purposes of the `require()` function is a `mainClass`, so

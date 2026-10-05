@@ -276,7 +276,7 @@ export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
     ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
     : never;
 
-export interface BidiMethodParams {
+export interface BidiMethodParams extends Pick<PayloadParams, 'makeArgs' | 'validate'> {
   required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   optional?: readonly string[];
 }

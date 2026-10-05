@@ -2,7 +2,7 @@ import {createRequire} from 'node:module';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-import {fs, system, util} from '@appium/support';
+import {fs, util} from '@appium/support';
 import type {ExtensionType, StringRecord} from '@appium/types';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 import {satisfies} from 'semver';
@@ -125,8 +125,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         // syntax for; parsing directly avoids that entirely.
         moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
       } else {
-        // https://github.com/nodejs/node/issues/31710
-        const importPath = system.isWindows() ? pathToFileURL(schemaPath).href : schemaPath;
+        // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+        // POSIX paths also need URL escaping for characters such as '#' and '%'.
+        const importPath = pathToFileURL(schemaPath).href;
         const mod = (await import(importPath)) as Record<string, any>;
         moduleObject = 'default' in mod ? mod.default : mod;
       }
@@ -305,8 +306,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async requireAsync(extName: ExtName<ExtType>): Promise<ExtClass<ExtType>> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
-    // https://github.com/nodejs/node/issues/31710
-    let importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+    // POSIX paths also need URL escaping for characters such as '#' and '%'.
+    let importPath = pathToFileURL(reqPath).href;
     // note: this will only reload the entry point, not files it imports internally
     if (process.env.APPIUM_RELOAD_EXTENSIONS) {
       // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by

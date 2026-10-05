@@ -26,6 +26,7 @@ import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {mergePlainObjects} from '../utils';
 import {processCapabilities, validateCaps} from './capabilities';
+import {clearBidiSubscriptions} from './commands/bidi-subscriptions';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
 
@@ -392,6 +393,7 @@ export class BaseDriver<
       }
     }
     this.sessionId = null;
+    clearBidiSubscriptions(this);
   }
 
   logExtraCaps(caps: Capabilities<C>) {

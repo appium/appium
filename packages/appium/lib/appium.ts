@@ -417,7 +417,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
             await this.deleteSession(registeredSessionId);
           }
         } catch (cleanupError) {
-          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${cleanupError}`);
+          const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
         }
       }
       return {

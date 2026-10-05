@@ -217,16 +217,19 @@ export function findNonPrefixedCaps<C extends Constraints>({
  * @see https://www.w3.org/TR/webdriver/#processing-capabilities
  */
 export function parseCaps<C extends Constraints>(
-  caps: W3CCapabilities<C>,
+  unparsedCaps: W3CCapabilities<C>,
   constraints: C | undefined = {} as C,
   shouldValidateCaps: boolean | undefined = true,
 ): ParsedCaps<C> {
   // If capabilities request is not an object, return error (#1.1)
-  if (!util.isPlainObject(caps)) {
+  if (!util.isPlainObject(unparsedCaps)) {
     throw new errors.InvalidArgumentError(
       'The capabilities argument was not valid for the following reason(s): "capabilities" must be a JSON object.',
     );
   }
+
+  // Recast the capability type, since util.isPlainObject broadens it
+  const caps = unparsedCaps as W3CCapabilities<C>;
 
   // Let 'requiredCaps' be property named 'alwaysMatch' from capabilities request (#2)
   // and 'allFirstMatchCaps' be property named 'firstMatch' from capabilities request (#3)

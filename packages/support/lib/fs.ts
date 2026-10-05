@@ -407,7 +407,7 @@ export const fs = {
             const file = await lastFileProcessed;
             resolve(file ?? null);
           } catch (err) {
-            log.warn(`Unexpected error: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
+            log.warn(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`);
             reject(err);
           }
         });

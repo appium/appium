@@ -765,7 +765,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     plugins: Plugin[];
   }): () => Promise<unknown> {
     if (plugins.length) {
-      this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name).join(',')}`);
+      this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name).join(', ')}`);
     }
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*

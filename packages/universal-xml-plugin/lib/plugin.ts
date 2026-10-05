@@ -1,4 +1,4 @@
-import type {Element, ExternalDriver, NextPluginCallback} from '@appium/types';
+import type {Element, ExecuteMethodMap, ExternalDriver, NextPluginCallback} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {BasePlugin} from 'appium/plugin.js';
 
@@ -7,6 +7,60 @@ import type {TransformMetadata} from './types.js';
 import {transformQuery} from './xpath.js';
 
 export class UniversalXMLPlugin extends BasePlugin {
+  static executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
+    'universalXml: setEnabled': {
+      command: 'setTranslationEnabled',
+      params: {required: ['enabled']},
+    },
+    'universalXml: isEnabled': {
+      command: 'isTranslationEnabled',
+    },
+  };
+
+  /**
+   * Whether page source and XPath queries are translated in this session. Plugin instances are
+   * created per session, so this is per-session state.
+   */
+  private translationEnabled = true;
+
+  /**
+   * Handles the plugin's execute methods (`universalXml: setEnabled`, `universalXml: isEnabled`)
+   * and passes any other script on to the next handler.
+   */
+  async execute(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    script: string,
+    args: readonly unknown[],
+  ): Promise<unknown> {
+    return await this.executeMethod(next, driver, script, args);
+  }
+
+  /**
+   * Turns translation on or off for the current session. While it's off, page source and
+   * `findElement(s)` are passed on unchanged.
+   */
+  async setTranslationEnabled(next: NextPluginCallback, driver: ExternalDriver, enabled: boolean): Promise<void> {
+    void next;
+    void driver;
+    if (typeof enabled !== 'boolean') {
+      throw new errors.InvalidArgumentError(`'enabled' must be a boolean, got ${JSON.stringify(enabled)}`);
+    }
+    this.translationEnabled = enabled;
+    this.log.info(`Universal XML translation is now ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * Returns whether translation is currently enabled for this session.
+   */
+  async isTranslationEnabled(): Promise<boolean> {
+    return this.translationEnabled;
+  }
+
+  /**
+   * Returns the page source, translated to universal XML when translation is enabled.
+   * `addIndexPath` adds an index path attribute to every node, which the XPath transformer uses.
+   */
   async getPageSource(
     next: NextPluginCallback | null,
     driver: ExternalDriver,
@@ -15,6 +69,9 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<string> {
     void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
+    if (!this.translationEnabled) {
+      return source;
+    }
     const metadata: TransformMetadata = {};
     const platformName = getPlatformName(driver);
     if (platformName.toLowerCase() === 'android') {
@@ -43,6 +100,10 @@ export class UniversalXMLPlugin extends BasePlugin {
     return xml;
   }
 
+  /**
+   * Finds an element. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
   async findElement(
     next: NextPluginCallback,
     driver: ExternalDriver,
@@ -52,6 +113,10 @@ export class UniversalXMLPlugin extends BasePlugin {
     return (await this._find(false, next, driver, strategy, selector)) as Element;
   }
 
+  /**
+   * Finds elements. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
   async findElements(
     next: NextPluginCallback,
     driver: ExternalDriver,
@@ -83,6 +148,7 @@ export class UniversalXMLPlugin extends BasePlugin {
     selector: string,
   ): Promise<Element | Element[]> {
     if (
+      !this.translationEnabled ||
       strategy.toLowerCase() !== 'xpath' ||
       !driver.getCurrentContext ||
       (await driver.getCurrentContext()) !== 'NATIVE_APP'

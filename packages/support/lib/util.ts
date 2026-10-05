@@ -103,6 +103,8 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
  * @param value - Value to check
  * @returns `true` if the value is empty
  */
+export function isEmpty(value: unknown[] | null | undefined): value is [] | null | undefined;
+export function isEmpty(value: unknown): boolean;
 export function isEmpty(value: unknown): boolean {
   if (value == null) {
     return true;

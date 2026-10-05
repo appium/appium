@@ -6,7 +6,14 @@ import * as util from 'node:util';
 import {LRUCache} from 'lru-cache';
 
 import {DEFAULT_SECURE_REPLACER, SecureValuesPreprocessor} from './secure-values-preprocessor.js';
-import type {LogFiltersConfig, Logger, MessageObject, PreprocessingRulesLoadResult, StyleObject} from './types.js';
+import type {
+  CustomLogLevel,
+  LogFiltersConfig,
+  Logger,
+  MessageObject,
+  PreprocessingRulesLoadResult,
+  StyleObject,
+} from './types.js';
 import {ansiBeep, ansiColor, isPlainObject, setBlocking, unleakString} from './utils/index.js';
 
 const DEFAULT_LOG_LEVELS = [
@@ -32,7 +39,7 @@ interface ArgumentFormatResult {
 }
 
 export class Log extends EventEmitter implements Logger {
-  level: string = 'info';
+  level: CustomLogLevel = 'info';
   prefixStyle: StyleObject = {fg: 'magenta'};
   headingStyle: StyleObject = {fg: 'white', bg: 'black'};
   heading = '';
@@ -43,20 +50,23 @@ export class Log extends EventEmitter implements Logger {
   // The server path nulls both streams out once Winston takes over, in logsink.ts.
   stream: Writable | null = process.stderr; // Output for levels below `stderrLevel`. Set to null when using custom output (e.g. Winston)
   errorStream: Writable | null = process.stderr; // Output for levels at/above `stderrLevel`. Set to null when using custom output (e.g. Winston)
-  stderrLevel: string = 'error'; // Minimum severity (inclusive) routed to `errorStream` instead of `stream`
+  stderrLevel: CustomLogLevel = 'error'; // Minimum severity (inclusive) routed to `errorStream` instead of `stream`
 
   private _asyncStorage: AsyncLocalStorage<Record<string, any>> = new AsyncLocalStorage();
   private _colorEnabled?: boolean;
   private _buffer: MessageObject[] = [];
-  private _style: Record<string, StyleObject | undefined> = Object.fromEntries(
-    DEFAULT_LOG_LEVELS.map(([level, , style]) => [level, style]),
-  );
-  private _levels: Record<string, number> = Object.fromEntries(
-    DEFAULT_LOG_LEVELS.map(([level, index]) => [level, index]),
-  );
-  private _disp: Record<string, number | string> = Object.fromEntries(
-    DEFAULT_LOG_LEVELS.map(([level, , , disp]) => [level, disp ?? level]),
-  );
+  private _style = Object.fromEntries(DEFAULT_LOG_LEVELS.map(([level, , style]) => [level, style])) as Record<
+    CustomLogLevel,
+    StyleObject | undefined
+  >;
+  private _levels = Object.fromEntries(DEFAULT_LOG_LEVELS.map(([level, index]) => [level, index])) as Record<
+    CustomLogLevel,
+    number
+  >;
+  private _disp = Object.fromEntries(DEFAULT_LOG_LEVELS.map(([level, , , disp]) => [level, disp ?? level])) as Record<
+    CustomLogLevel,
+    number | string
+  >;
   private _id = 0;
   private _paused = false;
   private _secureValuesPreprocessor: SecureValuesPreprocessor = new SecureValuesPreprocessor();
@@ -197,7 +207,7 @@ export class Log extends EventEmitter implements Logger {
    * @param message message of the log which will be formatted using utils.format()
    * @param args additional arguments appended to the log message also formatted using utils.format()
    */
-  log(level: string, prefix: string, message: any, ...args: any[]): void {
+  log(level: CustomLogLevel, prefix: string, message: any, ...args: any[]): void {
     const l = this._levels[level];
     if (l === undefined) {
       this.emit('error', new Error(util.format('Undefined log level: %j', level)));

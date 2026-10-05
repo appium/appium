@@ -214,8 +214,21 @@ export class WebDriverProxy {
       isResponseLogged = true;
       const isSessionCreationRequest = url.endsWith('/session') && method === 'POST';
       if (isSessionCreationRequest && status === 200) {
-        const raw = (data.value as Record<string, unknown> | undefined)?.sessionId;
-        this.sessionId = typeof raw === 'string' ? raw : raw != null ? JSON.stringify(raw) : null;
+        const rawId = (data.value as Record<string, unknown> | undefined)?.sessionId;
+        // Typically, rawId should be a string, null, or undefined,
+        // but we also accept and convert number, boolean, or object values.
+        // Other primitive types (bigint, symbol, function) cannot appear in an HTTP JSON response.
+        if (typeof rawId === 'string') {
+          this.sessionId = rawId;
+        } else if (rawId == null) {
+          this.sessionId = null;
+        } else if (typeof rawId === 'object') {
+          this.sessionId = JSON.stringify(rawId) ?? null;
+        } else if (typeof rawId === 'number' || typeof rawId === 'boolean') {
+          this.sessionId = String(rawId);
+        } else {
+          this.sessionId = null;
+        }
       }
       return [
         {

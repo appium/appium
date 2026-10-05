@@ -82,7 +82,7 @@ export async function getActivePlugins(
           ? `You don't have any plugins installed yet.`
           : `Only the following ${
               Object.keys(pluginConfig.installedExtensions).length === 1 ? `plugin is` : `plugins are`
-            } ` + `available: ${Object.keys(pluginConfig.installedExtensions)}`;
+            } ` + `available: ${Object.keys(pluginConfig.installedExtensions).join(', ')}`;
         throw new Error(`Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`);
       }
     }
@@ -113,7 +113,7 @@ export async function getActiveDrivers(
           ? `You don't have any drivers installed yet.`
           : `Only the following ${
               Object.keys(driverConfig.installedExtensions).length === 1 ? `driver is` : `drivers are`
-            } ` + `available: ${Object.keys(driverConfig.installedExtensions)}`;
+            } ` + `available: ${Object.keys(driverConfig.installedExtensions).join(', ')}`;
         throw new Error(`Could not load the driver '${driverName}' because it is not installed. ${suffix}`);
       }
     }

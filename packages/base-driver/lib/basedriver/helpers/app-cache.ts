@@ -181,7 +181,7 @@ export async function configureApp(
             remoteAppProps.lastModified = new Date(headers['last-modified'] as string);
           }
           if (headers['cache-control']) {
-            logger.debug(`Cache-Control: ${headers['cache-control']}`);
+            logger.debug(`Cache-Control: ${JSON.stringify(headers['cache-control'])}`);
             remoteAppProps.immutable = /\bimmutable\b/i.test(String(headers['cache-control']));
             const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(String(headers['cache-control']));
             if (maxAgeMatch) {

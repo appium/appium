@@ -71,7 +71,10 @@ function getSchemaValidator<Coerced>(
     }
     // the error formatter needs the parsed data (not the raw string) to locate errors inside objects
     const data = util.isPlainObject(coerced) ? coerced : value;
-    throw new ArgumentTypeError('\n\n' + formatErrors(errors, data, {schemaId}));
+    const formattedErrors = formatErrors(errors, data, {schemaId});
+    const formattedErrorsStr =
+      typeof formattedErrors === 'string' ? formattedErrors : formattedErrors.map((e) => e.error).join(', ');
+    throw new ArgumentTypeError('\n\n' + formattedErrorsStr);
   };
 }
 
@@ -140,7 +143,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     }
     case TYPENAMES.NULL:
     default: {
-      throw new TypeError(`Schema property "${arg}": \`${type}\` type unknown or disallowed`);
+      throw new TypeError(`Schema property "${arg}": \`${JSON.stringify(type)}\` type unknown or disallowed`);
     }
   }
 

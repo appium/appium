@@ -291,7 +291,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    *
    * @param extName - Installed extension key
    */
-  getInstallPath(extName: keyof ExtRecord<ExtType> & string): string {
+  getInstallPath(extName: keyof ExtRecord<ExtType>): string {
     return (
       this.installedExtensions[extName]?.installPath ??
       path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName)

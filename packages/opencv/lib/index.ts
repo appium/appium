@@ -456,7 +456,7 @@ function toMatchingMethod(name: string): number {
   if (!MATCHING_METHODS.includes(name as TemplateMatchingMethod)) {
     throw new Error(
       `The matching method '${name}' is unknown. ` +
-        `Only the following matching methods are supported: ${MATCHING_METHODS}`,
+        `Only the following matching methods are supported: ${MATCHING_METHODS.join(', ')}`,
     );
   }
   if (!cv) {

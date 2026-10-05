@@ -103,6 +103,8 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
  * @param value - Value to check
  * @returns `true` if the value is empty
  */
+export function isEmpty(value: unknown[] | null | undefined): value is [] | null | undefined;
+export function isEmpty(value: unknown): boolean;
 export function isEmpty(value: unknown): boolean {
   if (value == null) {
     return true;
@@ -190,7 +192,7 @@ export function escapeSpace(str: string): string {
  * @param quoteEscape - Optional character to escape, or `false` to skip
  * @returns Escaped string, or original value if `str` is not a string
  */
-export function escapeSpecialChars(str: string | unknown, quoteEscape?: string | false): string | unknown {
+export function escapeSpecialChars(str: unknown, quoteEscape?: string | false): unknown {
   if (typeof str !== 'string') {
     return str;
   }
@@ -297,10 +299,7 @@ export function wrapElement(elementId: string): Element {
  * @param predicate - Optional filter: undefined (drop undefined values), scalar (value match), or function
  * @returns New object with only the properties that pass the predicate
  */
-export function filterObject<T extends Record<string, unknown>>(
-  obj: T,
-  predicate?: ((value: unknown, obj: T) => boolean) | unknown,
-): Partial<T> {
+export function filterObject<T extends Record<string, unknown>>(obj: T, predicate?: unknown): Partial<T> {
   const newObj = {...obj} as Record<string, unknown>;
   let pred: (v: unknown, o: T) => boolean;
   if (predicate === undefined) {

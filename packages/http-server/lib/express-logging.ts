@@ -50,6 +50,7 @@ function compile(fmt: string): FormatFn {
     return `"\n    + (tokens["${name}"](req, res, "${arg}") || "-") + "`;
   });
   const js = `  return "${fmt}";`;
+  // eslint-disable-next-line no-implied-eval -- internal morgan behavior
   return new Function('tokens', 'req', 'res', js) as FormatFn;
 }
 

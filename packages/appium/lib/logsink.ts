@@ -288,9 +288,9 @@ function formatLog(args: ParsedArgs, targetConsole: boolean): Logform.Format {
 
   return format.printf((info: {timestamp?: string; message?: unknown}) => {
     if (targetConsole) {
-      return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
+      return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message as any}`;
     }
-    return `${info.timestamp} ${info.message}`;
+    return `${info.timestamp} ${info.message as any}`;
   });
 }
 

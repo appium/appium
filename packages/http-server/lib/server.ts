@@ -221,7 +221,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
  */
 export function normalizeBasePath(basePath: string): string {
   if (typeof basePath !== 'string') {
-    throw new Error(`Invalid path prefix ${basePath}`);
+    throw new Error(`Invalid path prefix ${JSON.stringify(basePath)}`);
   }
 
   // ensure the path prefix does not end in '/', since our method map starts all paths with '/'

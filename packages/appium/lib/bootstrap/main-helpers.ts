@@ -126,7 +126,7 @@ export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: P
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
     (map, klass) => ({
       ...map,
-      ...(klass.newMethodMap ?? {}),
+      ...klass.newMethodMap,
     }),
     {},
   );

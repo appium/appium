@@ -185,7 +185,7 @@ export function validateExecuteMethodParams(params: any[], paramSpec?: PayloadPa
     );
   }
   const specToUse = {
-    ...(paramSpec ?? {}),
+    ...paramSpec,
     required: paramSpec?.required ?? [],
     optional: paramSpec?.optional ?? [],
   };
@@ -232,6 +232,6 @@ function pickKnownParams(args: Record<string, any>, unknownNames: string[]): Rec
   if (util.isEmpty(unknownNames)) {
     return args;
   }
-  log.info(`The following arguments are not known and will be ignored: ${unknownNames}`);
+  log.info(`The following arguments are not known and will be ignored: ${unknownNames.join(', ')}`);
   return omitKeys(args, unknownNames);
 }

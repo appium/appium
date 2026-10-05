@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {isCancel} from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 
 export class ProxyRequest {
@@ -43,7 +43,7 @@ export class ProxyRequest {
         signal,
       });
     } catch (err) {
-      if (this._cancelled && axios.isCancel(err)) {
+      if (this._cancelled && isCancel(err)) {
         // The request was cancelled; do not propagate the error to callers.
         return await new Promise<AxiosResponse>(() => {});
       }

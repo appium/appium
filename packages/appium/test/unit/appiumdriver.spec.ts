@@ -9,7 +9,7 @@ import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@
 import {sleep} from 'asyncbox';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox, stub} from 'sinon';
-import WebSocket, {WebSocketServer} from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 
 import type * as AppiumModule from '../../lib/appium.js';
 import {CORS_FEATURE, PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';

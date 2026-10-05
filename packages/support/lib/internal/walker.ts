@@ -123,6 +123,7 @@ export class Walker extends Readable {
     const pathItem = this.paths[this.options.queueMethod]() as string;
     const statFunction = this.options.preserveSymlinks ? this.walkFs.lstat : this.walkFs.stat;
 
+    // oxlint-disable-next-line promise/prefer-await-to-callbacks -- internal klaw behavior
     statFunction(pathItem, (err, stats) => {
       const item: WalkItem = {path: pathItem, stats};
       if (err) {

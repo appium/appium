@@ -32,9 +32,6 @@ export {
   validateCaps,
 } from './basedriver/capabilities.js';
 
-// BiDi exports
-export {BIDI_COMMANDS} from './protocol/bidi-commands/index.js';
-
 export {isW3cCaps} from './helpers/capabilities.js';
 export {generateDriverLogPrefix} from './helpers/log-prefix.js';
 export {calcSignature} from './helpers/session.js';

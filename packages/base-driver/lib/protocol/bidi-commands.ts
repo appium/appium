@@ -5,8 +5,8 @@ const SUBSCRIBE_PARAMS = {
   optional: ['contexts'],
 } as const;
 
-// `events`/`contexts` is the legacy form; `subscriptions` is the spec form. They are mutually
-// exclusive, which bidiUnsubscribe validates.
+// `subscriptions` and `events` are alternative spec forms; `contexts` is a non-standard
+// addition to `events`. `subscriptions` excludes the others, which bidiUnsubscribe validates.
 const UNSUBSCRIBE_PARAMS = {
   optional: ['events', 'contexts', 'subscriptions'],
 } as const;

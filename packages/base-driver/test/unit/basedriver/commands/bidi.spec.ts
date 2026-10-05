@@ -41,7 +41,7 @@ describe('bidi commands -', function () {
       assert.deepEqual(driver.bidiEventSubs, {});
     });
 
-    it('should preserve the legacy event form without confusing events and IDs', async function () {
+    it('should support unsubscribing by event names without confusing events and IDs', async function () {
       const {subscription} = await driver.bidiSubscribe(['log.entryAdded'], ['a', 'b']);
       await driver.executeBidiCommand('session.unsubscribe', {events: ['log.entryAdded'], contexts: ['a']});
       assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['b']});
@@ -60,7 +60,18 @@ describe('bidi commands -', function () {
       assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['']});
     });
 
-    it('should default legacy unsubscribe to the global context', async function () {
+    it('should reject mixed arguments in direct ID-based unsubscribe calls without removing subscriptions', async function () {
+      const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+      for (const contexts of [[], [''], ['a']]) {
+        await assert.rejects(driver.bidiUnsubscribe(undefined, contexts, [subscription]), /cannot be combined/);
+      }
+      await assert.rejects(driver.bidiUnsubscribe(['log.entryAdded'], undefined, [subscription]), /cannot be combined/);
+      assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['']});
+      await driver.bidiUnsubscribe(undefined, undefined, [subscription]);
+      assert.deepEqual(driver.bidiEventSubs, {});
+    });
+
+    it('should default event-based unsubscribe to the global context', async function () {
       await driver.bidiSubscribe(['log.entryAdded']);
       await driver.bidiUnsubscribe(['log.entryAdded']);
       assert.deepEqual(driver.bidiEventSubs, {});

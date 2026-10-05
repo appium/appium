@@ -304,6 +304,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   async requireAsync(extName: ExtName<ExtType>): Promise<ExtClass<ExtType>> {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
+    // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+    // POSIX paths also need URL escaping for characters such as '#' and '%'.
     let importPath = pathToFileURL(reqPath).href;
     // note: this will only reload the entry point, not files it imports internally
     if (process.env.APPIUM_RELOAD_EXTENSIONS) {

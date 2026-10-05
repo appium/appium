@@ -280,18 +280,25 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * @param rawW3cCapabilities - the new session capabilities in W3C format
    */
   async createSession(rawW3cCapabilities: W3CAppiumDriverCaps): Promise<SessionHandlerCreateResult> {
-    const defaultCapabilities = structuredClone(this.args.defaultCapabilities);
-    const defaultSettings = pullSettings((defaultCapabilities ?? {}) as StringRecord);
+    const defaultCapabilities = promoteAppiumOptionsForObject(structuredClone(this.args.defaultCapabilities ?? {}));
+    const defaultSettings = pullSettings(defaultCapabilities as StringRecord);
     if (!isW3cCaps(rawW3cCapabilities)) {
       throw makeNonW3cCapsError();
     }
-    const w3cCapabilities = structuredClone(rawW3cCapabilities);
-    const w3cSettings = {
+    const w3cCapabilities = promoteAppiumOptions(structuredClone(rawW3cCapabilities));
+    const sharedSettings = {
       ...defaultSettings,
       ...pullSettings(w3cCapabilities.alwaysMatch ?? {}),
     };
+    if (w3cCapabilities.firstMatch === undefined) {
+      w3cCapabilities.firstMatch = [{}];
+    }
+    // Carry each candidate's settings through capability selection independently.
     for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
-      Object.assign(w3cSettings, pullSettings(firstMatchEntry));
+      const settings = {...sharedSettings, ...pullSettings(firstMatchEntry)};
+      if (util.isPlainObject(firstMatchEntry) && !util.isEmpty(settings)) {
+        (firstMatchEntry as StringRecord)['appium:settings'] = settings;
+      }
     }
 
     const protocol = PROTOCOLS.W3C;
@@ -301,15 +308,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver<AppiumDriverConstraints>(
-        promoteAppiumOptions(w3cCapabilities),
+        w3cCapabilities,
         this.desiredCapConstraints,
-        defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined,
+        defaultCapabilities,
       );
 
       if ('error' in parsedCaps && parsedCaps.error) {
         throw parsedCaps.error;
       }
       const {desiredCaps, processedW3CCapabilities} = parsedCaps as ParsedDriverCaps<AppiumDriverConstraints>;
+      const w3cSettings = pullSettings(desiredCaps);
+      pullSettings(processedW3CCapabilities.alwaysMatch);
 
       const {
         driver: InnerDriver,

@@ -58,7 +58,7 @@ describe('Protocol', function () {
         const {status, data} = await httpGet(`${baseUrl}/status`, {throwOnError: false});
         assert.equal(status, 500);
         assert.equal(data.value.error, 'unknown error');
-        assert.match(data.value.message, new RegExp(String(thrownValue ?? 'unknown')));
+        assert.match(data.value.message, new RegExp(String(thrownValue)));
         assert.equal(typeof data.value.stacktrace, 'string');
       });
     }

@@ -171,7 +171,9 @@ async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: stri
   const sessionLog = getLogger(driver, sessionId);
   sessionLog.info(`Client disconnected before receiving session ${sessionId}. Deleting it`);
   const warn = (error: unknown) =>
-    sessionLog.warn(`Could not delete abandoned session ${sessionId}: ${JSON.stringify(error)}`);
+    sessionLog.warn(
+      `Could not delete abandoned session ${sessionId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
   try {
     const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
       DELETE_SESSION_COMMAND,

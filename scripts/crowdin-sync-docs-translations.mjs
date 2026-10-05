@@ -197,4 +197,4 @@ async function main() {
   }
 }
 
-void (async () => await main())();
+await main();

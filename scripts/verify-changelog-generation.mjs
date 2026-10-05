@@ -10,7 +10,6 @@
 
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
-import {pathToFileURL} from 'node:url';
 
 import {ConventionalChangelog} from 'conventional-changelog';
 import {loadPreset} from 'conventional-changelog-preset-loader';
@@ -139,6 +138,6 @@ async function main() {
 }
 
 // Check if this module is being run directly
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (import.meta.main) {
   void main();
 }

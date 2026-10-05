@@ -309,4 +309,4 @@ async function main() {
   log.info('All done');
 }
 
-void (async () => await main())();
+await main();

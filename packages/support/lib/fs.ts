@@ -222,7 +222,7 @@ export const fs = {
     const renameFile = async (src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> => {
       if (!skipExistenceCheck && (await this.exists(dst))) {
         if (opts?.clobber === false) {
-          const err = new Error(`The destination path '${dst.toString()}' already exists`) as NodeJS.ErrnoException;
+          const err = new Error(`The destination path '${dst?.toString()}' already exists`) as NodeJS.ErrnoException;
           err.code = 'EEXIST';
           throw err;
         }

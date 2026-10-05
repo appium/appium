@@ -166,6 +166,7 @@ const config = {
     radix: 'error',
     'require-await': 'off',
     'no-empty-function': 'off',
+    'typescript/await-thenable': 'off',
     'typescript/unbound-method': 'off',
     'unicorn/prefer-node-protocol': 'warn',
 

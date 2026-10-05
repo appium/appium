@@ -58,7 +58,7 @@ describe('Protocol', function () {
         const {status, data} = await httpGet(`${baseUrl}/status`, {throwOnError: false});
         assert.equal(status, 500);
         assert.equal(data.value.error, 'unknown error');
-        assert.match(data.value.message, new RegExp(String(thrownValue)));
+        assert.match(data.value.message, /An unknown error has occurred/);
         assert.equal(typeof data.value.stacktrace, 'string');
       });
     }
@@ -377,7 +377,6 @@ describe('Protocol', function () {
 
           afterEach(async function () {
             delete (driver as any).performActions;
-            // oxlint-disable-next-line typescript/await-thenable -- close() is async
             await server.close();
           });
 

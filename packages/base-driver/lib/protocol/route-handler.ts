@@ -325,7 +325,7 @@ function normalizeError(err: unknown, driver: Core<any>, sessionId: string | und
     'The thrown error object does not seem to be a valid instance of the Error class. This ' +
       'might be a genuine bug of a driver or a plugin.',
   );
-  return new Error(String(err));
+  return new Error('An unknown error has occurred. Check the server logs for more details.');
 }
 
 /**

@@ -93,7 +93,7 @@ export class SecureValuesPreprocessor {
       } else if (typeof source === 'string') {
         rawRules.push(String(source));
       } else {
-        issues.push(`'${JSON.stringify(source)}' must be a valid log filtering rule`);
+        issues.push(`${JSON.stringify(source)} must be a valid log filtering rule`);
       }
     }
     this._rules = [];

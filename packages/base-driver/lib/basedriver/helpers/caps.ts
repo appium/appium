@@ -75,5 +75,5 @@ export function parseCapsArray(capValue: string | string[]): string[] {
   if (typeof capValue === 'string') {
     return [capValue];
   }
-  throw new TypeError(`Expected a string or a valid JSON array; received '${JSON.stringify(capValue)}'`);
+  throw new TypeError(`Expected a string or a valid JSON array; received ${JSON.stringify(capValue)}`);
 }

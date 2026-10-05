@@ -200,6 +200,35 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      it('should start the idle timeout after applying initial settings', async function () {
+        const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+        fakeDriver.setProtocolW3C();
+        fakeDriver.sessionId = SESSION_ID;
+        fakeDriver.newCommandTimeoutMs = 1000;
+        sandbox.stub(fakeDriver, 'onIpcInit').resolves();
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .returns([SESSION_ID, {...BASE_CAPS}]);
+        sandbox.stub(fakeDriver, 'updateSettings').callsFake(async () => {
+          await clock.tickAsync(2000);
+        });
+
+        const {value, error} = await appium.createSession({
+          ...W3C_CAPS,
+          alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {initial: true}},
+        } as any);
+
+        assert.equal(error, undefined);
+        assert.equal(value?.[0], SESSION_ID);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(999);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(1);
+        assert.equal(appium.sessions[SESSION_ID], undefined);
+        mockFakeDriver.verify();
+      });
+
       for (const cleanupFails of [false, true]) {
         it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
           const originalError = new Error('unsupported initial setting');

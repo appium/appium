@@ -46,7 +46,7 @@ Subscribes to one or more BiDi events.
 
 #### Response
 
-`null`
+`{subscription: string}` — a unique subscription ID that can be passed to `session.unsubscribe`.
 
 ### bidiUnsubscribe
 
@@ -56,15 +56,20 @@ session.unsubscribe
 
 > WebDriver BiDi documentation: [session.unsubscribe](https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe)
 
-Unsubscribes from one or more BiDi events.
+Unsubscribes using previously returned subscription IDs, or the legacy event/context form.
+Removing a subscription ID preserves any overlapping subscriptions.
 
 #### Parameters
 
 |Name|Description|Type|Default|
 |--|--|--|--|
-|`contexts?`|Contexts in which to unsubscribe from the specified events. By default, the global scope is applied.|string[]|`['']`|
-|`events`|Names of events to unsubscribe from|string[]||
+|`subscriptions?`|Non-empty list of subscription IDs returned by `session.subscribe`. Cannot be combined with `events` or `contexts`.|string[]||
+|`contexts?`|Legacy form only: contexts in which to unsubscribe from the specified events. By default, the global scope is applied.|string[]|`['']`|
+|`events?`|Legacy form: non-empty list of event names to unsubscribe from. Required when `subscriptions` is omitted.|string[]||
+
+All subscription IDs must be known to the current session. An unknown ID causes an `invalid argument`
+error without removing any subscriptions. Subscription IDs are cleared when the session is deleted.
 
 #### Response
 
-`null`
+`{}`

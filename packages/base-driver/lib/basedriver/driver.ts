@@ -24,7 +24,7 @@ import {calcSignature} from '../helpers/session.js';
 import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
-import {bidiStatus, bidiSubscribe, bidiUnsubscribe} from './commands/bidi.js';
+import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
 import {getLogEvents, logCustomEvent} from './commands/event.js';
 import {executeMethod} from './commands/execute.js';
 import {
@@ -414,6 +414,7 @@ export class BaseDriver<
     }
     this.pendingCommandControllers.clear();
     this.sessionId = null;
+    clearBidiSubscriptions(this);
   }
 
   /**

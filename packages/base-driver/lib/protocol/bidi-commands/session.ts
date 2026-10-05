@@ -30,6 +30,14 @@ export const SESSION_BIDI_COMMANDS = {
       // non-standard: not part of the spec, but kept for backward compatibility, since
       // bidiUnsubscribe uses it to scope which contexts' subscriptions get removed
       optional: ['contexts'],
+      validate: ({events, subscriptions, contexts}) => {
+        if (subscriptions !== undefined && (events !== undefined || contexts !== undefined)) {
+          return 'subscriptions cannot be combined with events or contexts';
+        }
+        return undefined;
+      },
+      // Preserve the selected alternative; otherwise IDs and event names become the same argument.
+      makeArgs: ({events, contexts, subscriptions}) => [events, contexts, subscriptions],
     },
   },
 } as const satisfies BidiMethodMap;

@@ -325,7 +325,7 @@ function normalizeError(err: unknown, driver: Core<any>, sessionId: string | und
     'The thrown error object does not seem to be a valid instance of the Error class. This ' +
       'might be a genuine bug of a driver or a plugin.',
   );
-  return new Error(`${JSON.stringify(err) ?? 'unknown'}`);
+  return new Error(String(err));
 }
 
 /**

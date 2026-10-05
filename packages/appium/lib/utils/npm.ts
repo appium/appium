@@ -91,7 +91,8 @@ export class NPM {
         // ignore
       }
     } catch (e) {
-      const {stdout, stderr, code} = e as ExecError;
+      // oxlint-disable-next-line typescript/no-useless-default-assignment -- the process may fail before teen_process adds the streams
+      const {stdout = '', stderr = '', code = null} = e as ExecError;
       throw new Error(
         `npm command '${argsCopy.join(
           ' ',

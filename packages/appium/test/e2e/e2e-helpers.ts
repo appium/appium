@@ -96,7 +96,8 @@ async function run(
       stderr: strip(retval.stderr),
     };
   } catch (err) {
-    const {stdout, stderr} = err as ExecError & {stdout?: string; stderr?: string};
+    // oxlint-disable-next-line typescript/no-useless-default-assignment -- the process may fail before teen_process adds the streams
+    const {stdout = '', stderr = ''} = err as ExecError;
     const execErr = err as ExecError;
     const baseErr = err instanceof Error ? err : new Error(String(err));
     const runErr = Object.assign(baseErr, {

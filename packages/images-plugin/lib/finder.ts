@@ -132,7 +132,7 @@ export class ImageElementFinder {
             defaultImageTemplateScale,
             ignoreDefaultImageTemplateScale,
             fixImageTemplateScale,
-            ...(scale || {}),
+            ...scale,
           });
           // We do not want `template` to be mutated multiple times when the
           // wrapping lambda is retried

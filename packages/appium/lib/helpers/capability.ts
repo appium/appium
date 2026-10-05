@@ -46,7 +46,6 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
   }
 
   let desiredCaps: Capabilities<C> = {} as Capabilities<C>;
-  // eslint-disable-next-line prefer-const -- assigned in success path after try
   let processedW3CCapabilities: W3CCapabilities<C> | undefined;
 
   w3cCapabilities = structuredClone(w3cCapabilities);

@@ -104,7 +104,7 @@ describe('utils', function () {
 
     it('should convert an object to a string', function () {
       for (const obj of [{}, null, undefined, [], 0]) {
-        assert.strictEqual(unleakString(obj as any), `${obj}`);
+        assert.strictEqual(unleakString(obj as any), `${obj as any}`);
       }
     });
   });

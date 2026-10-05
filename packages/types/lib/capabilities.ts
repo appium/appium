@@ -97,8 +97,8 @@ export type Capabilities<C extends Constraints> = ConstraintsToCaps<C>;
  * Does not contain {@linkcode BaseCapabilities}; see {@linkcode W3CDriverCaps}.
  */
 export interface W3CCapabilities<C extends Constraints> {
-  alwaysMatch: NSCapabilities<C>;
-  firstMatch: NSCapabilities<C>[];
+  alwaysMatch?: NSCapabilities<C>;
+  firstMatch?: NSCapabilities<C>[];
 }
 
 /**

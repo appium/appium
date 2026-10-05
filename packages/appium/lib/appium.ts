@@ -417,7 +417,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
             await this.deleteSession(registeredSessionId);
           }
         } catch (cleanupError) {
-          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${cleanupError}`);
+          const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
         }
       }
       return {
@@ -446,8 +447,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
             this.log.debug(`Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`);
             try {
               await plugin.onUnexpectedShutdown(driver, cause);
-            } catch (e) {
-              this.log.warn(`Got an error when running plugin ${plugin.name} shutdown handler: ${e}`);
+            } catch (err) {
+              const message = err instanceof Error ? err.message : String(err);
+              this.log.warn(`Got an error when running plugin ${plugin.name} shutdown handler: ${message}`);
             }
           } else {
             this.log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
@@ -763,7 +765,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     plugins: Plugin[];
   }): () => Promise<unknown> {
     if (plugins.length) {
-      this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
+      this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name).join(', ')}`);
     }
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*

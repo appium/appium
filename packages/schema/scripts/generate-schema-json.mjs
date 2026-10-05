@@ -57,7 +57,8 @@ async function write() {
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`, {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${message}`, {
       cause: err,
     });
   }
@@ -75,6 +76,6 @@ async function main() {
 }
 
 // Check if this module is being run directly
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+if (import.meta.main) {
+  void main();
 }

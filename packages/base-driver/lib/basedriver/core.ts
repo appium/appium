@@ -162,7 +162,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       throw new Error('Cannot log commands directly');
     }
     if (typeof eventName !== 'string') {
-      throw new Error(`Invalid eventName ${eventName}`);
+      throw new Error(`Invalid eventName ${JSON.stringify(eventName)}`);
     }
     if (!this._eventHistory[eventName]) {
       this._eventHistory[eventName] = [];

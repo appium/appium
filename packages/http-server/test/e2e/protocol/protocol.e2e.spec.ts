@@ -58,7 +58,7 @@ describe('Protocol', function () {
         const {status, data} = await httpGet(`${baseUrl}/status`, {throwOnError: false});
         assert.equal(status, 500);
         assert.equal(data.value.error, 'unknown error');
-        assert.match(data.value.message, new RegExp(String(thrownValue ?? 'unknown')));
+        assert.match(data.value.message, /An unknown error has occurred/);
         assert.equal(typeof data.value.stacktrace, 'string');
       });
     }
@@ -343,7 +343,7 @@ describe('Protocol', function () {
         });
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
-          (driver as any).performActions = (actions: object[]) => 'It works ' + actions.join('');
+          (driver as any).performActions = (actions: string[]) => 'It works ' + actions.join('');
           const {status, value, sessionId} = (
             await httpPost(`${sessionUrl}/actions`, {
               actions: ['a', 'b', 'c'],

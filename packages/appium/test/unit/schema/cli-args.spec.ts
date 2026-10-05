@@ -27,7 +27,7 @@ describe('cli-args', function () {
       await registerSchema(extType as ExtensionType, extName, schema as Parameters<typeof registerSchema>[2]);
     }
     await finalizeSchema();
-    return Object.fromEntries([...toParserArgs()]) as ParserArgsMap;
+    return Object.fromEntries(toParserArgs()) as ParserArgsMap;
   }
 
   beforeEach(resetSchema);

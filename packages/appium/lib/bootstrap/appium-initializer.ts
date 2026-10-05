@@ -18,6 +18,7 @@ import {SERVER_SUBCOMMAND} from '../constants.js';
 import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
 import {log as logger} from '../logger.js';
 import {init as logsinkInit} from '../logsink.js';
+import type {ErrorObject} from '../schema/ajv.js';
 import {
   isDriverCommandArgs,
   isExtensionCommandArgs,
@@ -112,9 +113,16 @@ export class AppiumInitializer {
 
   private assertConfigFileOk(configResult: Awaited<ReturnType<typeof readConfigFile>>): void {
     if (!util.isEmpty(configResult.errors)) {
-      throw new Error(
-        `Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`,
-      );
+      let errorsListString: string;
+      if (configResult.reason) {
+        errorsListString =
+          typeof configResult.reason !== 'string'
+            ? configResult.reason.map((r) => r.error).join(', ')
+            : configResult.reason;
+      } else {
+        errorsListString = (configResult.errors as ErrorObject[])?.map((e) => e.message).join(', ');
+      }
+      throw new Error(`Errors in config file ${configResult.filepath}:\n ${errorsListString}`);
     }
   }
 

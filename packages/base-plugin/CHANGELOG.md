@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.2](https://github.com/appium/appium/compare/@appium/base-plugin@4.0.0-beta.1...@appium/base-plugin@4.0.0-beta.2) (2026-10-05)
+
+### Bug Fixes
+
+* use native ESM entrypoint detection ([#22868](https://github.com/appium/appium/issues/22868)) ([e391bb2](https://github.com/appium/appium/commit/e391bb249fec5f700a6d63a747ff921a80689fb5))
+
+
 ## [4.0.0-beta.1](https://github.com/appium/appium/compare/@appium/base-plugin@4.0.0-beta.0...@appium/base-plugin@4.0.0-beta.1) (2026-09-27)
 
 **Note:** Version bump only for package @appium/base-plugin

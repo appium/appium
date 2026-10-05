@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.2](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.1...@appium/types@2.0.0-beta.2) (2026-10-05)
+
+### Bug Fixes
+
+* **base-driver:** reject unsupported BiDi user-context scopes ([#22877](https://github.com/appium/appium/issues/22877)) ([b077efd](https://github.com/appium/appium/commit/b077efd67d09cbdbe1f7c9a07a75aaa6d965beee))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22876](https://github.com/appium/appium/issues/22876)) ([b791915](https://github.com/appium/appium/commit/b791915ffcf322e1cc84dbde606be55d34f020b3))
+* **types:** align the logger peer dependency with Appium 4 ([#22866](https://github.com/appium/appium/issues/22866)) ([c78cfa4](https://github.com/appium/appium/commit/c78cfa405f9d0cd54fc056d812c26faa9535213b))
+
+
 ## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.0...@appium/types@2.0.0-beta.1) (2026-09-27)
 
 ### ⚠ BREAKING CHANGES

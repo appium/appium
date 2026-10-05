@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.2](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.1...@appium/support@8.0.0-beta.2) (2026-10-05)
+
+### Bug Fixes
+
+* **support:** accept transparently decompressed downloads ([#22886](https://github.com/appium/appium/issues/22886)) ([4de1a3e](https://github.com/appium/appium/commit/4de1a3e62c1493edc1e4aa5f540debd2e61d3e65))
+* **support:** do not leave a file behind when downloadFile fails ([#22836](https://github.com/appium/appium/issues/22836)) ([15ecc71](https://github.com/appium/appium/commit/15ecc718c4b14c5a449bb7ca309b7efad875ed96))
+* **support:** preserve directories on failed downloads ([#22864](https://github.com/appium/appium/issues/22864)) ([29a60d6](https://github.com/appium/appium/commit/29a60d6e935b23a64a250562689f914da7b37082))
+* **support:** preserve symlinks inside moved directories ([#22880](https://github.com/appium/appium/issues/22880)) ([6c9c930](https://github.com/appium/appium/commit/6c9c930cbedc1f0f5ce528b42818954bfdab41d4))
+
+
 ## [8.0.0-beta.1](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.0...@appium/support@8.0.0-beta.1) (2026-09-27)
 
 ### Bug Fixes

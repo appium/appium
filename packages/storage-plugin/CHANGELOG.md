@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.3](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.2...@appium/storage-plugin@3.0.0-beta.3) (2026-10-05)
+
+### Bug Fixes
+
+* **storage-plugin:** reject storage file names that start with a dot ([#22863](https://github.com/appium/appium/issues/22863)) ([1b85255](https://github.com/appium/appium/commit/1b852557a3cdcdcad1444fbf4ade7f108904973e))
+
+
 ## [3.0.0-beta.2](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.1...@appium/storage-plugin@3.0.0-beta.2) (2026-09-27)
 
 **Note:** Version bump only for package @appium/storage-plugin

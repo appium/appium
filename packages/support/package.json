@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "8.0.0-beta.1",
+  "version": "8.0.0-beta.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -52,8 +52,8 @@
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "~3.0.0-beta.0",
-    "@appium/types": "~2.0.0-beta.1",
+    "@appium/logger": "~3.0.0-beta.1",
+    "@appium/types": "~2.0.0-beta.2",
     "archiver": "^8.0.0",
     "asyncbox": "^6.4.2",
     "axios": "^1.19.0",
@@ -69,7 +69,7 @@
     "yauzl": "^3.4.0"
   },
   "devDependencies": {
-    "@appium/tsconfig": "~2.0.0-beta.0"
+    "@appium/tsconfig": "~2.0.0-beta.1"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.3](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.2...@appium/fake-plugin@5.0.0-beta.3) (2026-10-05)
+
+### Bug Fixes
+
+* use native ESM entrypoint detection ([#22868](https://github.com/appium/appium/issues/22868)) ([e391bb2](https://github.com/appium/appium/commit/e391bb249fec5f700a6d63a747ff921a80689fb5))
+
+
 ## [5.0.0-beta.2](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.1...@appium/fake-plugin@5.0.0-beta.2) (2026-09-27)
 
 **Note:** Version bump only for package @appium/fake-plugin

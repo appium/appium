@@ -151,7 +151,8 @@ describe('app download and configuration', function () {
           server = httpServer as HttpServerWithAsyncClose;
         });
         after(async function () {
-          server.close();
+          // oxlint-disable-next-line typescript/await-thenable -- close() is async
+          await server.close();
         });
 
         it('should download apk file with query string', async function () {

@@ -377,7 +377,8 @@ describe('Protocol', function () {
 
           afterEach(async function () {
             delete (driver as any).performActions;
-            server.close();
+            // oxlint-disable-next-line typescript/await-thenable -- close() is async
+            await server.close();
           });
 
           it('should work if a proxied request returns a successful W3C response', async function () {

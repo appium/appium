@@ -125,6 +125,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         // syntax for; parsing directly avoids that entirely.
         moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
       } else {
+        // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+        // POSIX paths also need URL escaping for characters such as '#' and '%'.
         const importPath = pathToFileURL(schemaPath).href;
         const mod = (await import(importPath)) as Record<string, any>;
         moduleObject = 'default' in mod ? mod.default : mod;

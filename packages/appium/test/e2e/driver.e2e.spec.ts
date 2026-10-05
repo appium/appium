@@ -103,7 +103,7 @@ describe('FakeDriver via HTTP', function () {
     let server: AppiumServer | void;
     return {
       setup: async (args?: Partial<ParsedArgs>) => {
-        const merged = {...(args ?? {}), appiumHome, port, address: TEST_HOST};
+        const merged = {...args, appiumHome, port, address: TEST_HOST};
         if (shouldStartServer) {
           server = await appiumServer(merged);
         }
@@ -558,12 +558,12 @@ describe('FakeDriver via HTTP', function () {
           },
         },
       };
-      let sessionId = null;
+      const session = {sessionId: null as string | null};
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
         .callsFake(async function (this: InstanceType<DriverClass>, caps) {
           const res = await BaseDriver.prototype.createSession.call(this, caps);
-          sessionId = res[0];
+          session.sessionId = res[0];
           assert.strictEqual(this.protocol, 'W3C');
           return res;
         });
@@ -574,8 +574,8 @@ describe('FakeDriver via HTTP', function () {
         const {status} = res;
         assert.strictEqual(status, 200);
       } finally {
-        if (sessionId) {
-          await httpDelete(`${testServerBaseSessionUrl}/${sessionId}`);
+        if (session.sessionId) {
+          await httpDelete(`${testServerBaseSessionUrl}/${session.sessionId}`);
         }
         createSessionStub.restore();
       }

@@ -65,7 +65,7 @@ export async function performApiRequest(suffix = '', opts = {}) {
         Authorization: `Bearer ${API_TOKEN}`,
         'Content-Type': 'application/json',
         'User-Agent': USER_AGENT,
-        ...(headers || {}),
+        ...headers,
       },
       url,
       params,

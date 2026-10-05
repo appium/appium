@@ -97,7 +97,7 @@ export function transformNode(
         throw new Error(`Index path is required but node found with no 'index' attribute`);
       }
 
-      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX]}`;
+      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX] as string}`;
       nodeObj[IDX_PATH_PREFIX] = thisIndexPath;
     }
 

@@ -222,7 +222,7 @@ export const fs = {
     const renameFile = async (src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> => {
       if (!skipExistenceCheck && (await this.exists(dst))) {
         if (opts?.clobber === false) {
-          const err = new Error(`The destination path '${dst}' already exists`) as NodeJS.ErrnoException;
+          const err = new Error(`The destination path '${dst?.toString()}' already exists`) as NodeJS.ErrnoException;
           err.code = 'EEXIST';
           throw err;
         }
@@ -292,8 +292,8 @@ export const fs = {
    * segments. Prefer a manual `readdir`-based walk over a glob pattern for callers that must
    * traverse through symlinks.
    */
-  glob: ((pattern: string | readonly string[], options: GlobOptions = {}) => {
-    const {cwd, withFileTypes, absolute, lazy} = options;
+  glob: ((pattern: string | readonly string[], options?: GlobOptions) => {
+    const {cwd, withFileTypes, absolute, lazy} = options ?? {};
     async function* generate(): AsyncGenerator<string | Dirent> {
       for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
         yield absolute && !withFileTypes ? path.resolve(cwd ?? process.cwd(), entry as string) : entry;
@@ -320,7 +320,9 @@ export const fs = {
       const fileHash = crypto.createHash(algorithm);
       const readStream = createReadStream(filePath);
       readStream.on('error', (e: Error) =>
-        reject(new Error(`Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`)),
+        reject(
+          new Error(`Cannot calculate ${algorithm} hash for '${filePath.toString()}'. Original error: ${e.message}`),
+        ),
       );
       readStream.on('data', (chunk: Buffer | string) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
@@ -405,7 +407,7 @@ export const fs = {
             const file = await lastFileProcessed;
             resolve(file ?? null);
           } catch (err) {
-            log.warn(`Unexpected error: ${err instanceof Error ? err.message : err}`);
+            log.warn(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`);
             reject(err);
           }
         });

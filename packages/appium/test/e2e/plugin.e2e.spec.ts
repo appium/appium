@@ -40,7 +40,7 @@ function createServer(): {
   let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
   return {
     setup: async (args?: Partial<ParsedArgs>) => {
-      server = await appiumServer({...baseServerArgs, ...(args ?? {})});
+      server = await appiumServer({...baseServerArgs, ...args});
     },
     teardown: async () => {
       await server?.close();
@@ -225,7 +225,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       it('should handle unexpected driver shutdown', async function () {
         const newOpts = {...wdOpts};
         newOpts.capabilities = {
-          ...(newOpts.capabilities ?? {}),
+          ...newOpts.capabilities,
           'appium:newCommandTimeout': 1,
         };
         const driver = await wdio(newOpts as any);
@@ -248,7 +248,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       it('should allow plugin handled commands to reset newCommandTimeout', async function () {
         const newOpts = {...wdOpts};
         newOpts.capabilities = {
-          ...(newOpts.capabilities ?? {}),
+          ...newOpts.capabilities,
           'appium:newCommandTimeout': 2,
         };
         const driver = await wdio(newOpts as any);

@@ -91,7 +91,7 @@ export class Timer {
       // get the difference, and convert to number
       nanoDuration = Number(endTime - this._startTime);
     } else {
-      throw new Error(`Unable to get duration. Start time '${this._startTime}' cannot be parsed`);
+      throw new Error(`Unable to get duration. Start time '${String(this._startTime)}' cannot be parsed`);
     }
 
     return new Duration(nanoDuration);

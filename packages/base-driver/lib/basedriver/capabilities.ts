@@ -174,8 +174,8 @@ export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<
         strippedCaps[strippedCapName] = caps[prefixedCap as keyof typeof caps];
       } else {
         log.warn(
-          `Ignoring capability '${prefixedCap}=${caps[prefixedCap as keyof typeof caps]}' and ` +
-            `using capability '${strippedCapName}=${strippedCaps[strippedCapName]}'`,
+          `Ignoring capability '${prefixedCap}=${JSON.stringify(caps[prefixedCap as keyof typeof caps])}' and ` +
+            `using capability '${strippedCapName}=${JSON.stringify(strippedCaps[strippedCapName])}'`,
         );
       }
     } else {
@@ -217,16 +217,19 @@ export function findNonPrefixedCaps<C extends Constraints>({
  * @see https://www.w3.org/TR/webdriver/#processing-capabilities
  */
 export function parseCaps<C extends Constraints>(
-  caps: W3CCapabilities<C>,
+  unparsedCaps: W3CCapabilities<C>,
   constraints: C | undefined = {} as C,
   shouldValidateCaps: boolean | undefined = true,
 ): ParsedCaps<C> {
   // If capabilities request is not an object, return error (#1.1)
-  if (!util.isPlainObject(caps)) {
+  if (!util.isPlainObject(unparsedCaps)) {
     throw new errors.InvalidArgumentError(
       'The capabilities argument was not valid for the following reason(s): "capabilities" must be a JSON object.',
     );
   }
+
+  // Recast the capability type, since util.isPlainObject broadens it
+  const caps = unparsedCaps as W3CCapabilities<C>;
 
   // Let 'requiredCaps' be property named 'alwaysMatch' from capabilities request (#2)
   // and 'allFirstMatchCaps' be property named 'firstMatch' from capabilities request (#3)
@@ -246,7 +249,7 @@ export function parseCaps<C extends Constraints>(
   const nonPrefixedCaps = findNonPrefixedCaps(caps);
   if (!util.isEmpty(nonPrefixedCaps)) {
     throw new errors.InvalidArgumentError(
-      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps}`,
+      `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps.join(', ')}`,
     );
   }
 
@@ -358,7 +361,7 @@ export function promoteAppiumOptionsForObject<C extends Constraints>(obj: NSCapa
   const verifyIfAcceptable = (capName: string) => {
     if (typeof capName !== 'string') {
       throw new errors.SessionNotCreatedError(
-        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`,
+        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${String(capName)}' is unexpected`,
       );
     }
     if (isStandardCap(capName)) {

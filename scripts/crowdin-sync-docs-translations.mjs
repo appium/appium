@@ -167,7 +167,7 @@ async function main() {
     try {
       await zip.extractAllTo(zipPath, tmpRoot);
       const srcLanguageNames = await fs.readdir(tmpRoot);
-      log.info(`Available Crowdin languages: ${srcLanguageNames}`);
+      log.info(`Available Crowdin languages: ${srcLanguageNames.join(', ')}`);
       log.info(`Supported languages map: ${JSON.stringify(CROWDIN_TO_FS_LANGUAGES_MAP)}`);
       let count = 0;
       for (const name of srcLanguageNames) {
@@ -197,4 +197,4 @@ async function main() {
   }
 }
 
-(async () => await main())();
+await main();

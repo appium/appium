@@ -170,7 +170,10 @@ function isResponseClosed(res: Response): boolean {
 async function deleteAbandonedSession(driver: Core<Constraints>, sessionId: string): Promise<void> {
   const sessionLog = getLogger(driver, sessionId);
   sessionLog.info(`Client disconnected before receiving session ${sessionId}. Deleting it`);
-  const warn = (error: unknown) => sessionLog.warn(`Could not delete abandoned session ${sessionId}: ${error}`);
+  const warn = (error: unknown) =>
+    sessionLog.warn(
+      `Could not delete abandoned session ${sessionId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
   try {
     const result = await (driver as BaseDriver<Constraints>).executeCommand<{error?: unknown} | undefined>(
       DELETE_SESSION_COMMAND,
@@ -322,7 +325,7 @@ function normalizeError(err: unknown, driver: Core<any>, sessionId: string | und
     'The thrown error object does not seem to be a valid instance of the Error class. This ' +
       'might be a genuine bug of a driver or a plugin.',
   );
-  return new Error(`${err ?? 'unknown'}`);
+  return new Error('An unknown error has occurred. Check the server logs for more details.');
 }
 
 /**

@@ -293,7 +293,7 @@ export interface LogDef {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: (driver: any) => Promise<unknown> | unknown;
+  getter: (driver: any) => unknown;
 }
 
 export interface ISettingsCommands<T extends object = object> {

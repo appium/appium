@@ -42,7 +42,7 @@ export interface Logger extends EventEmitter {
    * @param message message of the log which will be formatted using utils.format()
    * @param args additional arguments appended to the log message also formatted using utils.format()
    */
-  log(level: LogLevel | string, prefix: string, message: any, ...args: any[]): void;
+  log(level: CustomLogLevel, prefix: string, message: any, ...args: any[]): void;
 
   /**
    * @param prefix
@@ -118,6 +118,9 @@ export type LogLevel =
   | 'warn'
   | 'error'
   | 'silent';
+
+/** {@linkcode LogLevel} with the ability to define custom log levels. */
+export type CustomLogLevel = LogLevel | (string & {});
 
 /** ANSI display style for a level tag or heading. */
 export interface StyleObject {

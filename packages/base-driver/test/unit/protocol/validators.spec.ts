@@ -24,7 +24,7 @@ describe('validators', function () {
           (err: Error) => {
             assert.equal(err.name, 'Error');
             assert.match(err.message, /must be a valid URL/);
-            assert.match(err.message, new RegExp(String(url).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+            assert.match(err.message, new RegExp(String(url as any).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
             return true;
           },
         );

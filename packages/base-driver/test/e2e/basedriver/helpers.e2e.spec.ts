@@ -4,7 +4,7 @@ import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-import {fs, node} from '@appium/support';
+import {fs, node, tempDir} from '@appium/support';
 import {sleep} from 'asyncbox';
 
 import {appUrlRules} from '../../../lib/basedriver/helpers/app-url-rules.js';
@@ -19,6 +19,17 @@ const FIXTURE_ROOT = path.resolve(
 
 function getFixture(file: string): string {
   return path.resolve(FIXTURE_ROOT, file);
+}
+
+async function findNamedFiles(root: string, fileName: string): Promise<string[]> {
+  const found: string[] = [];
+  for (const entry of await fs.readdir(root)) {
+    const candidate = path.join(root, entry, fileName);
+    if (await fs.exists(candidate)) {
+      found.push(candidate);
+    }
+  }
+  return found;
 }
 
 describe('app download and configuration', function () {
@@ -62,6 +73,16 @@ describe('app download and configuration', function () {
 
         before(function () {
           const httpServer = http.createServer(function (req, res) {
+            if (req.url?.includes('/cut/')) {
+              res.writeHead(200, {
+                'Content-Type': 'application/vnd.android.package-archive',
+                'Content-Length': '1000',
+                'Content-Disposition': 'attachment; filename="incomplete-download.apk"',
+              });
+              res.write(Buffer.alloc(64));
+              setTimeout(() => res.destroy(), 100);
+              return;
+            }
             if (req.url?.indexOf('missing') !== -1) {
               res.writeHead(404);
               res.end();
@@ -170,6 +191,23 @@ describe('app download and configuration', function () {
           assert.ok(newAppPath.includes('from-star.apk'));
           const contents = await fs.readFile(newAppPath, 'utf8');
           assert.strictEqual(contents, 'this is not really an apk\n');
+        });
+        it('should remove an incomplete app download', async function () {
+          const fileName = 'incomplete-download.apk';
+          const originalTmpDir = process.env.APPIUM_TMP_DIR;
+          const tempRoot = await tempDir.openDir();
+          process.env.APPIUM_TMP_DIR = tempRoot;
+          try {
+            await assert.rejects(configureApp(`${serverUrl}/cut/${fileName}`, '.apk'), /Cannot fetch the application/);
+            assert.deepEqual(await findNamedFiles(tempRoot, fileName), []);
+          } finally {
+            if (originalTmpDir === undefined) {
+              delete process.env.APPIUM_TMP_DIR;
+            } else {
+              process.env.APPIUM_TMP_DIR = originalTmpDir;
+            }
+            await fs.rimraf(tempRoot);
+          }
         });
         it('should handle zip file that cannot be downloaded', async function () {
           await assert.rejects(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app'));

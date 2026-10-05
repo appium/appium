@@ -1,19 +1,25 @@
 import type {BidiModuleMap} from '@appium/types';
 
-const SUBSCRIPTION_REQUEST_PARAMS = {
+const SUBSCRIBE_PARAMS = {
   required: ['events'],
   optional: ['contexts'],
+} as const;
+
+// `events`/`contexts` is the legacy form; `subscriptions` is the spec form. They are mutually
+// exclusive, which bidiUnsubscribe validates.
+const UNSUBSCRIBE_PARAMS = {
+  optional: ['events', 'contexts', 'subscriptions'],
 } as const;
 
 export const BIDI_COMMANDS = {
   session: {
     subscribe: {
       command: 'bidiSubscribe',
-      params: SUBSCRIPTION_REQUEST_PARAMS,
+      params: SUBSCRIBE_PARAMS,
     },
     unsubscribe: {
       command: 'bidiUnsubscribe',
-      params: SUBSCRIPTION_REQUEST_PARAMS,
+      params: UNSUBSCRIBE_PARAMS,
     },
     status: {
       command: 'bidiStatus',

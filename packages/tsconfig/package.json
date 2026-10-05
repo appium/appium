@@ -1,6 +1,6 @@
 {
   "name": "@appium/tsconfig",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta.1",
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
   "description": "Shared TypeScript Config for Appium",
   "keywords": [

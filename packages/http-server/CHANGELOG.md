@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0-beta.2](https://github.com/appium/appium/compare/@appium/http-server@1.0.0-beta.1...@appium/http-server@1.0.0-beta.2) (2026-10-05)
+
+### Bug Fixes
+
+* **base-driver:** return protocol errors for null rejections ([#22869](https://github.com/appium/appium/issues/22869)) ([14c42f7](https://github.com/appium/appium/commit/14c42f791c34b6ef4805344df5e2146807ea25e7))
+
+
 ## 1.0.0-beta.1 (2026-09-27)
 
 ### ⚠ BREAKING CHANGES

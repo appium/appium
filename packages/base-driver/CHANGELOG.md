@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.2](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.1...@appium/base-driver@11.0.0-beta.2) (2026-10-05)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** when creating a new session, capabilities.firstMatch can no longer be set to an empty array, as per the WebDriver spec
+
+### Bug Fixes
+
+* **base-driver:** declare the path-to-regexp runtime dependency ([#22865](https://github.com/appium/appium/issues/22865)) ([63e9aa4](https://github.com/appium/appium/commit/63e9aa4f57d9c41cc4334d2666160fb054db5c45))
+* **base-driver:** decode credentials in app download URLs ([#22887](https://github.com/appium/appium/issues/22887)) ([c5f4217](https://github.com/appium/appium/commit/c5f42178066e0ee6e7bb2329da2207fe3cf3bec7))
+* **base-driver:** do not arm the idle timer while a command is still running ([#22828](https://github.com/appium/appium/issues/22828)) ([f330716](https://github.com/appium/appium/commit/f330716793279f3b2109c2a8ff8f0bff0fad58ac))
+* **base-driver:** keep the idle timer off while commands execute ([#22867](https://github.com/appium/appium/issues/22867)) ([9de70be](https://github.com/appium/appium/commit/9de70be6e262b4c86655379b78c12bb093a07c12))
+* **base-driver:** reject empty array in capabilities.firstMatch ([#22860](https://github.com/appium/appium/issues/22860)) ([6d1f28e](https://github.com/appium/appium/commit/6d1f28ed05124da1129378ce87f16b35fed0f0fc))
+* **base-driver:** reject queued commands when their session ends ([#22874](https://github.com/appium/appium/issues/22874)) ([ae8a27e](https://github.com/appium/appium/commit/ae8a27e02b262c8334f962d5256960f3af11489c))
+* **base-driver:** reject unsupported BiDi user-context scopes ([#22877](https://github.com/appium/appium/issues/22877)) ([b077efd](https://github.com/appium/appium/commit/b077efd67d09cbdbe1f7c9a07a75aaa6d965beee))
+* **base-driver:** remove incomplete app downloads ([#22878](https://github.com/appium/appium/issues/22878)) ([c159d19](https://github.com/appium/appium/commit/c159d1925c7fa580863962fef964fe58d987dc87))
+* **base-driver:** report noReset and fullReset together as session not created ([#22861](https://github.com/appium/appium/issues/22861)) ([318329f](https://github.com/appium/appium/commit/318329fba75b651e2ec93974e96cb628bb11cc77))
+* **base-driver:** return protocol errors for null rejections ([#22869](https://github.com/appium/appium/issues/22869)) ([14c42f7](https://github.com/appium/appium/commit/14c42f791c34b6ef4805344df5e2146807ea25e7))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22876](https://github.com/appium/appium/issues/22876)) ([b791915](https://github.com/appium/appium/commit/b791915ffcf322e1cc84dbde606be55d34f020b3))
+* **base-driver:** validate reset options before creating session state ([#22870](https://github.com/appium/appium/issues/22870)) ([1b7d1e0](https://github.com/appium/appium/commit/1b7d1e0eb779d15d804034ae64e556d81e122699))
+
+
 ## [11.0.0-beta.1](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.0...@appium/base-driver@11.0.0-beta.1) (2026-09-27)
 
 ### ⚠ BREAKING CHANGES

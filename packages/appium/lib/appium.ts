@@ -371,9 +371,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           `${innerSessionId} added to master session list`,
       );
 
-      // set the New Command Timeout for the inner driver
-      await driverInstance.startNewCommandTimeout();
-
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !util.isEmpty(w3cSettings)) {
         this.log.info(
@@ -397,6 +394,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         );
         dCaps.webSocketUrl = bidiUrl;
       }
+
+      // The session becomes idle only after all initialization has completed.
+      await driverInstance.startNewCommandTimeout();
     } catch (error: unknown) {
       if (registeredSessionId) {
         try {

@@ -3,7 +3,7 @@ import {EventEmitter} from 'node:events';
 import type {IncomingMessage} from 'node:http';
 import {describe, it} from 'node:test';
 
-import WebSocket from 'ws';
+import {WebSocket} from 'ws';
 
 import type {AppiumDriver} from '../../lib/appium.js';
 import {onBidiConnection} from '../../lib/bidi-commands.js';

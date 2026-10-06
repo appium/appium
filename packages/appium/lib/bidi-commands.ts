@@ -493,13 +493,15 @@ function initBidiEventListeners(
         if (method in eventLogCounts) {
           ++eventLogCounts[method];
         } else {
+          // must be set before logging: the log line may synchronously come back here as another event
+          // of the same method (e.g. drivers forward server logs as log.entryAdded with get_server_logs)
+          eventLogCounts[method] = 1;
           ext.log?.debug(
             // some old plugins might not have the `log` property
             `<-- BIDI EVENT ${method} (context: '${context}', ` +
               `params: ${util.truncateString(JSON.stringify(params), {length: MAX_LOGGED_DATA_LENGTH})}). ` +
               `All further similar events won't be logged.`,
           );
-          eventLogCounts[method] = 1;
         }
         // now we can send the event onto the socket
         const ev = {type: 'event', context, method, params};

@@ -3,5 +3,8 @@
  * @module
  */
 
-export * from './deploy.js';
-export * from './site.js';
+export {deploy, findDeployVersion} from './deploy.js';
+export type {DeployOpts} from './deploy.js';
+
+export {buildSite} from './site.js';
+export type {BuildMkDocsOpts} from './site.js';

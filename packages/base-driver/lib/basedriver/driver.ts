@@ -24,6 +24,7 @@ import {calcSignature} from '../helpers/session.js';
 import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
+// oxlint-disable import/no-duplicates -- see comment below
 import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
 import {getLogEvents, logCustomEvent} from './commands/event.js';
 import {executeMethod} from './commands/execute.js';
@@ -47,6 +48,7 @@ import {
   setScriptTimeout,
   timeouts,
 } from './commands/timeout.js';
+// oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
 // (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
 // import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type

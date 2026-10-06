@@ -276,17 +276,16 @@ function configureHttp({
   keepAliveTimeout,
   gracefulShutdownTimeout,
 }: ConfigureHttpOpts): AppiumServer {
-  // readonly props can only be set at construction time
   const appiumServer = Object.assign(httpServer, {
     webSocketsMapping: {},
     frontRouter: express.Router(),
     basePath,
+    addWebSocketHandler,
+    removeWebSocketHandler,
+    removeAllWebSocketHandlers,
+    getWebSocketHandlers,
+    isSecure: () => httpServer instanceof https.Server,
   }) as unknown as AppiumServer;
-  appiumServer.addWebSocketHandler = addWebSocketHandler;
-  appiumServer.removeWebSocketHandler = removeWebSocketHandler;
-  appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
-  appiumServer.getWebSocketHandlers = getWebSocketHandlers;
-  appiumServer.isSecure = () => httpServer instanceof https.Server;
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections
   // See: https://github.com/appium/appium/issues/20760

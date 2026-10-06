@@ -39,7 +39,7 @@ The procedure for storing a local file on the Appium server is as follows:
 
 - Calculate the [SHA1](https://en.wikipedia.org/wiki/SHA-1) hash of the source file
 - Decide the name of the destination file in the server storage (it can be the same as the original file name)
-- Send a `POST` request to the `/appium/storage/add` endpoint, which will return the `events` and `stream` websocket paths
+- Send a `POST` request to the `/appium/storage/add` endpoint (prefixed with the server base path, if any), which will return the `events` and `stream` websocket paths
 - Connect to both web sockets
 - Start listening for messages on the `events` web socket. Each message there is a JSON object wrapped
   to a string. The message must be either `{"value": {"success": true, "name":"app.ipa","sha1":"ccc963411b2621335657963322890305ebe96186"}}` to notify about a successful

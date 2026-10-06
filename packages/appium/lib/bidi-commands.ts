@@ -14,7 +14,7 @@ import type {
   StringRecord,
   SuccessBiDiCommandResponse,
 } from '@appium/types';
-import WebSocket from 'ws';
+import {WebSocket} from 'ws';
 
 import type {AppiumDriver} from './appium.js';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants.js';

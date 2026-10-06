@@ -228,6 +228,7 @@ class AppUrlRulesValidator {
     return url;
   }
 
+  // oxlint-disable promise/prefer-await-to-callbacks --- Node.js API
   /**
    * Creates a `dns.lookup`-compatible function which applies the address rules to every fresh
    * resolution. Node's `http.request` (and thus axios) expects the callback-based contract.
@@ -255,6 +256,7 @@ class AppUrlRulesValidator {
       });
     };
   }
+  // oxlint-enable promise/prefer-await-to-callbacks
 
   private _filterResolvedAddresses(hostname: string, addresses: LookupAddress[]): LookupAddress[] {
     const reject = () => this._reject(`The application host '${hostname}'`);

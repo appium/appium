@@ -128,6 +128,9 @@ const config = {
       rules: {
         'no-unused-expressions': 'off',
         'import/no-named-as-default-member': 'off',
+        'promise/always-return': 'off',
+        'promise/prefer-await-to-callbacks': 'off',
+        'promise/prefer-await-to-then': 'off',
         'typescript/ban-ts-comment': 'off',
         'typescript/no-non-null-assertion': 'off',
         'typescript/no-floating-promises': 'off',

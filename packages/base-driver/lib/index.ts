@@ -16,7 +16,32 @@ export {
   W3C_TIMEOUTS_MS,
 } from './constants.js';
 
-export * from './protocol/index.js';
+export {
+  ALL_COMMANDS,
+  BIDI_COMMANDS,
+  CREATE_SESSION_COMMAND,
+  DELETE_SESSION_COMMAND,
+  GET_STATUS_COMMAND,
+  LIST_DRIVER_COMMANDS_COMMAND,
+  LIST_DRIVER_EXTENSIONS_COMMAND,
+  METHOD_MAP,
+  NO_SESSION_ID_COMMANDS,
+  checkParams,
+  errorFromW3CJsonCode,
+  errors,
+  getProxyReq,
+  getResponseForW3CError,
+  isErrorType,
+  isSessionCommand,
+  handleIdempotency,
+  makeArgs,
+  routeConfiguringFunction,
+  routeToCommandName,
+  runWithProxyReq,
+  validateExecuteMethodParams,
+  withoutProxyReq,
+} from './protocol/index.js';
+export type {CheckParamsOptions, RouteConfiguringFunction, RouteConfiguringFunctionOpts} from './protocol/index.js';
 
 // wd-proxy exports
 export {WebDriverProxy} from './wd-proxy/proxy.js';
@@ -31,9 +56,6 @@ export {
   STANDARD_CAPS,
   validateCaps,
 } from './basedriver/capabilities.js';
-
-// BiDi exports
-export {BIDI_COMMANDS} from './protocol/bidi-commands/index.js';
 
 export {isW3cCaps} from './helpers/capabilities.js';
 export {generateDriverLogPrefix} from './helpers/log-prefix.js';

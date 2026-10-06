@@ -7,7 +7,7 @@ import {setImmediate} from 'node:timers/promises';
 import {BaseDriver} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
 import type {ExternalDriver} from '@appium/types';
-import WebSocket from 'ws';
+import {WebSocket} from 'ws';
 
 import {AppiumDriver} from '../../lib/appium.js';
 

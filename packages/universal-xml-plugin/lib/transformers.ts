@@ -2,10 +2,15 @@ import {ATTR_PREFIX} from './source.js';
 import type {TransformMetadata} from './types.js';
 
 /**
+ * Defines all platforms with available transformers.
+ */
+export const TRANSFORMS = {ios, android};
+
+/**
  * No-op transformer for iOS source XML.
  * @param nodeObj Node object to transform.
  */
-export function ios(nodeObj: any): void {
+function ios(nodeObj: any): void {
   void nodeObj;
   // iOS transformer does nothing
 }
@@ -15,7 +20,7 @@ export function ios(nodeObj: any): void {
  * @param nodeObj Node object to transform.
  * @param metadata Transformation metadata.
  */
-export function android(nodeObj: any, metadata: TransformMetadata): void {
+function android(nodeObj: any, metadata: TransformMetadata): void {
   // strip android:id from front of id
   const resId = nodeObj[`${ATTR_PREFIX}resource-id`];
   if (resId && metadata.appPackage) {

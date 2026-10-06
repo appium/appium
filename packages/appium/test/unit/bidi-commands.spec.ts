@@ -5,9 +5,9 @@ import {describe, it} from 'node:test';
 
 import WebSocket from 'ws';
 
-import type {AppiumDriver} from '../../lib/appium';
-import {onBidiConnection} from '../../lib/bidi-commands';
-import {BIDI_EVENT_NAME} from '../../lib/constants';
+import type {AppiumDriver} from '../../lib/appium.js';
+import {onBidiConnection} from '../../lib/bidi-commands.js';
+import {BIDI_EVENT_NAME} from '../../lib/constants.js';
 
 const SESSION_ID = 'bidi-session';
 const LOG_EVENT = 'log.entryAdded';

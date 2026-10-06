@@ -28,6 +28,7 @@ const deprecatedRoutesLogged: Set<string> = new Set();
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
   ttl: WS_TTL_MS,
+  ttlAutopurge: true,
   dispose: (f: () => any) => f(),
 });
 

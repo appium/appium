@@ -11,6 +11,15 @@ import type {ServerArgs} from './config.js';
 export type AppiumServer = Omit<HTTPServer, 'close'> & AppiumServerExtension;
 
 export interface AppiumServerExtension {
+  readonly webSocketsMapping: Record<string, WSServer>;
+  /**
+   * A {@linkcode Router} mounted before any route is registered. Use it from
+   * {@linkcode UpdateServerCallback} to add middleware that must see every request, including
+   * ones matched by routes registered elsewhere. See https://github.com/appium/appium/issues/17411
+   */
+  readonly frontRouter: Router;
+  /** The normalized `--base-path` the server is mounted at (leading slash, no trailing one; empty if none) */
+  readonly basePath: string;
   close(): Promise<void>;
   /**
    * Adds websocket handler to an {@linkcode AppiumServer}.
@@ -38,15 +47,8 @@ export interface AppiumServerExtension {
    * @returns Pathnames to WS server instances mapping matching the search criteria, if any found.
    */
   getWebSocketHandlers(this: AppiumServer, keysFilter?: string | null): Promise<Record<string, WSServer>>;
-  webSocketsMapping: Record<string, WSServer>;
   /** Returns true if the server operates via HTTPS protocol */
   isSecure(): boolean;
-  /**
-   * A {@linkcode Router} mounted before any route is registered. Use it from
-   * {@linkcode UpdateServerCallback} to add middleware that must see every request, including
-   * ones matched by routes registered elsewhere. See https://github.com/appium/appium/issues/17411
-   */
-  frontRouter: Router;
 }
 
 export type {WSServer};

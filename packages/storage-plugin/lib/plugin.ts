@@ -33,6 +33,7 @@ const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
 
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
+    const serverBasePath = httpServer.basePath;
     const buildHandler =
       (methodName: string, basePath: string, routePath: string, isDeprecated: boolean) =>
       async (req: Request, res: Response) => {
@@ -41,7 +42,7 @@ export class StoragePlugin extends BasePlugin {
           log.warn(
             `The '${routePath}' endpoint has been deprecated and will be removed in a future version ` +
               `of the storage plugin. Please use ` +
-              `'${routePath.replace(DEPRECATED_STORAGE_PREFIX, STORAGE_PREFIX)}' instead`,
+              `'${routePath.replace(basePath, `${serverBasePath}${STORAGE_PREFIX}`)}' instead`,
           );
         }
 
@@ -62,10 +63,11 @@ export class StoragePlugin extends BasePlugin {
         res.status(status).send(body);
       };
 
-    for (const [basePath, isDeprecated] of [
+    for (const [prefix, isDeprecated] of [
       [STORAGE_PREFIX, false],
       [DEPRECATED_STORAGE_PREFIX, true],
     ] as const) {
+      const basePath = `${serverBasePath}${prefix}`;
       expressApp.post(
         `${basePath}/add`,
         buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, `${basePath}/add`, isDeprecated),

@@ -64,6 +64,11 @@ If a folder with the same name already exists in the storage, an error will be t
 [Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#storage-plugin).
 
 > [!NOTE]
+> The endpoints are mounted under the server base path (the `--base-path` Appium server argument),
+> e.g. `/wd/hub/appium/storage/add` if the base path is `/wd/hub`.
+> Prior to plugin version 3.0.0 the base path was ignored and the endpoints were always mounted at the server root.
+
+> [!NOTE]
 > Prior to plugin version 1.2.0, all endpoints were mounted under the `/storage` prefix (e.g. `/storage/add`)
 > instead of `/appium/storage`. These legacy routes are still available for backward compatibility,
 > but are deprecated and will be removed in a future version of the plugin.

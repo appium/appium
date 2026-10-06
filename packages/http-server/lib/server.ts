@@ -71,6 +71,8 @@ export interface ConfigureServerOpts {
 /** Options for {@linkcode configureHttp} */
 export interface ConfigureHttpOpts {
   httpServer: HttpServer;
+  /** Normalized base path the server is mounted at */
+  basePath: string;
   reject: (error?: unknown) => void;
   keepAliveTimeout: number;
   gracefulShutdownTimeout?: number;
@@ -114,6 +116,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
       try {
         const appiumServer = configureHttp({
           httpServer,
+          basePath: normalizeBasePath(basePath),
           reject,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
@@ -268,13 +271,17 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
  */
 function configureHttp({
   httpServer,
+  basePath,
   reject,
   keepAliveTimeout,
   gracefulShutdownTimeout,
 }: ConfigureHttpOpts): AppiumServer {
-  const appiumServer = httpServer as unknown as AppiumServer;
-  appiumServer.webSocketsMapping = {};
-  appiumServer.frontRouter = express.Router();
+  // readonly props can only be set at construction time
+  const appiumServer = Object.assign(httpServer, {
+    webSocketsMapping: {},
+    frontRouter: express.Router(),
+    basePath,
+  }) as unknown as AppiumServer;
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;

@@ -28,27 +28,30 @@ const deprecatedRoutesLogged: Set<string> = new Set();
 const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
   max: 20,
   ttl: WS_TTL_MS,
+  ttlAutopurge: true,
   dispose: (f: () => any) => f(),
 });
 
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
+    const serverBasePath = httpServer.basePath;
     const buildHandler =
-      (methodName: string, basePath: string, routePath: string, isDeprecated: boolean) =>
+      (methodName: string, prefix: string, endpoint: string, isDeprecated: boolean) =>
       async (req: Request, res: Response) => {
+        // the server base path is intentionally omitted from the log message
+        const routePath = `${prefix}${endpoint}`;
         if (isDeprecated && !deprecatedRoutesLogged.has(routePath)) {
           deprecatedRoutesLogged.add(routePath);
           log.warn(
             `The '${routePath}' endpoint has been deprecated and will be removed in a future version ` +
-              `of the storage plugin. Please use ` +
-              `'${routePath.replace(DEPRECATED_STORAGE_PREFIX, STORAGE_PREFIX)}' instead`,
+              `of the storage plugin. Please use '${STORAGE_PREFIX}${endpoint}' instead`,
           );
         }
 
         let status = 200;
         let body: any;
         try {
-          const value = await STORAGE_HANDLERS[methodName](req, httpServer, basePath);
+          const value = await STORAGE_HANDLERS[methodName](req, httpServer, `${serverBasePath}${prefix}`);
           body = {value: value ?? null};
         } catch (e) {
           [status, body] = getResponseForW3CError(e);
@@ -62,26 +65,21 @@ export class StoragePlugin extends BasePlugin {
         res.status(status).send(body);
       };
 
-    for (const [basePath, isDeprecated] of [
+    for (const [prefix, isDeprecated] of [
       [STORAGE_PREFIX, false],
       [DEPRECATED_STORAGE_PREFIX, true],
     ] as const) {
-      expressApp.post(
-        `${basePath}/add`,
-        buildHandler(STORAGE_HANDLERS.addStorageItem.name, basePath, `${basePath}/add`, isDeprecated),
-      );
-      expressApp.get(
-        `${basePath}/list`,
-        buildHandler(STORAGE_HANDLERS.listStorageItems.name, basePath, `${basePath}/list`, isDeprecated),
-      );
-      expressApp.post(
-        `${basePath}/reset`,
-        buildHandler(STORAGE_HANDLERS.resetStorage.name, basePath, `${basePath}/reset`, isDeprecated),
-      );
-      expressApp.post(
-        `${basePath}/delete`,
-        buildHandler(STORAGE_HANDLERS.deleteStorageItem.name, basePath, `${basePath}/delete`, isDeprecated),
-      );
+      for (const [method, endpoint, handlerName] of [
+        ['post', '/add', STORAGE_HANDLERS.addStorageItem.name],
+        ['get', '/list', STORAGE_HANDLERS.listStorageItems.name],
+        ['post', '/reset', STORAGE_HANDLERS.resetStorage.name],
+        ['post', '/delete', STORAGE_HANDLERS.deleteStorageItem.name],
+      ] as const) {
+        expressApp[method](
+          `${serverBasePath}${prefix}${endpoint}`,
+          buildHandler(handlerName, prefix, endpoint, isDeprecated),
+        );
+      }
     }
   }
 }

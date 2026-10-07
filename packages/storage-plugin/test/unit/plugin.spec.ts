@@ -15,14 +15,14 @@ interface CapturedResponse {
  * Registers the plugin routes against a stub app and returns a function which invokes the
  * handler bound to `routePath` with the given request body.
  */
-async function routeCaller(routePath: string): Promise<(body: unknown) => Promise<CapturedResponse>> {
+async function routeCaller(routePath: string, basePath = ''): Promise<(body: unknown) => Promise<CapturedResponse>> {
   const routes: Record<string, (req: Request, res: Response) => Promise<void>> = {};
   const register = (path: string, handler: (req: Request, res: Response) => Promise<void>) => {
     routes[path] = handler;
   };
   const app = {post: register, get: register} as unknown as Express;
   // the request under test is rejected before the websocket setup runs, so this stub is never used
-  await StoragePlugin.updateServer(app, {} as unknown as AppiumServer);
+  await StoragePlugin.updateServer(app, {basePath} as unknown as AppiumServer);
   const handler = routes[routePath];
   assert.ok(handler, `No handler was registered for ${routePath}`);
 
@@ -53,5 +53,12 @@ describe('StoragePlugin routes', function () {
     });
     assert.strictEqual(status, 400);
     assert.strictEqual(body.value.error, 'invalid argument');
+  });
+
+  it('should mount the routes under the server base path', async function () {
+    const callRoute = await routeCaller('/wd/hub/appium/storage/add', '/wd/hub');
+    const {status} = await callRoute({name: 'foo/bar', sha1: 'ccc963411b2621335657963322890305ebe96186'});
+    assert.strictEqual(status, 400);
+    await assert.rejects(routeCaller('/appium/storage/add', '/wd/hub'));
   });
 });

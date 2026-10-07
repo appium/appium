@@ -1,4 +1,5 @@
 import cp from 'node:child_process';
+import {isIPv6} from 'node:net';
 import {fileURLToPath} from 'node:url';
 
 import {timing} from '@appium/support';
@@ -70,7 +71,8 @@ export class ExecuteDriverPlugin extends BasePlugin {
           // Appium probably won't be behind ssl locally; if it ever is, might need to update this to
           // provide a user configurable parameter
           protocol: 'http',
-          hostname: driver.serverHost,
+          // webdriverio puts the hostname into its request URLs as is
+          hostname: isIPv6(driver.serverHost) ? `[${driver.serverHost}]` : driver.serverHost,
           port: driver.serverPort,
           path: driver.serverPath,
         },

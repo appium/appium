@@ -1,5 +1,3 @@
-import {isIPv6} from 'node:net';
-
 import {
   AppiumIpc,
   BaseDriver,
@@ -395,7 +393,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const host = bidiCommands.determineBiDiHost(address);
-        const urlHost = isIPv6(host) ? `[${host}]` : host;
+        const urlHost = util.formatHostnameForUrl(host);
         const bidiUrl = `${scheme}://${urlHost}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +

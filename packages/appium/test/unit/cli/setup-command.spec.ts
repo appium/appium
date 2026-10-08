@@ -47,7 +47,7 @@ describe('SetupCommand', function () {
       mockSystem.isWindows.returns(true);
       assert.deepStrictEqual(getPresetDrivers('mobile'), ['uiautomator2', 'espresso']);
       assert.deepStrictEqual(getPresetDrivers('browser'), ['gecko', 'chromium']);
-      assert.deepStrictEqual(getPresetDrivers('desktop'), ['windows']);
+      assert.deepStrictEqual(getPresetDrivers('desktop'), ['wincore']);
     });
 
     it('for drivers on Linux environment', function () {

@@ -87,7 +87,7 @@ since 2022 and only speaks the legacy JSONWP protocol, so it does not work with 
 !!! info "Actions Needed"
 
     Check that your Windows tests work with `appium-wincore-driver`, then switch to it via
-    `appium driver uninstall windows && appium driver install windows`
+    `appium driver uninstall appium-windows-driver && appium driver install windows`
 
 ### Default Log Level Changed to `info`
 

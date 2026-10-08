@@ -22,7 +22,7 @@ export const ignorePatterns = ['**/.*', '**/*-d.ts', '**/build/**', '**/coverage
  */
 /** @type {import('oxlint').OxlintConfig} */
 const config = {
-  plugins: [],
+  plugins: ['eslint', 'promise', 'import', 'oxc', 'typescript', 'unicorn'],
   options: {
     typeAware: true,
   },
@@ -112,7 +112,6 @@ const config = {
   overrides: [
     {
       files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-      plugins: ['promise', 'import', 'typescript', 'unicorn'],
       env: {
         es2022: true,
         node: true,
@@ -124,7 +123,6 @@ const config = {
     },
     {
       files: ['**/test/**'],
-      plugins: ['typescript', 'import'],
       rules: {
         'no-unused-expressions': 'off',
         'import/no-named-as-default-member': 'off',

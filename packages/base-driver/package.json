@@ -57,7 +57,7 @@
     "@appium/types": "~2.0.0-beta.2",
     "async-lock": "^1.4.1",
     "asyncbox": "^6.4.2",
-    "axios": "^1.19.0",
+    "axios": "^1.20.0",
     "lru-cache": "^11.5.2",
     "path-to-regexp": "^8.4.2",
     "picomatch": "^4.0.7"

@@ -52,8 +52,8 @@
   "dependencies": {
     "@appium/opencv": "6.0.0-beta.2",
     "@appium/support": "8.0.0-beta.2",
-    "lru-cache": "11.5.2",
-    "sharp": "0.35.3"
+    "lru-cache": "11.5.3",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@appium/types": "2.0.0-beta.2"

@@ -46,7 +46,7 @@
   "dependencies": {
     "@appium/base-plugin": "4.0.0-beta.2",
     "@appium/support": "8.0.0-beta.2",
-    "asyncbox": "6.4.2"
+    "asyncbox": "6.4.3"
   },
   "devDependencies": {
     "@appium/types": "2.0.0-beta.2",

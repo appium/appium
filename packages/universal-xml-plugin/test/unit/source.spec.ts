@@ -107,6 +107,14 @@ describe('source functions', function () {
       assert.deepEqual(obj, {'@_id': 'someId', '@_rando': 'lorian'});
       assert.deepEqual(unknowns, ['rando']);
     });
+    it('should keep the enabled attribute on both platforms', function () {
+      for (const platform of ['ios', 'android']) {
+        const obj: any = {'@_enabled': 'false'};
+        const unknowns = transformAttrs(obj, Object.keys(obj), platform);
+        assert.deepEqual(obj, {'@_enabled': 'false'});
+        assert.deepEqual(unknowns, []);
+      }
+    });
     it('should not translate attributes for a different platform', function () {
       const obj: any = {'@_type': 'foo', '@_resource-id': 'someId'};
       const attrs = Object.keys(obj);

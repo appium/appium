@@ -264,11 +264,31 @@ export const fs = {
       await renameFile(from, to, dstRootWasCreated);
     } else if (fromStat.isDirectory()) {
       const dstRootWasCreated = await ensureDestination(to);
+      // an empty directory has nothing to rename, so a missing or non-directory
+      // destination would fall through to rimraf and delete the source
+      if (!dstRootWasCreated) {
+        let dstStat: Stats;
+        try {
+          dstStat = await fsPromises.stat(to);
+        } catch (err) {
+          if (isErrnoException(err) && err.code === 'ENOENT') {
+            throw new Error(`Cannot move '${from}' to '${to}' because the destination does not exist`, {
+              cause: err,
+            });
+          }
+          throw err;
+        }
+        if (!dstStat.isDirectory()) {
+          throw new Error(`Cannot move '${from}' to '${to}' because the destination is not a directory`);
+        }
+      }
       const items = await fsPromises.readdir(from, {withFileTypes: true});
       for (const item of items) {
         const srcPath = path.join(from, item.name);
         const destPath = path.join(to, item.name);
         if (item.isDirectory()) {
+          // the recursive call requires an existing destination, even without mkdirp
+          await fsPromises.mkdir(destPath, {recursive: true});
           await this.mv(srcPath, destPath, opts);
         } else if (item.isFile() || item.isSymbolicLink()) {
           await renameFile(srcPath, destPath, dstRootWasCreated);

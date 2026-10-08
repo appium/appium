@@ -1,6 +1,6 @@
 import os, {type NetworkInterfaceInfo} from 'node:os';
 
-import {util} from '@appium/support';
+import {net} from '@appium/support';
 
 import {log} from './logger.js';
 
@@ -42,7 +42,7 @@ export function logServerAddress(url: string): void {
 
   const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   const toLabel = (iface: NetworkInterfaceInfo) => {
-    const host = util.formatHostnameForUrl(iface.address);
+    const host = net.formatHostnameForUrl(iface.address);
     const href = urlObj.href.replace(urlObj.hostname, host);
     return iface.internal ? `${href} (only accessible from the same host)` : href;
   };

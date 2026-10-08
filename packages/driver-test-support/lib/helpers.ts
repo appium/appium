@@ -1,6 +1,6 @@
 import net from 'node:net';
 
-import {util} from '@appium/support';
+import {net as netUtils} from '@appium/support';
 
 /**
  * Default test host
@@ -154,7 +154,7 @@ export function createAppiumURL(
   return urlFor(session, pathname);
 }
 function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
-  let base = util.formatHostnameForUrl(address);
+  let base = netUtils.formatHostnameForUrl(address);
   if (!/^https?:\/\//.test(base)) {
     base = `http://${base}`;
   }

@@ -1,5 +1,4 @@
 import {randomUUID} from 'node:crypto';
-import {isIPv6} from 'node:net';
 import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
@@ -27,19 +26,6 @@ export const GiB = MiB * 1024;
 
 /** A string which is never `''`. */
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
-
-/**
- * Formats a hostname for interpolation into a URL authority.
- *
- * Brackets bare IPv6 literals; leaves IPv4 addresses, DNS names, and already-bracketed
- * hosts unchanged. This does not validate or normalize the hostname or a complete URL.
- *
- * @param hostname - Hostname without a scheme, port, or path
- * @returns Hostname with brackets if it is a bare IPv6 literal
- */
-export function formatHostnameForUrl(hostname: string): string {
-  return isIPv6(hostname) ? `[${hostname}]` : hostname;
-}
 
 /**
  * Generates a v4 UUID using Node.js crypto.

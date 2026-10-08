@@ -4,7 +4,7 @@ import https from 'node:https';
 
 import {DEFAULT_BASE_PATH} from '@appium/base-driver';
 import type {RouteConfiguringFunction} from '@appium/base-driver';
-import {fs, timing, util} from '@appium/support';
+import {fs, timing, net} from '@appium/support';
 import type {
   AppiumServer,
   ExternalDriver,
@@ -151,7 +151,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
 
         const protocol = appiumServer.isSecure() ? 'https' : 'http';
         const displayAddress = hostname ?? V4_BROADCAST_IP;
-        const bracketedAddress = util.formatHostnameForUrl(displayAddress);
+        const bracketedAddress = net.formatHostnameForUrl(displayAddress);
         logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizeBasePath(basePath)}`);
 
         resolve(appiumServer);

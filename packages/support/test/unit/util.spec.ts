@@ -21,26 +21,6 @@ describe('util', function () {
     sandbox.restore();
   });
 
-  describe('formatHostnameForUrl', function () {
-    for (const [hostname, expected] of [
-      ['::1', '[::1]'],
-      ['::', '[::]'],
-      ['2001:db8::1', '[2001:db8::1]'],
-      ['::ffff:192.0.2.1', '[::ffff:192.0.2.1]'],
-      ['[::1]', '[::1]'],
-      ['127.0.0.1', '127.0.0.1'],
-      ['localhost', 'localhost'],
-      ['example.com', 'example.com'],
-      ['', ''],
-    ]) {
-      it(`should format ${JSON.stringify(hostname)} idempotently`, function () {
-        const result = util.formatHostnameForUrl(hostname);
-        assert.equal(result, expected);
-        assert.equal(util.formatHostnameForUrl(result), expected);
-      });
-    }
-  });
-
   describe('hasValue', function () {
     it('should exist', function () {
       assert.ok(util.hasValue);

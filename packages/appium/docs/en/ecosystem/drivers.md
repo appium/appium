@@ -69,13 +69,13 @@ appium driver install safari
 appium driver install uiautomator2
 ```
 
-### [Windows](https://github.com/appium/appium-wincore-driver)
+### [WinCore](https://github.com/appium/appium-wincore-driver)
 
 * Target: Windows applications
 * Mode: Native
 
 ```sh title="Install This Driver"
-appium driver install windows
+appium driver install wincore
 ```
 
 ### [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
@@ -190,6 +190,20 @@ npm install appium-tizen-driver
 
 ```sh title="Install This Driver"
 appium driver install --source=npm appium-tizen-tv-driver
+```
+
+### [Windows (legacy)](https://github.com/appium/appium-windows-driver)
+
+!!! warning
+
+    This driver relies on WinAppDriver, which has not been maintained since 2022, and is only
+    compatible with Appium 1-3. Use the [WinCore](#wincore) driver with Appium 4 and newer.
+
+* Target: Windows applications
+* Mode: Native
+
+```sh title="Install This Driver"
+appium driver install --source=npm appium-windows-driver
 ```
 
 ### [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)

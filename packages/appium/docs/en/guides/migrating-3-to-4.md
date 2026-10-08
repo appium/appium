@@ -77,17 +77,22 @@ risk and newer npm versions no longer support passing custom arguments to them.
     Use `appium driver install`/`appium plugin install`, or declare extensions in your project's
     `package.json`, instead of `--drivers`/`--plugins` install-time arguments
 
-### `windows` Driver Shortcut Now Installs `appium-wincore-driver`
+### `windows` Driver Shortcut Replaced by `wincore`
 
-The `windows` shortcut for `appium driver install` now resolves to
-[`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver) instead of
-`appium-windows-driver`. The old driver depends on WinAppDriver, which has not been maintained
-since 2022 and only speaks the legacy JSONWP protocol, so it does not work with Appium 4.
+The `windows` shortcut for `appium driver install` has been removed, and the new `wincore` shortcut
+resolves to [`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver). The old
+`appium-windows-driver` depends on WinAppDriver, which has not been maintained since 2022 and only
+speaks the legacy JSONWP protocol, so it does not work with Appium 4.
 
 !!! info "Actions Needed"
 
-    Check that your Windows tests work with `appium-wincore-driver`, then switch to it via
-    `appium driver uninstall appium-windows-driver && appium driver install windows`
+    1. While Appium 3 is still installed, switch to `appium-wincore-driver` v3 and verify that your
+       Windows tests pass with it. The `windows` shortcut still points to the old driver in
+       Appium 3, so the package must be specified explicitly:
+       `appium driver uninstall appium-windows-driver && appium driver install --source=npm appium-wincore-driver@^3.0.0`
+    2. After upgrading to Appium 4, install the Appium 4 compatible driver release,
+       since v3 of the driver only works with Appium 3:
+       `appium driver uninstall appium-wincore-driver && appium driver install --source=npm appium-wincore-driver`
 
 ### Default Log Level Changed to `info`
 

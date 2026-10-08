@@ -166,7 +166,7 @@ export class ImageElementFinder {
         };
 
         const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
-        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
+        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).filter(pushIfOk).length > 0;
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of

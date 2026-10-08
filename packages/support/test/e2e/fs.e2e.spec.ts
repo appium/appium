@@ -66,6 +66,59 @@ describe('fs', function () {
       assert.strictEqual((await fs.readFile(srcPath)).toString(), 'bar');
     });
 
+    it('should not delete an empty directory when the destination is missing', async function () {
+      const srcPath = path.join(srcRoot!, 'empty');
+      await fs.mkdir(srcPath);
+      const dstPath = path.join(dstRoot!, 'missing');
+      await assert.rejects(fs.mv(srcPath, dstPath), /destination does not exist/);
+      assert.strictEqual(await fs.exists(srcPath), true);
+      assert.strictEqual(await fs.exists(dstPath), false);
+    });
+
+    it('should not delete an empty directory when the destination is a file', async function () {
+      const srcPath = path.join(srcRoot!, 'empty');
+      await fs.mkdir(srcPath);
+      const dstPath = path.join(dstRoot!, 'file');
+      await fs.writeFile(dstPath, 'keep');
+      await assert.rejects(fs.mv(srcPath, dstPath), /not a directory/);
+      assert.strictEqual(await fs.exists(srcPath), true);
+      assert.strictEqual(await fs.readFile(dstPath, 'utf8'), 'keep');
+    });
+
+    it('should keep an empty subdirectory when the destination directory already exists', async function () {
+      const srcPath = path.join(srcRoot!, 'src');
+      await fs.mkdirp(path.join(srcPath, 'empty'));
+      await fs.writeFile(path.join(srcPath, 'note.txt'), 'keep');
+      const dstPath = path.join(dstRoot!, 'dst');
+      await fs.mkdir(dstPath);
+      await fs.mv(srcPath, dstPath);
+      assert.strictEqual(await fs.exists(srcPath), false);
+      assert.strictEqual(await fs.readFile(path.join(dstPath, 'note.txt'), 'utf8'), 'keep');
+      assert.strictEqual((await fs.stat(path.join(dstPath, 'empty'))).isDirectory(), true);
+    });
+
+    it('should move nested files into an existing destination directory', async function () {
+      const srcPath = path.join(srcRoot!, 'src');
+      await fs.mkdirp(path.join(srcPath, 'sub'));
+      await fs.writeFile(path.join(srcPath, 'a.txt'), 'a');
+      await fs.writeFile(path.join(srcPath, 'sub', 'b.txt'), 'b');
+      const dstPath = path.join(dstRoot!, 'dst');
+      await fs.mkdir(dstPath);
+      await fs.mv(srcPath, dstPath);
+      assert.strictEqual(await fs.exists(srcPath), false);
+      assert.strictEqual(await fs.readFile(path.join(dstPath, 'a.txt'), 'utf8'), 'a');
+      assert.strictEqual(await fs.readFile(path.join(dstPath, 'sub', 'b.txt'), 'utf8'), 'b');
+    });
+
+    it('should move an empty directory when mkdirp creates the destination', async function () {
+      const srcPath = path.join(srcRoot!, 'empty');
+      await fs.mkdir(srcPath);
+      const dstPath = path.join(dstRoot!, 'moved');
+      await fs.mv(srcPath, dstPath, {mkdirp: true});
+      assert.strictEqual(await fs.exists(srcPath), false);
+      assert.strictEqual((await fs.stat(dstPath)).isDirectory(), true);
+    });
+
     it('should reject moving a directory into itself', async function () {
       const srcPath = path.join(srcRoot!, 'foo', 'src.file');
       await fs.mkdirp(path.dirname(srcPath));

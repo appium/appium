@@ -50,7 +50,7 @@
   "dependencies": {
     "@appium/support": "8.0.0-beta.2",
     "@xmldom/xmldom": "0.9.12",
-    "fast-xml-parser": "5.11.0",
+    "fast-xml-parser": "5.11.2",
     "xpath": "0.0.34"
   },
   "devDependencies": {

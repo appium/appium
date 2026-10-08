@@ -31,6 +31,28 @@ describe('WebDriverProxy', function () {
     testNewSessionURL = createTestURL('', 'session');
   });
 
+  describe('downstream host formatting', function () {
+    for (const [server, host] of [
+      ['::1', '[::1]'],
+      ['2001:db8::1', '[2001:db8::1]'],
+      ['[::1]', '[::1]'],
+      ['127.0.0.1', '127.0.0.1'],
+      ['localhost', 'localhost'],
+    ]) {
+      for (const scheme of ['http', 'https']) {
+        it(`should build valid ${scheme} URLs for ${server}`, function () {
+          const proxy = createWDProxy({server, scheme, port: 8100, base: '/wd/hub', sessionId: 'abc'});
+          const statusUrl = proxy.getUrlForProxy('/status', 'GET');
+          assert.equal(statusUrl, `${scheme}://${host}:8100/wd/hub/status`);
+          assert.equal(new URL(statusUrl).hostname, host);
+          const sessionUrl = proxy.getUrlForProxy('/session/old/url?foo=1', 'GET');
+          assert.equal(sessionUrl, `${scheme}://${host}:8100/wd/hub/session/abc/url?foo=1`);
+          assert.equal(new URL(sessionUrl).hostname, host);
+        });
+      }
+    }
+  });
+
   describe('proxying full urls', function () {
     it('should translate host and port', function () {
       const incomingUrl = PROXY_STATUS_URL;

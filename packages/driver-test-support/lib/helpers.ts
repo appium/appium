@@ -152,7 +152,7 @@ export function createAppiumURL(
   return urlFor(session, pathname);
 }
 function buildAppiumURL(address: string, port: string | number, session: string, pathname: string): string {
-  let base = address;
+  let base = net.isIPv6(address) ? `[${address}]` : address;
   if (!/^https?:\/\//.test(base)) {
     base = `http://${base}`;
   }

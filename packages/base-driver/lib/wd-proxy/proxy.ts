@@ -1,5 +1,6 @@
 import http from 'node:http';
 import https from 'node:https';
+import {isIPv6} from 'node:net';
 import nodeUrl from 'node:url';
 
 import {logger, util} from '@appium/support';
@@ -122,7 +123,8 @@ export class WebDriverProxy {
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
     const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
-    const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
+    const host = isIPv6(this.server) ? `[${this.server}]` : this.server;
+    const proxyPrefix = `${this.scheme}://${host}:${this.port}${this.base}`;
     let proxySuffix = normalizedPathname ? `/${normalizedPathname.replace(/^\/+/, '')}` : '';
     if (parsedUrl.search) {
       proxySuffix += parsedUrl.search;

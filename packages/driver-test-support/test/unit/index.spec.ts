@@ -17,6 +17,22 @@ describe('getTestPort()', function () {
 });
 
 describe('createAppiumURL()', function () {
+  for (const [address, authority] of [
+    ['::1', 'http://[::1]'],
+    ['2001:db8::1', 'http://[2001:db8::1]'],
+    ['[::1]', 'http://[::1]'],
+    ['https://[::1]', 'https://[::1]'],
+    ['127.0.0.1', 'http://127.0.0.1'],
+    ['localhost', 'http://localhost'],
+  ]) {
+    it(`should support ${address} in both calling forms`, function () {
+      const expected = `${authority}:4723/session/abc/url`;
+      assert.equal(createAppiumURL(address, 4723, 'abc', 'url'), expected);
+      assert.equal(createAppiumURL(address, 4723)('abc', 'url'), expected);
+      assert.equal(new URL(expected).port, '4723');
+    });
+  }
+
   let urlFor: (session: string, pathname: string) => string;
 
   before(async function () {

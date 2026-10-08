@@ -23,7 +23,6 @@ export const REMOVE_ATTRS = [
   'checkable',
   'checked',
   'clickable',
-  'enabled',
   'focusable',
   'focused',
   'long-clickable',

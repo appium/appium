@@ -31,6 +31,15 @@ describe('WebDriverProxy', function () {
     testNewSessionURL = createTestURL('', 'session');
   });
 
+  it('should bracket an IPv6 downstream host', function () {
+    const proxy = createWDProxy({server: '::1', port: 8100, base: '/wd/hub', sessionId: 'abc'});
+    assert.equal(proxy.getUrlForProxy('/status', 'GET'), 'http://[::1]:8100/wd/hub/status');
+    assert.equal(
+      proxy.getUrlForProxy('/session/old/url?foo=1', 'GET'),
+      'http://[::1]:8100/wd/hub/session/abc/url?foo=1',
+    );
+  });
+
   describe('proxying full urls', function () {
     it('should translate host and port', function () {
       const incomingUrl = PROXY_STATUS_URL;

@@ -52,6 +52,9 @@
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
+  "dependencies": {
+    "@appium/support": "~8.0.0-beta.2"
+  },
   "devDependencies": {
     "@appium/types": "~2.0.0-beta.2"
   },

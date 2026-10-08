@@ -1,4 +1,5 @@
 import {openAsBlob, type WriteStream} from 'node:fs';
+import {isIPv6} from 'node:net';
 import path from 'node:path';
 import type {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
@@ -94,6 +95,19 @@ export interface HttpUploadOptions extends NetOptions {
 type AuthLike = AuthCredentials | AxiosBasicCredentials;
 
 type HttpRemoteUri = `http://${string}` | `https://${string}`;
+
+/**
+ * Formats a hostname for interpolation into a URL authority.
+ *
+ * Brackets bare IPv6 literals; leaves IPv4 addresses, DNS names, and already-bracketed
+ * hosts unchanged. This does not validate or normalize the hostname or a complete URL.
+ *
+ * @param hostname - Hostname without a scheme, port, or path
+ * @returns Hostname with brackets if it is a bare IPv6 literal
+ */
+export function formatHostnameForUrl(hostname: string): string {
+  return isIPv6(hostname) ? `[${hostname}]` : hostname;
+}
 
 /** Uploads the given file to a remote location via HTTP(S). */
 export async function uploadFile(

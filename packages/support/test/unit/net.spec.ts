@@ -7,7 +7,7 @@ import {promisify} from 'node:util';
 import {gzip} from 'node:zlib';
 
 import {fs, tempDir} from '../../lib/index.js';
-import {downloadFile, uploadFile} from '../../lib/net.js';
+import {downloadFile, formatHostnameForUrl, uploadFile} from '../../lib/net.js';
 
 const FILE_BYTES = 100;
 
@@ -49,6 +49,26 @@ async function receiveUpload(run: (url: string) => Promise<void>): Promise<{
 }
 
 describe('net', function () {
+  describe('formatHostnameForUrl', function () {
+    for (const [hostname, expected] of [
+      ['::1', '[::1]'],
+      ['::', '[::]'],
+      ['2001:db8::1', '[2001:db8::1]'],
+      ['::ffff:192.0.2.1', '[::ffff:192.0.2.1]'],
+      ['[::1]', '[::1]'],
+      ['127.0.0.1', '127.0.0.1'],
+      ['localhost', 'localhost'],
+      ['example.com', 'example.com'],
+      ['', ''],
+    ]) {
+      it(`should format ${JSON.stringify(hostname)} idempotently`, function () {
+        const result = formatHostnameForUrl(hostname);
+        assert.equal(result, expected);
+        assert.equal(formatHostnameForUrl(result), expected);
+      });
+    }
+  });
+
   describe('uploadFile()', function () {
     it('should accept remote URLs typed as strings', function () {
       const upload = (remoteUri: string) =>

@@ -2,7 +2,7 @@ import http from 'node:http';
 import https from 'node:https';
 import nodeUrl from 'node:url';
 
-import {logger, util} from '@appium/support';
+import {logger, util, net} from '@appium/support';
 import type {AppiumLogger, HTTPBody, HTTPHeaders, HTTPMethod, ProxyOptions, ProxyResponse} from '@appium/types';
 import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {Request, Response} from 'express';
@@ -122,7 +122,8 @@ export class WebDriverProxy {
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
     const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
-    const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
+    const host = net.formatHostnameForUrl(this.server);
+    const proxyPrefix = `${this.scheme}://${host}:${this.port}${this.base}`;
     let proxySuffix = normalizedPathname ? `/${normalizedPathname.replace(/^\/+/, '')}` : '';
     if (parsedUrl.search) {
       proxySuffix += parsedUrl.search;

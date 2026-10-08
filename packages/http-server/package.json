@@ -58,7 +58,7 @@
     "body-parser": "^2.3.0",
     "express": "^5.2.1",
     "method-override": "^3.0.0",
-    "morgan": "^1.11.0",
+    "morgan": "^1.12.1",
     "path-to-regexp": "^8.4.2"
   },
   "engines": {

@@ -49,7 +49,7 @@
   "dependencies": {
     "@appium/http-server": "1.0.0-beta.2",
     "@xmldom/xmldom": "0.9.12",
-    "asyncbox": "6.4.2",
+    "asyncbox": "6.4.3",
     "xpath": "0.0.34",
     "yocto-spinner": "1.2.2"
   },

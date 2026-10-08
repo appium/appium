@@ -139,7 +139,7 @@ const config = {
         'typescript/no-non-null-assertion': 'off',
         'typescript/no-floating-promises': 'off',
         'typescript/no-useless-default-assignment': 'off',
-        'typescript/restrict-template-expressions': 'off'
+        'typescript/restrict-template-expressions': 'off',
       },
     },
   ],

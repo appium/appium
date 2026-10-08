@@ -292,3 +292,6 @@ removed.
   confusing error
 * `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
   preventing concurrent processes from silently clobbering each other's changes
+* `useDrivers` also accepts the location of a driver package, so that a package embedding Appium
+  can use the drivers it resolved itself instead of the ones installed in `APPIUM_HOME` (see
+  [Embedding Appium in an `npm` Package](./managing-exts.md#embedding-appium-in-an-npm-package))

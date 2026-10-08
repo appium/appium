@@ -63,7 +63,11 @@ export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): s
  * @param args - Parsed server CLI args
  * @param throwInsteadOfExit - When true, rethrows failures instead of calling `process.exit(1)`
  */
-export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
+export async function preflightChecks(
+  args: ParsedArgs<CliCommandServer>,
+  throwInsteadOfExit = false,
+  programmaticArgs = false,
+): Promise<void> {
   try {
     checkNodeOk();
     if (args.longStacktrace) {
@@ -74,7 +78,17 @@ export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwI
       process.exit(0);
     }
 
-    validateSchema(args);
+    // Direct driver modules are a programmatic-only API. Keep the public
+    // CLI/config schema strict (string[]), while still validating every normal
+    // server option and every string-valued useDrivers entry.
+    const schemaArgs =
+      programmaticArgs && args.useDrivers.some((entry) => typeof entry !== 'string')
+        ? {
+            ...args,
+            useDrivers: args.useDrivers.filter((entry): entry is string => typeof entry === 'string'),
+          }
+        : args;
+    validateSchema(schemaArgs as ParsedArgs<CliCommandServer>);
 
     if (args.tmpDir) {
       await requireDir(args.tmpDir, !args.noPermsCheck, 'tmpDir argument value');

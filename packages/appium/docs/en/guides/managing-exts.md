@@ -85,3 +85,24 @@ project.
 This strategy is *only* recommended if you are already using `npm` for your project.
 Otherwise, it is recommended that you use Appium's Extension CLI and, if necessary, adjust
 `APPIUM_HOME` to change the location of stored extensions.
+
+## Embedding Appium in an `npm` Package
+
+If you publish a package that starts Appium itself, such as a tool that ships Appium together with
+the drivers it needs, the drivers can end up installed in different places depending on the package
+manager and the project that uses your package. Programmatic callers can bypass Appium's extension
+discovery by importing the driver and passing it directly in `useDrivers`:
+
+```js
+import {main} from 'appium';
+import XCUITestDriver from 'appium-xcuitest-driver';
+
+await main({
+  useDrivers: [XCUITestDriver],
+});
+```
+
+Appium also accepts an ESM namespace object whose default/named exports identify one driver class.
+Directly supplied drivers stay in memory and are not added to `extensions.yaml`. String entries
+remain supported: a string can name an installed driver, or be an absolute path/`file:` URL for a
+driver package resolved by the embedding package.

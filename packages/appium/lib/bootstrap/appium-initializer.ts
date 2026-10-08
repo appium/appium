@@ -74,6 +74,7 @@ export class AppiumInitializer {
         pluginConfig,
         appiumHome,
         appiumHomeSourceName,
+        args !== undefined,
       );
     }
 
@@ -133,6 +134,7 @@ export class AppiumInitializer {
     pluginConfig: ExtensionConfigs['pluginConfig'],
     appiumHome: string,
     appiumHomeSourceName: string,
+    programmaticArgs: boolean,
   ): Promise<InitResult<Cmd>> {
     const defaults = getDefaultsForSchema(false);
     const serverArgs = defaultsDeep(
@@ -169,7 +171,7 @@ export class AppiumInitializer {
 
     const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>);
     appiumDriver.driverConfig = driverConfig;
-    await preflightChecks(serverArgs, this.throwInsteadOfExit);
+    await preflightChecks(serverArgs, this.throwInsteadOfExit, programmaticArgs);
 
     return {
       appiumDriver,

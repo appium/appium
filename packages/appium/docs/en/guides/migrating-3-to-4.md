@@ -86,13 +86,15 @@ speaks the legacy JSONWP protocol, so it does not work with Appium 4.
 
 !!! info "Actions Needed"
 
-    1. While Appium 3 is still installed, switch to `appium-wincore-driver` v3 and verify that your
-       Windows tests pass with it. The `windows` shortcut still points to the old driver in
-       Appium 3, so the package must be specified explicitly:
-       `appium driver uninstall appium-windows-driver && appium driver install --source=npm appium-wincore-driver@^3.0.0`
-    2. After upgrading to Appium 4, install the Appium 4 compatible driver release,
+    1. While Appium 3 is still installed, install `appium-wincore-driver` v3 next to the legacy
+       driver and verify that your Windows tests pass with it. The `wincore` shortcut is not
+       available in Appium 3, so the package must be specified explicitly:
+       `appium driver install --source=npm appium-wincore-driver@^3.0.0`
+    2. After upgrading to Appium 4, update to the Appium 4 compatible driver release,
        since v3 of the driver only works with Appium 3:
-       `appium driver uninstall appium-wincore-driver && appium driver install --source=npm appium-wincore-driver`
+       `appium driver update wincore --unsafe`
+    3. Uninstall the legacy driver, as it does not work with Appium 4:
+       `appium driver uninstall appium-windows-driver`
 
 ### Default Log Level Changed to `info`
 

@@ -46,7 +46,7 @@ export const MOBILE_DRIVERS = Object.freeze({
 
 export const DESKTOP_DRIVERS = Object.freeze({
   mac2: 'appium-mac2-driver',
-  windows: 'appium-windows-driver',
+  windows: 'appium-wincore-driver',
 } as const);
 
 export const DESKTOP_BROWSERS = Object.freeze({

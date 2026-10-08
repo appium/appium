@@ -69,12 +69,7 @@ appium driver install safari
 appium driver install uiautomator2
 ```
 
-### [Windows](https://github.com/appium/appium-windows-driver)
-
-!!! warning
-
-    Only the Node.js-based driver part is maintained by the Appium team. The server part
-    (WinAppDriver executable) is provided by Microsoft, but has not been maintained since 2022.
+### [Windows](https://github.com/appium/appium-wincore-driver)
 
 * Target: Windows applications
 * Mode: Native
@@ -154,11 +149,6 @@ appium driver install --source=npm @itsmeaj/appium-linux-driver
 ```
 
 ### [NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)
-
-!!! info
-
-    This driver is recommended as a drop-in replacement for the partially unmaintained
-    [Windows driver](#windows)
 
 * Target: Windows applications
 * Mode: Native

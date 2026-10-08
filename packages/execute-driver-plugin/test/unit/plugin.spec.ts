@@ -7,10 +7,10 @@ import type {ExternalDriver} from '@appium/types';
 
 import {ExecuteDriverPlugin} from '../../lib/plugin.js';
 
-function fakeDriver() {
+function fakeDriver(serverHost = '127.0.0.1') {
   return {
     isFeatureEnabled: () => true,
-    serverHost: '127.0.0.1',
+    serverHost,
     serverPort: 4723,
     serverPath: '/',
     sessionId: 'fake-session-id',
@@ -32,12 +32,18 @@ function dyingProcess(code: number | null, signal: string | null) {
   return scriptProc;
 }
 
-async function runScript(scriptProc: any, timeoutMs: number) {
+async function runScript(scriptProc: any, timeoutMs: number, serverHost?: string) {
   const originalFork = cp.fork;
   (cp as any).fork = () => scriptProc;
   try {
     const plugin = new ExecuteDriverPlugin('execute-driver');
-    return await plugin.executeDriverScript(async () => {}, fakeDriver(), 'return 1', 'webdriverio', timeoutMs);
+    return await plugin.executeDriverScript(
+      async () => {},
+      fakeDriver(serverHost),
+      'return 1',
+      'webdriverio',
+      timeoutMs,
+    );
   } finally {
     (cp as any).fork = originalFork;
   }
@@ -58,5 +64,21 @@ describe('execute driver plugin', function () {
 
   it('should resolve with an undefined result if the child exits cleanly without a message', async function () {
     assert.equal(await runScript(dyingProcess(0, null), 60000), undefined);
+  });
+
+  it('should pass a usable hostname to webdriverio if the server listens on an IPv6 address', async function () {
+    const scriptProc = new EventEmitter() as any;
+    scriptProc.connected = false;
+    scriptProc.exitCode = null;
+    scriptProc.kill = () => {};
+    let sentOptions: any;
+    scriptProc.send = ({driverOpts}: any) => {
+      sentOptions = driverOpts.options;
+      setImmediate(() => scriptProc.emit('message', {success: true}));
+    };
+
+    await runScript(scriptProc, 60000, '::1');
+
+    assert.equal(sentOptions.hostname, '[::1]');
   });
 });

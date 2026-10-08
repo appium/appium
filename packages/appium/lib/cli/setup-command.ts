@@ -31,7 +31,7 @@ const PRESET_PAIRS = Object.freeze({
 } as const);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
-const DRIVERS_ONLY_WINDOWS = ['windows'];
+const DRIVERS_ONLY_WINDOWS = ['wincore'];
 
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.

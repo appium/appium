@@ -32,7 +32,7 @@ appium setup browser
 
 Installs the following extensions for desktop application testing:
 
-* Drivers: `mac2`[^1], `windows`[^2]
+* Drivers: `mac2`[^1], `wincore`[^2]
 * Plugins: `images`, `inspector`
 
 #### Usage

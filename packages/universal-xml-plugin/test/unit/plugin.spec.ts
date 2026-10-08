@@ -72,6 +72,21 @@ describe('UniversalXMLPlugin', function () {
       assert.equal((node as any).nodeName, 'android.widget.EditText');
     });
 
+    it('should find android nodes by the enabled attribute', async function () {
+      const source = (await readFixture(FIXTURES.XML_ANDROID)).replace(
+        'content-desc="username" checkable="false" checked="false" clickable="true" enabled="true"',
+        'content-desc="username" checkable="false" checked="false" clickable="true" enabled="false"',
+      );
+      (driver as any).getCurrentContext = () => 'NATIVE_APP';
+      next = (driver as any).getPageSource = async () => source;
+      (driver as any).caps = {platformName: 'Android'};
+      (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
+      (driver as any).findElement = async (strategy: string, selector: string) => runQuery(selector, source)[0];
+      const node = await p.findElement(next, driver as any, 'xpath', '//TextInput[@enabled="false"]');
+      assert.equal(getNodeAttrVal(node as any, 'content-desc'), 'username');
+      assert.equal(getNodeAttrVal(node as any, 'enabled'), 'false');
+    });
+
     it('should not modify the xpath query and proxy the call to underlying driver', async function () {
       (driver as any).getCurrentContext = () => 'WEB_VIEW';
       (driver as any).findElement = () => ({});

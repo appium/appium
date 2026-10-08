@@ -17,6 +17,16 @@ describe('getTestPort()', function () {
 });
 
 describe('createAppiumURL()', function () {
+  it('should accept bare IPv6 in both calling forms', function () {
+    const expected = 'http://[::1]:4723/session/abc/url';
+    assert.equal(createAppiumURL('::1', 4723, 'abc', 'url'), expected);
+    assert.equal(createAppiumURL('::1', 4723)('abc', 'url'), expected);
+  });
+
+  it('should preserve an explicit scheme with a bracketed IPv6 host', function () {
+    assert.equal(createAppiumURL('https://[::1]', 4723, '', 'status'), 'https://[::1]:4723/status');
+  });
+
   let urlFor: (session: string, pathname: string) => string;
 
   before(async function () {

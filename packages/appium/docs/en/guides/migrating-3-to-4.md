@@ -77,6 +77,18 @@ risk and newer npm versions no longer support passing custom arguments to them.
     Use `appium driver install`/`appium plugin install`, or declare extensions in your project's
     `package.json`, instead of `--drivers`/`--plugins` install-time arguments
 
+### `windows` Driver Shortcut Now Installs `appium-wincore-driver`
+
+The `windows` shortcut for `appium driver install` now resolves to
+[`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver) instead of
+`appium-windows-driver`. The old driver depends on WinAppDriver, which has not been maintained
+since 2022 and only speaks the legacy JSONWP protocol, so it does not work with Appium 4.
+
+!!! info "Actions Needed"
+
+    Check that your Windows tests work with `appium-wincore-driver`, then switch to it via
+    `appium driver uninstall windows && appium driver install windows`
+
 ### Default Log Level Changed to `info`
 
 The default `--log-level` changed from `debug` to `info`. Debug-level logging is very verbose and

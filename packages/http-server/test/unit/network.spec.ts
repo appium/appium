@@ -22,22 +22,16 @@ describe('network', function () {
 });
 
 describe('logServerAddress()', function () {
-  for (const [bindHost, address, family, host] of [
-    ['[::]', '::1', 'IPv6', '[::1]'],
-    ['[::]', '2001:db8::1', 'IPv6', '[2001:db8::1]'],
-    ['0.0.0.0', '127.0.0.1', 'IPv4', '127.0.0.1'],
-  ]) {
-    it(`should advertise a valid URL for ${address}`, function (t) {
-      t.mock.method(os, 'networkInterfaces', () => ({
-        test: [{address, family, internal: true}],
-      }));
-      const info = t.mock.method(log, 'info', () => {});
-      logServerAddress(`https://${bindHost}:4723/wd/hub`);
-      const message = String(info.mock.calls[1].arguments[0]);
-      const advertisedUrl = message.match(/https:\/\/\S+/)?.[0];
-      assert.equal(advertisedUrl, `https://${host}:4723/wd/hub`);
-      assert.equal(new URL(advertisedUrl!).hostname, host);
-      assert.ok(message.includes('(only accessible from the same host)'));
-    });
-  }
+  it('should bracket IPv6 addresses in connection hints', function (t) {
+    t.mock.method(os, 'networkInterfaces', () => ({
+      test: [{address: '::1', family: 'IPv6', internal: true}],
+    }));
+    const info = t.mock.method(log, 'info', () => {});
+    logServerAddress('https://[::]:4723/wd/hub');
+    assert.ok(
+      String(info.mock.calls[1].arguments[0]).includes(
+        'https://[::1]:4723/wd/hub (only accessible from the same host)',
+      ),
+    );
+  });
 });

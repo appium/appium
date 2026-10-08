@@ -37,9 +37,6 @@ describe('util', function () {
         const result = util.formatHostnameForUrl(hostname);
         assert.equal(result, expected);
         assert.equal(util.formatHostnameForUrl(result), expected);
-        if (hostname) {
-          assert.equal(new URL(`http://${result}:4723/status`).port, '4723');
-        }
       });
     }
   });

@@ -149,6 +149,31 @@ a discretionary of special basis. Basically, this scheme is run at the project's
 not a public service. Making contributions to the project under this scheme does not obligate the
 project to pay you for such work, or otherwise compensate you in any way.
 
+### Contributions Are Voluntary
+
+Appium is a community-driven open source project, and all contributions to it are voluntary.
+Opening a pull request, or responding to review feedback, does not create a contract, a
+commission, a work-for-hire arrangement, or any other obligation on the part of the project, its
+Committers, the TC, or the OpenJS Foundation. In particular:
+
+- The project does not hire contractors, assign paid tasks, or quote per-PR, per-task, or hourly
+rates. The "value tiers" above are an after-the-fact, discretionary gesture of appreciation, not
+a price list.
+- Compensation can't be requested, negotiated, or promised in advance, and it must not be made a
+condition for starting, continuing, or revising a contribution. A value tier is only assigned by a
+Committer after a change has been merged, and may be zero.
+- Review feedback, including requests to extend, rework, or re-scope a change, is a normal part of
+getting it merged and is never a reason to ask for additional payment.
+- Contributors are free to stop working on a change at any time. Maintainers may pick it up, or
+close it if it does not suit the project.
+- Contributions that appear to be primarily motivated by obtaining payouts (for example, bulk or
+low-effort changes, including AI-generated ones submitted without understanding or testing them)
+may be closed, and repeated abuse of the scheme may result in the contributor being excluded from
+it and from the project's spaces. Contributors are fully responsible for the content they submit,
+regardless of the tools used to produce it.
+
+If you are not comfortable contributing on these terms, please do not contribute.
+
 ### Raising Issues Related to Governance
 
 This governance model necessarily leaves many situations unspecified. If

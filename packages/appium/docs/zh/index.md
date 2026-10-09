@@ -19,7 +19,7 @@ title: 欢迎使用
 欢迎来到 Appium 文档！ Appium是一个开源项目和相关软件生态系统，旨在促进多种应用平台的用户界面自动化，包括移动端（iOS、Android、Tizen）、浏览器端（Chrome、Firefox、Safari）、桌面端（macOS、Windows）、电视端（Roku、tvOS、Android TV、三星）等！
 
 <div style="text-align: center; margin-top: 2rem; font-style: italic;">
-  Appium 非常感谢主要合作伙伴的支持！ (了解更多关于我们的赞助计划和贡献者补偿计划信息请<a
+  Appium 非常感谢主要合作伙伴的支持！(了解更多关于我们的赞助计划和贡献者补偿计划信息请<a
   href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">点击此处</a>)  
 <div class="homepageSponsors">
     <div class="homepageSponsor">

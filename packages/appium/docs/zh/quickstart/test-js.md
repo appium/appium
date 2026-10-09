@@ -5,7 +5,7 @@ hide:
 title: 编写测试 (JS)
 ---
 
-要在 JavaScript (Node.js) 中编写 Appium 测试，我们需要选择一个与 Appium 兼容的客户端库。 维护最好的库，也是 Appium 团队推荐使用的，是 [WebdriverIO](https://webdriver.io)，所以让我们使用它。 由于我们已经安装了 Appium，我们知道我们的 Node 和 NPM 已经满足要求。 所以在您的计算机上某个地方创建一个新的项目目录，然后在其中初始化一个新的 Node.js 项目：
+要在 JavaScript (Node.js) 中编写 Appium 测试，我们需要选择一个与 Appium 兼容的客户端库。维护最好的库，也是 Appium 团队推荐使用的，是 [WebdriverIO](https://webdriver.io)，所以让我们使用它。由于我们已经安装了 Appium，我们知道我们的 Node 和 NPM 已经满足要求。所以在您的计算机上某个地方创建一个新的项目目录，然后在其中初始化一个新的 Node.js 项目：
 
 ```bash
 npm init
@@ -25,7 +25,7 @@ npm i --save-dev webdriverio
 --8<-- "./sample-code/quickstarts/js/package.json"
 ```
 
-现在是编写测试本身的时候了。 创建一个名为 `test.js` 的新文件，内容如下：
+现在是编写测试本身的时候了。创建一个名为 `test.js` 的新文件，内容如下：
 
 ```js title="test.js"
 --8<-- "./sample-code/quickstarts/js/test.js"
@@ -51,7 +51,7 @@ npm i --save-dev webdriverio
 4. 暂停片刻纯粹为了视觉效果。
 5. 结束 Appium 会话。
 
-就是这样！ 让我们试试。 在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。 然后，您可以执行脚本：
+就是这样！让我们试试。在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。然后，您可以执行脚本：
 
 ```bash
 node test.js
@@ -59,4 +59,4 @@ node test.js
 
 如果一切顺利，您将看到设置应用打开并导航到"Apps"视图，然后应用再次关闭。
 
-恭喜，您已经开始了 Appium 之旅！ 继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。
+恭喜，您已经开始了 Appium 之旅！继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

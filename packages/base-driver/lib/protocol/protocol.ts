@@ -31,6 +31,22 @@ export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
 export const deprecatedCommandsLogged: Set<string> = new Set();
 
 /**
+ * Determine whether the client HTTP request or response connection has been aborted/closed
+ * prior to completing standard response delivery.
+ * Crucially, normal POST requests set `req.destroyed = true` after reading the request body,
+ * so `req.destroyed` alone MUST NOT be treated as a client disconnect when `req.complete` is true.
+ */
+export function isClientDisconnected(req: Request, res: Response): boolean {
+  if (res.writableEnded) {
+    return false;
+  }
+  if (res.destroyed || Boolean(res.socket && res.socket.destroyed)) {
+    return true;
+  }
+  return Boolean(req.destroyed && !req.complete);
+}
+
+/**
  * Infer W3C vs MJSONWP from new-session capability payloads.
  * @param createSessionArgs - Arguments passed to the createSession command
  */
@@ -407,6 +423,12 @@ function buildHandler(
         throw new errors.NoSuchDriverError();
       }
 
+      // If the client aborted the request before execution started, exit early
+      if (isClientDisconnected(req, res)) {
+        getLogger(driver, sessionId).info(`Request for ${method} ${path} was aborted by client prior to execution`);
+        return;
+      }
+
       // if the driver is currently proxying commands to another JSONWP server, bypass all our
       // checks and assume the upstream server knows what it's doing. But keep this in the
       // try/catch block so if proxying itself fails, we give a message to the client. Of course we
@@ -503,6 +525,20 @@ function buildHandler(
       // unpack createSession response
       if (spec.command === CREATE_SESSION_COMMAND) {
         newSessionId = driverRes[0];
+
+        // Check if client disconnected while createSession was executing
+        if (isClientDisconnected(req, res)) {
+          getLogger(driver, newSessionId).warn(
+            `Client disconnected before createSession response could be sent. Cleaning up orphaned session ${newSessionId}`,
+          );
+          try {
+            await (driver as BaseDriver<any>).executeCommand(DELETE_SESSION_COMMAND, newSessionId);
+          } catch (cleanupErr) {
+            getLogger(driver, newSessionId).error(`Failed to clean up orphaned session ${newSessionId}: ${cleanupErr}`);
+          }
+          return;
+        }
+
         getLogger(driver, newSessionId).debug(
           `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
         );
@@ -581,6 +617,11 @@ function buildHandler(
       }
 
       [httpStatus, httpResBody] = getResponseForW3CError(actualErr);
+    }
+
+    if (isClientDisconnected(req, res)) {
+      getLogger(driver, sessionId || newSessionId).info('Client disconnected before response could be written; suppressing response delivery');
+      return;
     }
 
     // decode the response, which is either a string or json

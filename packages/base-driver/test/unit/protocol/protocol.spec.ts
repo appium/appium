@@ -61,19 +61,18 @@ describe('Protocol', function () {
   });
 
   describe('aborted request & orphan session cleanup', function () {
-    it('should execute command normally on POST request after body read completes', async function () {
+    it('should execute POST command normally when body read completes and client remains connected', async function () {
       let executed = false;
-      const fakeDriver = {
-        sessionExists: () => true,
-        proxyActive: () => false,
-        executeCommand: async (cmd: string) => {
-          if (cmd === 'getStatus') {
-            executed = true;
-            return {build: {version: '1.0.0'}};
-          }
-          return null;
-        },
-      } as any;
+      const fakeDriver = new BaseDriver({} as InitialOpts);
+      fakeDriver.sessionExists = () => true;
+      fakeDriver.proxyActive = () => false;
+      fakeDriver.executeCommand = async (cmd: string) => {
+        if (cmd === 'createSession') {
+          executed = true;
+          return ['session-123', {platformName: 'iOS'}];
+        }
+        return null;
+      };
 
       const routes: Record<string, Function> = {};
       const app = {
@@ -82,11 +81,11 @@ describe('Protocol', function () {
         delete: (path: string, handler: Function) => { routes[`DELETE:${path}`] = handler; },
       } as any;
 
-      const addRoutes = routeConfiguringFunction(fakeDriver);
+      const addRoutes = routeConfiguringFunction(fakeDriver as any);
       addRoutes(app);
 
       const req = {
-        body: {},
+        body: {capabilities: {alwaysMatch: {platformName: 'iOS'}}},
         params: {},
         destroyed: true,
         complete: true,
@@ -107,31 +106,49 @@ describe('Protocol', function () {
         },
       } as unknown as Response;
 
-      const statusHandler = routes['GET:/status'];
-      assert.ok(statusHandler);
-      await statusHandler(req, res);
+      const createSessionHandler = routes['POST:/session'];
+      assert.ok(createSessionHandler);
+      await createSessionHandler(req, res);
       assert.strictEqual(executed, true);
       assert.strictEqual(responseSent, true);
     });
 
-    it('should delete orphaned session when client disconnects during createSession', async function () {
+    it('should delete orphaned session when client disconnects MID-FLIGHT during createSession execution', async function () {
       const createdSessionId = 'session-orphan-999';
       const deletedSessions: string[] = [];
 
-      const fakeDriver = {
-        sessionExists: () => false,
-        proxyActive: () => false,
-        executeCommand: async (cmd: string, ...args: any[]) => {
-          if (cmd === 'createSession') {
-            return [createdSessionId, {platformName: 'iOS'}];
-          }
-          if (cmd === 'deleteSession') {
-            deletedSessions.push(args[0]);
-            return null;
-          }
+      const req = {
+        body: {capabilities: {alwaysMatch: {platformName: 'iOS'}}},
+        params: {},
+        destroyed: false,
+        complete: true,
+        headers: {},
+      } as unknown as Request;
+
+      const res = {
+        destroyed: false,
+        writableEnded: false,
+        socket: {destroyed: false},
+        status: function () { return this; },
+        json: function () { return this; },
+      } as unknown as Response;
+
+      const fakeDriver = new BaseDriver({} as InitialOpts);
+      fakeDriver.sessionExists = () => false;
+      fakeDriver.proxyActive = () => false;
+      fakeDriver.executeCommand = async (cmd: string, ...args: any[]) => {
+        if (cmd === 'createSession') {
+          // Simulate client disconnect mid-flight while driver is initializing
+          (res as any).destroyed = true;
+          (res as any).socket = {destroyed: true};
+          return [createdSessionId, {platformName: 'iOS'}];
+        }
+        if (cmd === 'deleteSession') {
+          deletedSessions.push(args[0]);
           return null;
-        },
-      } as any;
+        }
+        return null;
+      };
 
       const routes: Record<string, Function> = {};
       const app = {
@@ -140,24 +157,8 @@ describe('Protocol', function () {
         delete: (path: string, handler: Function) => { routes[`DELETE:${path}`] = handler; },
       } as any;
 
-      const addRoutes = routeConfiguringFunction(fakeDriver);
+      const addRoutes = routeConfiguringFunction(fakeDriver as any);
       addRoutes(app);
-
-      const req = {
-        body: {capabilities: {alwaysMatch: {platformName: 'iOS'}}},
-        params: {},
-        destroyed: true,
-        complete: false,
-        headers: {},
-      } as unknown as Request;
-
-      const res = {
-        destroyed: true,
-        writableEnded: false,
-        socket: {destroyed: true},
-        status: function () { return this; },
-        json: function () { return this; },
-      } as unknown as Response;
 
       const createSessionHandler = routes['POST:/session'];
       assert.ok(createSessionHandler);

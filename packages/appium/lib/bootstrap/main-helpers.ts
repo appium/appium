@@ -63,7 +63,11 @@ export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): s
  * @param args - Parsed server CLI args
  * @param throwInsteadOfExit - When true, rethrows failures instead of calling `process.exit(1)`
  */
-export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
+export async function preflightChecks(
+  args: ParsedArgs<CliCommandServer>,
+  throwInsteadOfExit = false,
+  programmaticArgs = false,
+): Promise<void> {
   try {
     checkNodeOk();
     if (args.longStacktrace) {
@@ -74,7 +78,17 @@ export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwI
       process.exit(0);
     }
 
-    validateSchema(args);
+    // Direct driver modules are a programmatic-only API. Keep the public
+    // CLI/config schema strict (string[]), while still validating every normal
+    // server option and every string-valued useDrivers entry.
+    const schemaArgs =
+      programmaticArgs && args.useDrivers.some((entry) => typeof entry !== 'string')
+        ? {
+            ...args,
+            useDrivers: args.useDrivers.filter((entry): entry is string => typeof entry === 'string'),
+          }
+        : args;
+    validateSchema(schemaArgs as ParsedArgs<CliCommandServer>);
 
     if (args.tmpDir) {
       await requireDir(args.tmpDir, !args.noPermsCheck, 'tmpDir argument value');
@@ -142,6 +156,14 @@ export function buildServerOpts(
   pluginClasses: PluginNameMap,
 ): {serverOpts: ServerOpts; normalizedBasePath: string} {
   const routeConfiguringFunction = makeRouter(appiumDriver);
+  // Driver updateServer hooks receive the CLI-shaped argument contract.
+  // Embedded programmatic modules have already been registered in driverClasses.
+  const cliArgs = {
+    ...parsedArgs,
+    useDrivers: parsedArgs.useDrivers.some((entry) => typeof entry !== 'string')
+      ? [...driverClasses.values()]
+      : parsedArgs.useDrivers.filter((entry): entry is string => typeof entry === 'string'),
+  };
   const serverOpts: ServerOpts = {
     routeConfiguringFunction,
     port: parsedArgs.port,
@@ -150,7 +172,7 @@ export function buildServerOpts(
     basePath: parsedArgs.basePath,
     serverUpdaters: getServerUpdaters(driverClasses, pluginClasses),
     extraMethodMap: getExtraMethodMap(driverClasses, pluginClasses),
-    cliArgs: parsedArgs,
+    cliArgs,
   };
   const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
   for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout'] as const) {

@@ -62,7 +62,7 @@ appium
 |`--ssl-key-path`|Absolute path to the `.key` file if TLS is used. Must be provided together with `--ssl-cert-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
 |`--strict-caps`|Prevent creation of new client sessions that use unsupported capabilities|boolean|`false`|
 |`--tmp`|Absolute path to the directory used for temporary files|string|[`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir)|
-|`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
+|`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated. An entry can also be the absolute path or `file:` URL of a driver package directory, to use that driver without installing it (see [Embedding Appium in an `npm` Package](../../guides/managing-exts.md#embedding-appium-in-an-npm-package)).|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
 |`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
 

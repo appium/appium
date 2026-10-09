@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/appium@4.0.0-beta.3...appium@4.0.0-beta.4) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** Replace the &#x60;windows&#x60; known-driver shortcut with &#x60;wincore&#x60; pointing to appium-wincore-driver instead of the obsolete appium-windows-driver
+
+### Features
+
+* **appium:** replace obsolete windows driver with appium-wincore-driver  ([#22917](https://github.com/appium/appium/issues/22917)) ([7544a10](https://github.com/appium/appium/commit/7544a1008d96f44f19499500314b6ae21d54d4f2))
+
+### Bug Fixes
+
+* **appium:** prevent recursion when logging the first BiDi event of a method ([#22897](https://github.com/appium/appium/issues/22897)) ([e230727](https://github.com/appium/appium/commit/e230727090f24a3c777c88de9d43d83ff94ea97d))
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* tune wincore driver integration ([#22922](https://github.com/appium/appium/issues/22922)) ([9f8455e](https://github.com/appium/appium/commit/9f8455e1973e97c8a6451a9291de741dadfed775))
+
+
 ## [4.0.0-beta.3](https://github.com/appium/appium/compare/appium@4.0.0-beta.2...appium@4.0.0-beta.3) (2026-10-05)
 
 ### Features

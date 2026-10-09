@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.4](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.3...@appium/fake-plugin@5.0.0-beta.4) (2026-10-09)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
 ## [5.0.0-beta.3](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.2...@appium/fake-plugin@5.0.0-beta.3) (2026-10-05)
 
 ### Bug Fixes

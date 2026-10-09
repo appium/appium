@@ -173,6 +173,7 @@ describe('tls server', function () {
   });
 
   it('should start up with our middleware', {skip}, async function () {
+    assert.strictEqual(hwServer.isSecure(), true);
     const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
     assert.strictEqual(data, 'Hello World!');
   });

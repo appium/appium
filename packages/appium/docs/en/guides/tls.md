@@ -24,10 +24,18 @@ After the server is started use the `https` protocol and a client supporting SSL
 
 ### Supported Features
 
-Once a secure server socket is established it supports the following protocols:
-`['h2', 'spdy/3.1', 'spdy/3', 'spdy/2', 'http/1.1', 'http/1.0']`. See
-[the SPDY node module documentation](https://www.npmjs.com/package/spdy) to get more details about
-its features. All insecure client connections will be rejected by the server.
+On Node.js 20 and 22, Appium uses the legacy SPDY server and negotiates the
+following protocols: `['h2', 'spdy/3.1', 'spdy/3', 'spdy/2', 'http/1.1', 'http/1.0']`.
+See [the SPDY module documentation](https://www.npmjs.com/package/spdy).
+
+On **Node.js 24 and later**, the SPDY dependency cannot load because it uses
+a removed Node.js `http_parser` internal binding. Appium therefore uses
+Node's built-in `https` server with **HTTP/1.1 over TLS** instead. This keeps
+HTTPS Appium clients working, but native Node.js 24+ TLS does **not** offer
+SPDY or HTTP/2 negotiation. Clients that require `h2`/SPDY must use a compatible
+Node.js 22 runtime until the server transport is upgraded.
+
+All insecure plaintext HTTP connections are rejected in either mode.
 
 ### Self-Signed Certificates
 

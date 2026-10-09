@@ -1,4 +1,5 @@
 import http from 'node:http';
+import https from 'node:https';
 import type {Server as HttpServer} from 'node:http';
 import {createRequire} from 'node:module';
 
@@ -278,6 +279,13 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
     }
   }
   const [cert, key] = (await Promise.all(certKey.map((p) => fs.readFile(p, 'utf8')))) as [string, string];
+  // spdy@4 depends on http-deceiver's removed process.binding('http_parser').
+  // Never load that module on Node 24+, where the native HTTPS listener supports
+  // Appium's normal HTTP/1.1 clients and rejects plaintext connections.
+  if (Number.parseInt(process.versions.node.split('.')[0], 10) >= 24) {
+    log.warn('Legacy SPDY is unavailable on Node.js 24+; enabling native HTTPS (HTTP/1.1 only)');
+    return https.createServer({cert, key}, app) as unknown as HttpServer;
+  }
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
 
   const spdy = require('spdy') as {
@@ -320,7 +328,10 @@ function configureHttp({
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
   appiumServer.isSecure = function isSecure() {
-    return Boolean((this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure);
+    return Boolean(
+      (this as unknown as {_spdyState?: {secure?: boolean}})._spdyState?.secure ||
+      this instanceof https.Server
+    );
   };
 
   // This avoids Express middleware timeout issues with long-lived WebSocket connections

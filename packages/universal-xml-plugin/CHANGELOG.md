@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.3...@appium/universal-xml-plugin@4.0.0-beta.4) (2026-10-09)
+
+### Bug Fixes
+
+* **universal-xml-plugin:** keep the enabled attribute in transformed source ([#22911](https://github.com/appium/appium/issues/22911)) ([3063ec9](https://github.com/appium/appium/commit/3063ec99175454125cf4f277272b97de866fcbe2))
+
+
 ## [4.0.0-beta.3](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.2...@appium/universal-xml-plugin@4.0.0-beta.3) (2026-10-05)
 
 ### Features

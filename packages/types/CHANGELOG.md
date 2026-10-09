@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.2...@appium/types@2.0.0-beta.3) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **storage-plugin:** the storage routes (and the stream/events websocket paths) were always mounted at the server root, ignoring --base-path. They are now prefixed with the base path, e.g. /wd/hub/appium/storage/add.
+
+### Bug Fixes
+
+* **storage-plugin:** mount routes under the server base path ([#22906](https://github.com/appium/appium/issues/22906)) ([8297d31](https://github.com/appium/appium/commit/8297d31fb18b4d0b9e2b377332cfc680281ec6ed))
+
+
 ## [2.0.0-beta.2](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.1...@appium/types@2.0.0-beta.2) (2026-10-05)
 
 ### Bug Fixes

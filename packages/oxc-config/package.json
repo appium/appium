@@ -1,6 +1,6 @@
 {
   "name": "@appium/oxc-config",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Shared Oxlint and Oxfmt config for Appium projects",
   "keywords": [
     "appium",

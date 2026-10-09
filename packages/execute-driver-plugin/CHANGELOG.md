@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.3...@appium/execute-driver-plugin@8.0.0-beta.4) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* **execute-driver-plugin:** bracket IPv6 server hosts for webdriverio ([#22912](https://github.com/appium/appium/issues/22912)) ([dbae73b](https://github.com/appium/appium/commit/dbae73b92180c457936c1d040ad9684cdd842b8e))
+
+
 ## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.2...@appium/execute-driver-plugin@8.0.0-beta.3) (2026-10-05)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

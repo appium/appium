@@ -29,6 +29,29 @@ appium --use-plugins=universal-xml
 Once the plugin is running, it will intercept and transform the app source retrieved by the Get Page
 Source command, as well as element node/attribute names provided in Find Element-related commands.
 
+### Switching between universal and native XML
+
+On a driver that exposes `NATIVE_APP`, the context list also contains `universal-xml`.
+Transformation remains enabled by default, so the plugin reports `universal-xml` as the current
+context while the underlying driver is native. Switching explicitly to `NATIVE_APP` disables both
+source transformation and XPath translation for that session; this makes the original page source
+available to native selectors and tools such as OCR integrations. Switch back to `universal-xml`
+to restore the common source and selector vocabulary.
+
+For example, using WebdriverIO:
+
+```js
+await driver.switchAppiumContext('NATIVE_APP');
+const nativeXml = await driver.getPageSource();
+await driver.switchAppiumContext('universal-xml');
+const universalXml = await driver.getPageSource();
+```
+
+The virtual context is not forwarded to the underlying driver. Entering it from a webview first
+switches the real driver to `NATIVE_APP`. Real webview contexts keep their original source and
+selector handling, and other context names retain the driver's normal validation and errors.
+Context state is isolated between sessions and removed when a session is deleted.
+
 ## API
 
 [Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#universal-xml-plugin).

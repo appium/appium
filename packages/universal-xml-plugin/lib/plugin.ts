@@ -6,7 +6,69 @@ import {transformSourceXml} from './source.js';
 import type {TransformMetadata} from './types.js';
 import {transformQuery} from './xpath.js';
 
+const NATIVE_CONTEXT = 'NATIVE_APP';
+const UNIVERSAL_CONTEXT = 'universal-xml';
+
+type ContextEntry = string | {id: string; [key: string]: unknown};
+
 export class UniversalXMLPlugin extends BasePlugin {
+  // Driver objects belong to individual sessions. Weak keys do not retain ended sessions.
+  private readonly nativeSourceSessions = new WeakSet<ExternalDriver>();
+
+  async getContexts(next: NextPluginCallback, driver: ExternalDriver): Promise<ContextEntry[]> {
+    const contexts = (await next()) as ContextEntry[];
+    const contextId = (context: ContextEntry) => (typeof context === 'string' ? context : context.id);
+    const nativeContext = contexts.find((context) => contextId(context) === NATIVE_CONTEXT);
+    if (
+      !supportsContextSwitching(driver) ||
+      !nativeContext ||
+      contexts.some((context) => contextId(context) === UNIVERSAL_CONTEXT)
+    ) {
+      return contexts;
+    }
+    const universalContext =
+      typeof nativeContext === 'string' ? UNIVERSAL_CONTEXT : {...nativeContext, id: UNIVERSAL_CONTEXT};
+    return [...contexts, universalContext];
+  }
+
+  async getCurrentContext(next: NextPluginCallback, driver: ExternalDriver): Promise<string | null> {
+    const context = (await next()) as string | null;
+    return context === NATIVE_CONTEXT && supportsContextSwitching(driver) && !this.nativeSourceSessions.has(driver)
+      ? UNIVERSAL_CONTEXT
+      : context;
+  }
+
+  async setContext(next: NextPluginCallback, driver: ExternalDriver, name: string | null): Promise<unknown> {
+    if (name !== UNIVERSAL_CONTEXT) {
+      // Commit the mode only after the real driver accepts the requested context.
+      const result = await next();
+      this.nativeSourceSessions.add(driver);
+      return result;
+    }
+    if (!supportsContextSwitching(driver) || !driver.getCurrentContext || !driver.setContext) {
+      throw new errors.NoSuchContextError(`The driver does not support the '${UNIVERSAL_CONTEXT}' context`);
+    }
+    if ((await driver.getCurrentContext()) !== NATIVE_CONTEXT) {
+      await driver.setContext(NATIVE_CONTEXT);
+    }
+    this.nativeSourceSessions.delete(driver);
+    return null;
+  }
+
+  async deleteSession(next: NextPluginCallback, driver: ExternalDriver): Promise<unknown> {
+    try {
+      return await next();
+    } finally {
+      this.nativeSourceSessions.delete(driver);
+    }
+  }
+
+  private async shouldTransformSource(driver: ExternalDriver): Promise<boolean> {
+    return (
+      !this.nativeSourceSessions.has(driver) &&
+      (!driver.getCurrentContext || (await driver.getCurrentContext()) === NATIVE_CONTEXT)
+    );
+  }
   async getPageSource(
     next: NextPluginCallback | null,
     driver: ExternalDriver,
@@ -15,6 +77,9 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<string> {
     void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
+    if (!(await this.shouldTransformSource(driver))) {
+      return source;
+    }
     const metadata: TransformMetadata = {};
     const platformName = getPlatformName(driver);
     if (platformName.toLowerCase() === 'android') {
@@ -83,9 +148,10 @@ export class UniversalXMLPlugin extends BasePlugin {
     selector: string,
   ): Promise<Element | Element[]> {
     if (
+      this.nativeSourceSessions.has(driver) ||
       strategy.toLowerCase() !== 'xpath' ||
       !driver.getCurrentContext ||
-      (await driver.getCurrentContext()) !== 'NATIVE_APP'
+      (await driver.getCurrentContext()) !== NATIVE_CONTEXT
     ) {
       return (await next()) as Element | Element[];
     }
@@ -115,4 +181,11 @@ export class UniversalXMLPlugin extends BasePlugin {
 
 function getPlatformName(driver: ExternalDriver): string {
   return ((driver.caps as Record<string, unknown>)?.platformName as string) || '';
+}
+
+function supportsContextSwitching(driver: ExternalDriver): boolean {
+  return (
+    ['ios', 'android'].includes(getPlatformName(driver).toLowerCase()) &&
+    Boolean(driver.getCurrentContext && driver.setContext)
+  );
 }

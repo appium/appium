@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import type {Capabilities, Constraints, NSCapabilities, StandardCapabilities, W3CCapabilities} from '@appium/types';
 import type {KeyAsString, MergeExclusive} from 'type-fest';
 
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {errors} from '../protocol/errors';
 import {omit, pickBy} from '../utils';
 import {log} from './logger';
@@ -105,6 +106,54 @@ export function validateCaps<C extends Constraints>(
 
   // Return caps
   return caps;
+}
+
+/**
+ * A side-effect-free snapshot of capability validation for driver-author tests.
+ *
+ * Unknown capabilities are reported independently of validation: Appium permits
+ * them, so `valid` remains true unless `validateCaps` itself rejects the input.
+ */
+export interface CapDiagnostics {
+  /** Whether the existing validateCaps rules accept these capabilities. */
+  valid: boolean;
+  /** Validation failures; empty when valid. */
+  errors: string[];
+  /** Keys absent from the supplied constraints, with optional typo hints. */
+  unknownCapabilities: Array<{name: string; suggestion?: string}>;
+}
+
+/**
+ * Inspect validation failures and unknown capabilities without creating a session
+ * or intercepting warning logs. Does not change validateCaps or session behavior.
+ *
+ * Pass the same combined base + driver constraints that the driver would use.
+ * Capability names should already be normalized (e.g. appium prefixes removed).
+ */
+export function diagnoseCaps<C extends Constraints>(
+  caps: Capabilities<C>,
+  constraints: C | undefined = {} as C,
+  opts: ValidateCapsOpts | undefined = {},
+): CapDiagnostics {
+  const knownCaps = Object.keys(constraints ?? {});
+  const known = new Set(knownCaps);
+  const unknownCapabilities = util.isPlainObject(caps)
+    ? Object.keys(caps)
+        .filter((name) => !known.has(name))
+        .map((name) => {
+          const suggestion = getLevenshteinSuggestion(name, knownCaps);
+          return suggestion ? {name, suggestion} : {name};
+        })
+    : [];
+
+  const errors: string[] = [];
+  try {
+    validateCaps(caps, constraints, opts);
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : String(error));
+  }
+
+  return {valid: errors.length === 0, errors, unknownCapabilities};
 }
 
 /**

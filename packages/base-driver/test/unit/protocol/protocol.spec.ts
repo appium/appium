@@ -66,13 +66,13 @@ describe('Protocol', function () {
       const fakeDriver = new BaseDriver({} as InitialOpts);
       fakeDriver.sessionExists = () => true;
       fakeDriver.proxyActive = () => false;
-      fakeDriver.executeCommand = async (cmd: string) => {
+      fakeDriver.executeCommand = (async (cmd: string) => {
         if (cmd === 'createSession') {
           executed = true;
           return ['session-123', {platformName: 'iOS'}];
         }
         return null;
-      };
+      }) as typeof fakeDriver.executeCommand;
 
       const routes: Record<string, Function> = {};
       const app = {
@@ -136,7 +136,7 @@ describe('Protocol', function () {
       const fakeDriver = new BaseDriver({} as InitialOpts);
       fakeDriver.sessionExists = () => false;
       fakeDriver.proxyActive = () => false;
-      fakeDriver.executeCommand = async (cmd: string, ...args: any[]) => {
+      fakeDriver.executeCommand = (async (cmd: string, ...args: any[]) => {
         if (cmd === 'createSession') {
           // Simulate client disconnect mid-flight while driver is initializing
           (res as any).destroyed = true;
@@ -148,7 +148,7 @@ describe('Protocol', function () {
           return null;
         }
         return null;
-      };
+      }) as typeof fakeDriver.executeCommand;
 
       const routes: Record<string, Function> = {};
       const app = {

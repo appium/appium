@@ -96,6 +96,15 @@ describe('source functions', function () {
       assert.deepEqual(obj, {'@_id': 'someId'});
       assert.deepEqual(unknowns, []);
     });
+    it('should preserve enabled for both platforms, including false values', function () {
+      for (const platform of ['ios', 'android']) {
+        for (const enabled of ['true', 'false']) {
+          const node: Record<string, string> = {'@_enabled': enabled};
+          assert.deepEqual(transformAttrs(node, Object.keys(node), platform), []);
+          assert.deepEqual(node, {'@_enabled': enabled});
+        }
+      }
+    });
     it('should not translate unknown attributes and return them in the unknowns list', function () {
       const obj: any = {
         '@_type': 'foo',

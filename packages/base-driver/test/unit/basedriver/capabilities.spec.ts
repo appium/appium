@@ -6,6 +6,7 @@ import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 
 import {
   APPIUM_VENDOR_PREFIX,
+  diagnoseCaps,
   findNonPrefixedCaps,
   mergeCaps,
   parseCaps,
@@ -110,6 +111,43 @@ describe('caps', function () {
       };
 
       assert.deepStrictEqual(validateCaps(caps as unknown as Capabilities<typeof constraints>, constraints), caps);
+    });
+  });
+
+  describe('#diagnoseCaps', function () {
+    it('reports unknown capability names while keeping accepted extras valid', function () {
+      const result = diagnoseCaps(
+        {deviceName: 'Pixel', deviceNmae: 'typo', randomFeature: true} as any,
+        {deviceName: {isString: true}},
+      );
+      assert.strictEqual(result.valid, true);
+      assert.deepStrictEqual(result.errors, []);
+      assert.deepStrictEqual(result.unknownCapabilities, [
+        {name: 'deviceNmae', suggestion: 'deviceName'},
+        {name: 'randomFeature'},
+      ]);
+    });
+
+    it('returns normal validation errors alongside unknown-key diagnostics without throwing', function () {
+      const result = diagnoseCaps(
+        {deviceName: 42, deviceNmae: 'Pixel'} as any,
+        {deviceName: {isString: true}, requiredCap: {presence: true}},
+      );
+      assert.strictEqual(result.valid, false);
+      assert.match(result.errors.join(' '), /'deviceName' must be of type string/);
+      assert.match(result.errors.join(' '), /'requiredCap' is required/);
+      assert.deepStrictEqual(result.unknownCapabilities, [{name: 'deviceNmae', suggestion: 'deviceName'}]);
+    });
+
+    it('honors the same skipPresenceConstraint option as validateCaps', function () {
+      const caps = {} as any;
+      const constraints = {requiredCap: {presence: true}};
+      assert.strictEqual(diagnoseCaps(caps, constraints).valid, false);
+      assert.deepStrictEqual(diagnoseCaps(caps, constraints, {skipPresenceConstraint: true}), {
+        valid: true,
+        errors: [],
+        unknownCapabilities: [],
+      });
     });
   });
 

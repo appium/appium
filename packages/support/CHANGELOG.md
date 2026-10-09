@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.2...@appium/support@8.0.0-beta.3) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* **support:** do not drop directories while fs.mv moves a folder ([#22913](https://github.com/appium/appium/issues/22913)) ([aed3af9](https://github.com/appium/appium/commit/aed3af95381b67ece2a0f08bd4125b2a09dafd4d))
+
+
 ## [8.0.0-beta.2](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.1...@appium/support@8.0.0-beta.2) (2026-10-05)
 
 ### Bug Fixes

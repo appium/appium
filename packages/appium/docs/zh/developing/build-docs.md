@@ -45,7 +45,7 @@ npx appium-docs init
 
 请参考 [MkDocs 文档](https://www.mkdocs.org/user-guide/writing-your-docs/) 来了解如何组织与构建你的文档结构。
 
-### Helping LLMs Use Your Documentation
+### 帮助LLMs 使用您的文档
 
 The [`/llms.txt` convention](https://llmstxt.org/) is a Markdown file at the root of a
 documentation site, listing its most useful pages so that large language models can navigate the

@@ -6,9 +6,9 @@ title: 编写测试 (.NET)
 ---
 
 [Appium .NET Client](https://github.com/appium/dotnet-client/) 是
-官方的 Appium C# 客户端。 这个驱动程序是 Selenium C# 客户端的扩展。 它具有常规驱动程序的所有功能，但在之上添加了 Appium 特定的方法。 该驱动程序在公共 NuGet Gallery 上作为 [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/) 提供。
+官方的 Appium C# 客户端。这个驱动程序是 Selenium C# 客户端的扩展。它具有常规驱动程序的所有功能，但在之上添加了 Appium 特定的方法。该驱动程序在公共 NuGet Gallery 上作为 [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/) 提供。
 
-现在，我们进入目录并创建一个新的 [NUnit](https://nunit.org/) 项目。 我们还将添加对 Appium.Net 驱动程序和其他依赖项的引用。
+现在，我们进入目录并创建一个新的 [NUnit](https://nunit.org/) 项目。我们还将添加对 Appium.Net 驱动程序和其他依赖项的引用。
 
 ```bash
 cd dotnet-client
@@ -21,7 +21,7 @@ dotnet add package Appium.WebDriver  --prerelease
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
 
-完成后，您的项目应该有一个占位符文件 `UnitTest1.cs`。 我们将替换代码以包含 OpenQA 命名空间、驱动程序的初始化以及实际测试。
+完成后，您的项目应该有一个占位符文件 `UnitTest1.cs`。我们将替换代码以包含 OpenQA 命名空间、驱动程序的初始化以及实际测试。
 
 ```C# title="UnitTest1.cs"
 using OpenQA.Selenium;
@@ -77,12 +77,12 @@ public class Tests
 
 基本上，此代码执行以下操作：
 
-1. 定义一组"Capabilities"（参数）发送到 Appium 服务器，以便 Appium 知道您想要自动化什么。 有些参数可以使用环境变量覆盖。
+1. 定义一组"Capabilities"（参数）发送到 Appium 服务器，以便 Appium 知道您想要自动化什么。有些参数可以使用环境变量覆盖。
 2. 在内置的 Android 设置应用上启动 Appium 会话。
 3. 查找"Apps"列表项并点击它。
 4. 结束 Appium 会话。
 
-就是这样！ 让我们试试。 在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。 然后，您可以执行脚本：
+就是这样！让我们试试。在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。然后，您可以执行脚本：
 
 ```bash
 dotnet test
@@ -96,4 +96,4 @@ dotnet test
 
 如果一切顺利，您将看到设置应用打开并在模拟器中导航到"Apps"视图，然后应用再次关闭。
 
-恭喜，您已经开始了 Appium 之旅！ 继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。
+恭喜，您已经开始了 Appium 之旅！继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

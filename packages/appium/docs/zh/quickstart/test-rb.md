@@ -5,7 +5,7 @@ hide:
 title: 编写测试 (Ruby)
 ---
 
-[AppiumLib](https://github.com/appium/ruby_lib) 和 [AppiumLibCore](https://github.com/appium/ruby_lib_core)（**推荐**）是 Ruby 中的官方 Appium 客户端库，可通过 gem 以 [appium_lib](https://rubygems.org/gems/appium_lib) 和 [appium_lib_core](https://rubygems.org/gems/appium_lib_core) 包名获取。 appium_lib_core 继承自 Selenium Ruby Binding，而 appium_lib 继承自 appium_lib_core，因此安装这些库包括 selenium 绑定。 如果您需要一个不太复杂的客户端解决方案，我们推荐 `appium_lib_core`。 `appium_lib` 有一些核心没有的有用方法，但代价是更大的复杂性和可能在最新环境中不工作的历史方法。
+[AppiumLib](https://github.com/appium/ruby_lib) 和 [AppiumLibCore](https://github.com/appium/ruby_lib_core)（**推荐**）是 Ruby 中的官方 Appium 客户端库，可通过 gem 以 [appium_lib](https://rubygems.org/gems/appium_lib) 和 [appium_lib_core](https://rubygems.org/gems/appium_lib_core) 包名获取。 appium_lib_core 继承自 Selenium Ruby Binding，而 appium_lib 继承自 appium_lib_core，因此安装这些库包括 selenium 绑定。如果您需要一个不太复杂的客户端解决方案，我们推荐 `appium_lib_core`。 `appium_lib` 有一些核心没有的有用方法，但代价是更大的复杂性和可能在最新环境中不工作的历史方法。
 
 作为第一步，让我们初始化一个 Gemfile 来管理依赖项：
 
@@ -34,11 +34,10 @@ bundle add test-unit
 ```
 
 `appium_lib_core` 是作为 Appium 客户端的主要部分。
-`appium_lib` 有各种辅助方法，但驱动程序实例通常被设计为全局变量使用。 它可能导致处理实例的问题。
+`appium_lib` 有各种辅助方法，但驱动程序实例通常被设计为全局变量使用。它可能导致处理实例的问题。
 `appium_lib_core` 没有这样的全局变量。
 
-此示例使用 `appium_lib_core` 和 `test-unit` gem 模块。
-在 `appium_lib` 中的测试代码应该类似。
+此示例使用 `appium_lib_core` 和 `test-unit` gem 模块。在 `appium_lib` 中的测试代码应该类似。
 
 ```ruby title="test.rb"
 --8<-- "./sample-code/quickstarts/rb/test.rb"
@@ -68,7 +67,7 @@ bundle add test-unit
 4. 暂停片刻纯粹为了视觉效果。
 5. 结束 Appium 会话。
 
-就是这样！ 让我们试试。 在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。 然后，您可以执行脚本：
+就是这样！让我们试试。在运行测试之前，请确保在另一个终端会话中运行 Appium 服务器，否则您会收到无法连接的错误。然后，您可以执行脚本：
 
 ```bash
 # 如果您的环境尚未运行安装命令，请先运行 "bundle install"。
@@ -77,4 +76,4 @@ bundle exec ruby test.rb
 
 如果一切顺利，您将看到设置应用打开并导航到"Apps"视图，然后应用再次关闭。
 
-恭喜，您已经开始了 Appium 之旅！ 继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。
+恭喜，您已经开始了 Appium 之旅！继续阅读一些 [后续步骤](./next-steps.md) 以进行探索。

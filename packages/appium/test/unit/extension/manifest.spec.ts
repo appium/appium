@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
@@ -489,32 +491,49 @@ describe('Manifest', function () {
       });
 
       describe('when a dependency is declared in APPIUM_HOME package.json but not found by glob', function () {
-        beforeEach(function () {
-          MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
-            if (filepath.endsWith('package.json') && !filepath.includes('yaml')) {
-              return JSON.stringify({
-                dependencies: { 'yaml': '2.0.0' }
-              });
-            }
-            if (filepath.includes('yaml/package.json')) {
-              return JSON.stringify({
-                name: 'yaml',
-                version: '2.0.0',
-                appium: {
-                  automationName: 'yaml',
-                  mainClass: 'SomeClass',
-                  driverName: 'yamlDriver'
-                }
-              });
-            }
-            return '{}';
-          });
+        let workspaceRoot: string | undefined;
+        let driverPath: string;
+
+        beforeEach(async function () {
+          workspaceRoot = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), 'appium-hoisted-driver-')));
+          const appiumHome = path.join(workspaceRoot, 'packages', 'app');
+          driverPath = path.join(workspaceRoot, 'node_modules', '@appium', 'hoisted-fixture-driver');
+          await fs.mkdir(appiumHome, {recursive: true});
+          await fs.mkdir(driverPath, {recursive: true});
+          await fs.writeFile(
+            path.join(appiumHome, 'package.json'),
+            JSON.stringify({dependencies: {'@appium/hoisted-fixture-driver': '1.0.0'}}),
+          );
+          const driverPackage: ExtPackageJson<DriverType> = {
+            name: '@appium/hoisted-fixture-driver',
+            version: '1.0.0',
+            appium: {
+              automationName: 'HoistedFixture',
+              mainClass: 'HoistedDriver',
+              platformNames: ['Fake'],
+              driverName: 'hoistedFixture',
+            },
+            peerDependencies: {appium: APPIUM_VER},
+          };
+          await fs.writeFile(path.join(driverPath, 'package.json'), JSON.stringify(driverPackage));
+          // Module resolution uses the real filesystem, not the readFile stub.
+          MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => fs.readFile(filepath, 'utf8'));
           MockAppiumSupport.fs.glob.resolves([]);
+          manifest = Manifest.getInstance(appiumHome);
+        });
+
+        afterEach(async function () {
+          if (workspaceRoot) {
+            await fs.rm(workspaceRoot, {recursive: true, force: true});
+            workspaceRoot = undefined;
+          }
         });
 
         it('should discover the driver via module resolution', async function () {
           await manifest.syncWithInstalledExtensions();
-          assert.ok(Object.hasOwn(manifest.getExtensionData(DRIVER_TYPE), 'yamlDriver'));
+          const drivers = manifest.getExtensionData(DRIVER_TYPE);
+          assert.ok(Object.hasOwn(drivers, 'hoistedFixture'));
+          assert.strictEqual(drivers.hoistedFixture.installPath, driverPath);
         });
       });
 

@@ -37,12 +37,36 @@ describe('Websockets (e2e)', function () {
       await baseServer.addWebSocketHandler(endpoint, wss);
       try {
         for (const sessionId of ['%FF', '%', 'valid-session']) {
-          await new Promise<void>((resolve, reject) => {
-            const client = new WebSocket(`ws://${TEST_HOST}:${port}/bidi/${sessionId}`);
-            client.addEventListener('error', () => reject(new Error('WebSocket connection failed')), {once: true});
-            client.addEventListener('message', () => client.close(), {once: true});
-            client.addEventListener('close', () => resolve(), {once: true});
-          });
+          const client = new WebSocket(`ws://${TEST_HOST}:${port}/bidi/${sessionId}`);
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          try {
+            await new Promise<void>((resolve, reject) => {
+              timer = setTimeout(() => reject(new Error('WebSocket exchange timed out')), 5000);
+              let receivedMessage = false;
+              client.addEventListener('error', () => reject(new Error('WebSocket connection failed')), {once: true});
+              client.addEventListener(
+                'message',
+                (event) => {
+                  try {
+                    assert.strictEqual(event.data, WS_DATA);
+                    receivedMessage = true;
+                    client.close();
+                  } catch (error) {
+                    reject(error);
+                  }
+                },
+                {once: true},
+              );
+              client.addEventListener(
+                'close',
+                () => (receivedMessage ? resolve() : reject(new Error('WebSocket closed before receiving data'))),
+                {once: true},
+              );
+            });
+          } finally {
+            clearTimeout(timer);
+            client.close();
+          }
         }
       } finally {
         await baseServer.removeWebSocketHandler(endpoint);

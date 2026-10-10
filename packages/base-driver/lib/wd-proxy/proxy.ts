@@ -17,7 +17,10 @@ import {ProxyRequest} from './proxy-request.js';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
+// Preserve URL encoding while retaining wildcard arrays for pathname reconstruction.
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}', {
+  decode: (value) => value,
+});
 
 const ALLOWED_OPTS = [
   'scheme',

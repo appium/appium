@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import {
+  type BigIntStats,
   close,
   constants,
   type CopyOptions,
@@ -25,7 +26,7 @@ import {walk, type Walker, type WalkItem, type WalkOptions} from './internal/ind
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {isSameDestination, isSubPath, pluralize} from './util.js';
+import {isSubPath, pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -241,9 +242,9 @@ export const fs = {
       }
     };
 
-    let fromStat: Stats;
+    let fromStat: BigIntStats;
     try {
-      fromStat = await fsPromises.stat(from);
+      fromStat = await fsPromises.lstat(from, {bigint: true});
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {
         throw new Error(`The source path '${from}' does not exist or is not accessible`, {
@@ -252,14 +253,24 @@ export const fs = {
       }
       throw err;
     }
-    // moving a path onto itself deletes it, and a destination inside the source never returns
-    if (await isSameDestination(from, to)) {
+    // Directory moves merge into the destination, so follow its final symlink.
+    // File and symlink moves replace the destination entry itself.
+    let toStat: BigIntStats | undefined;
+    try {
+      toStat = await (fromStat.isDirectory() ? fsPromises.stat : fsPromises.lstat)(to, {bigint: true});
+    } catch (err) {
+      if (!isErrnoException(err) || err.code !== 'ENOENT') {
+        throw err;
+      }
+    }
+    // Renaming an entry onto itself is a no-op, but the final cleanup would delete it.
+    if (toStat && fromStat.dev === toStat.dev && fromStat.ino === toStat.ino) {
       return;
     }
     if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
       throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
     }
-    if (fromStat.isFile()) {
+    if (fromStat.isFile() || fromStat.isSymbolicLink()) {
       const dstRootWasCreated = await ensureDestination(path.dirname(to));
       await renameFile(from, to, dstRootWasCreated);
     } else if (fromStat.isDirectory()) {

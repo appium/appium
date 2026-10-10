@@ -33,9 +33,27 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-const MIN_WS_CODE_VAL = 1000;
-const MAX_WS_CODE_VAL = 1015;
-const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
+/**
+ * Close codes defined by RFC 6455, section 7.4.1 and the IANA registry.
+ * https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1
+ */
+const WebSocketCloseCode = {
+  NORMAL_CLOSURE: 1000,
+  GOING_AWAY: 1001,
+  RESERVED: 1004,
+  NO_STATUS_RECEIVED: 1005,
+  ABNORMAL_CLOSURE: 1006,
+  INTERNAL_ERROR: 1011,
+  BAD_GATEWAY: 1014,
+} as const;
+// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+const MIN_APPLICATION_CLOSE_CODE = 3000;
+const MAX_APPLICATION_CLOSE_CODE = 4999;
+const RESERVED_CLOSE_CODES: readonly number[] = [
+  WebSocketCloseCode.RESERVED,
+  WebSocketCloseCode.NO_STATUS_RECEIVED,
+  WebSocketCloseCode.ABNORMAL_CLOSURE,
+];
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
 
@@ -338,15 +356,14 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
       `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
         `Closing proxy connection to client`,
     );
-    const intCode: number = typeof code === 'number' ? (code as number) : parseInt(code, 10);
-    if (Number.isNaN(intCode) || intCode < MIN_WS_CODE_VAL || intCode > MAX_WS_CODE_VAL) {
+    const closeCode = toSendableCloseCode(code);
+    if (closeCode !== code) {
       driverLog.warn(
         `Received code ${code} from upstream socket, but this is not a valid ` +
-          `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
+          `websocket code. Rewriting to ${closeCode} for ws compatibility`,
       );
-      code = WS_FALLBACK_CODE;
     }
-    ws.close(code, reason);
+    ws.close(closeCode, reason);
   });
 
   proxyClient.on('error', (err) => {
@@ -413,7 +430,7 @@ function initBidiSocketHandlers(
     // If we're proxying, might as well close the upstream connection and clean it up
     if (proxyClient) {
       driverLog.debug('Also closing BiDi proxy socket connection');
-      proxyClient.close(code, reason);
+      proxyClient.close(toSendableCloseCode(code), reason);
     }
 
     const eventLogCounts = BIDI_EVENTS_MAP.get(bidiHandlerDriver);
@@ -546,6 +563,18 @@ async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<We
     }
   }
   return ws;
+}
+
+/**
+ * Replace close codes that cannot be sent in a WebSocket close frame.
+ */
+function toSendableCloseCode(code: number): number {
+  const isStandard =
+    code >= WebSocketCloseCode.NORMAL_CLOSURE &&
+    code <= WebSocketCloseCode.BAD_GATEWAY &&
+    !RESERVED_CLOSE_CODES.includes(code);
+  const isApplication = code >= MIN_APPLICATION_CLOSE_CODE && code <= MAX_APPLICATION_CLOSE_CODE;
+  return isStandard || isApplication ? code : WebSocketCloseCode.INTERNAL_ERROR;
 }
 
 // #endregion

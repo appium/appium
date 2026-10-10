@@ -90,13 +90,22 @@ export function tryHandleWebSocketUpgrade(
   } catch {
     currentPathname = req.url ?? '';
   }
-  for (const [pathname, wsServer] of Object.entries(webSocketsMapping)) {
-    if (match(pathname)(currentPathname)) {
-      wsServer.handleUpgrade(req, socket, head, (ws) => {
-        wsServer.emit('connection', ws, req);
-      });
-      return true;
+  try {
+    for (const [pathname, wsServer] of Object.entries(webSocketsMapping)) {
+      // We only need a match, not decoded parameters. Malformed percent escapes must
+      // not throw from the HTTP server's native upgrade event listener.
+      if (match(pathname, {decode: false})(currentPathname)) {
+        wsServer.handleUpgrade(req, socket, head, (ws) => {
+          wsServer.emit('connection', ws, req);
+        });
+        return true;
+      }
     }
+  } catch (err) {
+    log.warn(`Could not upgrade WebSocket connection: ${err instanceof Error ? err.message : String(err)}`);
+    socket.destroy();
+    // The failed connection is consumed, including when called as Express middleware.
+    return true;
   }
   log.info(`Did not match the websocket upgrade request at ${currentPathname} to any known route`);
   return false;

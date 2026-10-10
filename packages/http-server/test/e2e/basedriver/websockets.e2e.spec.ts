@@ -30,6 +30,24 @@ describe('Websockets (e2e)', function () {
   });
 
   describe('web sockets support', function () {
+    it('should survive percent-encoded upgrade paths and continue accepting connections', async function () {
+      const wss = new WebSocketServer({noServer: true});
+      wss.on('connection', (ws) => ws.send(WS_DATA));
+      const endpoint = '/bidi/:sessionId';
+      await baseServer.addWebSocketHandler(endpoint, wss);
+      try {
+        for (const sessionId of ['%FF', '%', 'valid-session']) {
+          await new Promise<void>((resolve, reject) => {
+            const client = new WebSocket(`ws://${TEST_HOST}:${port}/bidi/${sessionId}`);
+            client.addEventListener('error', () => reject(new Error('WebSocket connection failed')), {once: true});
+            client.addEventListener('message', () => client.close(), {once: true});
+            client.addEventListener('close', () => resolve(), {once: true});
+          });
+        }
+      } finally {
+        await baseServer.removeWebSocketHandler(endpoint);
+      }
+    });
     it('should be able to add websocket handler and remove it', async function () {
       const wss = new WebSocketServer({
         noServer: true,

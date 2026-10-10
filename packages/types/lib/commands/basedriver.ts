@@ -21,7 +21,7 @@ export interface ITimeoutCommands {
    *
    * @param type - the type of the timeout (deprecated)
    * @param ms - the ms for the timeout (deprecated)
-   * @param script - the number in ms for the script timeout, used for the W3C command
+   * @param script - the script timeout in ms, or null to disable the timeout
    * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
    * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
    * @param command - the number in ms for the Appium-specific command timeout
@@ -35,7 +35,7 @@ export interface ITimeoutCommands {
      * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
      */
     ms?: number | string,
-    script?: number,
+    script?: number | null,
     pageLoad?: number,
     implicit?: number,
     command?: number,
@@ -51,9 +51,9 @@ export interface ITimeoutCommands {
   /**
    * A helper method (not a command) used to set the script timeout value
    *
-   * @param ms - the script timeout in ms
+   * @param ms - the script timeout in ms, or null to disable the timeout
    */
-  setScriptTimeout(ms: number): void;
+  setScriptTimeout(ms: number | null): void;
 
   /**
    * A helper method (not a command) used to set the page load timeout value

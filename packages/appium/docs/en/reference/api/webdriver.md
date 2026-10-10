@@ -93,7 +93,7 @@ timeout for supported drivers and contexts.
 
 |Name|Description|Type|
 |--|--|--|
-|`script`|Script timeout|number|
+|`script`|Script timeout (`null` disables the timeout)|number or null|
 |`pageLoad`|Page load timeout|number|
 |`implicit`|Implicit wait timeout|number|
 |`command`|Appium command timeout|number|
@@ -115,7 +115,7 @@ for supported drivers and contexts.
 
 |Name|Description|Type|
 |--|--|--|
-|`script?`|Script timeout (in milliseconds)|number|
+|`script?`|Script timeout (in milliseconds; `null` disables the timeout)|number or null|
 |`implicit?`|Implicit wait timeout (in milliseconds)|number|
 |`pageLoad?`|Page load timeout (in milliseconds)|number|
 |`command?`|Appium command timeout (in milliseconds)|number|

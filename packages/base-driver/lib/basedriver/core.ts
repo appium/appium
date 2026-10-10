@@ -55,7 +55,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   allowInsecure: string[] = [];
   denyInsecure: string[] = [];
   newCommandTimeoutMs: number = NEW_COMMAND_TIMEOUT_MS;
-  scriptTimeoutMs: number = W3C_TIMEOUTS_MS.SCRIPT;
+  scriptTimeoutMs: number | null = W3C_TIMEOUTS_MS.SCRIPT;
   pageLoadTimeoutMs: number = W3C_TIMEOUTS_MS.PAGE_LOAD;
   implicitWaitMs: number = W3C_TIMEOUTS_MS.IMPLICIT_WAIT;
   locatorStrategies: string[] = [];

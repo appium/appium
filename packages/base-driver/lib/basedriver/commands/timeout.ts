@@ -17,7 +17,7 @@ const MIN_TIMEOUT = 0;
  *
  * @param type - the type of the timeout (deprecated)
  * @param ms - the ms for the timeout (deprecated)
- * @param script - the number in ms for the script timeout, used for the W3C command
+ * @param script - the script timeout in ms, or null to disable the timeout
  * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
  * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
  * @param command - the number in ms for the Appium-specific command timeout
@@ -32,7 +32,7 @@ export async function timeouts<C extends Constraints>(
    * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
    */
   ms?: number | string,
-  script?: number,
+  script?: number | null,
   pageLoad?: number,
   implicit?: number,
   command?: number,
@@ -60,7 +60,7 @@ export async function timeouts<C extends Constraints>(
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
   // Validate every supplied value before changing this driver or any managed driver.
-  const parsedScript = util.hasValue(script) ? this.parseTimeoutArgument(script) : undefined;
+  const parsedScript = script === null ? null : util.hasValue(script) ? this.parseTimeoutArgument(script) : undefined;
   const parsedPageLoad = util.hasValue(pageLoad) ? this.parseTimeoutArgument(pageLoad) : undefined;
   const parsedImplicit = util.hasValue(implicit) ? this.parseTimeoutArgument(implicit) : undefined;
   const parsedCommand = util.hasValue(command) ? this.parseTimeoutArgument(command) : undefined;
@@ -132,9 +132,9 @@ export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, m
 /**
  *  A helper method (not a command) used to set the script timeout value
  *
- * @param ms - the script timeout in ms
+ * @param ms - the script timeout in ms, or null to disable the timeout
  */
-export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number): void {
+export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number | null): void {
   this.scriptTimeoutMs = ms;
   this.log.debug(`Set script timeout to ${ms}ms`);
   if (this.managedDrivers?.length) {

@@ -220,6 +220,17 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   /**
    * Example custom entry point called directly, outside Appium's command dispatcher.
    * Protect both the queued command and asynchronous work after executeCommand returns.
+   * Idle expiry resumes after the whole operation finishes, including when postProcess throws.
+   * Normal commands using BaseDriver.executeCommand need no additional wrapper. The helper tracks
+   * activity; it does not create a queue or guard arbitrary custom timers. This example uses the
+   * standard BaseDriver.startNewCommandTimeout implementation.
+   *
+   * @example
+   * const handle = await driver.getWindowHandleWithPostProcessing(async (handle) => {
+   *   await saveHandle(handle); // Application-specific asynchronous work
+   * });
+   *
+   * @see ../../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
    */
   async getWindowHandleWithPostProcessing(postProcess: (handle: string) => Promise<void>): Promise<string> {
     return await runWithCommandTimeout(this, async () => {

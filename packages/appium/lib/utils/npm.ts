@@ -61,10 +61,11 @@ export class NPM {
     execOpts: Omit<TeenProcessExecOptions, 'cwd'> = {},
   ): Promise<NpmExecResult> {
     const {cwd, json, lockFile} = opts;
+    const isWindows = system.isWindows();
 
     const teenProcessExecOpts: TeenProcessExecOptions = {
       ...execOpts,
-      shell: system.isWindows() || execOpts.shell,
+      shell: isWindows ? false : execOpts.shell,
       cwd,
     };
 
@@ -72,7 +73,28 @@ export class NPM {
     if (json) {
       argsCopy.push('--json');
     }
-    const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
+    let npmCmd = 'npm';
+    if (isWindows) {
+      // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
+      // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
+      const npmShim = await fs.realpath(await fs.which('npm.cmd'));
+      const npmBin = path.join(path.dirname(npmShim), 'node_modules', 'npm', 'bin');
+      let npmCli = path.join(npmBin, 'npm-cli.js');
+      // Official npm shims prefer a globally updated npm when one exists at the configured prefix.
+      const prefixScript = path.join(npmBin, 'npm-prefix.js');
+      if (await fs.exists(prefixScript)) {
+        const {stdout} = await exec(process.execPath, [prefixScript], teenProcessExecOpts);
+        const prefixCli = path.join(stdout.trim(), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+        if (stdout.trim() && (await fs.exists(prefixCli))) {
+          npmCli = prefixCli;
+        }
+      }
+      if (!(await fs.exists(npmCli))) {
+        throw new Error(`Cannot find the npm CLI adjacent to '${npmShim}': '${npmCli}'`);
+      }
+      npmCmd = process.execPath;
+      argsCopy.unshift(npmCli);
+    }
     type ExecRunnerResult = {stdout: string; stderr: string; code: number | null};
     let runner = async (): Promise<ExecRunnerResult> => await exec(npmCmd, argsCopy, teenProcessExecOpts);
     if (lockFile) {

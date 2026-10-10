@@ -201,12 +201,17 @@ Adds a new file to the storage.
 |`ws.events`|Path for the events web socket used to notify about upload success or failure|string|
 |`ws.stream`|Path for the streaming web socket used to upload the file content|string|
 
+Use the returned WebSocket paths as opaque values; do not construct them from the checksum.
+Pending uploads with the same file name and checksum reuse their sockets and renew their
+lifetime to `ttlMs` on each add request. Different file names receive separate upload paths,
+even when their checksums match.
+
 Example:
 ```json
 {
   "ws": {
-    "stream": "/appium/storage/add/ccc963411b2621335657963322890305ebe96186/stream",
-    "events": "/appium/storage/add/ccc963411b2621335657963322890305ebe96186/events"
+    "stream": "/appium/storage/add/39af638fb4497820e241105bb41adfe7dfe588c2861d5052c1fbe12481067de3/stream",
+    "events": "/appium/storage/add/39af638fb4497820e241105bb41adfe7dfe588c2861d5052c1fbe12481067de3/events"
   },
   "ttlMs": 300000
 }

@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import {EventEmitter} from 'node:events';
 
 import {fs, logger, tempDir, util} from '@appium/support';
@@ -89,9 +90,13 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
     throw new Error('httpServer is required to add a storage item');
   }
   const itemOptions = requireValidItemOptions(parseRequestArgs(req, ['name', 'sha1']) as ItemOptions);
+  const uploadId = createHash('sha256')
+    .update(JSON.stringify([itemOptions.name, itemOptions.sha1.toLowerCase()]))
+    .digest('hex');
+  const commonPathname = `${basePath}/add/${uploadId}`;
   const {lock} = getPendingUploads(httpServer);
-  const [stream, events] = await lock.acquire(`${basePath}/${itemOptions.sha1}`, () =>
-    prepareWebSockets(httpServer, itemOptions, basePath),
+  const [stream, events] = await lock.acquire(commonPathname, () =>
+    prepareWebSockets(httpServer, itemOptions, commonPathname),
   );
   return {
     ws: {
@@ -144,12 +149,15 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
 async function prepareWebSockets(
   httpServer: AppiumServer,
   itemOptions: ItemOptions,
-  basePath: string,
+  commonPathname: string,
 ): Promise<[string, string]> {
-  const commonPathname = `${basePath}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
-  if (Object.hasOwn(await httpServer.getWebSocketHandlers(streamPathname), streamPathname)) {
+  const {cache} = getPendingUploads(httpServer);
+  if (
+    Object.hasOwn(await httpServer.getWebSocketHandlers(streamPathname), streamPathname) &&
+    cache.get(commonPathname, {updateAgeOnGet: true})
+  ) {
     return [streamPathname, eventsPathname];
   }
 
@@ -170,7 +178,6 @@ async function prepareWebSockets(
       signaler.removeAllListeners();
     }, 100);
   };
-  const {cache} = getPendingUploads(httpServer);
   cache.set(commonPathname, streamDoneCallback);
   eventsServer.on('connection', async (wsUpstream: WebSocket) => {
     signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));

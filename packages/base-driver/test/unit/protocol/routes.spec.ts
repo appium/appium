@@ -5,6 +5,12 @@ import type {TestContext} from 'node:test';
 import type {HTTPMethod} from '@appium/types';
 
 import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol/index.js';
+
+it('should resolve route shapes without decoding their parameters', function () {
+  for (const name of ['a%', '%FF', 'a%25b', 'a%2Fb']) {
+    assert.equal(routeToCommandName(`/session/s/element/e/attribute/${name}`, 'GET'), 'getAttribute');
+  }
+});
 import {resolveSourceSnapshotPath} from '../../helpers.js';
 
 snapshot.setResolveSnapshotPath(resolveSourceSnapshotPath);

@@ -73,7 +73,8 @@ export function routeToCommandName(endpoint: string, method?: HTTPMethod, basePa
   }
   possiblePathnames.push(normalizedPathname);
   for (const [routePath, routeSpec] of Object.entries(METHOD_MAP)) {
-    const routeMatcher = match(routePath);
+    // Only the route shape matters; decoding unused parameters can throw on raw percent signs.
+    const routeMatcher = match(routePath, {decode: false});
     if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const spec = routeSpec as Record<string, DriverMethodDef<Driver>>;
       const commandForAnyMethod = () => Object.keys(spec).map((key) => spec[key]?.command)[0];

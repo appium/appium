@@ -336,7 +336,7 @@ describe('ExtensionCommand', function () {
       it('should pass if a specific compatible version was requested', async function () {
         stubRegistry({'1.0.0': TOO_OLD, '2.0.0': COMPATIBLE, '3.0.0': TOO_NEW});
         assert.strictEqual(await findCompatible('2.0.0'), undefined);
-        assert.deepStrictEqual(queriedVersions(), [`${pkgName}@1.0.0`]);
+        assert.deepStrictEqual(queriedVersions(), [`${pkgName}@2.0.0`]);
       });
 
       it('should throw if a specific incompatible version was requested', async function () {
@@ -373,6 +373,12 @@ describe('ExtensionCommand', function () {
         stubRegistry({'1.0.0': TOO_NEW, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
         await assert.rejects(findCompatible(), /none of its versions are compatible/);
         assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`]);
+      });
+
+      it('should fail fast if even the newest version requires an older server', async function () {
+        stubRegistry({'1.0.0': TOO_OLD, '2.0.0': TOO_OLD, '3.0.0': TOO_OLD});
+        await assert.rejects(findCompatible(), /cannot be installed because the server version it requires/);
+        assert.deepStrictEqual(queriedVersions(), [pkgName]);
       });
 
       it('should throw if no version is compatible', async function () {

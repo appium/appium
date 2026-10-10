@@ -1165,8 +1165,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
         const extServerVersion = await getRemoteExtensionVersionReq(pkgName, pkgVer);
         const isExtCompatible = isCompatible(extServerVersion);
         if (!isExtCompatible) {
-          // Only throw if a specific extension version was provided
-          if (pkgVer) {
+          // Only throw if a specific extension version was provided,
+          // or the latest version declares a range that is too old, so no version is compatible
+          if (pkgVer || (extServerVersion && semver.gtr(serverVersion, extServerVersion, {includePrerelease: true}))) {
             throw this._createFatalError(
               `'${installSpec}' cannot be installed because the server version it requires (${extServerVersion}) ` +
                 `does not meet the currently installed one (${serverVersion}). Please install ` +

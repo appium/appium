@@ -89,6 +89,7 @@ describe('StoragePlugin routes', function () {
   }
 
   it('should store identical content under each requested name', {timeout: 10000}, async function () {
+    const signal = AbortSignal.timeout(5000);
     const server = makeServer();
     const http = createServer();
     const clients: WebSocket[] = [];
@@ -105,7 +106,7 @@ describe('StoragePlugin routes', function () {
     });
     try {
       http.listen(0, '127.0.0.1');
-      await once(http, 'listening');
+      await once(http, 'listening', {signal});
       const address = http.address();
       assert.ok(address && typeof address !== 'string');
       const list = await routeCaller('/appium/storage/list', '', server);
@@ -126,12 +127,14 @@ describe('StoragePlugin routes', function () {
         const connect = async (path: string): Promise<WebSocket> => {
           const client = new WebSocket(`ws://127.0.0.1:${address.port}${path}`);
           clients.push(client);
-          await once(client, 'open');
+          // Keep termination during cleanup safe even if the open wait was aborted.
+          client.on('error', () => {});
+          await once(client, 'open', {signal});
           return client;
         };
         const events = await connect(response.body.value.ws.events);
         const stream = await connect(response.body.value.ws.stream);
-        const status = once(events, 'message');
+        const status = once(events, 'message', {signal});
         stream.send(content);
         const [message] = await status;
         assert.deepEqual(JSON.parse(message.toString()).value, {success: true, name, sha1});

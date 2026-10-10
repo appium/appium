@@ -88,14 +88,18 @@ describe('StoragePlugin routes', function () {
     });
   }
 
-  it('should store identical content under each requested name', {timeout: 10000}, async function () {
-    const signal = AbortSignal.timeout(5000);
+  // Match Java Client's upload sequence without requiring Java or starting Appium.
+  // https://github.com/appium/java-client/blob/f8e328bffbaca38e59762eb0cb793eff38a34ca1/src/main/java/io/appium/java_client/plugins/storage/StorageClient.java
+  it('should support Java Client uploads and retries for identical content under different names', async function (t) {
+    const signal = AbortSignal.any([t.signal, AbortSignal.timeout(4000)]);
     const server = makeServer();
     const http = createServer();
     const clients: WebSocket[] = [];
     const root = await tempDir.openDir();
     const previousRoot = process.env.APPIUM_STORAGE_ROOT;
+    const previousKeepAll = process.env.APPIUM_STORAGE_KEEP_ALL;
     process.env.APPIUM_STORAGE_ROOT = root;
+    process.env.APPIUM_STORAGE_KEEP_ALL = 'false';
     http.on('upgrade', (req, socket, head) => {
       const handler = server.webSocketsMapping[req.url!];
       if (!handler) {
@@ -113,37 +117,66 @@ describe('StoragePlugin routes', function () {
       // Initialize the storage directory before exercising the upload routes.
       assert.deepEqual((await list({})).body.value, []);
       const callRoute = await routeCaller('/appium/storage/add', '', server);
-      const content = Buffer.from('identical upload payload');
+      // Exercise multiple full 65535-byte chunks and a final partial chunk.
+      const content = Buffer.alloc(131071);
+      for (let i = 0; i < content.length; i++) {
+        content[i] = i % 251;
+      }
       const sha1 = createHash('sha1').update(content).digest('hex');
       const first = await callRoute({name: 'a.apk', sha1});
       const second = await callRoute({name: 'b.apk', sha1});
       assert.equal(first.status, 200);
       assert.equal(second.status, 200);
-      assert.notDeepEqual(first.body.value.ws, second.body.value.ws);
+      assert.notDeepEqual(first.body.value.ws, second.body.value.ws, 'different names need separate endpoints');
+      assert.ok(first.body.value.ttlMs > 0);
+      const connect = async (path: string): Promise<WebSocket> => {
+        // Use the returned path verbatim; the upload ID's hash algorithm is irrelevant to clients.
+        const client = new WebSocket(`ws://127.0.0.1:${address.port}${path}`);
+        clients.push(client);
+        // Keep termination during cleanup safe even if the open wait was aborted.
+        client.on('error', () => {});
+        await once(client, 'open', {signal});
+        return client;
+      };
+      const observer = await connect(first.body.value.ws.events);
+      const observedStatus = once(observer, 'message', {signal});
+      // Handle cancellation while the uploads are still in progress.
+      void observedStatus.catch(() => {});
       for (const [name, response] of [
         ['a.apk', first],
         ['b.apk', second],
       ] as const) {
-        const connect = async (path: string): Promise<WebSocket> => {
-          const client = new WebSocket(`ws://127.0.0.1:${address.port}${path}`);
-          clients.push(client);
-          // Keep termination during cleanup safe even if the open wait was aborted.
-          client.on('error', () => {});
-          await once(client, 'open', {signal});
-          return client;
-        };
-        const events = await connect(response.body.value.ws.events);
-        const stream = await connect(response.body.value.ws.stream);
+        const retry = await callRoute({name, sha1});
+        assert.deepEqual(retry, response);
+        // Java opens stream before events, sends chunks, then closes stream before awaiting success.
+        const stream = await connect(retry.body.value.ws.stream);
+        const events = await connect(retry.body.value.ws.events);
         const status = once(events, 'message', {signal});
-        stream.send(content);
+        void status.catch(() => {});
+        for (let offset = 0; offset < content.length; offset += 65535) {
+          await new Promise<void>((resolve, reject) => {
+            stream.send(content.subarray(offset, offset + 65535), (error) => (error ? reject(error) : resolve()));
+          });
+        }
+        stream.close();
         const [message] = await status;
         assert.deepEqual(JSON.parse(message.toString()).value, {success: true, name, sha1});
       }
+      const [observedMessage] = await observedStatus;
+      assert.deepEqual(JSON.parse(observedMessage.toString()).value, {success: true, name: 'a.apk', sha1});
       const items = (await list({})).body.value;
       assert.deepEqual(items.map((item: {name: string}) => item.name).sort(), ['a.apk', 'b.apk']);
       for (const item of items) {
+        assert.equal(item.size, content.length);
         assert.deepEqual(await fs.readFile(item.path), content);
       }
+      const deleteItem = await routeCaller('/appium/storage/delete', '', server);
+      assert.equal((await deleteItem({name: 'a.apk'})).body.value, true);
+      assert.equal((await deleteItem({name: 'a.apk'})).body.value, false);
+      assert.equal((await list({})).body.value.length, 1);
+      const reset = await routeCaller('/appium/storage/reset', '', server);
+      assert.equal((await reset({})).status, 200);
+      assert.deepEqual((await list({})).body.value, []);
     } finally {
       for (const client of clients) {
         client.terminate();
@@ -154,6 +187,11 @@ describe('StoragePlugin routes', function () {
         delete process.env.APPIUM_STORAGE_ROOT;
       } else {
         process.env.APPIUM_STORAGE_ROOT = previousRoot;
+      }
+      if (previousKeepAll === undefined) {
+        delete process.env.APPIUM_STORAGE_KEEP_ALL;
+      } else {
+        process.env.APPIUM_STORAGE_KEEP_ALL = previousKeepAll;
       }
       await fs.rimraf(root);
     }

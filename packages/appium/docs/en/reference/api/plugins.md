@@ -210,8 +210,8 @@ Example:
 ```json
 {
   "ws": {
-    "stream": "/appium/storage/add/39af638fb4497820e241105bb41adfe7dfe588c2861d5052c1fbe12481067de3/stream",
-    "events": "/appium/storage/add/39af638fb4497820e241105bb41adfe7dfe588c2861d5052c1fbe12481067de3/events"
+    "stream": "/appium/storage/add/bd5e9232afa8465e03b26dd8acd2dfcb384445e8/stream",
+    "events": "/appium/storage/add/bd5e9232afa8465e03b26dd8acd2dfcb384445e8/events"
   },
   "ttlMs": 300000
 }

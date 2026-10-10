@@ -265,6 +265,21 @@ export const fs = {
     }
     // Renaming an entry onto itself is a no-op, but the final cleanup would delete it.
     if (toStat && fromStat.dev === toStat.dev && fromStat.ino === toStat.ino) {
+      const fromName = path.basename(from);
+      const toName = path.basename(to);
+      if (
+        isWindows() &&
+        fromName !== toName &&
+        fromName.toLowerCase() === toName.toLowerCase() &&
+        (await fsPromises.realpath(path.dirname(from))) === (await fsPromises.realpath(path.dirname(to)))
+      ) {
+        // Windows preserves spelling even when names identify the same entry. Do not remove
+        // either path: rename changes the spelling, and cleanup would delete the renamed entry.
+        const toEntry = await fsPromises.lstat(to, {bigint: true});
+        if (fromStat.dev === toEntry.dev && fromStat.ino === toEntry.ino) {
+          await fsPromises.rename(from, to);
+        }
+      }
       return;
     }
     if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {

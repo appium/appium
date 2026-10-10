@@ -507,6 +507,79 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
       });
 
+      for (const fails of [false, true]) {
+        it(`should restore idle expiry after a plugin proxies a ${fails ? 'failing' : 'successful'} command`, async function () {
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          fakeDriver.sessionId = SESSION_ID;
+          fakeDriver.newCommandTimeoutMs = 1000;
+          class PassThroughPlugin extends BasePlugin {
+            async getPageSource(next: () => Promise<unknown>) {
+              return await next();
+            }
+          }
+          appium.sessionPlugins[SESSION_ID] = [new PassThroughPlugin('passthrough')];
+          const proxy = sandbox.stub(fakeDriver, 'proxyCommand');
+          if (fails) {
+            proxy.rejects(new Error('proxy failed'));
+          } else {
+            proxy.resolves('<source/>');
+          }
+          try {
+            await fakeDriver.startNewCommandTimeout();
+            const result = await runWithProxyReq(
+              {originalUrl: `/session/${SESSION_ID}/source`, method: 'GET'} as any,
+              () => appium.executeCommand('getPageSource', SESSION_ID),
+            );
+            assert.equal(Boolean(result.error), fails);
+            await clock.tickAsync(999);
+            assert.equal(fakeDriver.sessionId, SESSION_ID);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+          }
+        });
+      }
+
+      it('should protect plugin post-processing from overlapping HTTP commands and restore expiry on failure', async function () {
+        const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+        fakeDriver.sessionId = SESSION_ID;
+        fakeDriver.newCommandTimeoutMs = 1000;
+        let finishPostProcessing!: () => void;
+        const postProcessing = new Promise<void>((resolve) => {
+          finishPostProcessing = resolve;
+        });
+        let markStarted!: () => void;
+        const started = new Promise<void>((resolve) => {
+          markStarted = resolve;
+        });
+        class PostProcessingPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            await next();
+            markStarted();
+            await postProcessing;
+            throw new Error('post-processing failed');
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new PostProcessingPlugin('postprocessing')];
+        sandbox.stub(fakeDriver, 'getPageSource').resolves('<source/>');
+        const command = appium.executeCommand('getPageSource', SESSION_ID);
+        try {
+          await started;
+          await fakeDriver.executeCommand('getStatus');
+          await clock.tickAsync(2000);
+          assert.equal(fakeDriver.sessionId, SESSION_ID);
+          finishPostProcessing();
+          assert.match((await command).error!.message, /post-processing failed/);
+          await clock.tickAsync(1000);
+          assert.equal(fakeDriver.sessionId, null);
+        } finally {
+          finishPostProcessing();
+          await command;
+          await fakeDriver.clearNewCommandTimeout();
+        }
+      });
+
       it('should not leak the ambient proxy request into a command a plugin re-enters via executeCommand', async function () {
         // a plugin handling the outer (proxy-deferred) command, which re-enters dispatch for an
         // unrelated command before deferring to the rest of the chain
@@ -519,11 +592,7 @@ describe('AppiumDriver', function () {
         appium.sessionPlugins[SESSION_ID] = [new ReentrantPlugin('reentrant')];
 
         // the re-entered command should run normally, not be proxied
-        mockFakeDriver
-          .expects('executeCommand')
-          .once()
-          .withExactArgs('getWindowHandle', SESSION_ID)
-          .resolves('a-handle');
+        sandbox.stub(fakeDriver, 'getWindowHandle').resolves('a-handle');
         // only the outer command, which the ambient context was actually set up for, gets proxied
         mockFakeDriver
           .expects('proxyCommand')
@@ -536,6 +605,39 @@ describe('AppiumDriver', function () {
 
         mockFakeDriver.verify();
         assert.strictEqual(res.value, '<<proxied>>');
+      });
+
+      it('should serialize proxied commands even when a plugin handles them', async function () {
+        class PassThroughPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            return await next();
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new PassThroughPlugin('passthrough')];
+        let finish!: () => void;
+        const pending = new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+        const proxy = sandbox.stub(fakeDriver, 'proxyCommand');
+        proxy.onFirstCall().callsFake(async () => (await pending) as any);
+        proxy.onSecondCall().resolves('<source/>');
+        const call = () =>
+          runWithProxyReq({originalUrl: `/session/${SESSION_ID}/source`, method: 'GET'} as any, () =>
+            appium.executeCommand('getPageSource', SESSION_ID),
+          );
+        const commands = Promise.all([call(), call()]);
+        try {
+          await new Promise((resolve) => setImmediate(resolve));
+          assert.equal(proxy.callCount, 1);
+          finish();
+          const results = await commands;
+          assert.equal(results[1].value, '<source/>');
+          assert.equal(proxy.callCount, 2);
+        } finally {
+          finish();
+          await commands;
+          await fakeDriver.clearNewCommandTimeout();
+        }
       });
     });
     describe('configureDriverFeatures', function () {
@@ -766,6 +868,52 @@ describe('AppiumDriver', function () {
         upstreamSocket.terminate();
         assert.strictEqual(await clientClosed, 1011);
       });
+
+      for (const disconnect of [false, true]) {
+        it(`should suspend idle expiry until proxied BiDi commands ${disconnect ? 'disconnect' : 'all finish'}`, async function () {
+          await fakeDriver.clearNewCommandTimeout();
+          sandbox.stub(fakeDriver as any, 'stopClock').resolves();
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          try {
+            fakeDriver.newCommandTimeoutMs = 1000;
+            await fakeDriver.startNewCommandTimeout();
+            for (const id of [1, 2]) {
+              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
+              await received;
+            }
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            const eventReceived = new Promise((resolve) => client.once('message', resolve));
+            upstreamSocket.send(JSON.stringify({type: 'event', method: 'log.entryAdded', params: {}}));
+            await eventReceived;
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            if (disconnect) {
+              const closed = new Promise((resolve) => client.once('close', resolve));
+              upstreamSocket.close();
+              await closed;
+            } else {
+              for (const id of [2, 1]) {
+                const received = new Promise((resolve) => client.once('message', resolve));
+                upstreamSocket.send(JSON.stringify({id, type: 'success', result: {contexts: []}}));
+                await received;
+                if (id === 2) {
+                  await clock.tickAsync(2000);
+                  assert.notEqual(fakeDriver.sessionId, null);
+                }
+              }
+            }
+            await clock.tickAsync(999);
+            assert.notEqual(fakeDriver.sessionId, null);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+            clock.restore();
+          }
+        });
+      }
     });
     describe('createPluginInstances', function () {
       class NoArgsPlugin extends BasePlugin {}

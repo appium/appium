@@ -24,6 +24,7 @@ import {calcSignature} from '../helpers/session.js';
 import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
+import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
 // oxlint-disable import/no-duplicates -- see comment below
 import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
 import {getLogEvents, logCustomEvent} from './commands/event.js';
@@ -38,6 +39,16 @@ import {
   getPageSource,
 } from './commands/find.js';
 import {getLog, getLogTypes} from './commands/log.js';
+// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named imports alone aren't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop them from the declaration output.
+import './commands/bidi.js';
+import './commands/event.js';
+import './commands/execute.js';
+import './commands/find.js';
+import './commands/log.js';
+import './commands/timeout.js';
 import {
   getTimeouts,
   implicitWaitForCondition,
@@ -49,16 +60,6 @@ import {
   timeouts,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
-// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
-// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
-// import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type
-// surface, so `tsc` would otherwise drop them from the declaration output.
-import './commands/bidi.js';
-import './commands/event.js';
-import './commands/execute.js';
-import './commands/find.js';
-import './commands/log.js';
-import './commands/timeout.js';
 import {DriverCore} from './core.js';
 import * as helpers from './helpers/index.js';
 
@@ -90,9 +91,6 @@ export class BaseDriver<
   serverPath?: string;
   supportedLogTypes: Readonly<LogDefRecord> = {};
 
-  // Number of commands (queued or queue-exempt) currently executing. Used so the new command
-  // timeout is only restarted once the driver is fully idle again, not after every exempt command.
-  private inFlightCommandCount = 0;
   private readonly pendingCommandControllers = new Set<AbortController>();
 
   /**
@@ -123,63 +121,46 @@ export class BaseDriver<
     const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
     if (!command) {
-      if (this.isCommandsQueueEnabled && this.inFlightCommandCount === 0) {
+      if (this.isCommandsQueueEnabled && !hasRunningCommands(this)) {
         await this.startNewCommandTimeout();
       }
       throw new errors.NotYetImplementedError();
     }
 
     const runCommandPromise = async () => {
-      let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
-      let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
       let wasSessionShutdownUnexpectedly = false;
-      const onUnexpectedShutdown = (e: Error) => {
-        wasSessionShutdownUnexpectedly = true;
-        unexpectedShutdownRejecter?.(e);
-      };
-      this.inFlightCommandCount++;
-      try {
-        // The preceding queued command may have armed the timer after this request arrived.
-        await this.clearNewCommandTimeout();
-        return await Promise.race([
-          command.call(this, ...args),
-          // This promise is needed to monitor if the session has been
-          // shut down unexpectedly while the command was running
-          new Promise((resolve, reject) => {
-            unexpectedShutdownResolver = resolve;
-            unexpectedShutdownRejecter = reject;
-            this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          }),
-        ]);
-      } finally {
-        this.inFlightCommandCount--;
-
-        if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
-          // This is needed to prevent memory leaks
-          this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          unexpectedShutdownRejecter = null;
-          // @ts-ignore typescript cannot understand this
-          unexpectedShutdownResolver?.();
-        }
-
-        // if we have set a new command timeout (which is the default), start a
-        // timer once we've finished executing this command. If we don't clear
-        // the timer (which is done when a new command comes in), we will trigger
-        // automatic session deletion in this.onCommandTimeout. Of course we don't
-        // want to trigger the timer when the user is shutting down the session
-        // intentionally. Also, since queue-exempt commands can run concurrently with a
-        // still-executing command, only (re)start the timer once the driver is fully idle,
-        // otherwise we would prematurely time out the command that is still in flight.
-        if (
-          !wasSessionShutdownUnexpectedly &&
-          this.isCommandsQueueEnabled &&
-          cmd !== DELETE_SESSION_COMMAND &&
-          this.inFlightCommandCount === 0
-        ) {
-          // resetting existing timeout
-          await this.startNewCommandTimeout();
-        }
-      }
+      return await runWithCommandTimeout(
+        this,
+        async () => {
+          let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
+          let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
+          const onUnexpectedShutdown = (e: Error) => {
+            wasSessionShutdownUnexpectedly = true;
+            unexpectedShutdownRejecter?.(e);
+          };
+          try {
+            return await Promise.race([
+              command.call(this, ...args),
+              // This promise is needed to monitor if the session has been
+              // shut down unexpectedly while the command was running
+              new Promise((resolve, reject) => {
+                unexpectedShutdownResolver = resolve;
+                unexpectedShutdownRejecter = reject;
+                this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+              }),
+            ]);
+          } finally {
+            if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
+              // This is needed to prevent memory leaks
+              this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+              unexpectedShutdownRejecter = null;
+              // @ts-ignore typescript cannot understand this
+              unexpectedShutdownResolver?.();
+            }
+          }
+        },
+        {restart: () => cmd !== DELETE_SESSION_COMMAND && !wasSessionShutdownUnexpectedly},
+      );
     };
 
     // exempt commands bypass the queue, so they can run while other commands are queued/running,
@@ -271,7 +252,7 @@ export class BaseDriver<
     await this.clearNewCommandTimeout();
 
     // arming this while a command is still running shuts that command down
-    if (this.inFlightCommandCount > 0) {
+    if (hasRunningCommands(this)) {
       return;
     }
 

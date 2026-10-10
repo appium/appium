@@ -58,6 +58,41 @@ describe('AppiumIpc', function () {
 
   describe('unsubscribe', function () {
     for (const viaSubscription of [false, true]) {
+      for (const afterMessage of [false, true]) {
+        it(
+          `should finish waiters despite a throwing observer with viaSubscription=${viaSubscription}, afterMessage=${afterMessage}`,
+          {timeout: 2000},
+          async function () {
+            const ipc = new AppiumIpc();
+            const sub = ipc.subscribe('foo', 'bar');
+            const error = new Error('unsubscribe observer failed');
+            sub.on(EVT_UNSUBSCRIBED, () => {
+              throw error;
+            });
+            const iterators = [sub[Symbol.asyncIterator](), sub[Symbol.asyncIterator]()];
+            let pending = iterators.map((iterator) => iterator.next());
+            if (afterMessage) {
+              await ipc.publish('foo', 'baz', 'message');
+              for (const result of await Promise.all(pending)) {
+                assert.equal(result.value?.data, 'message');
+              }
+              pending = iterators.map((iterator) => iterator.next());
+            }
+
+            assert.throws(() => (viaSubscription ? sub.unsubscribe() : ipc.unsubscribe('foo', 'bar')), error);
+
+            assert.equal(sub.isActive, false);
+            assert.equal(sub.listenerCount(EVT_MESSAGE), 0);
+            assert.equal(sub.unsubscribe(), false);
+            assert.equal(ipc.unsubscribe('foo', 'bar'), false);
+            assert.deepEqual(await Promise.all(pending), [
+              {done: true, value: undefined},
+              {done: true, value: undefined},
+            ]);
+          },
+        );
+      }
+
       it(
         `should finish all waiting iterators and notify once with viaSubscription=${viaSubscription}`,
         {timeout: 2000},

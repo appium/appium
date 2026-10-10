@@ -29,6 +29,8 @@ export type AppiumIpcOpts = {
 const ASYNC_ITERATOR_STOP = Symbol('asyncIteratorStop');
 
 export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>> implements IIpcSubscription<T> {
+  private readonly pendingIterators = new Set<() => void>();
+
   constructor(
     public readonly subscriber: string,
     public readonly topic: string,
@@ -62,22 +64,37 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
     return this.ipc.unsubscribe(this.topic, this.subscriber);
   }
 
+  /**
+   * Ends iterator waits before notifying observers, whose listeners may throw.
+   * @internal Called after AppiumIpc removes this subscription from its registry.
+   */
+  notifyUnsubscribed(): void {
+    for (const stopWaiting of this.pendingIterators) {
+      stopWaiting();
+    }
+    this.pendingIterators.clear();
+    try {
+      this.emit(EVT_UNSUBSCRIBED);
+    } finally {
+      this.removeAllListeners(EVT_MESSAGE);
+    }
+  }
+
   async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
-    // yield any messages that are emitted, but keep an eye out for an unsubscribed that happens
-    // while a caller is waiting on the loop, because we want to exit the loop in case of
-    // unsubscription, even if we were already waiting on the next message.
+    // Keep iterator completion independent of public event listeners so a failing
+    // observer cannot prevent unsubscription from ending a wait for the next message.
     while (this.isActive) {
       const val = await new Promise<IpcMessage<T> | typeof ASYNC_ITERATOR_STOP>((resolve) => {
         const onMessage = (message: IpcMessage<T>) => {
-          this.off(EVT_UNSUBSCRIBED, onUnsubscribed);
+          this.pendingIterators.delete(onUnsubscribed);
           resolve(message);
         };
         const onUnsubscribed = () => {
           this.off(EVT_MESSAGE, onMessage);
           resolve(ASYNC_ITERATOR_STOP);
         };
+        this.pendingIterators.add(onUnsubscribed);
         this.once(EVT_MESSAGE, onMessage);
-        this.once(EVT_UNSUBSCRIBED, onUnsubscribed);
       });
       if (val === ASYNC_ITERATOR_STOP) {
         break;
@@ -125,11 +142,7 @@ export class AppiumIpc implements IAppiumIpc {
       return false;
     }
     this.subs[topic] = this.subs[topic].filter((sub) => sub !== subscription);
-    try {
-      subscription.emit(EVT_UNSUBSCRIBED);
-    } finally {
-      subscription.removeAllListeners(EVT_MESSAGE);
-    }
+    subscription.notifyUnsubscribed();
     return true;
   }
 

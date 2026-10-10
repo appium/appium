@@ -1,9 +1,11 @@
+import {createHash} from 'node:crypto';
 import {EventEmitter} from 'node:events';
 
 import {fs, logger, tempDir, util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import {getResponseForW3CError} from 'appium/driver.js';
 import {BasePlugin} from 'appium/plugin.js';
+import AsyncLock from 'async-lock';
 import type {Express, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
 import {WebSocketServer} from 'ws';
@@ -25,12 +27,7 @@ const WS_TTL_MS = 5 * 60 * 1000;
 const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer, basePath?: string) => Promise<any>> =
   {};
 const deprecatedRoutesLogged: Set<string> = new Set();
-const STORAGE_ADDITIONS_CACHE: LRUCache<string, () => any> = new LRUCache({
-  max: 20,
-  ttl: WS_TTL_MS,
-  ttlAutopurge: true,
-  dispose: (f: () => any) => f(),
-});
+const pendingUploads = new WeakMap<AppiumServer, {lock: AsyncLock; cache: LRUCache<string, () => void>}>();
 
 export class StoragePlugin extends BasePlugin {
   static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
@@ -93,7 +90,14 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
     throw new Error('httpServer is required to add a storage item');
   }
   const itemOptions = requireValidItemOptions(parseRequestArgs(req, ['name', 'sha1']) as ItemOptions);
-  const [stream, events] = await prepareWebSockets(httpServer, itemOptions, basePath);
+  const uploadId = createHash('sha1')
+    .update(JSON.stringify([itemOptions.name, itemOptions.sha1.toLowerCase()]))
+    .digest('hex');
+  const commonPathname = `${basePath}/add/${uploadId}`;
+  const {lock} = getPendingUploads(httpServer);
+  const [stream, events] = await lock.acquire(commonPathname, () =>
+    prepareWebSockets(httpServer, itemOptions, commonPathname),
+  );
   return {
     ws: {
       stream,
@@ -145,12 +149,15 @@ function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, 
 async function prepareWebSockets(
   httpServer: AppiumServer,
   itemOptions: ItemOptions,
-  basePath: string,
+  commonPathname: string,
 ): Promise<[string, string]> {
-  const commonPathname = `${basePath}/add/${itemOptions.sha1}`;
   const streamPathname = `${commonPathname}/stream`;
   const eventsPathname = `${commonPathname}/events`;
-  if (!util.isEmpty(httpServer.getWebSocketHandlers(streamPathname))) {
+  const {cache} = getPendingUploads(httpServer);
+  if (
+    Object.hasOwn(await httpServer.getWebSocketHandlers(streamPathname), streamPathname) &&
+    cache.get(commonPathname, {updateAgeOnGet: true})
+  ) {
     return [streamPathname, eventsPathname];
   }
 
@@ -171,7 +178,7 @@ async function prepareWebSockets(
       signaler.removeAllListeners();
     }, 100);
   };
-  STORAGE_ADDITIONS_CACHE.set(itemOptions.sha1, streamDoneCallback);
+  cache.set(commonPathname, streamDoneCallback);
   eventsServer.on('connection', async (wsUpstream: WebSocket) => {
     signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));
   });
@@ -191,7 +198,7 @@ async function prepareWebSockets(
       };
       log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
       signaler.emit('status', successEvent);
-      STORAGE_ADDITIONS_CACHE.delete(itemOptions.sha1);
+      cache.delete(commonPathname);
     } catch (e) {
       log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
       // in case of a failure we do not want to close the server yet
@@ -210,6 +217,23 @@ async function prepareWebSockets(
   ]);
 
   return [streamPathname, eventsPathname];
+}
+
+function getPendingUploads(httpServer: AppiumServer) {
+  let pending = pendingUploads.get(httpServer);
+  if (!pending) {
+    pending = {
+      lock: new AsyncLock(),
+      cache: new LRUCache<string, () => void>({
+        max: 20,
+        ttl: WS_TTL_MS,
+        ttlAutopurge: true,
+        dispose: (cleanup) => cleanup(),
+      }),
+    };
+    pendingUploads.set(httpServer, pending);
+  }
+  return pending;
 }
 
 const getStorageSingleton = util.memoize(async () => {

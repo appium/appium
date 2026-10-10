@@ -1,7 +1,7 @@
 import type {Server as HttpServer} from 'node:http';
 
 import type {IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {BaseDriver} from 'appium/driver.js';
+import {BaseDriver, runWithCommandTimeout} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 
@@ -215,6 +215,18 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
 
   async getWindowHandle(): Promise<string> {
     return '1';
+  }
+
+  /**
+   * Example custom entry point called directly, outside Appium's command dispatcher.
+   * Protect both the queued command and asynchronous work after executeCommand returns.
+   */
+  async getWindowHandleWithPostProcessing(postProcess: (handle: string) => Promise<void>): Promise<string> {
+    return await runWithCommandTimeout(this, async () => {
+      const handle = await this.executeCommand<string>('getWindowHandle');
+      await postProcess(handle);
+      return handle;
+    });
   }
 
   async getWindowHandles(): Promise<string[]> {

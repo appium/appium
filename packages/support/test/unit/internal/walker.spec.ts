@@ -157,26 +157,83 @@ describe('internal/walker', function () {
   });
 
   describe('error handling', function () {
-    it('should emit an error and never end when the root does not exist', async function () {
+    it('should emit an error and end when the root does not exist', {timeout: 2000}, async function () {
       const missing = path.join(os.tmpdir(), `walker-missing-${Date.now()}`);
-      await new Promise<void>((resolve, reject) => {
+      const errors: NodeJS.ErrnoException[] = [];
+      await new Promise<void>((resolve) => {
         const walker = walk(missing);
-        const timeoutId = setTimeout(() => reject(new Error('timed out waiting for the error event')), 2000);
-        walker.on('data', () => {
-          clearTimeout(timeoutId);
-          reject(new Error('unexpectedly received data for a missing root'));
-        });
-        walker.on('end', () => {
-          clearTimeout(timeoutId);
-          reject(new Error('unexpectedly reached end for a missing root'));
-        });
-        walker.on('error', function (err: Error) {
-          clearTimeout(timeoutId);
-          assert.strictEqual((err as NodeJS.ErrnoException).code, 'ENOENT');
-          resolve();
-        });
+        walker.on('data', () => assert.fail('unexpected item for a missing root'));
+        walker.on('error', (err: NodeJS.ErrnoException) => errors.push(err));
+        walker.on('end', resolve);
       });
+      assert.deepEqual(
+        errors.map((err) => err.code),
+        ['ENOENT'],
+      );
     });
+
+    it('should still reject errors during async iteration', async function () {
+      const missing = path.join(os.tmpdir(), `walker-missing-${Date.now()}`);
+      await assert.rejects(collect(missing), {code: 'ENOENT'});
+    });
+
+    it('should stop reading if an error handler destroys the walker', {timeout: 2000}, async function () {
+      let reads = 0;
+      const error = Object.assign(new Error('simulated stat failure'), {code: 'EIO'});
+      const stat: WalkFs['stat'] = (_p, cb) => {
+        reads++;
+        cb(error, undefined as unknown as nodeFs.Stats);
+      };
+      await new Promise<void>((resolve) => {
+        const walker = walk('.', {fs: {...nodeFs, stat}});
+        walker.on('data', () => assert.fail('unexpected item'));
+        walker.on('error', () => walker.destroy());
+        walker.on('close', resolve);
+      });
+      assert.equal(reads, 1);
+    });
+
+    for (const code of ['EACCES', 'ELOOP', 'EIO']) {
+      for (const preserveSymlinks of [false, true]) {
+        it(`should skip ${code} entries with preserveSymlinks=${preserveSymlinks}`, {timeout: 2000}, async function () {
+          const root = await mkdtemp(path.join(os.tmpdir(), 'walker-stat-error-'));
+          try {
+            const names = ['a-bad', 'b-bad', 'c-good', 'd-bad'];
+            await Promise.all(names.map((name) => writeFile(path.join(root, name), name)));
+            const error = Object.assign(new Error('simulated stat failure'), {code});
+            const stat: WalkFs['stat'] = (p, cb) => {
+              if (String(p).endsWith('-bad')) {
+                cb(error, undefined as unknown as nodeFs.Stats);
+              } else {
+                nodeFs.stat(p, cb);
+              }
+            };
+            const items: string[] = [];
+            const errors: string[] = [];
+            await new Promise<void>((resolve) => {
+              const walker = walk(root, {
+                fs: {...nodeFs, stat, lstat: stat},
+                preserveSymlinks,
+                pathSorter: (a, b) => a.localeCompare(b),
+              });
+              walker.on('data', (item: WalkItem) => items.push(item.path));
+              walker.on('error', (err: Error, item: WalkItem) => {
+                assert.equal(err, error);
+                errors.push(item.path);
+              });
+              walker.on('end', resolve);
+            });
+            assert.deepEqual(items, [root, path.join(root, 'c-good')]);
+            assert.deepEqual(
+              errors,
+              ['a-bad', 'b-bad', 'd-bad'].map((name) => path.join(root, name)),
+            );
+          } finally {
+            await rm(root, {recursive: true, force: true});
+          }
+        });
+      }
+    }
 
     it('should still push the directory item and keep walking siblings when readdir fails', async function () {
       const root = await mkdtemp(path.join(os.tmpdir(), 'walker-readdir-error-'));

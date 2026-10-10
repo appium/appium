@@ -419,8 +419,8 @@ export const fs = {
           log.warn(`Got an error while walking '${item?.path ?? 'unknown'}': ${err.message}`);
           if (isErrnoException(err) && err.code === 'ENOENT') {
             log.warn('All files may not have been accessed');
+            reject(err);
           }
-          reject(err);
         })
         .on('end', async function () {
           try {

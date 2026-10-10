@@ -180,35 +180,40 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   describe('walkDir()', function () {
-    for (const code of ['ENOENT', 'EACCES', 'ELOOP', 'EIO']) {
-      it(`should reject and destroy the walker on ${code}`, {timeout: 2000}, async function () {
-        const error = Object.assign(new Error(`Cannot stat an entry: ${code}`), {code});
-        const destroy = sandbox.spy(Walker.prototype, 'destroy');
-        sandbox.stub(Walker.prototype, '_read').callsFake(function (this: Walker) {
-          this.emit('error', error, {path: import.meta.dirname});
-        });
-
-        await assert.rejects(
-          fs.walkDir(import.meta.dirname, true, () => false),
-          error,
-        );
-
-        assert.equal(destroy.calledOnce, true);
+    it('should reject and destroy the walker on ENOENT', {timeout: 2000}, async function () {
+      const error = Object.assign(new Error('Cannot stat an entry'), {code: 'ENOENT'});
+      const destroy = sandbox.spy(Walker.prototype, 'destroy');
+      sandbox.stub(Walker.prototype, '_read').callsFake(function (this: Walker) {
+        this.emit('error', error, {path: import.meta.dirname});
       });
-    }
+
+      await assert.rejects(
+        fs.walkDir(import.meta.dirname, true, () => false),
+        error,
+      );
+
+      assert.equal(destroy.calledOnce, true);
+    });
 
     it(
-      'should reject when a directory contains a self-referencing link',
+      'should skip a self-referencing link and visit healthy files',
       {skip: system.isWindows(), timeout: 2000},
       async function () {
         const root = await tempDir.openDir();
         try {
           await symlink('loop', path.join(root, 'loop'));
+          const healthyFile = path.join(root, 'z-healthy.txt');
+          await writeFile(healthyFile, 'healthy');
+          const visited: string[] = [];
 
-          await assert.rejects(
-            fs.walkDir(root, true, () => false),
-            {code: 'ELOOP'},
+          assert.equal(
+            await fs.walkDir(root, true, async (item) => {
+              visited.push(item);
+              return false;
+            }),
+            null,
           );
+          assert.deepEqual(visited.sort(), [root, healthyFile].sort());
         } finally {
           await fs.rimraf(root);
         }

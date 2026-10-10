@@ -148,7 +148,10 @@ export class ImageElementFinder {
           comparisonOpts.method = imageMatchMethod;
         }
 
-        const pushIfOk = (el: any): boolean => {
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
+        const matches = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
+        let found = false;
+        for (const el of matches) {
           const result: OccurrenceResultWithVisualization = {
             rect: el.rect,
             score: el.score,
@@ -159,14 +162,12 @@ export class ImageElementFinder {
               `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
                 `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
             );
-            return false;
+            continue;
           }
           results.push(result);
-          return true;
-        };
-
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
-        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
+          found = true;
+        }
+        return found;
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of

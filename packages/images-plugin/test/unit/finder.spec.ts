@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
-import type {Constraints} from '@appium/types';
+import type {Constraints, Element} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import sharp from 'sharp';
@@ -126,6 +126,28 @@ describe('finding elements by image', function () {
       assert.ok(Array.isArray(els));
       assert.strictEqual(els.length, 1);
       basicImgElVerify((els as unknown as ImageElement[])[0], f);
+    });
+    it('should return every matched image element', async function () {
+      const rects = [rect, {...rect, x: 50}, {...rect, y: 100}];
+      compareStub.resolves(rects.map((r) => ({rect: r, score})));
+      const els = (await f.findByImage(template, d as any, {multiple: true})) as Element[];
+      assert.deepStrictEqual(
+        els.map((el) => f.getImageElement(util.unwrapElement(el))!.rect),
+        rects,
+      );
+    });
+    it('should return every matched image element inside the container', async function () {
+      const containerRect = {x: 0, y: 0, width: 100, height: 100};
+      const inside = [rect, {...rect, x: 50}];
+      compareStub.resolves([{rect: {...rect, y: 100}, score}, ...inside.map((r) => ({rect: r, score}))]);
+      const els = (await f.findByImage(template, d as any, {
+        multiple: true,
+        containerRect,
+      })) as Element[];
+      assert.deepStrictEqual(
+        els.map((el) => f.getImageElement(util.unwrapElement(el))!.rect),
+        inside,
+      );
     });
     it('should fail if driver does not support getWindowRect', async function () {
       (d as any).getWindowRect = null;

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, ExtensionType} from '@appium/types';
@@ -236,6 +238,37 @@ describe('DriverConfig', function () {
                 'foo',
               );
               assert.strictEqual(problems.length, 0);
+              assert.strictEqual(
+                MockResolveFrom.calledOnceWithExactly('/somewhere/', path.posix.join('whatever', 'driver-schema.js')),
+                true,
+              );
+            });
+
+            it('should honor an export-mapped schema from the installed package', async function () {
+              const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-schema-exports-'));
+              const pkgName = 'exported-schema-driver';
+              const installPath = path.join(tempRoot, 'node_modules', pkgName);
+              try {
+                await fs.mkdir(path.join(installPath, 'build'), {recursive: true});
+                await fs.writeFile(
+                  path.join(installPath, 'package.json'),
+                  JSON.stringify({
+                    name: pkgName,
+                    version: '1.0.0',
+                    exports: {'./schema.json': './build/schema.json'},
+                  }),
+                );
+                await fs.writeFile(path.join(installPath, 'build', 'schema.json'), JSON.stringify({type: 'object'}));
+
+                const problems = await driverConfig.getSchemaProblems(
+                  {pkgName, schema: 'schema.json', installPath},
+                  'exported',
+                );
+
+                assert.deepStrictEqual(problems, []);
+              } finally {
+                await fs.rm(tempRoot, {recursive: true, force: true});
+              }
             });
           });
         });
@@ -245,23 +278,39 @@ describe('DriverConfig', function () {
     describe('readExtensionSchema()', function () {
       let driverConfig: DriverConfig;
       let extData: ExtManifestWithSchema<DriverType>;
+      let tempRoot: string;
 
       const extName = 'stuff';
 
-      beforeEach(function () {
+      beforeEach(async function () {
+        tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-driver-schema-'));
+        const installPath = path.join(tempRoot, 'node_modules', 'some-pkg');
+        await fs.mkdir(installPath, {recursive: true});
+        await fs.writeFile(
+          path.join(installPath, 'package.json'),
+          JSON.stringify({
+            name: 'some-pkg',
+            version: '1.0.0',
+            exports: {'./driver-schema.json': './driver-schema.json'},
+          }),
+        );
+        await fs.writeFile(path.join(installPath, 'driver-schema.json'), JSON.stringify({type: 'object'}));
         extData = {
           pkgName: 'some-pkg',
-          schema: 'driver-schema.js',
+          schema: 'driver-schema.json',
           automationName: 'foo',
           mainClass: 'Gargle',
           platformNames: ['barnyard'],
           version: '1.0.0',
           installSpec: 'some-pkg',
           installType: 'npm',
-          installPath: '/somewhere',
+          installPath,
         };
-        MockResolveFrom.resolves(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);
+      });
+
+      afterEach(async function () {
+        await fs.rm(tempRoot, {recursive: true, force: true});
       });
 
       describe('when the extension data is missing `schema`', function () {
@@ -282,11 +331,8 @@ describe('DriverConfig', function () {
       });
 
       describe('when the extension schema has not yet been registered', function () {
-        it('should resolve and load the extension schema file', async function () {
-          await driverConfig.readExtensionSchema(extName, extData);
-
-          // we don't have access to the schema registration cache directly, so this is as close as we can get.
-          assert.strictEqual(MockResolveFrom.calledOnce, true);
+        it('should resolve and load the extension schema file from the installed package', async function () {
+          await assert.doesNotReject(driverConfig.readExtensionSchema(extName, extData));
         });
       });
     });

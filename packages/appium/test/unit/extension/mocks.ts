@@ -8,6 +8,8 @@ import path from 'node:path';
 import {console as supportConsole, util as supportUtil} from '@appium/support';
 import {createSandbox, type SinonSandbox, type SinonStub} from 'sinon';
 
+import {resolvePackageSubpathFrom} from '../../../lib/utils/resolve-from';
+
 export interface MockAppiumSupportFs {
   readFile: SinonStub;
   writeFile: SinonStub;
@@ -15,6 +17,7 @@ export interface MockAppiumSupportFs {
   glob: SinonStub;
   mkdirp: SinonStub;
   exists: SinonStub;
+  findRoot: SinonStub;
 }
 
 export interface MockAppiumSupportEnv {
@@ -66,13 +69,21 @@ export interface MockResolveFrom extends SinonStub<[cwd: string, id: string], Pr
   (cwd: string, id: string): Promise<string>;
 }
 
+export interface MockResolvePackageJsonFrom extends SinonStub<[cwd: string, packageName: string], Promise<string>> {
+  (cwd: string, packageName: string): Promise<string>;
+}
+
 export interface MockGlob extends SinonStub {
   (spec: string, opts: {cwd: string}, done: () => void): EventEmitter;
 }
 
 export interface Overrides {
   '@appium/support': MockAppiumSupport;
-  '../../../lib/utils/resolve-from': {resolveFrom: MockResolveFrom};
+  '../../../lib/utils/resolve-from': {
+    resolveFrom: MockResolveFrom;
+    resolvePackageJsonFrom: MockResolvePackageJsonFrom;
+    resolvePackageSubpathFrom: typeof resolvePackageSubpathFrom;
+  };
   '../../../lib/utils/is-package-changed': MockPackageChanged;
   glob: MockGlob;
 }
@@ -81,6 +92,7 @@ export interface InitMocksResult {
   MockAppiumSupport: MockAppiumSupport;
   MockPackageChanged: MockPackageChanged;
   MockResolveFrom: MockResolveFrom;
+  MockResolvePackageJsonFrom: MockResolvePackageJsonFrom;
   MockGlob: MockGlob;
   sandbox: SinonSandbox;
   overrides: Overrides;
@@ -97,6 +109,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
       glob: sandbox.stub().resolves([]),
       mkdirp: sandbox.stub().resolves(),
       exists: sandbox.stub().resolves(true),
+      findRoot: sandbox.stub().callsFake((dir: string) => dir),
     },
     env: {
       resolveAppiumHome: sandbox.stub().resolves('/some/path'),
@@ -145,6 +158,9 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   const MockResolveFrom: MockResolveFrom = sandbox
     .stub<[cwd: string, id: string], Promise<string>>()
     .callsFake(async (cwd, id) => path.join(cwd, id));
+  const MockResolvePackageJsonFrom: MockResolvePackageJsonFrom = sandbox
+    .stub<[cwd: string, packageName: string], Promise<string>>()
+    .callsFake(async (cwd, packageName) => path.join(cwd, 'node_modules', packageName, 'package.json'));
 
   const MockGlob = sandbox.stub().callsFake((spec: string, opts: {cwd: string}, done: () => void) => {
     const ee = new EventEmitter();
@@ -159,7 +175,11 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
 
   const overrides: Overrides = {
     '@appium/support': MockAppiumSupport,
-    '../../../lib/utils/resolve-from': {resolveFrom: MockResolveFrom},
+    '../../../lib/utils/resolve-from': {
+      resolveFrom: MockResolveFrom,
+      resolvePackageJsonFrom: MockResolvePackageJsonFrom,
+      resolvePackageSubpathFrom,
+    },
     '../../../lib/utils/is-package-changed': MockPackageChanged,
     glob: MockGlob,
   };
@@ -168,6 +188,7 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
     MockAppiumSupport,
     MockPackageChanged,
     MockResolveFrom,
+    MockResolvePackageJsonFrom,
     MockGlob,
     sandbox,
     overrides,

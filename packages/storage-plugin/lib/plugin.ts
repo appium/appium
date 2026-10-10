@@ -90,7 +90,7 @@ STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
     throw new Error('httpServer is required to add a storage item');
   }
   const itemOptions = requireValidItemOptions(parseRequestArgs(req, ['name', 'sha1']) as ItemOptions);
-  const uploadId = createHash('sha256')
+  const uploadId = createHash('sha1')
     .update(JSON.stringify([itemOptions.name, itemOptions.sha1.toLowerCase()]))
     .digest('hex');
   const commonPathname = `${basePath}/add/${uploadId}`;

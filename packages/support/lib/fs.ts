@@ -243,7 +243,7 @@ export const fs = {
 
     let fromStat: Stats;
     try {
-      fromStat = await fsPromises.stat(from);
+      fromStat = await fsPromises.lstat(from);
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {
         throw new Error(`The source path '${from}' does not exist or is not accessible`, {
@@ -253,13 +253,13 @@ export const fs = {
       throw err;
     }
     // moving a path onto itself deletes it, and a destination inside the source never returns
-    if (await isSameDestination(from, to)) {
+    if (path.resolve(from) === path.resolve(to) || (await isSameDestination(from, to))) {
       return;
     }
     if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
       throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
     }
-    if (fromStat.isFile()) {
+    if (fromStat.isFile() || fromStat.isSymbolicLink()) {
       const dstRootWasCreated = await ensureDestination(path.dirname(to));
       await renameFile(from, to, dstRootWasCreated);
     } else if (fromStat.isDirectory()) {

@@ -46,7 +46,6 @@ capabilities is optional and entirely driver-dependent.
 | --------------------------------------------------- | ------------------------------------------------------------- |
 | `platformVersion`                                   | Must be `string`                                              |
 | `appium:app`                                        | Must be `string`; empty values are ignored                    |
-| `appium:autoLaunch` (deprecated) | Must be `boolean`                                             |
 | `appium:autoWebview`                                | Must be `boolean`                                             |
 | `appium:fullReset`                                  | Must be `boolean`; mutually exclusive with `appium:noReset`   |
 | `appium:language`                                   | Must be `string`                                              |

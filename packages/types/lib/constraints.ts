@@ -37,9 +37,6 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = {
   automationName: {
     isString: true,
   },
-  autoLaunch: {
-    isBoolean: true,
-  },
   udid: {
     isString: true,
   },

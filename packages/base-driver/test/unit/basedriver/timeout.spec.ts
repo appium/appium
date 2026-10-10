@@ -42,6 +42,33 @@ describe('timeout', function () {
   });
 
   describe('timeouts', function () {
+    for (const invalidIndex of [1, 2, 3]) {
+      it(`should preserve all timeouts when argument ${invalidIndex} is invalid`, async function () {
+        const managedDriver = new BaseDriver({} as InitialOpts);
+        driver.managedDrivers = [managedDriver];
+        const before = await driver.getTimeouts();
+        const managedBefore = await managedDriver.getTimeouts();
+        const values = [100, 200, 300, 400];
+        values[invalidIndex] = -1;
+        try {
+          await assert.rejects(driver.timeouts(undefined, undefined, ...values), errors.InvalidArgumentError);
+          assert.deepEqual(await driver.getTimeouts(), before);
+          assert.deepEqual(await managedDriver.getTimeouts(), managedBefore);
+          assert.equal(scriptTimeoutSpy.called, false);
+          assert.equal(pageLoadTimeoutSpy.called, false);
+          assert.equal(implicitWaitSpy.called, false);
+          assert.equal(newCommandTimeoutSpy.called, false);
+        } finally {
+          driver.managedDrivers = [];
+        }
+      });
+    }
+
+    it('should apply all valid timeouts after validation', async function () {
+      await driver.timeouts(undefined, undefined, 100, 200, 300, 400);
+      assert.deepEqual(await driver.getTimeouts(), {script: 100, pageLoad: 200, implicit: 300, command: 400});
+    });
+
     describe('JSONWP errors', function () {
       it('should throw an error if something random is sent', async function () {
         await assert.rejects(driver.timeouts('random timeout', 'howdy'));

@@ -5,9 +5,39 @@ import {match} from 'path-to-regexp';
 import sinon from 'sinon';
 
 import {log} from '../../../lib/logger.js';
-import {handleLogContext} from '../../../lib/middleware.js';
+import {handleLogContext, tryHandleWebSocketUpgrade} from '../../../lib/middleware.js';
 
 describe('middleware', function () {
+  describe('WebSocket upgrades', function () {
+    for (const path of ['/bidi/%FF', '/bidi/%', '/bidi/a%2Fb?query=1']) {
+      it(`should match ${path} without decoding unused route parameters`, function () {
+        const handleUpgrade = sinon.spy();
+        const req = {headers: {upgrade: 'websocket'}, url: path};
+        assert.equal(
+          tryHandleWebSocketUpgrade(req as any, {} as any, Buffer.alloc(0), {
+            '/bidi/:sessionId': {handleUpgrade} as any,
+          }),
+          true,
+        );
+        assert.equal(handleUpgrade.calledOnce, true);
+      });
+    }
+
+    it('should consume and close an upgrade whose handler throws', function () {
+      const destroy = sinon.spy();
+      const handleUpgrade = sinon.stub().throws(new Error('upgrade failed'));
+      assert.equal(
+        tryHandleWebSocketUpgrade(
+          {headers: {upgrade: 'websocket'}, url: '/bidi/session'} as any,
+          {destroy} as any,
+          Buffer.alloc(0),
+          {'/bidi/:sessionId': {handleUpgrade} as any},
+        ),
+        true,
+      );
+      assert.equal(destroy.calledOnce, true);
+    });
+  });
   describe('match', function () {
     it('should match static path pattern', function () {
       const pathname = '/ws/session/1234/appium/device/syslog';

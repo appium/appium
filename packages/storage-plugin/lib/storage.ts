@@ -15,7 +15,7 @@ import type {ItemOptions, StorageItem} from './types.js';
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const ADDITION_LOCK = new AsyncLock();
-const SHA1_HASH_LEN = 40;
+const SHA1_HASH_PATTERN = /^[a-f\d]{40}$/i;
 
 export class Storage {
   private readonly _root: string;
@@ -226,7 +226,7 @@ export class StorageArgumentError extends errors.InvalidArgumentError {}
  */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   validateStorageItemName(opts.name);
-  if (opts.sha1?.length !== SHA1_HASH_LEN) {
+  if (typeof opts.sha1 !== 'string' || !SHA1_HASH_PATTERN.test(opts.sha1)) {
     throw new StorageArgumentError(
       `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
         `example 'ccc963411b2621335657963322890305ebe96186'`,

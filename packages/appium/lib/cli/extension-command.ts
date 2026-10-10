@@ -1156,7 +1156,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
     const serverVersion = npmPackage.version;
     const isCompatible = (extServerVersion: string | null) =>
-      !!extServerVersion && semver.satisfies(serverVersion, extServerVersion, {includePrerelease: true});
+      !extServerVersion || semver.satisfies(serverVersion, extServerVersion, {includePrerelease: true});
 
     const isGivenExtCompatible = await spinWith(
       this.isJsonOutput,

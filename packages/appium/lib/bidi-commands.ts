@@ -3,7 +3,7 @@ import os from 'node:os';
 import {promisify} from 'node:util';
 
 import type {ExtensionCore} from '@appium/base-driver';
-import {errors} from '@appium/base-driver';
+import {errors, runWithCommandTimeout} from '@appium/base-driver';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '@appium/http-server';
 import {net, util} from '@appium/support';
 import type {
@@ -24,6 +24,7 @@ type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
 type SendData = (data: string | Buffer) => Promise<void>;
 type LogSocketError = (err: Error) => void;
+type PendingProxyCommands = Map<number, Set<() => void>>;
 interface InitBiDiSocketResult {
   bidiHandlerDriver: AnyDriver;
   bidiHandlerPlugins: ExtensionPlugin[];
@@ -123,7 +124,10 @@ export async function onBidiMessage(
       throw new errors.InvalidArgumentError(`Missing params for BiDi operation in '${dataTruncated}`);
     }
     const executeWrappedCommand = wrapCommandWithPlugins(driver as ExtensionCore, plugins, method, params);
-    const result = await executeWrappedCommand();
+    const result =
+      driver === this
+        ? await executeWrappedCommand()
+        : await runWithCommandTimeout(driver as ExternalDriver, executeWrappedCommand);
     resMessage = {
       id,
       type: 'success',
@@ -381,6 +385,7 @@ function initBidiSocketHandlers(
   logSocketErr: LogSocketError,
 ): void {
   const driverLog = bidiHandlerDriver.log;
+  const pendingProxyCommands = trackBidiProxyCommands(proxyClient);
   // Can't do much with random errors on the connection other than log them
   ws.on('error', logSocketErr);
 
@@ -392,19 +397,24 @@ function initBidiSocketHandlers(
   // coming from the client
   // First is incoming messages from the client
   ws.on('message', async (data: Buffer) => {
-    if (proxyClient && sendToProxy) {
-      // if we're meant to proxy to an upstream bidi socket, just do that
-      // TODO trying to determine how this proxying behaviour would interface with plugins is too
-      // complex for now, so just ignore plugins in this case
-      await sendToProxy(data.toString('utf8'));
-    } else {
-      const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
-      await send(JSON.stringify(res));
+    try {
+      if (proxyClient && sendToProxy) {
+        // if we're meant to proxy to an upstream bidi socket, just do that
+        // TODO trying to determine how this proxying behaviour would interface with plugins is too
+        // complex for now, so just ignore plugins in this case
+        await sendBidiProxyCommand(data, bidiHandlerDriver, proxyClient, sendToProxy, pendingProxyCommands);
+      } else {
+        const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
+        await send(JSON.stringify(res));
+      }
+    } catch (err) {
+      logSocketErr(err instanceof Error ? err : new Error(String(err)));
     }
   });
 
   // Next consider if the client closes the socket connection on us
   ws.on('close', (code, reason) => {
+    finishBidiProxyCommands(pendingProxyCommands);
     // Not sure if we need to do anything here if the client closes the websocket connection.
     // Probably if a session was started via the socket, and the socket closes, we should end the
     // associated session to free up resources. But otherwise, for sockets attached to existing
@@ -422,6 +432,81 @@ function initBidiSocketHandlers(
       driverLog.debug(`BiDi events statistics: ${JSON.stringify(eventLogCounts, null, 2)}`);
     }
   });
+}
+
+/** Track proxied commands until an upstream response or socket termination. */
+function trackBidiProxyCommands(proxyClient: WebSocket | null): PendingProxyCommands {
+  const pendingCommands: PendingProxyCommands = new Map();
+  if (!proxyClient) {
+    return pendingCommands;
+  }
+
+  // Sending a frame is not command completion. Events do not complete commands either.
+  proxyClient.on('message', (data) => {
+    try {
+      let payload: Buffer;
+      if (Array.isArray(data)) {
+        payload = Buffer.concat(data);
+      } else if (Buffer.isBuffer(data)) {
+        payload = data;
+      } else {
+        payload = Buffer.from(data);
+      }
+      const response = JSON.parse(payload.toString());
+      if (typeof response.id === 'number' && ['success', 'error'].includes(response.type)) {
+        finishBidiProxyCommands(pendingCommands, response.id);
+      }
+    } catch {
+      // Preserve opaque upstream messages; this observer only manages command activity.
+    }
+  });
+  proxyClient.once('close', () => finishBidiProxyCommands(pendingCommands));
+  proxyClient.on('error', () => finishBidiProxyCommands(pendingCommands));
+  return pendingCommands;
+}
+
+/** Forward a command while keeping the idle timer suspended until its response arrives. */
+async function sendBidiProxyCommand(
+  data: Buffer,
+  driver: AnyDriver,
+  proxyClient: WebSocket,
+  sendToProxy: SendData,
+  pendingCommands: PendingProxyCommands,
+): Promise<void> {
+  await runWithCommandTimeout(driver as ExternalDriver, async () => {
+    let id: number | undefined;
+    try {
+      const command = JSON.parse(data.toString());
+      if (typeof command.id === 'number') {
+        id = command.id;
+      }
+    } catch {
+      // The upstream server is responsible for rejecting malformed commands.
+    }
+    let response: Promise<void> | undefined;
+    if (id !== undefined) {
+      response = new Promise<void>((resolve) => {
+        const pending = pendingCommands.get(id) ?? new Set();
+        pending.add(resolve);
+        pendingCommands.set(id, pending);
+      });
+    }
+    await sendToProxy(data.toString('utf8'));
+    if (proxyClient.readyState !== WebSocket.OPEN) {
+      finishBidiProxyCommands(pendingCommands, id);
+    }
+    await response;
+  });
+}
+
+/** Release activity guards for one command ID, or every command on a terminated connection. */
+function finishBidiProxyCommands(pendingCommands: PendingProxyCommands, id?: number): void {
+  for (const key of id === undefined ? pendingCommands.keys() : [id]) {
+    for (const finish of pendingCommands.get(key) ?? []) {
+      finish();
+    }
+    pendingCommands.delete(key);
+  }
 }
 
 /**

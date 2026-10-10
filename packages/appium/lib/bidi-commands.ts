@@ -3,7 +3,7 @@ import os from 'node:os';
 import {promisify} from 'node:util';
 
 import type {ExtensionCore} from '@appium/base-driver';
-import {errors} from '@appium/base-driver';
+import {errors, runWithCommandTimeout} from '@appium/base-driver';
 import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '@appium/http-server';
 import {net, util} from '@appium/support';
 import type {
@@ -123,7 +123,10 @@ export async function onBidiMessage(
       throw new errors.InvalidArgumentError(`Missing params for BiDi operation in '${dataTruncated}`);
     }
     const executeWrappedCommand = wrapCommandWithPlugins(driver as ExtensionCore, plugins, method, params);
-    const result = await executeWrappedCommand();
+    const result =
+      driver === this
+        ? await executeWrappedCommand()
+        : await runWithCommandTimeout(driver as ExternalDriver, executeWrappedCommand);
     resMessage = {
       id,
       type: 'success',
@@ -381,6 +384,32 @@ function initBidiSocketHandlers(
   logSocketErr: LogSocketError,
 ): void {
   const driverLog = bidiHandlerDriver.log;
+  const pendingProxyCommands = new Map<number, Set<() => void>>();
+  const finishProxyCommands = (id?: number) => {
+    for (const key of id === undefined ? pendingProxyCommands.keys() : [id]) {
+      for (const finish of pendingProxyCommands.get(key) ?? []) {
+        finish();
+      }
+      pendingProxyCommands.delete(key);
+    }
+  };
+  if (proxyClient) {
+    // Sending a frame is not command completion. Keep the idle timer suspended until
+    // the corresponding upstream response arrives (events do not complete commands).
+    proxyClient.on('message', (data) => {
+      try {
+        const payload = Array.isArray(data) ? Buffer.concat(data) : Buffer.isBuffer(data) ? data : Buffer.from(data);
+        const response = JSON.parse(payload.toString());
+        if (typeof response.id === 'number' && ['success', 'error'].includes(response.type)) {
+          finishProxyCommands(response.id);
+        }
+      } catch {
+        // Preserve opaque upstream messages; this observer only manages command activity.
+      }
+    });
+    proxyClient.once('close', () => finishProxyCommands());
+    proxyClient.on('error', () => finishProxyCommands());
+  }
   // Can't do much with random errors on the connection other than log them
   ws.on('error', logSocketErr);
 
@@ -392,19 +421,47 @@ function initBidiSocketHandlers(
   // coming from the client
   // First is incoming messages from the client
   ws.on('message', async (data: Buffer) => {
-    if (proxyClient && sendToProxy) {
-      // if we're meant to proxy to an upstream bidi socket, just do that
-      // TODO trying to determine how this proxying behaviour would interface with plugins is too
-      // complex for now, so just ignore plugins in this case
-      await sendToProxy(data.toString('utf8'));
-    } else {
-      const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
-      await send(JSON.stringify(res));
+    try {
+      if (proxyClient && sendToProxy) {
+        // if we're meant to proxy to an upstream bidi socket, just do that
+        // TODO trying to determine how this proxying behaviour would interface with plugins is too
+        // complex for now, so just ignore plugins in this case
+        await runWithCommandTimeout(bidiHandlerDriver as ExternalDriver, async () => {
+          let id: number | undefined;
+          try {
+            const command = JSON.parse(data.toString());
+            if (typeof command.id === 'number') {
+              id = command.id;
+            }
+          } catch {
+            // The upstream server is responsible for rejecting malformed commands.
+          }
+          const response =
+            id === undefined
+              ? undefined
+              : new Promise<void>((resolve) => {
+                  const pending = pendingProxyCommands.get(id) ?? new Set();
+                  pending.add(resolve);
+                  pendingProxyCommands.set(id, pending);
+                });
+          await sendToProxy(data.toString('utf8'));
+          if (proxyClient.readyState !== WebSocket.OPEN) {
+            finishProxyCommands(id);
+          }
+          await response;
+        });
+      } else {
+        const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
+        await send(JSON.stringify(res));
+      }
+    } catch (err) {
+      logSocketErr(err instanceof Error ? err : new Error(String(err)));
     }
   });
 
   // Next consider if the client closes the socket connection on us
   ws.on('close', (code, reason) => {
+    finishProxyCommands();
     // Not sure if we need to do anything here if the client closes the websocket connection.
     // Probably if a session was started via the socket, and the socket closes, we should end the
     // associated session to free up resources. But otherwise, for sockets attached to existing

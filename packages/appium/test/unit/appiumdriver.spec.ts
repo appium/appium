@@ -868,6 +868,52 @@ describe('AppiumDriver', function () {
         upstreamSocket.terminate();
         assert.strictEqual(await clientClosed, 1011);
       });
+
+      for (const disconnect of [false, true]) {
+        it(`should suspend idle expiry until proxied BiDi commands ${disconnect ? 'disconnect' : 'all finish'}`, async function () {
+          await fakeDriver.clearNewCommandTimeout();
+          sandbox.stub(fakeDriver as any, 'stopClock').resolves();
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          try {
+            fakeDriver.newCommandTimeoutMs = 1000;
+            await fakeDriver.startNewCommandTimeout();
+            for (const id of [1, 2]) {
+              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
+              await received;
+            }
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            const eventReceived = new Promise((resolve) => client.once('message', resolve));
+            upstreamSocket.send(JSON.stringify({type: 'event', method: 'log.entryAdded', params: {}}));
+            await eventReceived;
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            if (disconnect) {
+              const closed = new Promise((resolve) => client.once('close', resolve));
+              upstreamSocket.close();
+              await closed;
+            } else {
+              for (const id of [2, 1]) {
+                const received = new Promise((resolve) => client.once('message', resolve));
+                upstreamSocket.send(JSON.stringify({id, type: 'success', result: {contexts: []}}));
+                await received;
+                if (id === 2) {
+                  await clock.tickAsync(2000);
+                  assert.notEqual(fakeDriver.sessionId, null);
+                }
+              }
+            }
+            await clock.tickAsync(999);
+            assert.notEqual(fakeDriver.sessionId, null);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+            clock.restore();
+          }
+        });
+      }
     });
     describe('createPluginInstances', function () {
       class NoArgsPlugin extends BasePlugin {}

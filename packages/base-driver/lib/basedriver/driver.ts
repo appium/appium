@@ -39,16 +39,6 @@ import {
   getPageSource,
 } from './commands/find.js';
 import {getLog, getLogTypes} from './commands/log.js';
-// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
-// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
-// import graph — the named imports alone aren't part of `BaseDriver`'s emitted type
-// surface, so `tsc` would otherwise drop them from the declaration output.
-import './commands/bidi.js';
-import './commands/event.js';
-import './commands/execute.js';
-import './commands/find.js';
-import './commands/log.js';
-import './commands/timeout.js';
 import {
   getTimeouts,
   implicitWaitForCondition,
@@ -60,6 +50,16 @@ import {
   timeouts,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
+// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop them from the declaration output.
+import './commands/bidi.js';
+import './commands/event.js';
+import './commands/execute.js';
+import './commands/find.js';
+import './commands/log.js';
+import './commands/timeout.js';
 import {DriverCore} from './core.js';
 import * as helpers from './helpers/index.js';
 

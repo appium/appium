@@ -63,6 +63,16 @@ describe('proxy', function () {
     assert.strictEqual(j.sessionId, '123');
   });
   describe('getUrlForProxy', function () {
+    for (const value of ['a%23b', 'a%2Fb', 'a%25b', 'a%3Fb', '%E6%97%A5%E6%9C%AC']) {
+      for (const prefix of ['', '/session/old', '/wd/hub/session/old']) {
+        it(`should preserve encoded parameters ${value} under ${prefix || '/'}`, function () {
+          assert.equal(
+            mockProxy({sessionId: 'new'}).getUrlForProxy(`${prefix}/element/${value}/attribute/${value}?q=%25`, 'GET'),
+            `http://${TEST_HOST}:${port}/session/new/element/${value}/attribute/${value}?q=%25`,
+          );
+        });
+      }
+    }
     it('should modify session id, host, and port', function () {
       assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST'),

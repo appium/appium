@@ -5,23 +5,21 @@ type TimeoutDriver = Pick<
   'clearNewCommandTimeout' | 'startNewCommandTimeout' | 'isCommandsQueueEnabled' | 'sessionId'
 > & {shutdownUnexpectedly?: boolean};
 
-interface CommandActivity {
-  count: number;
-  restoreTimeout: () => void;
-}
-
 // Drivers installed in APPIUM_HOME may load another copy of base-driver. Share activity
-// counts so their HTTP commands and the server's plugin/BiDi wrappers protect each other.
+// tokens so their HTTP commands and the server's plugin/BiDi wrappers protect each other.
 const STORE_KEY = Symbol.for('@appium/base-driver:command-activity');
-const stores = globalThis as typeof globalThis & {[STORE_KEY]?: WeakMap<object, CommandActivity>};
-const activeCommands = (stores[STORE_KEY] ??= new WeakMap<object, CommandActivity>());
+const stores = globalThis as typeof globalThis & {[STORE_KEY]?: WeakMap<object, Set<symbol>>};
+const activeCommands = (stores[STORE_KEY] ??= new WeakMap<object, Set<symbol>>());
 
 /** Whether a driver has commands or plugin handlers still in flight. */
 export function hasRunningCommands(driver: object): boolean {
-  return (activeCommands.get(driver)?.count ?? 0) > 0;
+  return (activeCommands.get(driver)?.size ?? 0) > 0;
 }
 
-/** Suspend the idle timer until the last overlapping command or plugin handler finishes. */
+/**
+ * Suspend the idle timer until the last overlapping command or plugin handler finishes.
+ * Requires a driver whose startNewCommandTimeout honors shared command activity, as BaseDriver does.
+ */
 export async function runWithCommandTimeout<T>(
   driver: TimeoutDriver,
   command: () => Promise<T>,
@@ -29,20 +27,21 @@ export async function runWithCommandTimeout<T>(
 ): Promise<T> {
   let activity = activeCommands.get(driver);
   if (!activity) {
-    activity = {count: 0, restoreTimeout: guardTimeoutRestart(driver)};
+    activity = new Set();
     activeCommands.set(driver, activity);
   }
-  activity.count++;
+  const token = Symbol();
+  activity.add(token);
   try {
     await driver.clearNewCommandTimeout();
     return await command();
   } finally {
-    if (--activity.count === 0) {
+    activity.delete(token);
+    if (activity.size === 0) {
       activeCommands.delete(driver);
-      activity.restoreTimeout();
       if (
         (typeof restart === 'function' ? restart() : restart) &&
-        driver.sessionId !== null &&
+        Boolean(driver.sessionId) &&
         !driver.shutdownUnexpectedly &&
         driver.isCommandsQueueEnabled
       ) {
@@ -50,28 +49,4 @@ export async function runWithCommandTimeout<T>(
       }
     }
   }
-}
-
-function guardTimeoutRestart(driver: TimeoutDriver): () => void {
-  const ownDescriptor = Object.getOwnPropertyDescriptor(driver, 'startNewCommandTimeout');
-  const startTimeout = driver.startNewCommandTimeout;
-  // Older installed drivers cannot see the shared counter. Intercept their attempts to
-  // rearm expiry until the outer plugin/BiDi work completes, then restore their method.
-  Object.defineProperty(driver, 'startNewCommandTimeout', {
-    configurable: true,
-    enumerable: ownDescriptor?.enumerable ?? false,
-    writable: true,
-    value: async () => {
-      if (!hasRunningCommands(driver)) {
-        await startTimeout.call(driver);
-      }
-    },
-  });
-  return () => {
-    if (ownDescriptor) {
-      Object.defineProperty(driver, 'startNewCommandTimeout', ownDescriptor);
-    } else {
-      Reflect.deleteProperty(driver, 'startNewCommandTimeout');
-    }
-  };
 }

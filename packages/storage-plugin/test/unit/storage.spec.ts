@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import {Readable} from 'node:stream';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {fs, logger, tempDir} from '@appium/support';
@@ -110,7 +111,21 @@ describe('storage', function () {
     assert.strictEqual(await fs.exists(storageRoot!), true);
   });
 
+  for (const name of ['app.filepart', 'app.FILEPART', 'app.FilePart']) {
+    it(`should reject reserved storage name ${name} before writing`, async function () {
+      storage = new Storage(storageRoot!, true, true, log);
+      await assert.rejects(
+        storage.add({name, sha1: 'da39a3ee5e6b4b0d3255bfef95601890afd80709'}, Readable.from([])),
+        StorageArgumentError,
+      );
+      assert.deepEqual(await fs.readdir(storageRoot!), []);
+    });
+  }
+
   describe('validateStorageItemName', function () {
+    it('should allow the reserved suffix inside a name', function () {
+      assert.doesNotThrow(() => validateStorageItemName('app.filepart.apk'));
+    });
     it('should accept valid file names', function () {
       assert.doesNotThrow(() => validateStorageItemName('foo.bar'));
       assert.doesNotThrow(() => validateStorageItemName('foo-bar_baz'));

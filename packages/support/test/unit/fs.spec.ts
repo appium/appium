@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdir, writeFile} from 'node:fs/promises';
+import {mkdir, symlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
@@ -7,6 +7,7 @@ import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
 import {fs, system, tempDir} from '../../lib/index.js';
+import {Walker} from '../../lib/internal/index.js';
 
 const TEST_TIMEOUT = 10000;
 
@@ -179,6 +180,41 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   describe('walkDir()', function () {
+    for (const code of ['ENOENT', 'EACCES', 'ELOOP', 'EIO']) {
+      it(`should reject and destroy the walker on ${code}`, {timeout: 2000}, async function () {
+        const error = Object.assign(new Error(`Cannot stat an entry: ${code}`), {code});
+        const destroy = sandbox.spy(Walker.prototype, 'destroy');
+        sandbox.stub(Walker.prototype, '_read').callsFake(function (this: Walker) {
+          this.emit('error', error, {path: import.meta.dirname});
+        });
+
+        await assert.rejects(
+          fs.walkDir(import.meta.dirname, true, () => false),
+          error,
+        );
+
+        assert.equal(destroy.calledOnce, true);
+      });
+    }
+
+    it(
+      'should reject when a directory contains a self-referencing link',
+      {skip: system.isWindows(), timeout: 2000},
+      async function () {
+        const root = await tempDir.openDir();
+        try {
+          await symlink('loop', path.join(root, 'loop'));
+
+          await assert.rejects(
+            fs.walkDir(root, true, () => false),
+            {code: 'ELOOP'},
+          );
+        } finally {
+          await fs.rimraf(root);
+        }
+      },
+    );
+
     it('walkDir recursive', async function () {
       assert.notStrictEqual(
         await fs.walkDir(import.meta.dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),

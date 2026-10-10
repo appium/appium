@@ -93,11 +93,6 @@ export class BaseDriver<
 
   private readonly pendingCommandControllers = new Set<AbortController>();
 
-  /** Custom timer implementations use the compatibility guard unless they explicitly opt out. */
-  get supportsCommandTimeoutTracking(): boolean {
-    return this.startNewCommandTimeout === BaseDriver.prototype.startNewCommandTimeout;
-  }
-
   /**
    * This is the main command handler for the driver. It wraps command
    * execution with timeout logic, checking that we have a valid session,

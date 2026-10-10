@@ -232,13 +232,6 @@ export interface Driver<
   startNewCommandTimeout(): Promise<void>;
 
   /**
-   * Whether startNewCommandTimeout respects base-driver's shared command activity tracking.
-   * BaseDriver reports true for its standard timer. Custom timer implementations may opt
-   * in if they honor the same guard. Older drivers omit this and use the compatibility guard.
-   */
-  readonly supportsCommandTimeoutTracking?: boolean;
-
-  /**
    * The processed capabilities used to start the session represented by the current driver instance
    */
   caps?: Capabilities<C>;

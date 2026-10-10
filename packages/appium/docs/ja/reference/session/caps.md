@@ -46,10 +46,5 @@ capabilities is optional and entirely driver-dependent.
 | --------------------------------------------------- | ------------------------------------------------------------- |
 | `platformVersion`                                   | Must be `string`                                              |
 | `appium:app`                                        | Must be `string`; empty values are ignored                    |
-| `appium:autoWebview`                                | Must be `boolean`                                             |
 | `appium:fullReset`                                  | Must be `boolean`; mutually exclusive with `appium:noReset`   |
-| `appium:language`                                   | Must be `string`                                              |
-| `appium:locale`                                     | Must be `string`                                              |
-| `appium:orientation`                                | Must be either `LANDSCAPE` or `PORTRAIT`                      |
 | `appium:noReset`                                    | Must be `boolean`; mutually exclusive with `appium:fullReset` |
-| `appium:udid`                                       | Must be `string`                                              |

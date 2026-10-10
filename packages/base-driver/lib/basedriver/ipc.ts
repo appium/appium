@@ -59,10 +59,7 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
     if (!this.isActive) {
       return false;
     }
-    const unsubscribeRes = this.ipc.unsubscribe(this.topic, this.subscriber);
-    this.emit('unsubscribed');
-    this.removeAllListeners(EVT_MESSAGE);
-    return unsubscribeRes;
+    return this.ipc.unsubscribe(this.topic, this.subscriber);
   }
 
   async *[Symbol.asyncIterator](): AsyncGenerator<IpcMessage<T>> {
@@ -71,14 +68,16 @@ export class IpcSubscription<T extends IpcData> extends EventEmitter<IpcEvent<T>
     // unsubscription, even if we were already waiting on the next message.
     while (this.isActive) {
       const val = await new Promise<IpcMessage<T> | typeof ASYNC_ITERATOR_STOP>((resolve) => {
-        this.once(EVT_MESSAGE, (message: IpcMessage<T>) => {
-          this.removeAllListeners(EVT_UNSUBSCRIBED);
+        const onMessage = (message: IpcMessage<T>) => {
+          this.off(EVT_UNSUBSCRIBED, onUnsubscribed);
           resolve(message);
-        });
-        this.once(EVT_UNSUBSCRIBED, () => {
-          // EVT_MESSAGE listeners are already removed in unsubscribe()
+        };
+        const onUnsubscribed = () => {
+          this.off(EVT_MESSAGE, onMessage);
           resolve(ASYNC_ITERATOR_STOP);
-        });
+        };
+        this.once(EVT_MESSAGE, onMessage);
+        this.once(EVT_UNSUBSCRIBED, onUnsubscribed);
       });
       if (val === ASYNC_ITERATOR_STOP) {
         break;
@@ -121,11 +120,17 @@ export class AppiumIpc implements IAppiumIpc {
 
   unsubscribe(topic: string, subscriber: string): boolean {
     this.log.info(`Unsubscribing ${subscriber} from topic '${topic}'`);
-    if (this.subscriptionExists(topic, subscriber)) {
-      this.subs[topic] = this.subs[topic].filter((sub) => sub.subscriber !== subscriber);
-      return true;
+    const subscription = this.subs[topic]?.find((sub) => sub.subscriber === subscriber);
+    if (!subscription) {
+      return false;
     }
-    return false;
+    this.subs[topic] = this.subs[topic].filter((sub) => sub !== subscription);
+    try {
+      subscription.emit(EVT_UNSUBSCRIBED);
+    } finally {
+      subscription.removeAllListeners(EVT_MESSAGE);
+    }
+    return true;
   }
 
   async publish<T extends IpcData>(topic: string, publisher: string, data: T): Promise<void> {

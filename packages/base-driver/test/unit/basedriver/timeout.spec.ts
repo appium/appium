@@ -117,6 +117,28 @@ describe('timeout', function () {
       });
     });
     describe('script timeout', function () {
+      it('should preserve an explicit null script timeout and propagate it to managed drivers', async function () {
+        const managedDriver = new BaseDriver({} as InitialOpts);
+        driver.managedDrivers = [managedDriver];
+        try {
+          await driver.timeouts(undefined, undefined, null);
+          assert.equal((await driver.getTimeouts()).script, null);
+          assert.equal((await managedDriver.getTimeouts()).script, null);
+          await driver.timeouts(undefined, undefined, undefined, 200);
+          assert.equal((await driver.getTimeouts()).script, null);
+          await driver.timeouts(undefined, undefined, 300);
+          assert.equal((await driver.getTimeouts()).script, 300);
+          assert.equal((await managedDriver.getTimeouts()).script, 300);
+        } finally {
+          driver.managedDrivers = [];
+        }
+      });
+
+      it('should not apply a null script timeout when another timeout is invalid', async function () {
+        await assert.rejects(driver.timeouts(undefined, undefined, null, -1), errors.InvalidArgumentError);
+        assert.equal((await driver.getTimeouts()).script, 0);
+      });
+
       it('should call setScriptTimeout when using the W3C format', async function () {
         await driver.timeouts(undefined, undefined, 42);
         assert.strictEqual(scriptTimeoutSpy.calledOnce, true);

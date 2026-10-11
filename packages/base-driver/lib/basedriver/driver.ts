@@ -287,7 +287,14 @@ export class BaseDriver<
         `${this.newCommandTimeoutMs / 1000.0} seconds ` +
         `expired. Try customizing the timeout using the ` +
         `'newCommandTimeout' desired capability`;
-      await this.startUnexpectedShutdown(new Error(errorMessage));
+      try {
+        await this.startUnexpectedShutdown(new Error(errorMessage));
+      } catch (err) {
+        // Timer callbacks have no caller to handle a rejected shutdown promise.
+        this.log.warn(
+          `Failed to clean up the session after the new command timeout: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
     }, this.newCommandTimeoutMs);
   }
 

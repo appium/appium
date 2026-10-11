@@ -46,6 +46,18 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
 const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
 const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
+type WaitForMatchesOptions = {
+  multiple: boolean;
+  ignoreDefaultImageTemplateScale: boolean;
+  containerRect: Rect | null;
+};
+
+type CreateImageElementsOptions = {
+  shouldCheckStaleness: boolean;
+  multiple: boolean;
+  containerRect: Rect | null;
+};
+
 export class ImageElementFinder {
   private _imgElCache: LRUCache<string, ImageElement>;
 
@@ -392,11 +404,7 @@ export class ImageElementFinder {
     driver: ExternalDriver,
     screenSize: Size,
     settings: ImageSettings,
-    {
-      multiple,
-      ignoreDefaultImageTemplateScale,
-      containerRect,
-    }: {multiple: boolean; ignoreDefaultImageTemplateScale: boolean; containerRect: Rect | null},
+    {multiple, ignoreDefaultImageTemplateScale, containerRect}: WaitForMatchesOptions,
   ): Promise<{matches: OccurrenceResultWithVisualization[]; template: Buffer}> {
     const matches: OccurrenceResultWithVisualization[] = [];
     let didFixTemplateImageScale = false;
@@ -481,11 +489,7 @@ export class ImageElementFinder {
   private createImageElements(
     matches: OccurrenceResultWithVisualization[],
     template: Buffer,
-    {
-      shouldCheckStaleness,
-      multiple,
-      containerRect,
-    }: {shouldCheckStaleness: boolean; multiple: boolean; containerRect: Rect | null},
+    {shouldCheckStaleness, multiple, containerRect}: CreateImageElementsOptions,
   ): Element | Element[] | ImageElement {
     const elements = matches.map(({rect, score, visualization}) => {
       log.info(`Image template matched: ${JSON.stringify(rect)}`);

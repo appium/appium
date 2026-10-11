@@ -271,7 +271,7 @@ describe('ExtensionCommand', function () {
       });
     });
 
-    describe(`${type} _findCompatibleVersion()`, function () {
+    describe(`${type} _findCompatibleExtVersion()`, function () {
       const COMPATIBLE = '*';
       const TOO_NEW = '^999.0.0'; // requires a newer Appium server version
       const TOO_OLD = '^1.0.0'; // requires an older Appium server version
@@ -280,7 +280,7 @@ describe('ExtensionCommand', function () {
       let infoStub: SinonStub;
 
       function findCompatible(pkgVer?: string): Promise<string | undefined> {
-        return (ec as any)._findCompatibleVersion({
+        return (ec as any)._findCompatibleExtVersion({
           installSpec: pkgName,
           pkgName,
           pkgVer,
@@ -319,6 +319,7 @@ describe('ExtensionCommand', function () {
         (ec as any).log = {
           decorate: (message: string) => message,
           info: sandbox.stub(),
+          warn: sandbox.stub(),
         };
         infoStub = sandbox.stub(npm, 'getPackageInfo');
       });
@@ -367,7 +368,7 @@ describe('ExtensionCommand', function () {
       it('should fall back to the oldest major if only it is compatible', async function () {
         stubRegistry({'1.0.0': COMPATIBLE, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
         assert.strictEqual(await findCompatible(), '1.0.0');
-        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`]);
+        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`, `${pkgName}@2.0.0`]);
       });
 
       it('should fail fast if even the oldest version requires a newer server', async function () {

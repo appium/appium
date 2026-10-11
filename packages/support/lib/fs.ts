@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import {
-  type BigIntStats,
   close,
   constants,
   type CopyOptions,
@@ -13,7 +12,6 @@ import {
   promises as fsPromises,
   read,
   rmSync,
-  type Stats,
   write,
 } from 'node:fs';
 import path from 'node:path';
@@ -23,10 +21,11 @@ import sanitize from 'sanitize-filename';
 import which from 'which';
 
 import {walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
+import {MoveOperation} from './internal/move-operation.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {isSubPath, pluralize} from './util.js';
+import {pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -123,10 +122,6 @@ export function toCpOptions(opts: CopyFileOptions = {}): CopyOptions {
   };
 }
 
-function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
-  return err instanceof Error && 'code' in err;
-}
-
 export const fs = {
   /**
    * Resolves `true` if `path` is _readable_.
@@ -213,103 +208,7 @@ export const fs = {
    * Move a file or a folder.
    */
   async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
-    const ensureDestination = async (p: PathLike): Promise<boolean> => {
-      if (opts?.mkdirp && !(await this.exists(p))) {
-        await fsPromises.mkdir(p, {recursive: true});
-        return true;
-      }
-      return false;
-    };
-    const renameFile = async (src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> => {
-      if (!skipExistenceCheck && (await this.exists(dst))) {
-        if (opts?.clobber === false) {
-          const err = new Error(`The destination path '${dst?.toString()}' already exists`) as NodeJS.ErrnoException;
-          err.code = 'EEXIST';
-          throw err;
-        }
-        await this.rimraf(dst);
-      }
-      try {
-        await fsPromises.rename(src, dst);
-      } catch (err) {
-        if (isErrnoException(err) && err.code === 'EXDEV') {
-          // Preserve relative and dangling links when rename crosses filesystems.
-          await fsPromises.cp(String(src), String(dst), {verbatimSymlinks: true});
-          await this.rimraf(src);
-        } else {
-          throw err;
-        }
-      }
-    };
-
-    let fromStat: BigIntStats;
-    try {
-      fromStat = await fsPromises.lstat(from, {bigint: true});
-    } catch (err) {
-      if (isErrnoException(err) && err.code === 'ENOENT') {
-        throw new Error(`The source path '${from}' does not exist or is not accessible`, {
-          cause: err,
-        });
-      }
-      throw err;
-    }
-    // Directory moves merge into the destination, so follow its final symlink.
-    // File and symlink moves replace the destination entry itself.
-    let toStat: BigIntStats | undefined;
-    try {
-      toStat = await (fromStat.isDirectory() ? fsPromises.stat : fsPromises.lstat)(to, {bigint: true});
-    } catch (err) {
-      if (!isErrnoException(err) || err.code !== 'ENOENT') {
-        throw err;
-      }
-    }
-    // Renaming an entry onto itself is a no-op, but the final cleanup would delete it.
-    if (toStat && fromStat.dev === toStat.dev && fromStat.ino === toStat.ino) {
-      return;
-    }
-    if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
-      throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
-    }
-    if (fromStat.isFile() || fromStat.isSymbolicLink()) {
-      const dstRootWasCreated = await ensureDestination(path.dirname(to));
-      await renameFile(from, to, dstRootWasCreated);
-    } else if (fromStat.isDirectory()) {
-      const dstRootWasCreated = await ensureDestination(to);
-      // an empty directory has nothing to rename, so a missing or non-directory
-      // destination would fall through to rimraf and delete the source
-      if (!dstRootWasCreated) {
-        let dstStat: Stats;
-        try {
-          dstStat = await fsPromises.stat(to);
-        } catch (err) {
-          if (isErrnoException(err) && err.code === 'ENOENT') {
-            throw new Error(`Cannot move '${from}' to '${to}' because the destination does not exist`, {
-              cause: err,
-            });
-          }
-          throw err;
-        }
-        if (!dstStat.isDirectory()) {
-          throw new Error(`Cannot move '${from}' to '${to}' because the destination is not a directory`);
-        }
-      }
-      const items = await fsPromises.readdir(from, {withFileTypes: true});
-      for (const item of items) {
-        const srcPath = path.join(from, item.name);
-        const destPath = path.join(to, item.name);
-        if (item.isDirectory()) {
-          // the recursive call requires an existing destination, even without mkdirp
-          await fsPromises.mkdir(destPath, {recursive: true});
-          await this.mv(srcPath, destPath, opts);
-        } else if (item.isFile() || item.isSymbolicLink()) {
-          await renameFile(srcPath, destPath, dstRootWasCreated);
-        }
-      }
-    } else {
-      return;
-    }
-
-    await this.rimraf(from);
+    await new MoveOperation(from, to, opts).move();
   },
 
   /** Find path to an executable in system `PATH`. @see https://github.com/npm/node-which */
@@ -483,3 +382,7 @@ export const fs = {
 };
 
 export default fs;
+
+function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
+  return err instanceof Error && 'code' in err;
+}

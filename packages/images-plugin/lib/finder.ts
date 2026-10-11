@@ -46,16 +46,17 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
 const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
 const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
-type WaitForMatchesOptions = {
+type ImageMatchOptions = {
   multiple: boolean;
-  ignoreDefaultImageTemplateScale: boolean;
   containerRect: Rect | null;
 };
 
-type CreateImageElementsOptions = {
+type WaitForMatchesOptions = ImageMatchOptions & {
+  ignoreDefaultImageTemplateScale: boolean;
+};
+
+type CreateImageElementsOptions = ImageMatchOptions & {
   shouldCheckStaleness: boolean;
-  multiple: boolean;
-  containerRect: Rect | null;
 };
 
 export class ImageElementFinder {

@@ -41,9 +41,9 @@ These capabilities are not directly used in the Appium server/base driver, but a
 validation checks due to their relevance in other drivers. The actual handling of these
 capabilities is optional and entirely driver-dependent.
 
-| Capability                        | Validation                                                    |
-|-----------------------------------|---------------------------------------------------------------|
-| `platformVersion`                 | Must be `string`                                              |
-| `appium:app`                      | Must be `string`; empty values are ignored                    |
-| `appium:fullReset`                | Must be `boolean`; mutually exclusive with `appium:noReset`   |
-| `appium:noReset`                  | Must be `boolean`; mutually exclusive with `appium:fullReset` |
+| Capability               | Validation                                                    |
+|--------------------------|---------------------------------------------------------------|
+| `appium:platformVersion` | Must be `string`                                              |
+| `appium:app`             | Must be `string`; empty values are ignored                    |
+| `appium:fullReset`       | Must be `boolean`; mutually exclusive with `appium:noReset`   |
+| `appium:noReset`         | Must be `boolean`; mutually exclusive with `appium:fullReset` |

@@ -179,7 +179,11 @@ async function prepareWebSockets(
     }, 100);
   };
   cache.set(commonPathname, streamDoneCallback);
-  eventsServer.on('connection', async (wsUpstream: WebSocket) => {
+  eventsServer.on('connection', (wsUpstream: WebSocket) => {
+    // Server errors do not include errors emitted by individual connections.
+    wsUpstream.on('error', (e) => {
+      log.info(`The ${eventsPathname} web socket connection has notified about an error: ${e.message}`);
+    });
     signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));
   });
   eventsServer.on('error', (e) => {

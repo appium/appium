@@ -366,8 +366,6 @@ removed.
   now included for introspection/validation purposes
 * `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
   compile time, catching mismatched required/optional execute method parameters in driver code
-* `appium driver|plugin uninstall|update|doctor|run` now accept the npm package name of an installed
-  extension (e.g. `appium-uiautomator2-driver`) in addition to its short name
 * The [Universal XML plugin](../reference/api/plugins.md) provides the `universalXml: setEnabled` and
   `universalXml: isEnabled` execute methods to toggle the translation during a session, e.g. to
   retrieve the original page source

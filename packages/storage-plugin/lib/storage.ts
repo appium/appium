@@ -48,9 +48,17 @@ export class Storage {
 
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
     const {name} = requireValidItemOptions(opts);
+    const isStream = typeof (source as any).pipe === 'function';
+    const lockKey = name.toLowerCase();
+    // WebSocket messages cannot wait for the lock: frames and close events would be lost.
+    // Reject contention synchronously so the client can retry with a fresh connection.
+    if (!isStream && ADDITION_LOCK.isBusy(lockKey)) {
+      (source as WebSocket).close(net.WebSocketCloseCode.TRY_AGAIN_LATER);
+      throw new StorageArgumentError(`An upload of '${name}' is already in progress. Retry after it completes.`);
+    }
     // toLowerCase is needed for case-insensitive server filesystems
-    await ADDITION_LOCK.acquire(name.toLowerCase(), async () => {
-      if (typeof (source as any).pipe === 'function') {
+    await ADDITION_LOCK.acquire(lockKey, async () => {
+      if (isStream) {
         await this._addFromStream(opts, source as Stream);
       } else {
         await this._addFromWebSocket(opts, source as WebSocket);
@@ -245,6 +253,11 @@ export function validateStorageItemName(name: string): void {
   }
   if (name.startsWith('.')) {
     throw new StorageArgumentError(`The provided file name '${name}' must not start with a dot`);
+  }
+  if (name.toLowerCase().endsWith(TMP_EXT)) {
+    throw new StorageArgumentError(
+      `The provided file name '${name}' must not end with the reserved '${TMP_EXT}' suffix`,
+    );
   }
 
   const sanitizedName = fs.sanitizeName(name, {

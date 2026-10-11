@@ -367,6 +367,7 @@ describe('ExtensionCommand', function () {
       it('should fall back to the oldest major if only it is compatible', async function () {
         stubRegistry({'1.0.0': COMPATIBLE, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
         assert.strictEqual(await findCompatible(), '1.0.0');
+        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`]);
       });
 
       it('should fail fast if even the oldest version requires a newer server', async function () {

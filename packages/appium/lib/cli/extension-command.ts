@@ -369,7 +369,14 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       );
     }
 
-    await this._checkInstallCompatibility(installViaNpmOpts);
+    if (installType === INSTALL_TYPE_NPM) {
+      const compatibleVersion = await this._findCompatibleExtVersion(installViaNpmOpts);
+      if (compatibleVersion && !installViaNpmOpts.pkgVer) {
+        installViaNpmOpts.pkgVer = compatibleVersion;
+        // Append the found version so that it's shown in the following log messages
+        installViaNpmOpts.installSpec = `${installSpec}@${compatibleVersion}`;
+      }
+    }
 
     const receipt = await this.installViaNpm(installViaNpmOpts);
 
@@ -1119,28 +1126,114 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
   }
 
   /**
-   * Checks whether the given extension is compatible with the currently installed server
+   * Finds the latest extension version compatible with the currently installed server.
+   * If a specific version is requested, only that one is checked.
+   *
+   * @returns the latest compatible version, or `undefined` if the check does not apply
+   * @throws {Error} if no version is compatible
    */
-  private async _checkInstallCompatibility({
+  private async _findCompatibleExtVersion({
     installSpec,
     pkgName,
     pkgVer,
-    installType,
-  }: InstallViaNpmArgs): Promise<void> {
-    if (INSTALL_TYPE_NPM !== installType) {
-      return;
+  }: InstallViaNpmArgs): Promise<string | undefined> {
+    const serverVersion = npmPackage.version;
+    const isGivenExtCompatible = await this._checkGivenExtVersionCompatibility(
+      serverVersion,
+      installSpec,
+      pkgName,
+      pkgVer,
+    );
+
+    if (isGivenExtCompatible) {
+      return undefined;
     }
 
-    await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
-      const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(pkgName, pkgVer);
-      if (serverVersion && extVersionRequirement && !semver.satisfies(serverVersion, extVersionRequirement)) {
-        throw this._createFatalError(
-          `'${installSpec}' cannot be installed because the server version it requires (${extVersionRequirement}) ` +
-            `does not meet the currently installed one (${serverVersion}). Please install ` +
-            `a compatible server version first.`,
-        );
+    return await this._findLatestCompatibleExtVersion(serverVersion, installSpec, pkgName);
+  }
+
+  /**
+   * Checks whether the given extension version (or the latest, if not specified) is compatible
+   * with the currently installed server version.
+   *
+   * @returns whether the extension version is compatible with the server
+   * @throws {Error} if the specified version is incompatible, or if the latest version declares an outdated server range
+   */
+  private async _checkGivenExtVersionCompatibility(
+    serverVersion: string,
+    installSpec: string,
+    pkgName: string,
+    pkgVer?: string,
+  ): Promise<boolean> {
+    return await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
+      const extServerVersion = await getRemoteExtensionVersionReq(pkgName, pkgVer);
+      const isExtCompatible = areVersionsCompatible(serverVersion, extServerVersion);
+      if (!isExtCompatible) {
+        if (pkgVer || (extServerVersion && semver.gtr(serverVersion, extServerVersion))) {
+          throw this._createFatalError(
+            `'${installSpec}' cannot be installed because the server version it requires (${extServerVersion}) ` +
+              `does not meet the currently installed one (${serverVersion}). Please install ` +
+              `a compatible server version first.`,
+          );
+        }
+        const latestVerIncompatibleMsg =
+          `The latest version of '${pkgName}' cannot be installed because the server version it requires ` +
+          `(${extServerVersion}) does not meet the currently installed one (${serverVersion}). ` +
+          `Will look for an older, compatible version of '${pkgName}'.`;
+        this.log.warn(console.styleText('yellow', latestVerIncompatibleMsg));
       }
+      return isExtCompatible;
     });
+  }
+
+  /**
+   * Checks the latest stable version of each extension major for server compatibility
+   *
+   * @returns the latest compatible extension version
+   * @throws {Error} if no extension version is compatible
+   */
+  private async _findLatestCompatibleExtVersion(
+    serverVersion: string,
+    installSpec: string,
+    pkgName: string,
+  ): Promise<string> {
+    const throwIncompatible = () => {
+      throw this._createFatalError(
+        `'${installSpec}' cannot be installed because none of its versions are compatible with the currently ` +
+          `installed server version (${serverVersion}). Please install a compatible server version first.`,
+      );
+    };
+
+    const latestCompatibleVersion = await spinWith(
+      this.isJsonOutput,
+      `Looking for latest compatible version of '${pkgName}'`,
+      async () => {
+        const versions = await getRemoteExtensionLatestStableMajors(pkgName);
+        // At most one version (= latest), which has already been checked
+        if (versions.length < 2) {
+          return throwIncompatible();
+        }
+        // Check the oldest version first - if it requires a newer server, no version can match
+        const oldestReq = await getRemoteExtensionVersionReq(pkgName, versions[versions.length - 1]);
+        if (oldestReq && semver.ltr(serverVersion, oldestReq)) {
+          return throwIncompatible();
+        }
+        // Newest first; skip latest (already checked) and oldest (requirement in `oldestReq`)
+        for (const version of versions.slice(1, -1)) {
+          if (areVersionsCompatible(serverVersion, await getRemoteExtensionVersionReq(pkgName, version))) {
+            return version;
+          }
+        }
+        if (areVersionsCompatible(serverVersion, oldestReq)) {
+          return versions[versions.length - 1];
+        }
+        return throwIncompatible();
+      },
+    );
+
+    this.log.info(`Found version ${latestCompatibleVersion} as the latest compatible version of '${pkgName}'`);
+
+    return latestCompatibleVersion;
   }
 
   /**
@@ -1217,12 +1310,34 @@ function receiptToManifest<ExtType extends ExtensionType>(receipt: ExtInstallRec
 }
 
 /**
- * Fetches the remote extension version requirements
+ * Fetches the latest published non-prerelease version of each extension major, newest first.
+ *
+ * Assumes extensions only raise their server range in a major release and never widen it.
+ *
+ * @param pkgName Extension name
+ */
+async function getRemoteExtensionLatestStableMajors(pkgName: string): Promise<string[]> {
+  const info = (await npm.getPackageInfo(pkgName, ['versions'])) as unknown;
+  const versions = Array.isArray(info) ? (info as string[]) : typeof info === 'string' ? [info] : [];
+  const stableVersionsDesc = versions.filter((v) => semver.valid(v) && !semver.prerelease(v)).sort(semver.rcompare);
+  const latestPerMajor = new Map<number, string>();
+  for (const v of stableVersionsDesc) {
+    const major = semver.major(v);
+    if (!latestPerMajor.has(major)) {
+      latestPerMajor.set(major, v);
+    }
+  }
+  return [...latestPerMajor.values()];
+}
+
+/**
+ * Fetches the remote extension Appium server version requirements
  *
  * @param pkgName Extension name
  * @param [pkgVer] Extension version (if not provided then the latest is assumed)
+ * @returns supported Appium server semver range, or null if the extension does not declare one
  */
-async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): Promise<[string, string | null]> {
+async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): Promise<string | null> {
   const allDeps = await npm.getPackageInfo(`${pkgName}${pkgVer ? `@${pkgVer}` : ``}`, [
     'peerDependencies',
     'dependencies',
@@ -1230,7 +1345,15 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): P
   const requiredVersionPair = Object.values(allDeps)
     .flatMap((dep) => Object.entries(dep ?? {}))
     .find(([name]) => name === 'appium');
-  return [npmPackage.version, requiredVersionPair ? (requiredVersionPair[1] as string | null) : null];
+  return requiredVersionPair ? (requiredVersionPair[1] as string | null) : null;
+}
+
+/**
+ * Checks whether an extension's declared server range is compatible with the given server version.
+ * Extensions with no declared range (null) are considered compatible.
+ */
+function areVersionsCompatible(serverVersion: string, extServerVersion: string | null): boolean {
+  return !extServerVersion || semver.satisfies(serverVersion, extServerVersion);
 }
 
 /**

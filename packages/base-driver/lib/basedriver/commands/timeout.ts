@@ -59,22 +59,20 @@ export async function timeouts<C extends Constraints>(
   }
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
+  const timeoutUpdates = [
+    [script, 'setScriptTimeout'],
+    [pageLoad, 'setPageLoadTimeout'],
+    [implicit, 'setImplicitWait'],
+    [command, 'setNewCommandTimeout'],
+  ] as const;
   // Validate every supplied value before changing this driver or any managed driver.
-  const parsedScript = util.hasValue(script) ? this.parseTimeoutArgument(script) : undefined;
-  const parsedPageLoad = util.hasValue(pageLoad) ? this.parseTimeoutArgument(pageLoad) : undefined;
-  const parsedImplicit = util.hasValue(implicit) ? this.parseTimeoutArgument(implicit) : undefined;
-  const parsedCommand = util.hasValue(command) ? this.parseTimeoutArgument(command) : undefined;
-  if (parsedScript !== undefined) {
-    this.setScriptTimeout(parsedScript);
-  }
-  if (parsedPageLoad !== undefined) {
-    this.setPageLoadTimeout(parsedPageLoad);
-  }
-  if (parsedImplicit !== undefined) {
-    this.setImplicitWait(parsedImplicit);
-  }
-  if (parsedCommand !== undefined) {
-    this.setNewCommandTimeout(parsedCommand);
+  const parsedTimeouts = timeoutUpdates.map(
+    ([value, setter]) => [util.hasValue(value) ? this.parseTimeoutArgument(value) : undefined, setter] as const,
+  );
+  for (const [value, setter] of parsedTimeouts) {
+    if (value !== undefined) {
+      this[setter](value);
+    }
   }
 }
 

@@ -164,6 +164,42 @@ validated like any other unknown parameter.
 
     Remove `sessionId`/`id` from the parameters of any custom BiDi command invocation
 
+### `getStatus` No Longer Waits In the Commands Queue
+
+`GET /status` is now exempt from the driver commands queue by default, so it can be answered while
+a long-running command is still in progress. The new-command idle timer is now only restarted once
+no commands are executing. Drivers can customize the exemption list by overriding the new
+`queueExemptCommands` getter.
+
+!!! info "Actions Needed"
+
+    None, unless your driver relied on `getStatus` being serialized with other commands
+
+### Stricter Capability Validation
+
+* An empty `firstMatch` array in the new session request is no longer silently replaced with a
+  single empty entry; it is rejected with `InvalidArgumentError`, as required by the W3C standard
+* Setting both `appium:noReset` and `appium:fullReset` to `true` now fails with `SessionNotCreatedError`
+  instead of a generic error, and no longer leaves partially initialized session state behind
+* `appium:newCommandTimeout` values that are `null`, blank, or otherwise not a finite number are now
+  ignored (the default idle timeout is kept) instead of silently disabling the timeout
+
+!!! info "Actions Needed"
+
+    Send `firstMatch: [{}]` (or omit `firstMatch`) instead of an empty array
+
+### Storage Plugin Routes Respect `--base-path`
+
+The [storage plugin](https://github.com/appium/appium/tree/master/packages/storage-plugin) HTTP
+routes and stream/events WebSocket paths used to be mounted at the server root, ignoring `--base-path`.
+They are now prefixed with the base path, e.g. `/wd/hub/appium/storage/add`. Also, storage file names
+starting with a dot, reserved partial-file names, and concurrent WebSocket uploads of the same file
+are now rejected.
+
+!!! info "Actions Needed"
+
+    If the server uses a non-default `--base-path`, update storage plugin clients to include it in the URLs
+
 ## Endpoint Changes
 
 The following endpoints have been removed:
@@ -217,6 +253,29 @@ been removed.
 !!! info "Actions Needed"
 
     Replace `import BaseDriver from '@appium/base-driver'` with `import {BaseDriver} from '@appium/base-driver'`
+
+### HTTP Server Extracted Into `@appium/http-server`
+
+The HTTP/Express server code was moved from `@appium/base-driver` into the new
+`@appium/http-server` package. `@appium/base-driver` no longer exports `server`,
+`normalizeBasePath`, `configureServer`, `ServerOpts`, `ConfigureServerOpts`, `ConfigureHttpOpts`,
+or `StartServerOpts`, and no longer depends on `express` and related middleware packages.
+`appium/driver.js` stopped re-exporting these symbols as well.
+
+!!! info "Actions Needed"
+
+    Import the server helpers from `@appium/http-server` instead
+
+### Driver-Specific Capabilities Removed From Base Constraints
+
+The `appium:locale`, `appium:language`, `appium:autoWebview`, `appium:orientation`, and
+`appium:udid` capabilities are no longer part of the standard capability constraints, since they
+are not generic enough. The deprecated `appium:autoLaunch` capability has been removed as well.
+The base driver no longer validates them.
+
+!!! info "Actions Needed"
+
+    Drivers that rely on these capabilities must declare them in their own `desiredCapConstraints`
 
 ### `@appium/base-plugin` Default Export and Legacy Logger Removed
 
@@ -306,6 +365,11 @@ removed.
   now included for introspection/validation purposes
 * `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
   compile time, catching mismatched required/optional execute method parameters in driver code
+* `appium driver|plugin uninstall|update|doctor|run` now accept the npm package name of an installed
+  extension (e.g. `appium-uiautomator2-driver`) in addition to its short name
+* The [Universal XML plugin](../reference/api/plugins.md) provides the `universalXml: setEnabled` and
+  `universalXml: isEnabled` execute methods to toggle the translation during a session, e.g. to
+  retrieve the original page source
 * Extension manifests and `extensions.yaml` are now validated with `ajv`/JSON Schema; a corrupted
   `extensions.yaml` now resets to an empty manifest with a warning instead of crashing later with a
   confusing error

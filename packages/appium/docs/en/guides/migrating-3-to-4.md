@@ -181,8 +181,9 @@ no commands are executing. Drivers can customize the exemption list by overridin
   single empty entry; it is rejected with `InvalidArgumentError`, as required by the W3C standard
 * Setting both `appium:noReset` and `appium:fullReset` to `true` now fails with `SessionNotCreatedError`
   instead of a generic error, and no longer leaves partially initialized session state behind
-* `appium:newCommandTimeout` values that are `null`, blank, or otherwise not a finite number are now
-  ignored (the default idle timeout is kept) instead of silently disabling the timeout
+* `appium:newCommandTimeout` values that are `null`, blank strings, or non-finite numeric values are now
+  ignored (the default idle timeout is kept) instead of silently disabling the timeout. Other invalid
+  types, such as nonnumeric strings, still fail capability validation
 
 !!! info "Actions Needed"
 

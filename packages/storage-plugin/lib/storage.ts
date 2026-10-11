@@ -246,6 +246,11 @@ export function validateStorageItemName(name: string): void {
   if (name.startsWith('.')) {
     throw new StorageArgumentError(`The provided file name '${name}' must not start with a dot`);
   }
+  if (name.toLowerCase().endsWith(TMP_EXT)) {
+    throw new StorageArgumentError(
+      `The provided file name '${name}' must not end with the reserved '${TMP_EXT}' suffix`,
+    );
+  }
 
   const sanitizedName = fs.sanitizeName(name, {
     replacement: '_',

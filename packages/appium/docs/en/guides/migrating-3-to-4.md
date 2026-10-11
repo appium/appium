@@ -374,3 +374,5 @@ removed.
   confusing error
 * `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
   preventing concurrent processes from silently clobbering each other's changes
+* The `install` CLI command now attempts to search for and install the newest compatible extension
+  version, if the latest version has an incompatible Appium server requirement

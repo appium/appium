@@ -75,6 +75,48 @@ describe('fs', function () {
       assert.strictEqual(await fs.exists(dstPath), false);
     });
 
+    for (const isDirectory of [false, true]) {
+      for (const clobber of [false, true]) {
+        it(
+          `should change only name casing on Windows: directory=${isDirectory}, clobber=${clobber}`,
+          {
+            skip: !isWindows(),
+          },
+          async function () {
+            const source = path.join(srcRoot!, 'app');
+            const destination = path.join(srcRoot!, 'App');
+            if (isDirectory) {
+              await fs.mkdir(source);
+              await fs.writeFile(path.join(source, 'payload'), 'keep');
+            } else {
+              await fs.writeFile(source, 'keep');
+            }
+
+            await fs.mv(source, destination, {clobber});
+
+            assert.deepEqual(await fs.readdir(srcRoot!), ['App']);
+            assert.equal(
+              await fs.readFile(isDirectory ? path.join(destination, 'payload') : destination, 'utf8'),
+              'keep',
+            );
+          },
+        );
+      }
+    }
+
+    it('should preserve a Windows directory junction pointing to the source', {skip: !isWindows()}, async function () {
+      const source = path.join(srcRoot!, 'source');
+      const alias = path.join(srcRoot!, 'alias');
+      await fs.mkdir(source);
+      await fs.writeFile(path.join(source, 'payload'), 'keep');
+      await fs.symlink(source, alias, 'junction');
+
+      await fs.mv(source, alias);
+
+      assert.equal(await fs.readFile(path.join(source, 'payload'), 'utf8'), 'keep');
+      assert.equal((await fs.lstat(alias)).isSymbolicLink(), true);
+    });
+
     it('should not delete an empty directory when the destination is a file', async function () {
       const srcPath = path.join(srcRoot!, 'empty');
       await fs.mkdir(srcPath);

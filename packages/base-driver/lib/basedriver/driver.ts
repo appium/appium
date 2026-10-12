@@ -132,31 +132,21 @@ export class BaseDriver<
       return await runWithCommandTimeout(
         this,
         async () => {
-          let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
-          let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
+          const shutdown = Promise.withResolvers<void>();
           const onUnexpectedShutdown = (e: Error) => {
             wasSessionShutdownUnexpectedly = true;
-            unexpectedShutdownRejecter?.(e);
+            shutdown.reject(e);
           };
           try {
+            this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
             return await Promise.race([
-              command.call(this, ...args),
-              // This promise is needed to monitor if the session has been
-              // shut down unexpectedly while the command was running
-              new Promise((resolve, reject) => {
-                unexpectedShutdownResolver = resolve;
-                unexpectedShutdownRejecter = reject;
-                this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-              }),
+              shutdown.promise,
+              // Observe both promises before the command can emit shutdown or throw synchronously.
+              Promise.resolve().then(() => command.call(this, ...args)),
             ]);
           } finally {
-            if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
-              // This is needed to prevent memory leaks
-              this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-              unexpectedShutdownRejecter = null;
-              // @ts-ignore typescript cannot understand this
-              unexpectedShutdownResolver?.();
-            }
+            this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+            shutdown.resolve();
           }
         },
         {restart: () => cmd !== DELETE_SESSION_COMMAND && !wasSessionShutdownUnexpectedly},

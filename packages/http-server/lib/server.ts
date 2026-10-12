@@ -139,7 +139,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         // once all configurations and updaters have been applied, make sure to set up a catchall
         // handler so that anything unknown 404s. But do this after everything else since we don't
         // want to block extensions' ability to add routes if they want.
-        app.all('/*all', catch404Handler);
+        app.all('/{*all}', catch404Handler);
 
         await startServer({
           httpServer,
@@ -182,6 +182,11 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
+  app.use((_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    next();
+  });
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server

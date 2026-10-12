@@ -265,9 +265,7 @@ for this behavior. Appium does not replace a driver's timer methods to provide c
 
 !!! info "Actions Needed"
 
-    Update the driver's `@appium/base-driver` dependency to an Appium 4 release that includes
-    shared command activity tracking. This also applies to drivers installed separately under
-    `APPIUM_HOME`. Custom `startNewCommandTimeout` implementations must delegate timer creation
+    Custom `startNewCommandTimeout` implementations must delegate timer creation
     to `super.startNewCommandTimeout()` so they respect shared activity. Custom command execution
     must delegate to `super.executeCommand()` or wrap the full command in `runWithCommandTimeout`.
 

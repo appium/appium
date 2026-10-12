@@ -182,6 +182,11 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
+  app.use((_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    next();
+  });
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
-import {routeConfiguringFunction} from '@appium/base-driver';
+import {errors, routeConfiguringFunction, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
 import {createSandbox} from 'sinon';
@@ -54,11 +54,80 @@ describe('server configuration', function () {
     sandbox.restore();
   });
 
+  it('should set no-cache on successful responses and errors from each HTTP layer', async function () {
+    const driver = {sessionExists: () => false, executeCommand: () => ({ready: true})};
+    const _server = await server({
+      routeConfiguringFunction(app, opts) {
+        routeConfiguringFunction(driver as any)(app, opts);
+        app.get('/uncaught-error', () => {
+          throw new Error('HTTP handler failed');
+        });
+      },
+      port,
+    });
+    try {
+      const cases: [string, RequestInit, number][] = [
+        ['/status', {}, 200],
+        ['/unknown', {}, 404],
+        ['/session/missing/title', {}, 404],
+        ['/uncaught-error', {}, 500],
+        ['/session', {method: 'POST', headers: {'content-type': 'application/json'}, body: '{'}, 400],
+      ];
+      for (const [path, init, status] of cases) {
+        const headers = new Headers(init.headers);
+        headers.set('connection', 'close');
+        const res = await fetch(`http://127.0.0.1:${port}${path}`, {...init, headers});
+        assert.strictEqual(res.status, status, path);
+        assert.strictEqual(res.headers.get('cache-control'), 'no-cache', path);
+        await res.json();
+      }
+    } finally {
+      await _server.close();
+    }
+  });
+
+  for (const status of [200, 404]) {
+    it(`should set no-cache on a proxied ${status} response`, async function () {
+      const proxy = new WebDriverProxy();
+      const proxyCommand = sandbox.stub(proxy, 'proxyCommand');
+      const value =
+        status === 200
+          ? 'Page title'
+          : {
+              error: 'no such window',
+              message: 'Window closed',
+              stacktrace: 'downstream stack',
+            };
+      if (status === 200) {
+        proxyCommand.resolves([{statusCode: status, headers: {'cache-control': 'public, max-age=60'}} as any, {value}]);
+      } else {
+        proxyCommand.rejects(new errors.ProxyRequestError('Proxy failed', {value}, status));
+      }
+      const driver = {
+        sessionExists: () => true,
+        proxyActive: () => true,
+        canProxy: () => true,
+        proxyRouteIsAvoided: () => false,
+        executeCommand: (_command: string, req: any, res: any) => proxy.proxyReqRes(req, res),
+      };
+      const _server = await server({routeConfiguringFunction: routeConfiguringFunction(driver as any), port});
+      try {
+        const res = await fetch(`http://127.0.0.1:${port}/session/test/title`, {headers: {connection: 'close'}});
+        assert.strictEqual(res.status, status);
+        assert.strictEqual(res.headers.get('cache-control'), 'no-cache');
+        assert.deepStrictEqual(await res.json(), {value});
+        assert.strictEqual(proxyCommand.calledOnce, true);
+      } finally {
+        await _server.close();
+      }
+    });
+  }
+
   it('should actually use the middleware', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
-    assert.strictEqual(app.use.callCount, 12);
+    assert.strictEqual(app.use.callCount, 13);
     assert.strictEqual(app.all.callCount, 0);
   });
 

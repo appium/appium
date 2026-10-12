@@ -1,6 +1,6 @@
 import type {DriverCaps, W3CDriverCaps} from '../capabilities.js';
 import type {Constraints} from '../constraints.js';
-import type {Timeouts} from '../standard-caps.js';
+import type {Timeouts, TimeoutValue} from '../standard-caps.js';
 import type {Element, StringRecord} from '../util.js';
 
 export interface IBidiCommands {
@@ -36,9 +36,9 @@ export interface ITimeoutCommands {
      * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
      */
     ms?: number | string,
-    script?: number | null,
-    pageLoad?: number | null,
-    implicit?: number | null,
+    script?: TimeoutValue,
+    pageLoad?: TimeoutValue,
+    implicit?: TimeoutValue,
     command?: number,
   ): Promise<void>;
 
@@ -54,21 +54,21 @@ export interface ITimeoutCommands {
    *
    * @param ms - the script timeout in ms, or null to disable the timeout
    */
-  setScriptTimeout(ms: number | null): void;
+  setScriptTimeout(ms: TimeoutValue): void;
 
   /**
    * A helper method (not a command) used to set the page load timeout value
    *
    * @param ms - the page load timeout in ms, or null to disable the timeout
    */
-  setPageLoadTimeout(ms: number | null): void;
+  setPageLoadTimeout(ms: TimeoutValue): void;
 
   /**
    * A helper method (not a command) used to set the implicit wait value
    *
    * @param ms - the implicit wait in ms, or null to disable the timeout
    */
-  setImplicitWait(ms: number | null): void;
+  setImplicitWait(ms: TimeoutValue): void;
 
   /**
    * Periodically retry an async function up until the currently set implicit wait timeout

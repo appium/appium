@@ -76,6 +76,8 @@ export function validateCaps<C extends Constraints>(
     throw new errors.InvalidArgumentError(`must be a JSON object`);
   }
 
+  caps = omitNullCapabilities(caps);
+
   // Remove the 'presence' constraint if we're not checking for it
   constraints = Object.fromEntries(
     Object.entries(constraints ?? {}).map(([key, constraint]) => {
@@ -246,7 +248,12 @@ export function parseCaps<C extends Constraints>(
   }
 
   // Check for non-prefixed, non-standard capabilities and log warnings if they are found
-  const nonPrefixedCaps = findNonPrefixedCaps(caps);
+  const normalizedRequiredCaps = omitNullCapabilities(requiredCaps);
+  const normalizedFirstMatchCaps = allFirstMatchCaps.map(omitNullCapabilities);
+  const nonPrefixedCaps = findNonPrefixedCaps({
+    alwaysMatch: normalizedRequiredCaps,
+    firstMatch: normalizedFirstMatchCaps,
+  });
   if (!util.isEmpty(nonPrefixedCaps)) {
     throw new errors.InvalidArgumentError(
       `All non-standard capabilities should have a vendor prefix. The following capabilities did not have one: ${nonPrefixedCaps.join(', ')}`,
@@ -254,8 +261,8 @@ export function parseCaps<C extends Constraints>(
   }
 
   // Strip out the 'appium:' prefix from all
-  let strippedRequiredCaps = stripAppiumPrefixes(requiredCaps);
-  const strippedAllFirstMatchCaps: Capabilities<C>[] = allFirstMatchCaps.map(stripAppiumPrefixes);
+  let strippedRequiredCaps = stripAppiumPrefixes(normalizedRequiredCaps);
+  const strippedAllFirstMatchCaps: Capabilities<C>[] = normalizedFirstMatchCaps.map(stripAppiumPrefixes);
 
   // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys
   if (shouldValidateCaps) {
@@ -410,4 +417,9 @@ export function promoteAppiumOptions<C extends Constraints>(originalCaps: W3CCap
     result.firstMatch = firstMatch;
   }
   return result;
+}
+
+/** Omit only top-level null values; nested values belong to capability-specific deserializers. */
+function omitNullCapabilities<T extends Record<string, unknown>>(caps: T): T {
+  return util.isPlainObject(caps) ? (pickBy(caps, (value) => value !== null) as T) : caps;
 }

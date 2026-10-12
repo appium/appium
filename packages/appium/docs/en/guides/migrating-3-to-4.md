@@ -210,13 +210,8 @@ are now rejected.
     Concurrent WebSocket uploads to the same case-insensitive file name now close with code `1013`;
     retry with a new connection after the active upload finishes
 
-See [#22959](https://github.com/appium/appium/pull/22959) and
-[#22962](https://github.com/appium/appium/pull/22962) for the file-name and upload-contention fixes.
-
-Pending upload WebSocket routes are also preserved across retries
-([#22948](https://github.com/appium/appium/pull/22948)), and errors on upload event sockets are
-logged instead of potentially terminating the server
-([#22963](https://github.com/appium/appium/pull/22963)).
+Pending upload WebSocket routes are also preserved across retries,
+and errors on upload event sockets are logged instead of potentially terminating the server.
 
 ## Behavior Fixes
 

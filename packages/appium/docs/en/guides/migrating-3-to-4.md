@@ -255,6 +255,20 @@ been removed.
 
     Replace `import BaseDriver from '@appium/base-driver'` with `import {BaseDriver} from '@appium/base-driver'`
 
+### Drivers Must Support Shared Command Activity Tracking
+
+Appium keeps the new-command idle timer suspended until the entire plugin command chain
+finishes, including work after `next()` returns. This requires the `@appium/base-driver`
+implementation with shared command activity tracking and the `runWithCommandTimeout` helper.
+Older implementations that track only their own in-flight commands are no longer supported
+for this behavior. Appium does not replace a driver's timer methods to provide compatibility.
+
+!!! info "Actions Needed"
+
+    Custom `startNewCommandTimeout` implementations must delegate timer creation
+    to `super.startNewCommandTimeout()` so they respect shared activity. Custom command execution
+    must delegate to `super.executeCommand()` or wrap the full command in `runWithCommandTimeout`.
+
 ### HTTP Server Extracted Into `@appium/http-server`
 
 The HTTP/Express server code was moved from `@appium/base-driver` into the new

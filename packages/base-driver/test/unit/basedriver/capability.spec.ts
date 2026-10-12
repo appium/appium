@@ -163,7 +163,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps),
-      {name: 'SessionNotCreatedError', message: /platformName/},
+      {name: 'SessionNotCreatedError', message: /vendor prefix.*platformname/},
     );
   });
 

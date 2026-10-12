@@ -493,15 +493,28 @@ async function sendBidiProxyCommand(
     }
     await sendToProxy(data.toString('utf8'));
     if (proxyClient.readyState !== WebSocket.OPEN) {
-      finishBidiProxyCommands(pendingCommands, id);
+      finishBidiProxyCommands(pendingCommands);
     }
     await response;
   });
 }
 
-/** Release activity guards for one command ID, or every command on a terminated connection. */
+/** Release one activity guard per response, or every guard on a terminated connection. */
 function finishBidiProxyCommands(pendingCommands: PendingProxyCommands, id?: number): void {
-  for (const key of id === undefined ? pendingCommands.keys() : [id]) {
+  if (id !== undefined) {
+    const pending = pendingCommands.get(id);
+    const finish = pending?.values().next().value;
+    if (pending && finish) {
+      // BiDi IDs are not necessarily unique. One response completes only one command.
+      pending.delete(finish);
+      if (pending.size === 0) {
+        pendingCommands.delete(id);
+      }
+      finish();
+    }
+    return;
+  }
+  for (const key of pendingCommands.keys()) {
     for (const finish of pendingCommands.get(key) ?? []) {
       finish();
     }

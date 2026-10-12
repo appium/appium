@@ -869,15 +869,21 @@ describe('AppiumDriver', function () {
         assert.strictEqual(await clientClosed, 1011);
       });
 
-      for (const disconnect of [false, true]) {
-        it(`should suspend idle expiry until proxied BiDi commands ${disconnect ? 'disconnect' : 'all finish'}`, async function () {
+      for (const {disconnect, commandIds, responseType} of [
+        {disconnect: false, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: true, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'error'},
+        {disconnect: true, commandIds: [1, 1], responseType: 'success'},
+      ]) {
+        it(`should suspend idle expiry for IDs ${commandIds} until ${disconnect ? 'disconnect' : `all ${responseType} responses arrive`}`, async function () {
           await fakeDriver.clearNewCommandTimeout();
           sandbox.stub(fakeDriver as any, 'stopClock').resolves();
           const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
           try {
             fakeDriver.newCommandTimeoutMs = 1000;
             await fakeDriver.startNewCommandTimeout();
-            for (const id of [1, 2]) {
+            for (const id of commandIds) {
               const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
               client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
               await received;
@@ -894,11 +900,17 @@ describe('AppiumDriver', function () {
               upstreamSocket.close();
               await closed;
             } else {
-              for (const id of [2, 1]) {
+              for (const [responseIndex, id] of commandIds.toReversed().entries()) {
                 const received = new Promise((resolve) => client.once('message', resolve));
-                upstreamSocket.send(JSON.stringify({id, type: 'success', result: {contexts: []}}));
+                upstreamSocket.send(
+                  JSON.stringify(
+                    responseType === 'success'
+                      ? {id, type: 'success', result: {contexts: []}}
+                      : {id, type: 'error', error: 'unknown error', message: 'Test command failed'},
+                  ),
+                );
                 await received;
-                if (id === 2) {
+                if (responseIndex === 0) {
                   await clock.tickAsync(2000);
                   assert.notEqual(fakeDriver.sessionId, null);
                 }

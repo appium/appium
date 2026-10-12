@@ -7,6 +7,7 @@ import type {
   IpcMessage,
   MethodMap,
 } from '@appium/types';
+import {runWithCommandTimeout} from 'appium/driver.js';
 import {BasePlugin} from 'appium/plugin.js';
 import {sleep} from 'asyncbox';
 import type {Application, Request, Response} from 'express';
@@ -193,6 +194,26 @@ export class FakePlugin extends BasePlugin {
     this.log.info('After findElement is run');
     originalRes.fake = true;
     return originalRes;
+  }
+
+  /**
+   * Example for bounded work started outside Appium's plugin command chain, such as an IPC callback.
+   * Ordinary command handlers, including work after await next(), are already protected by Appium.
+   * The helper suspends idle expiry through retrieval and the session-data update, then resumes it
+   * after success or failure. It requires the driver's standard command-activity-aware timer and
+   * does not impose a duration limit on the work. Await it; do not wrap a perpetual background loop.
+   *
+   * @example
+   * await plugin.refreshSessionData(driver, async () => {
+   *   return await loadSessionData(); // Application-specific asynchronous work
+   * });
+   *
+   * @see ../../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
+   */
+  async refreshSessionData(driver: DriverLike, fetchData: () => Promise<unknown>): Promise<void> {
+    await runWithCommandTimeout(driver, async () => {
+      driver.fakeSessionData = await fetchData();
+    });
   }
 
   async getFakeSessionData(_next: () => Promise<unknown>, driver: DriverLike): Promise<unknown> {

@@ -868,6 +868,64 @@ describe('AppiumDriver', function () {
         upstreamSocket.terminate();
         assert.strictEqual(await clientClosed, 1011);
       });
+
+      for (const {disconnect, commandIds, responseType} of [
+        {disconnect: false, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: true, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'error'},
+        {disconnect: true, commandIds: [1, 1], responseType: 'success'},
+      ]) {
+        it(`should suspend idle expiry for IDs ${commandIds} until ${disconnect ? 'disconnect' : `all ${responseType} responses arrive`}`, async function () {
+          await fakeDriver.clearNewCommandTimeout();
+          sandbox.stub(fakeDriver as any, 'stopClock').resolves();
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          try {
+            fakeDriver.newCommandTimeoutMs = 1000;
+            await fakeDriver.startNewCommandTimeout();
+            for (const id of commandIds) {
+              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
+              await received;
+            }
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            const eventReceived = new Promise((resolve) => client.once('message', resolve));
+            upstreamSocket.send(JSON.stringify({type: 'event', method: 'log.entryAdded', params: {}}));
+            await eventReceived;
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            if (disconnect) {
+              const closed = new Promise((resolve) => client.once('close', resolve));
+              upstreamSocket.close();
+              await closed;
+            } else {
+              for (const [responseIndex, id] of commandIds.toReversed().entries()) {
+                const received = new Promise((resolve) => client.once('message', resolve));
+                upstreamSocket.send(
+                  JSON.stringify(
+                    responseType === 'success'
+                      ? {id, type: 'success', result: {contexts: []}}
+                      : {id, type: 'error', error: 'unknown error', message: 'Test command failed'},
+                  ),
+                );
+                await received;
+                if (responseIndex === 0) {
+                  await clock.tickAsync(2000);
+                  assert.notEqual(fakeDriver.sessionId, null);
+                }
+              }
+            }
+            await clock.tickAsync(999);
+            assert.notEqual(fakeDriver.sessionId, null);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+            clock.restore();
+          }
+        });
+      }
     });
     describe('createPluginInstances', function () {
       class NoArgsPlugin extends BasePlugin {}

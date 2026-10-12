@@ -263,6 +263,12 @@ implementation with shared command activity tracking and the `runWithCommandTime
 Older implementations that track only their own in-flight commands are no longer supported
 for this behavior. Appium does not replace a driver's timer methods to provide compatibility.
 
+!!! info "Actions Needed"
+
+    Custom `startNewCommandTimeout` implementations must delegate timer creation
+    to `super.startNewCommandTimeout()` so they respect shared activity. Custom command execution
+    must delegate to `super.executeCommand()` or wrap the full command in `runWithCommandTimeout`.
+
 ### HTTP Server Extracted Into `@appium/http-server`
 
 The HTTP/Express server code was moved from `@appium/base-driver` into the new

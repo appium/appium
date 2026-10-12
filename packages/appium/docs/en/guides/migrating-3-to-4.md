@@ -9,6 +9,8 @@ title: Migrating to Appium 4
 
 This document is a guide for those who are using Appium 3 and would like to upgrade to Appium 4.
 It contains a list of breaking changes, as well as suggestions for handling them.
+The [behavior fixes](#behavior-fixes) section also highlights corrections that can affect existing
+tests, client error handling, and server integrations.
 
 Appium 4 focuses on modernizing the codebase (Node.js requirements, ESM-only packages, dropping
 long-deprecated protocol support and APIs) rather than introducing a large number of new
@@ -149,10 +151,14 @@ already-executed timed-out command.
   existing `implicit` and Appium-specific `command` values
 * Driver-level `timeouts()`/`ISessionHandler` type declarations narrow `implicit` to a `number`,
   matching `script`/`pageLoad` (the wire endpoint still coerces numeric strings at runtime)
+* All supplied timeout values are validated before any are applied. A request such as
+  `{script: 456, pageLoad: -1}` now fails without changing the script timeout, including on managed
+  drivers ([#22960](https://github.com/appium/appium/pull/22960))
 
 !!! info "Actions Needed"
 
     Update any code that sends the `type`/`ms` timeout parameters or a `string` value for `implicit`
+    and do not rely on rejected timeout requests applying some of their values
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
@@ -200,6 +206,104 @@ are now rejected.
 !!! info "Actions Needed"
 
     If the server uses a non-default `--base-path`, update storage plugin clients to include it in the URLs
+    and avoid file names starting with a dot or ending in `.filepart` (case-insensitive).
+    Concurrent WebSocket uploads to the same case-insensitive file name now close with code `1013`;
+    retry with a new connection after the active upload finishes
+
+See [#22959](https://github.com/appium/appium/pull/22959) and
+[#22962](https://github.com/appium/appium/pull/22962) for the file-name and upload-contention fixes.
+
+Pending upload WebSocket routes are also preserved across retries
+([#22948](https://github.com/appium/appium/pull/22948)), and errors on upload event sockets are
+logged instead of potentially terminating the server
+([#22963](https://github.com/appium/appium/pull/22963)).
+
+## Behavior Fixes
+
+These fixes are relevant when upgrading from Appium 3, even though they do not remove APIs.
+Most require no changes unless your tests or integrations depend on the previous behavior.
+
+### HTTP Responses and WebDriver Errors
+
+* WebDriver HTTP responses now include `Cache-Control: no-cache`, including successful responses,
+  errors, and responses reconstructed by `WebDriverProxy`
+  ([#22971](https://github.com/appium/appium/pull/22971)). Caches must revalidate these responses
+  before reusing them; this header does not mean `no-store`.
+* When no installed driver matches the requested platform/automation combination, or the matching
+  driver cannot be loaded or does not export its class, New Session now returns `session not created`
+  instead of `unknown error`. The HTTP status remains `500`, and the diagnostic message is preserved.
+  Validation of missing `platformName`/`appium:automationName` is unchanged
+  ([#22970](https://github.com/appium/appium/pull/22970)).
+* A downstream `detached shadow root` error is now preserved as HTTP `404` with that WebDriver
+  error code instead of being converted to `unknown error` with HTTP `500`
+  ([#22968](https://github.com/appium/appium/pull/22968)).
+* With an empty base path, an unregistered `GET /` now returns a WebDriver JSON `unknown command`
+  response with HTTP `404` instead of Express's HTML 404 page. Extensions can still register their
+  own root route ([#22969](https://github.com/appium/appium/pull/22969)).
+* Driver commands rejecting with `null` or `undefined` now produce a WebDriver `unknown error`
+  response instead of causing the error handler itself to fail
+  ([#22869](https://github.com/appium/appium/pull/22869)).
+
+!!! info "Actions Needed"
+
+    Update assertions or retry logic that inspect raw error codes, HTTP status codes, response
+    headers, or root-path response bodies. Use `GET /status` for server health checks
+
+### Initial Settings and Session Lifecycle
+
+* Initial settings now come from the selected `firstMatch` candidate, with defaults and
+  `alwaysMatch` settings applied first. Unselected candidates no longer override them, and settings
+  inside `appium:options` are now honored
+  ([#22882](https://github.com/appium/appium/pull/22882)).
+* The new-command idle timeout starts after initial settings and BiDi response setup finish,
+  preventing a session from expiring during initialization
+  ([#22881](https://github.com/appium/appium/pull/22881)). If post-create initialization fails,
+  Appium now attempts to delete the newly created session and removes its registration while
+  preserving the original initialization error
+  ([#22873](https://github.com/appium/appium/pull/22873)).
+* Commands still waiting in the queue when their session ends now reject with `invalid session id`
+  instead of remaining pending indefinitely; their driver methods are not executed
+  ([#22874](https://github.com/appium/appium/pull/22874)).
+* A driver cleanup failure during idle-timeout shutdown is now logged instead of becoming an
+  unhandled rejection that can terminate the server and unrelated sessions
+  ([#22964](https://github.com/appium/appium/pull/22964)).
+
+!!! info "Actions Needed"
+
+    Put initial settings in `alwaysMatch` or the intended `firstMatch` candidate. Handle
+    `invalid session id` for queued requests when a session ends, and make driver cleanup safe
+    to call after a partially completed initialization
+
+### BiDi Subscription Scope and Event Delivery
+
+Subscriptions without `contexts` now receive events carrying a context, and module subscriptions
+such as `events: ["log"]` now match events such as `log.entryAdded`. Overlapping subscriptions
+deliver each event only once ([#22883](https://github.com/appium/appium/pull/22883)).
+
+The base implementation of `session.subscribe` now rejects `userContexts` with `unsupported operation`
+instead of silently creating an unscoped subscription. Malformed `userContexts`, or supplying both
+`contexts` and `userContexts`, produce `invalid argument`. Drivers implementing user-context support
+can override `bidiSubscribe` ([#22877](https://github.com/appium/appium/pull/22877)).
+
+!!! info "Actions Needed"
+
+    Use `contexts` for browsing-context scope, or a driver that implements `userContexts` for
+    user-context scope. Review event-count assertions and workarounds for previously missing events
+
+### App Downloads and IPv6 Connections
+
+Percent-encoded credentials in `appium:app` URLs are now decoded once before Basic authentication,
+and complete HTTP-compressed downloads are no longer rejected because the decompressed file size
+differs from `Content-Length` ([#22887](https://github.com/appium/appium/pull/22887),
+[#22886](https://github.com/appium/appium/pull/22886)). IPv6 literals are now bracketed when constructing
+URLs, including advertised BiDi WebSocket URLs and execute-driver plugin connections
+([#22872](https://github.com/appium/appium/pull/22872),
+[#22912](https://github.com/appium/appium/pull/22912),
+[#22914](https://github.com/appium/appium/pull/22914)).
+
+!!! info "Actions Needed"
+
+    Remove any workarounds for literal percent escapes in download credentials or malformed IPv6 URLs
 
 ## Endpoint Changes
 
@@ -360,6 +464,27 @@ The following `@appium/support` exports have been removed: `process` (`getProces
 
     None for typical drivers/plugins, which don't use these low-level helpers directly. If you do,
     switch to the suggested replacement or a native Node.js API
+
+### Filesystem and IPC Fixes
+
+* `@appium/support`'s `fs.mv()` now preserves symlinks inside moved directories and moves source
+  symlinks themselves without moving their targets' contents. Dangling source links are supported,
+  and Windows case-only renames update the entry's spelling
+  ([#22880](https://github.com/appium/appium/pull/22880),
+  [#22954](https://github.com/appium/appium/pull/22954),
+  [#22958](https://github.com/appium/appium/pull/22958)).
+* `fs.walkDir()` now rejects on all walker errors, such as `EACCES` and `ELOOP`, instead of leaving
+  the returned promise pending for errors other than `ENOENT`
+  ([#22956](https://github.com/appium/appium/pull/22956)).
+* Both `ipc.unsubscribe(topic, subscriber)` and `subscription.unsubscribe()` now finish waiting
+  async iterators and notify observers once. An observer that throws still propagates its error
+  to the caller, but no longer prevents waiting iterators from finishing
+  ([#22955](https://github.com/appium/appium/pull/22955)).
+
+!!! info "Actions Needed"
+
+    If you intend to move a symlink's target, resolve it explicitly before calling `fs.mv()`.
+    Handle directory-walk rejections and allow IPC consumers to finish when unsubscribed
 
 ### Legacy Test Pages Removed From `@appium/base-driver`
 

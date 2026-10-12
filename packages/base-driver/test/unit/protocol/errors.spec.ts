@@ -58,6 +58,11 @@ const errorsList: ErrorListItem[] = [
     error: 'no such shadow root',
   },
   {
+    errorName: 'DetachedShadowRootError',
+    errorMsg: 'The referenced shadow root is no longer attached to the DOM.',
+    error: 'detached shadow root',
+  },
+  {
     errorName: 'UnknownCommandError',
     errorMsg:
       'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
@@ -232,6 +237,7 @@ describe('w3c Status Codes', function () {
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
       ['NoSuchShadowRootError', 404],
+      ['DetachedShadowRootError', 404],
       ['NoAlertOpenError', 404],
       ['NoSuchWindowError', 404],
       ['StaleElementReferenceError', 404],
@@ -305,6 +311,17 @@ describe('.getResponseForW3CError', function () {
 
 describe('.getActualError', function () {
   describe('W3C', function () {
+    it('should preserve a downstream detached shadow root response', function () {
+      const value = {
+        error: 'detached shadow root',
+        message: 'Shadow root has been detached',
+        stacktrace: 'downstream stacktrace',
+      };
+      const actualError = new errors.ProxyRequestError('Proxy request failed', {value}, 404).getActualError();
+      assert.ok(isErrorType(actualError, errors.DetachedShadowRootError));
+      assert.deepStrictEqual(getResponseForW3CError(actualError), [404, {value}]);
+    });
+
     it('should map a 404 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',

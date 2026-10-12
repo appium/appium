@@ -120,8 +120,8 @@ export class NoSuchElementError extends ProtocolError {
 
 /**
  * W3C WebDriver "no such shadow root" error. Issued when a command
- * targets an element's shadow root that does not exist (or has been
- * detached). Previously this was mis-classified as UnknownError — see
+ * targets an element that does not have a shadow root.
+ * Previously this was mis-classified as UnknownError — see
  * https://github.com/appium/appium/issues/22209.
  */
 export class NoSuchShadowRootError extends ProtocolError {
@@ -137,6 +137,28 @@ export class NoSuchShadowRootError extends ProtocolError {
   static error() {
     return 'no such shadow root';
   }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+}
+
+/** A command references a shadow root that is no longer attached to the DOM. */
+export class DetachedShadowRootError extends ProtocolError {
+  constructor(message: string = '', cause?: Error) {
+    super(
+      message || 'The referenced shadow root is no longer attached to the DOM.',
+      DetachedShadowRootError.w3cStatus(),
+      DetachedShadowRootError.error(),
+      cause,
+    );
+  }
+
+  /** Returns the WebDriver JSON error code. */
+  static error() {
+    return 'detached shadow root';
+  }
+
+  /** Returns the WebDriver HTTP status code. */
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
@@ -821,6 +843,7 @@ export const errors = {
   InvalidContextError,
   NoSuchFrameError,
   NoSuchShadowRootError,
+  DetachedShadowRootError,
   UnableToCaptureScreen,
   UnknownMethodError,
   UnsupportedOperationError,

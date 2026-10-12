@@ -76,7 +76,7 @@ export function validateCaps<C extends Constraints>(
     throw new errors.InvalidArgumentError(`must be a JSON object`);
   }
 
-  caps = omitNullCapabilities(caps);
+  const normalizedCaps = omitNullCapabilities(caps);
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = Object.fromEntries(
@@ -98,7 +98,7 @@ export function validateCaps<C extends Constraints>(
   ) as C;
 
   const validationErrors = validator.validate(
-    pickBy(caps, (value) => util.hasValue(value)),
+    pickBy(normalizedCaps, (value) => util.hasValue(value)),
     constraints,
   );
 
@@ -113,7 +113,7 @@ export function validateCaps<C extends Constraints>(
   }
 
   // Return caps
-  return caps;
+  return normalizedCaps;
 }
 
 /**

@@ -155,6 +155,47 @@ describe('server configuration', function () {
     }
   });
 
+  for (const basePath of ['', '/wd/hub']) {
+    it(`should return W3C errors for unknown paths with basePath '${basePath}'`, async function () {
+      const _server = await server({
+        routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+        port,
+        basePath,
+      });
+      try {
+        for (const route of ['/', '/unknown', `${basePath}/unknown/nested`]) {
+          const res = await fetch(`http://127.0.0.1:${port}${route}`);
+          assert.strictEqual(res.status, 404, route);
+          assert.match(res.headers.get('content-type') ?? '', /application\/json/);
+          assert.strictEqual(((await res.json()) as any).value.error, 'unknown command');
+        }
+        const status = await fetch(`http://127.0.0.1:${port}${basePath}/status`);
+        assert.strictEqual(status.status, 200);
+      } finally {
+        await _server.close();
+      }
+    });
+  }
+
+  it('should preserve a root route registered by a server updater', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.get('/', (_req, res) => res.send('extension root'));
+        },
+      ],
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/`);
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(await res.text(), 'extension root');
+    } finally {
+      await _server.close();
+    }
+  });
+
   it('should reject if error thrown in configureRoutes parameter', async function () {
     const configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');

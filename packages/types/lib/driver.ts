@@ -62,7 +62,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   allowInsecure: string[];
   denyInsecure: string[];
   newCommandTimeoutMs: number;
-  implicitWaitMs: number;
+  implicitWaitMs: number | null;
   locatorStrategies: string[];
   webLocatorStrategies: string[];
   eventEmitter: EventEmitter;

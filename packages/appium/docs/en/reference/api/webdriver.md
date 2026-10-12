@@ -94,8 +94,8 @@ timeout for supported drivers and contexts.
 |Name|Description|Type|
 |--|--|--|
 |`script`|Script timeout (`null` disables the timeout)|number or null|
-|`pageLoad`|Page load timeout|number|
-|`implicit`|Implicit wait timeout|number|
+|`pageLoad`|Page load timeout (`null` disables the timeout)|number or null|
+|`implicit`|Implicit wait timeout (`null` disables the timeout)|number or null|
 |`command`|Appium command timeout|number|
 
 ### timeouts
@@ -116,9 +116,14 @@ for supported drivers and contexts.
 |Name|Description|Type|
 |--|--|--|
 |`script?`|Script timeout (in milliseconds; `null` disables the timeout)|number or null|
-|`implicit?`|Implicit wait timeout (in milliseconds)|number|
-|`pageLoad?`|Page load timeout (in milliseconds)|number|
+|`implicit?`|Implicit wait timeout (in milliseconds; `null` disables the timeout)|number or null|
+|`pageLoad?`|Page load timeout (in milliseconds; `null` disables the timeout)|number or null|
 |`command?`|Appium command timeout (in milliseconds)|number|
+
+The standard `script`, `pageLoad`, and `implicit` values must be `null` or integers from
+0 to 9007199254740991 inclusive. Omitted fields retain their current values. All supplied
+values are validated before any timeout is changed. The deprecated `type`/`ms` format
+and the Appium-specific `command` timeout retain their legacy parsing behavior.
 
 #### Response
 

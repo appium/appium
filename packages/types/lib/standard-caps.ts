@@ -15,7 +15,7 @@ export interface ProxyObject {
   socksUsername?: string;
   socksPassword?: string;
 }
-export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number>;
+export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number | null>;
 
 /**
  * W3C standard capabilities

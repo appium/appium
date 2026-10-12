@@ -15,7 +15,9 @@ export interface ProxyObject {
   socksUsername?: string;
   socksPassword?: string;
 }
-export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number | null>;
+/** A standard WebDriver timeout in milliseconds, or null to disable the timeout. */
+export type TimeoutValue = number | null;
+export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', TimeoutValue>;
 
 /**
  * W3C standard capabilities

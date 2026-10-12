@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {afterEach, before, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
@@ -31,10 +31,6 @@ describe('server configuration', function () {
   let port: number;
   let sandbox: sinon.SinonSandbox;
 
-  before(async function () {
-    port = await getTestPort();
-  });
-
   function fakeApp() {
     const app = {
       use: sandbox.spy(),
@@ -48,7 +44,9 @@ describe('server configuration', function () {
     return app;
   }
 
-  beforeEach(function () {
+  beforeEach(async function () {
+    // Do not reuse a fetch connection from a server closed by the previous test.
+    port = await getTestPort();
     sandbox = createSandbox();
   });
 
@@ -115,6 +113,7 @@ describe('server configuration', function () {
     try {
       const res = await fetch(`http://127.0.0.1:${port}/status`);
       assert.strictEqual(res.headers.get('x-pre-server'), 'true');
+      await res.json();
     } finally {
       await _server.close();
     }
@@ -171,6 +170,7 @@ describe('server configuration', function () {
         }
         const status = await fetch(`http://127.0.0.1:${port}${basePath}/status`);
         assert.strictEqual(status.status, 200);
+        await status.json();
       } finally {
         await _server.close();
       }

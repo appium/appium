@@ -177,6 +177,9 @@ no commands are executing. Drivers can customize the exemption list by overridin
 
 ### Stricter Capability Validation
 
+* Standard capability names are now case-sensitive: use `platformName` and `browserName`, not
+  `PlatformName` or `BrowserName`. Incorrectly cased unprefixed names are rejected as non-standard
+  capabilities. This does not change capability value matching or extension capability handling
 * An empty `firstMatch` array in the new session request is no longer silently replaced with a
   single empty entry; it is rejected with `InvalidArgumentError`, as required by the W3C standard
 * Setting both `appium:noReset` and `appium:fullReset` to `true` now fails with `SessionNotCreatedError`

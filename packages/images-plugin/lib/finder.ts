@@ -46,6 +46,19 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
 const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
 const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
+type ImageMatchOptions = {
+  multiple: boolean;
+  containerRect: Rect | null;
+};
+
+type WaitForMatchesOptions = ImageMatchOptions & {
+  ignoreDefaultImageTemplateScale: boolean;
+};
+
+type CreateImageElementsOptions = ImageMatchOptions & {
+  shouldCheckStaleness: boolean;
+};
+
 export class ImageElementFinder {
   private _imgElCache: LRUCache<string, ImageElement>;
 
@@ -91,16 +104,7 @@ export class ImageElementFinder {
     }: FindByImageOptions = {},
   ): Promise<Element | Element[] | ImageElement> {
     const settings: ImageSettings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
-    const {
-      imageMatchThreshold: threshold,
-      imageMatchMethod,
-      fixImageTemplateSize,
-      fixImageTemplateScale,
-      defaultImageTemplateScale,
-      getMatchedImageResult: visualize,
-    } = settings;
-
-    log.info(`Finding image element with match threshold ${threshold}`);
+    log.info(`Finding image element with match threshold ${settings.imageMatchThreshold}`);
     if (!driver.getWindowRect) {
       throw new Error("This driver does not support the required 'getWindowRect' command");
     }
@@ -114,114 +118,30 @@ export class ImageElementFinder {
     // dimensions. If so let's check and cut it down to size since the algorithm
     // will not work unless we do. But because it requires some potentially
     // expensive commands, only do this if the user has requested it in settings.
-    if (fixImageTemplateSize) {
+    if (settings.fixImageTemplateSize) {
       template = await this.ensureTemplateSize(template, {
         width: containerRect ? containerRect.width : screenSize.width,
         height: containerRect ? containerRect.height : screenSize.height,
       });
     }
 
-    const results: OccurrenceResultWithVisualization[] = [];
-    let didFixTemplateImageScale = false;
-    const performLookup = async (): Promise<boolean> => {
-      try {
-        const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
-
-        if (!didFixTemplateImageScale) {
-          template = await this.fixImageTemplateScale(template, {
-            defaultImageTemplateScale,
-            ignoreDefaultImageTemplateScale,
-            fixImageTemplateScale,
-            ...scale,
-          });
-          // We do not want `template` to be mutated multiple times when the
-          // wrapping lambda is retried
-          didFixTemplateImageScale = true;
-        }
-
-        const comparisonOpts: any = {
-          threshold,
-          visualize,
-          multiple,
-        };
-        if (imageMatchMethod) {
-          comparisonOpts.method = imageMatchMethod;
-        }
-
-        const pushIfOk = (el: any): boolean => {
-          const result: OccurrenceResultWithVisualization = {
-            rect: el.rect,
-            score: el.score,
-            visualization: el.visualization,
-          };
-          if (containerRect && !containsRect(containerRect, result.rect)) {
-            log.debug(
-              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
-                `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
-            );
-            return false;
-          }
-          results.push(result);
-          return true;
-        };
-
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
-        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
-      } catch (err: any) {
-        // if compareImages fails, we'll get a specific error, but we should
-        // retry, so trap that and just return false to trigger the next round of
-        // implicitly waiting. For other errors, throw them to get out of the
-        // implicit wait loop
-        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
-          return false;
-        }
-        throw err;
-      }
-    };
-
-    try {
-      await driver.implicitWaitForCondition(performLookup);
-    } catch (err: any) {
-      // this `implicitWaitForCondition` method will throw a 'Condition unmet'
-      // error if an element is not found eventually. In that case, we will
-      // handle the element not found response below. In the case where get some
-      // _other_ kind of error, it means something blew up totally apart from the
-      // implicit wait timeout. We should not mask that error and instead throw
-      // it straightaway
-      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
-        throw err;
-      }
-    }
-
-    if (results.length === 0) {
+    const lookup = await this.waitForMatches(template, driver, screenSize, settings, {
+      multiple,
+      ignoreDefaultImageTemplateScale,
+      containerRect,
+    });
+    if (lookup.matches.length === 0) {
       if (multiple) {
         return [];
       }
       throw new errors.NoSuchElementError();
     }
 
-    const elements = results.map(({rect, score, visualization}) => {
-      log.info(`Image template matched: ${JSON.stringify(rect)}`);
-      return new ImageElement({
-        template,
-        rect,
-        score,
-        match: visualization ? Buffer.from(visualization, 'base64') : null,
-        finder: this,
-        containerRect,
-      });
+    return this.createImageElements(lookup.matches, lookup.template, {
+      shouldCheckStaleness,
+      multiple,
+      containerRect,
     });
-
-    // if we're just checking staleness, return straightaway so we don't add
-    // a new element to the cache. shouldCheckStaleness does not support multiple
-    // elements, since it is a purely internal mechanism
-    if (shouldCheckStaleness) {
-      return elements[0];
-    }
-
-    const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
-
-    return multiple ? registeredElements : registeredElements[0];
   }
 
   /**
@@ -473,5 +393,125 @@ export class ImageElementFinder {
       fit: 'fill',
     });
     return await imgObj.toBuffer();
+  }
+
+  /**
+   * Matches the template against screenshots until a match is accepted or the implicit wait ends.
+   *
+   * @returns The accepted matches and the template they were matched with
+   */
+  private async waitForMatches(
+    template: Buffer,
+    driver: ExternalDriver,
+    screenSize: Size,
+    settings: ImageSettings,
+    {multiple, ignoreDefaultImageTemplateScale, containerRect}: WaitForMatchesOptions,
+  ): Promise<{matches: OccurrenceResultWithVisualization[]; template: Buffer}> {
+    const matches: OccurrenceResultWithVisualization[] = [];
+    let didFixTemplateImageScale = false;
+    const performLookup = async (): Promise<boolean> => {
+      try {
+        const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
+
+        if (!didFixTemplateImageScale) {
+          template = await this.fixImageTemplateScale(template, {
+            defaultImageTemplateScale: settings.defaultImageTemplateScale,
+            ignoreDefaultImageTemplateScale,
+            fixImageTemplateScale: settings.fixImageTemplateScale,
+            ...scale,
+          });
+          // We do not want `template` to be mutated multiple times when the
+          // wrapping lambda is retried
+          didFixTemplateImageScale = true;
+        }
+
+        const comparisonOpts: any = {
+          threshold: settings.imageMatchThreshold,
+          visualize: settings.getMatchedImageResult,
+          multiple,
+        };
+        if (settings.imageMatchMethod) {
+          comparisonOpts.method = settings.imageMatchMethod;
+        }
+
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
+        const candidates = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
+        let found = false;
+        for (const el of candidates) {
+          const result: OccurrenceResultWithVisualization = {
+            rect: el.rect,
+            score: el.score,
+            visualization: el.visualization,
+          };
+          if (containerRect && !containsRect(containerRect, result.rect)) {
+            log.debug(
+              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
+                `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
+            );
+            continue;
+          }
+          matches.push(result);
+          found = true;
+        }
+        return found;
+      } catch (err: any) {
+        // if compareImages fails, we'll get a specific error, but we should
+        // retry, so trap that and just return false to trigger the next round of
+        // implicitly waiting. For other errors, throw them to get out of the
+        // implicit wait loop
+        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
+          return false;
+        }
+        throw err;
+      }
+    };
+
+    try {
+      await driver.implicitWaitForCondition(performLookup);
+    } catch (err: any) {
+      // this `implicitWaitForCondition` method will throw a 'Condition unmet'
+      // error if an element is not found eventually. In that case, we will
+      // handle the element not found response below. In the case where get some
+      // _other_ kind of error, it means something blew up totally apart from the
+      // implicit wait timeout. We should not mask that error and instead throw
+      // it straightaway
+      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
+        throw err;
+      }
+    }
+    return {matches, template};
+  }
+
+  /**
+   * Creates image elements for accepted matches and registers them unless this is a staleness check.
+   *
+   * @returns WebDriver element(s), or the image element itself for a staleness check
+   */
+  private createImageElements(
+    matches: OccurrenceResultWithVisualization[],
+    template: Buffer,
+    {shouldCheckStaleness, multiple, containerRect}: CreateImageElementsOptions,
+  ): Element | Element[] | ImageElement {
+    const elements = matches.map(({rect, score, visualization}) => {
+      log.info(`Image template matched: ${JSON.stringify(rect)}`);
+      return new ImageElement({
+        template,
+        rect,
+        score,
+        match: visualization ? Buffer.from(visualization, 'base64') : null,
+        finder: this,
+        containerRect,
+      });
+    });
+
+    // if we're just checking staleness, return straightaway so we don't add
+    // a new element to the cache. shouldCheckStaleness does not support multiple
+    // elements, since it is a purely internal mechanism
+    if (shouldCheckStaleness) {
+      return elements[0];
+    }
+
+    const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
+    return multiple ? registeredElements : registeredElements[0];
   }
 }

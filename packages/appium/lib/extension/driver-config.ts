@@ -1,3 +1,4 @@
+import {errors} from '@appium/base-driver';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
@@ -80,7 +81,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;
-      throw new Error(msg, {cause: err});
+      throw new errors.SessionNotCreatedError(msg, err);
     }
   }
 

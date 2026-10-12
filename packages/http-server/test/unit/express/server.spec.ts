@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {afterEach, before, beforeEach, describe, it} from 'node:test';
+import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
@@ -31,10 +31,6 @@ describe('server configuration', function () {
   let port: number;
   let sandbox: sinon.SinonSandbox;
 
-  before(async function () {
-    port = await getTestPort();
-  });
-
   function fakeApp() {
     const app = {
       use: sandbox.spy(),
@@ -48,7 +44,9 @@ describe('server configuration', function () {
     return app;
   }
 
-  beforeEach(function () {
+  beforeEach(async function () {
+    // Do not reuse a fetch connection from a server closed by the previous test.
+    port = await getTestPort();
     sandbox = createSandbox();
   });
 
@@ -115,6 +113,7 @@ describe('server configuration', function () {
     try {
       const res = await fetch(`http://127.0.0.1:${port}/status`);
       assert.strictEqual(res.headers.get('x-pre-server'), 'true');
+      await res.json();
     } finally {
       await _server.close();
     }
@@ -150,6 +149,48 @@ describe('server configuration', function () {
       assert.equal(res.status, 400);
       assert.match(res.headers.get('content-type') ?? '', /application\/json/);
       assert.equal(((await res.json()) as any).value.error, 'invalid argument');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  for (const basePath of ['', '/wd/hub']) {
+    it(`should return W3C errors for unknown paths with basePath '${basePath}'`, async function () {
+      const _server = await server({
+        routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+        port,
+        basePath,
+      });
+      try {
+        for (const route of ['/', '/unknown', `${basePath}/unknown/nested`]) {
+          const res = await fetch(`http://127.0.0.1:${port}${route}`);
+          assert.strictEqual(res.status, 404, route);
+          assert.match(res.headers.get('content-type') ?? '', /application\/json/);
+          assert.strictEqual(((await res.json()) as any).value.error, 'unknown command');
+        }
+        const status = await fetch(`http://127.0.0.1:${port}${basePath}/status`);
+        assert.strictEqual(status.status, 200);
+        await status.json();
+      } finally {
+        await _server.close();
+      }
+    });
+  }
+
+  it('should preserve a root route registered by a server updater', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.get('/', (_req, res) => res.send('extension root'));
+        },
+      ],
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/`);
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(await res.text(), 'extension root');
     } finally {
       await _server.close();
     }

@@ -3,10 +3,13 @@ import {EventEmitter} from 'node:events';
 import type {IncomingMessage} from 'node:http';
 import {describe, it} from 'node:test';
 
+import {BaseDriver} from '@appium/base-driver';
+import {BasePlugin} from '@appium/base-plugin';
+import sinon from 'sinon';
 import {WebSocket} from 'ws';
 
 import type {AppiumDriver} from '../../lib/appium.js';
-import {onBidiConnection} from '../../lib/bidi-commands.js';
+import {onBidiConnection, onBidiMessage} from '../../lib/bidi-commands.js';
 import {BIDI_EVENT_NAME} from '../../lib/constants.js';
 
 const SESSION_ID = 'bidi-session';
@@ -15,6 +18,58 @@ const CONTEXT = 'NATIVE_APP';
 const MAX_LOG_LINES = 50;
 
 describe('bidi-commands', function () {
+  for (const pluginHandles of [false, true]) {
+    it(`should protect ${pluginHandles ? 'plugin' : 'driver'} BiDi commands from idle expiry and resume it after failure`, async function () {
+      const clock = sinon.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+      let finishCommand!: () => void;
+      const pending = new Promise<void>((resolve) => {
+        finishCommand = resolve;
+      });
+      let markStarted!: () => void;
+      const started = new Promise<void>((resolve) => {
+        markStarted = resolve;
+      });
+      const handler = async () => {
+        markStarted();
+        await pending;
+        throw new Error('BiDi failed');
+      };
+      class BidiDriver extends BaseDriver<any> {
+        bidiBrowsingContextGetTree = handler;
+      }
+      class BidiPlugin extends BasePlugin {
+        bidiBrowsingContextGetTree = handler;
+      }
+      const driver = new BidiDriver();
+      driver.sessionId = SESSION_ID;
+      driver.newCommandTimeoutMs = 1000;
+      await driver.startNewCommandTimeout();
+      const response = onBidiMessage.call(
+        {} as AppiumDriver,
+        Buffer.from(JSON.stringify({id: 1, method: 'browsingContext.getTree', params: {}})),
+        driver,
+        pluginHandles ? [new BidiPlugin('bidi')] : [],
+      );
+      try {
+        await started;
+        // An overlapping HTTP command must not rearm the timer either.
+        await driver.executeCommand('getStatus');
+        await clock.tickAsync(2000);
+        assert.equal(driver.sessionId, SESSION_ID);
+        finishCommand();
+        assert.equal((await response).type, 'error');
+        await clock.tickAsync(999);
+        assert.equal(driver.sessionId, SESSION_ID);
+        await clock.tickAsync(1);
+        assert.equal(driver.sessionId, null);
+      } finally {
+        finishCommand();
+        await response;
+        await driver.clearNewCommandTimeout();
+        clock.restore();
+      }
+    });
+  }
   describe('onBidiConnection', function () {
     it('should log the first event once if writing that log line emits another event', async function () {
       const eventEmitter = new EventEmitter();

@@ -1,5 +1,5 @@
 import {util} from '@appium/support';
-import type {Constraints, ITimeoutCommands} from '@appium/types';
+import type {Constraints, ITimeoutCommands, TimeoutValue} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
 
 import {errors} from '../../protocol/index.js';
@@ -32,9 +32,9 @@ export async function timeouts<C extends Constraints>(
    * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
    */
   ms?: number | string,
-  script?: number | null,
-  pageLoad?: number | null,
-  implicit?: number | null,
+  script?: TimeoutValue,
+  pageLoad?: TimeoutValue,
+  implicit?: TimeoutValue,
   command?: number,
 ): Promise<void> {
   if (type && typeof type === 'string' && util.hasValue(ms)) {
@@ -102,7 +102,7 @@ export async function getTimeouts<C extends Constraints>(this: BaseDriver<C>) {
  *
  * @param ms - the implicit wait in ms, or null to disable the timeout
  */
-export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number | null): void {
+export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.implicitWaitMs = ms;
   this.log.debug(`Set implicit wait to ${ms}ms`);
   if (this.managedDrivers?.length) {
@@ -120,7 +120,7 @@ export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: 
  *
  * @param ms - the page load timeout in ms, or null to disable the timeout
  */
-export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number | null): void {
+export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.pageLoadTimeoutMs = ms;
   this.log.debug(`Set page load timeout to ${ms}ms`);
   if (this.managedDrivers?.length) {
@@ -138,7 +138,7 @@ export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, m
  *
  * @param ms - the script timeout in ms, or null to disable the timeout
  */
-export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number | null): void {
+export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.scriptTimeoutMs = ms;
   this.log.debug(`Set script timeout to ${ms}ms`);
   if (this.managedDrivers?.length) {

@@ -19,6 +19,7 @@ import type {Constraints} from './constraints.js';
 import type {HTTPHeaders, HTTPMethod} from './http.js';
 import type {AppiumLogger} from './logger.js';
 import type {AppiumServer, UpdateServerCallback} from './server.js';
+import type {TimeoutValue} from './standard-caps.js';
 import type {Class, Merge, StringRecord} from './util.js';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -62,7 +63,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   allowInsecure: string[];
   denyInsecure: string[];
   newCommandTimeoutMs: number;
-  implicitWaitMs: number;
+  implicitWaitMs: TimeoutValue;
   locatorStrategies: string[];
   webLocatorStrategies: string[];
   eventEmitter: EventEmitter;

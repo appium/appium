@@ -1,5 +1,6 @@
 import type {DriverCaps, W3CDriverCaps} from '../capabilities.js';
 import type {Constraints} from '../constraints.js';
+import type {Timeouts, TimeoutValue} from '../standard-caps.js';
 import type {Element, StringRecord} from '../util.js';
 
 export interface IBidiCommands {
@@ -21,9 +22,9 @@ export interface ITimeoutCommands {
    *
    * @param type - the type of the timeout (deprecated)
    * @param ms - the ms for the timeout (deprecated)
-   * @param script - the number in ms for the script timeout, used for the W3C command
-   * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
-   * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
+   * @param script - the script timeout in ms, or null to disable the timeout
+   * @param pageLoad - the page load timeout in ms, or null to disable the timeout
+   * @param implicit - the implicit wait timeout in ms, or null to disable the timeout
    * @param command - the number in ms for the Appium-specific command timeout
    */
   timeouts(
@@ -35,9 +36,9 @@ export interface ITimeoutCommands {
      * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
      */
     ms?: number | string,
-    script?: number,
-    pageLoad?: number,
-    implicit?: number,
+    script?: TimeoutValue,
+    pageLoad?: TimeoutValue,
+    implicit?: TimeoutValue,
     command?: number,
   ): Promise<void>;
 
@@ -51,23 +52,23 @@ export interface ITimeoutCommands {
   /**
    * A helper method (not a command) used to set the script timeout value
    *
-   * @param ms - the script timeout in ms
+   * @param ms - the script timeout in ms, or null to disable the timeout
    */
-  setScriptTimeout(ms: number): void;
+  setScriptTimeout(ms: TimeoutValue): void;
 
   /**
    * A helper method (not a command) used to set the page load timeout value
    *
-   * @param ms - the page load timeout in ms
+   * @param ms - the page load timeout in ms, or null to disable the timeout
    */
-  setPageLoadTimeout(ms: number): void;
+  setPageLoadTimeout(ms: TimeoutValue): void;
 
   /**
    * A helper method (not a command) used to set the implicit wait value
    *
-   * @param ms - the implicit wait in ms
+   * @param ms - the implicit wait in ms, or null to disable the timeout
    */
-  setImplicitWait(ms: number): void;
+  setImplicitWait(ms: TimeoutValue): void;
 
   /**
    * Periodically retry an async function up until the currently set implicit wait timeout
@@ -84,7 +85,7 @@ export interface ITimeoutCommands {
    *
    * @returns A map of timeout names to ms values
    */
-  getTimeouts(): Promise<Record<string, number>>;
+  getTimeouts(): Promise<Timeouts & {command: number}>;
 
   /**
    * Get a timeout value from a number or a string

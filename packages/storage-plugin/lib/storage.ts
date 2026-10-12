@@ -15,7 +15,7 @@ import type {ItemOptions, StorageItem} from './types.js';
 const MAX_TASKS = 5;
 const TMP_EXT = '.filepart';
 const ADDITION_LOCK = new AsyncLock();
-const SHA1_HASH_LEN = 40;
+const SHA1_HASH_PATTERN = /^[a-f\d]{40}$/i;
 
 export class Storage {
   private readonly _root: string;
@@ -48,9 +48,17 @@ export class Storage {
 
   async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
     const {name} = requireValidItemOptions(opts);
+    const isStream = typeof (source as any).pipe === 'function';
+    const lockKey = name.toLowerCase();
+    // WebSocket messages cannot wait for the lock: frames and close events would be lost.
+    // Reject contention synchronously so the client can retry with a fresh connection.
+    if (!isStream && ADDITION_LOCK.isBusy(lockKey)) {
+      (source as WebSocket).close(net.WebSocketCloseCode.TRY_AGAIN_LATER);
+      throw new StorageArgumentError(`An upload of '${name}' is already in progress. Retry after it completes.`);
+    }
     // toLowerCase is needed for case-insensitive server filesystems
-    await ADDITION_LOCK.acquire(name.toLowerCase(), async () => {
-      if (typeof (source as any).pipe === 'function') {
+    await ADDITION_LOCK.acquire(lockKey, async () => {
+      if (isStream) {
         await this._addFromStream(opts, source as Stream);
       } else {
         await this._addFromWebSocket(opts, source as WebSocket);
@@ -226,7 +234,7 @@ export class StorageArgumentError extends errors.InvalidArgumentError {}
  */
 export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
   validateStorageItemName(opts.name);
-  if (opts.sha1?.length !== SHA1_HASH_LEN) {
+  if (typeof opts.sha1 !== 'string' || !SHA1_HASH_PATTERN.test(opts.sha1)) {
     throw new StorageArgumentError(
       `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
         `example 'ccc963411b2621335657963322890305ebe96186'`,
@@ -245,6 +253,11 @@ export function validateStorageItemName(name: string): void {
   }
   if (name.startsWith('.')) {
     throw new StorageArgumentError(`The provided file name '${name}' must not start with a dot`);
+  }
+  if (name.toLowerCase().endsWith(TMP_EXT)) {
+    throw new StorageArgumentError(
+      `The provided file name '${name}' must not end with the reserved '${TMP_EXT}' suffix`,
+    );
   }
 
   const sanitizedName = fs.sanitizeName(name, {

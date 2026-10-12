@@ -88,6 +88,41 @@ describe('BaseDriver', function () {
   });
 
   describe('executeCommand', function () {
+    for (const outcome of ['success', 'reject', 'throw', 'shutdown', 'shutdown-throw']) {
+      it(`should clean up shutdown monitoring after ${outcome}`, async function () {
+        const error = new Error(outcome);
+        const driver = Object.assign(new BaseDriver(), {
+          monitoredCommand(this: BaseDriver<any>) {
+            if (outcome.startsWith('shutdown')) {
+              this.eventEmitter.emit('onUnexpectedShutdown', error);
+            }
+            if (outcome.endsWith('throw')) {
+              throw error;
+            }
+            return outcome === 'reject' ? Promise.reject(error) : Promise.resolve('done');
+          },
+        });
+        driver.sessionId = 'shutdown-monitor-test';
+        let timerStarts = 0;
+        driver.startNewCommandTimeout = async () => {
+          timerStarts++;
+        };
+        const listenerCount = driver.eventEmitter.listenerCount('onUnexpectedShutdown');
+        try {
+          const result = driver.executeCommand('monitoredCommand');
+          if (outcome === 'success') {
+            assert.equal(await result, 'done');
+          } else {
+            await assert.rejects(result, (actual) => actual === error);
+          }
+          assert.equal(driver.eventEmitter.listenerCount('onUnexpectedShutdown'), listenerCount);
+          assert.equal(timerStarts, outcome.startsWith('shutdown') ? 0 : 1);
+        } finally {
+          await driver.clearNewCommandTimeout();
+        }
+      });
+    }
+
     it('should only time out after the last queued command finishes', async function () {
       const driver = new SlowCommandDriver({} as InitialOpts);
       driver.sessionId = 'queued-timeout-test';

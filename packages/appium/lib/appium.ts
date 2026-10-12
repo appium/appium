@@ -15,6 +15,7 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  runWithCommandTimeout,
   withoutProxyReq,
 } from '@appium/base-driver';
 import {util, net} from '@appium/support';
@@ -632,14 +633,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // get any plugins which are registered as handling this command
     const plugins = this.pluginsToHandleCmd(cmd, sessionId);
 
-    // if any plugins are going to handle this command, we can't guarantee that the default
-    // driver's executeCommand method will be called, which means we can't guarantee that the
-    // newCommandTimeout will be cleared. So we do it here as well.
-    if (plugins.length && dstSession) {
-      this.log.debug('Clearing new command timeout pre-emptively since plugin(s) will handle this command');
-      await dstSession.clearNewCommandTimeout();
-    }
-
     // now we define a 'cmdHandledBy' object which will keep track of which plugins have handled this
     // command. we care about this because (a) multiple plugins can handle the same command, and
     // (b) there's no guarantee that a plugin will actually call the next() method which runs the
@@ -671,7 +664,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         if (!dstSession?.proxyCommand) {
           throw new NoDriverProxyCommandError();
         }
-        return await dstSession.proxyCommand(
+        return await dstSession.executeCommand(
+          'proxyCommand',
           reqForProxy.originalUrl,
           reqForProxy.method as HTTPMethod,
           reqForProxy.body,
@@ -705,21 +699,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     });
     // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
     // re-enters executeCommand for a different command doesn't inherit and misuse this one
-    const res = await withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
+    const execute = () => withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
+    // Keep the timer suspended through the entire plugin chain, including work after next().
+    // Plugins may handle a command themselves or continue processing after the driver returns.
+    const res =
+      dstSession && plugins.length
+        ? await runWithCommandTimeout(dstSession, execute, {restart: cmd !== DELETE_SESSION_COMMAND})
+        : await execute();
 
-    // if we had plugins, make sure to log out the helpful report about which plugins ended up
-    // handling the command and which didn't
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
-
-    // if we had plugins, and if they did not ultimately call the default handler, this means our
-    // new command timeout was not restarted by the default handler's executeCommand call, so
-    // restart it here using the same logic as in BaseDriver's executeCommand
-    if (dstSession && !cmdHandledBy.default && dstSession.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
-      this.log.debug(
-        'Restarting new command timeout via umbrella driver since plugin did not ' + 'allow default handler to execute',
-      );
-      await dstSession.startNewCommandTimeout();
-    }
 
     // And finally, if the command was createSession, we want to migrate any plugins which were
     // previously sessionless to use the new sessionId, so that plugins can share state between

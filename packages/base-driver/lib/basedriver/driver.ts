@@ -374,11 +374,13 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     this.opts = opts;
-    if (this.opts.noReset === true) {
-      this.opts.fullReset = false;
-    }
-    if (this.opts.fullReset === true) {
-      this.opts.noReset = false;
+    for (const [enabledOption, disabledOption] of [
+      ['noReset', 'fullReset'],
+      ['fullReset', 'noReset'],
+    ] as const) {
+      if (this.opts[enabledOption] === true) {
+        this.opts[disabledOption] = false;
+      }
     }
     this.opts.fastReset = !this.opts.fullReset && !this.opts.noReset;
     this.opts.skipUninstall = this.opts.fastReset || this.opts.noReset;

@@ -310,6 +310,26 @@ describe('.getResponseForW3CError', function () {
 });
 
 describe('.getActualError', function () {
+  for (const data of [{text: 'Unsaved changes'}, {}, {details: {items: [1, null, false]}}]) {
+    it(`should preserve optional error data ${JSON.stringify(data)} through a proxy round trip`, function () {
+      const value = {error: 'unexpected alert open', message: 'alert', stacktrace: 'remote stack', data};
+      const proxyError = new errors.ProxyRequestError('Proxy failed', JSON.stringify({value}), 500);
+      assert.deepStrictEqual(getResponseForW3CError(proxyError.getActualError()), [500, {value}]);
+    });
+  }
+
+  it('should serialize data supplied by a local driver without changing BiDi errors', function () {
+    const error = new errors.UnexpectedAlertOpenError('alert');
+    error.data = {text: 'Unsaved changes'};
+    assert.deepStrictEqual(getResponseForW3CError(error)[1].value.data, error.data);
+    assert.equal(Object.hasOwn(error.bidiErrObject(1), 'data'), false);
+  });
+
+  it('should omit error data when none was supplied', function () {
+    const error = errorFromW3CJsonCode('unexpected alert open', 'alert', 'remote stack');
+    assert.equal(Object.hasOwn(getResponseForW3CError(error)[1].value, 'data'), false);
+  });
+
   describe('W3C', function () {
     it('should preserve a downstream detached shadow root response', function () {
       const value = {

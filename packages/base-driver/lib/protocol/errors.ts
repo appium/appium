@@ -42,6 +42,8 @@ class BaseError extends Error {
 export class ProtocolError extends BaseError {
   public error: string;
   public w3cStatus: number;
+  /** Optional WebDriver error data supplied by the driver or downstream server. */
+  public data?: Record<string, unknown>;
   protected _stacktrace: string | undefined;
 
   constructor(msg: string, w3cStatus: number, w3cErrorSignature: string, cause?: Error) {
@@ -763,6 +765,7 @@ export class ProxyRequestError extends BaseError {
         this._w3cError.error,
         this._w3cError.message || this.message,
         this._w3cError.stacktrace || this.stack,
+        this._w3cError.data,
       );
     }
     return new UnknownError(this.message, this.cause);
@@ -864,6 +867,7 @@ interface W3CError {
   error: string;
   message?: string;
   stacktrace?: string;
+  data?: Record<string, unknown>;
 }
 
 interface ParameterRequirements {
@@ -883,13 +887,20 @@ export function isErrorType<T>(err: any, type: Class<T>): err is T {
  * @param signature W3C error string (see https://www.w3.org/TR/webdriver/#handling-errors `JSON Error Code` column)
  * @param message the error message
  * @param stacktrace an optional error stacktrace
+ * @param data optional WebDriver error data
  * @return The error that is associated with the W3C error string
  */
-export function errorFromW3CJsonCode(signature: string, message: string, stacktrace?: string): ProtocolError {
+export function errorFromW3CJsonCode(
+  signature: string,
+  message: string,
+  stacktrace?: string,
+  data?: Record<string, unknown>,
+): ProtocolError {
   const ErrorClass = w3cErrorCodeMap[signature.toLowerCase()] ?? UnknownError;
   w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
   const resultError = new ErrorClass(message);
   resultError.stacktrace = stacktrace;
+  resultError.data = data;
   return resultError;
 }
 
@@ -906,6 +917,7 @@ export function getResponseForW3CError(err: any): [number, {value: W3CError}] {
         error: e.error,
         message: e.message,
         stacktrace: e.stacktrace || e.stack,
+        ...(e.data === undefined ? {} : {data: e.data}),
       },
     },
   ];

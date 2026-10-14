@@ -13,7 +13,7 @@ import {
   type ServerArgs,
   type SessionCapabilities,
   type StringRecord,
-  type TimeoutValue,
+  type Timeouts,
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
@@ -329,7 +329,7 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
 
-    const initialTimeouts: Partial<Record<'script' | 'pageLoad' | 'implicit', TimeoutValue>> = {};
+    const initialTimeouts: Partial<Timeouts> = {};
     const requestedTimeouts = caps.timeouts;
     if (requestedTimeouts !== undefined) {
       if (!util.isPlainObject(requestedTimeouts)) {

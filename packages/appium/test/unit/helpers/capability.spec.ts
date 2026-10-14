@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
+import {getResponseForW3CError} from '@appium/base-driver';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
 import type {InvalidCaps} from '../../../lib/helpers/capability.js';
@@ -14,6 +15,14 @@ import {BASE_CAPS, W3C_CAPS} from '../../helpers.js';
 
 describe('helpers/capability', function () {
   describe('parseCapsForInnerDriver()', function () {
+    for (const caps of [null, [], {alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
+      it(`should classify malformed capability structure ${JSON.stringify(caps)} as invalid argument`, function () {
+        const result = parseCapsForInnerDriver(caps as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
+        const [status, body] = getResponseForW3CError(result.error);
+        assert.equal(status, 400);
+        assert.equal(body.value.error, 'invalid argument');
+      });
+    }
     it('should return an error if only JSONWP provided', function () {
       const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
       assert.ok(res.error);

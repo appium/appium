@@ -21,7 +21,7 @@ import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
 import {calcSignature} from '../helpers/session.js';
-import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
+import {DELETE_SESSION_COMMAND, errors, isErrorType} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
 import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
@@ -299,7 +299,7 @@ export class BaseDriver<
 
     const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
     if (!originalCaps) {
-      throw new errors.SessionNotCreatedError(
+      throw new errors.InvalidArgumentError(
         'Appium only supports W3C-style capability objects. ' +
           'Your client is sending an older capabilities format. Please update your client library.',
       );
@@ -318,6 +318,9 @@ export class BaseDriver<
       caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
       caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
     } catch (e) {
+      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
+        throw e;
+      }
       const message = e instanceof Error ? e.message : String(e);
       throw new errors.SessionNotCreatedError(message);
     }

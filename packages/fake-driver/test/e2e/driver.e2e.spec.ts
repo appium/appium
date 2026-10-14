@@ -375,13 +375,16 @@ describe('FakeDriver - via HTTP', function () {
       await axios.delete(`http://${TEST_HOST}:${port}/session/${value.sessionId}`);
     });
 
-    it('should fail if given unsupported desiredCapabilities', async function () {
-      await assert.rejects(
-        axios.post(`http://${TEST_HOST}:${port}/session`, {
+    it('should return invalid argument if given unsupported desiredCapabilities', async function () {
+      const {status, data} = await axios.post(
+        `http://${TEST_HOST}:${port}/session`,
+        {
           desiredCapabilities: W3C_PREFIXED_CAPS,
-        }),
-        /500/,
+        },
+        {validateStatus: null},
       );
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
     });
   });
 });

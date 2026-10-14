@@ -66,8 +66,8 @@ export async function timeouts<C extends Constraints>(
   ] as const;
   // Validate every supplied value before changing this driver or any managed driver.
   for (const [value] of timeoutUpdates) {
-    if (value !== undefined && value !== null && (!Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
-      throw new errors.InvalidArgumentError('Invalid timeout value: expected null or a non-negative safe integer');
+    if (value !== undefined) {
+      validateTimeoutValue(value);
     }
   }
   // Keep the Appium extension's legacy parsing separate from W3C timeout validation.
@@ -79,6 +79,13 @@ export async function timeouts<C extends Constraints>(
   }
   if (parsedCommand !== undefined) {
     this.setNewCommandTimeout(parsedCommand);
+  }
+}
+
+/** Validate a standard timeout value shared by New Session and Set Timeouts. */
+export function validateTimeoutValue(value: unknown): asserts value is TimeoutValue {
+  if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
+    throw new errors.InvalidArgumentError('Invalid timeout value: expected null or a non-negative safe integer');
   }
 }
 

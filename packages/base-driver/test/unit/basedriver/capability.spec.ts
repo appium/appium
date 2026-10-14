@@ -188,7 +188,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps),
-      {name: 'InvalidArgumentError', message: /platformName/},
+      {name: 'InvalidArgumentError', message: /vendor prefix.*platformname/},
     );
   });
 

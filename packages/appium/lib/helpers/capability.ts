@@ -1,4 +1,4 @@
-import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/base-driver';
+import {errors, isStandardCap, isW3cCaps, processCapabilities} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
@@ -6,7 +6,6 @@ import {log as logger} from '../logger.js';
 import {mapKeys} from '../utils/index.js';
 
 const W3C_APPIUM_PREFIX = 'appium';
-const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
 
 /** Result of successfully parsing W3C capabilities for the inner driver. */
 export interface ParsedDriverCaps<C extends Constraints = BaseDriverCapConstraints> {
@@ -108,9 +107,7 @@ export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
   caps: Capabilities<C>,
 ): NSCapabilities<C> {
   return mapKeys(caps as Record<string, unknown>, (_, key) =>
-    STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
-      ? String(key)
-      : `${W3C_APPIUM_PREFIX}:${key}`,
+    isStandardCap(String(key)) || String(key).includes(':') ? String(key) : `${W3C_APPIUM_PREFIX}:${key}`,
   ) as NSCapabilities<C>;
 }
 

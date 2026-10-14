@@ -7,12 +7,14 @@ import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import {
   APPIUM_VENDOR_PREFIX,
   findNonPrefixedCaps,
+  isStandardCap,
   mergeCaps,
   parseCaps,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
   promoteAppiumOptions,
   stripAppiumPrefixes,
+  STANDARD_CAPS,
   validateCaps,
 } from '../../../lib/basedriver/capabilities.js';
 import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
@@ -21,6 +23,45 @@ import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
 type TestW3CCaps = W3CCapabilities<Constraints>;
 
 describe('caps', function () {
+  describe('standard capability names', function () {
+    it('should recognize only the exact spelling of each standard name', function () {
+      for (const key of STANDARD_CAPS) {
+        assert.equal(isStandardCap(key), true);
+        assert.equal(isStandardCap(key.toUpperCase()), false);
+      }
+    });
+
+    for (const key of ['PlatformName', 'platformname', 'BrowserName', 'TIMEOUTS']) {
+      for (const location of ['alwaysMatch', 'firstMatch']) {
+        it(`should reject ${key} in ${location} as an unprefixed non-standard capability`, function () {
+          const caps = location === 'alwaysMatch' ? {alwaysMatch: {[key]: 'value'}} : {firstMatch: [{[key]: 'value'}]};
+          assert.throws(() => processCapabilities(caps as TestW3CCaps), /should have a vendor prefix/);
+        });
+      }
+    }
+
+    it('should preserve standard values and extension names with mixed casing', function () {
+      assert.deepStrictEqual(
+        processCapabilities({
+          alwaysMatch: {
+            platformName: 'aNdRoId',
+            browserName: 'Chrome',
+            'appium:automationName': 'UIAutomator2',
+            'appium:PlatformName': 'custom',
+            'vendor:MixedCase': true,
+          },
+        } as TestW3CCaps),
+        {
+          platformName: 'aNdRoId',
+          browserName: 'Chrome',
+          automationName: 'UIAutomator2',
+          PlatformName: 'custom',
+          'vendor:MixedCase': true,
+        },
+      );
+    });
+  });
+
   describe('null capability values', function () {
     for (const [alwaysMatch, firstMatch] of [
       [{browserName: null}, {browserName: 'chrome'}],

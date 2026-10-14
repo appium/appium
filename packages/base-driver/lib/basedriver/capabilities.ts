@@ -11,7 +11,7 @@ import type {
 
 import {log} from '../helpers/logger.js';
 import {errors} from '../protocol/errors.js';
-import {omit, pickBy} from '../utils.js';
+import {omit, omitKeys, pickBy} from '../utils.js';
 import {validator} from './validation.js';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';
@@ -262,39 +262,45 @@ export function parseCaps<C extends Constraints>(
   let strippedRequiredCaps = stripAppiumPrefixes(normalizedRequiredCaps);
   const strippedAllFirstMatchCaps: Capabilities<C>[] = normalizedFirstMatchCaps.map(stripAppiumPrefixes);
 
+  // A well-formed platform name may be unsupported by this driver. Check platform
+  // inclusion during matching, while retaining its type checks during validation.
+  const validationConstraints = {
+    ...constraints,
+    ...(constraints?.platformName && {
+      platformName: omitKeys({...constraints.platformName}, ['inclusion', 'inclusionCaseInsensitive']),
+    }),
+  } as C;
+
   // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys
   if (shouldValidateCaps) {
-    strippedRequiredCaps = validateCaps(strippedRequiredCaps, constraints, {
+    strippedRequiredCaps = validateCaps(strippedRequiredCaps, validationConstraints, {
       skipPresenceConstraint: true,
     });
   }
-  // Remove the 'presence' constraint for any keys that are already present in 'requiredCaps'
-  // since we know that this constraint has already passed
-  const filteredConstraints = Object.fromEntries(
-    Object.entries(constraints ?? {}).filter(([key]) => !(key in strippedRequiredCaps)),
-  ) as C;
 
   // Validate every candidate before merging or matching (spec #5). Required driver
   // capabilities are checked during matching, since they may come from alwaysMatch.
   for (const firstMatchCaps of strippedAllFirstMatchCaps) {
     if (shouldValidateCaps) {
-      validateCaps(firstMatchCaps, constraints, {skipPresenceConstraint: true});
+      validateCaps(firstMatchCaps, validationConstraints, {skipPresenceConstraint: true});
     }
   }
   // Merge every candidate before selecting one (spec #6-7). A duplicate in any
   // candidate invalidates the request, even if an earlier candidate could match.
   const mergedCaps = strippedAllFirstMatchCaps.map((firstMatchCaps) => mergeCaps(strippedRequiredCaps, firstMatchCaps));
 
-  // Retain driver presence checks as matching criteria.
+  // Check the merged capabilities so platform support and required driver
+  // capabilities are enforced whether supplied in alwaysMatch or firstMatch.
   const validationErrors: string[] = [];
   let matchedCaps: ParsedCaps<C>['matchedCaps'] = null;
   const validatedFirstMatchCaps = strippedAllFirstMatchCaps
     .map((firstMatchCaps, index) => {
       try {
-        // Validate firstMatch caps
-        const validatedCaps = shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
+        if (shouldValidateCaps) {
+          validateCaps(mergedCaps[index], constraints);
+        }
         matchedCaps ??= mergedCaps[index];
-        return validatedCaps;
+        return firstMatchCaps;
       } catch (e) {
         validationErrors.push((e as Error).message);
       }

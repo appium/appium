@@ -51,6 +51,7 @@ import {
   setScriptTimeout,
   timeouts,
   validateTimeoutValue,
+  W3C_TIMEOUTS,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -73,11 +74,6 @@ const EVENT_SESSION_START = 'newSessionStarted';
 const EVENT_SESSION_QUIT_START = 'quitSessionRequested';
 const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
-const TIMEOUT_PROPERTIES = [
-  ['script', 'scriptTimeoutMs'],
-  ['pageLoad', 'pageLoadTimeoutMs'],
-  ['implicit', 'implicitWaitMs'],
-] as const;
 
 export class BaseDriver<
   const C extends Constraints,
@@ -327,7 +323,7 @@ export class BaseDriver<
 
     // Initialize local state before the concrete driver starts its backend.
     // Timeout command/setter overrides may require an already running backend.
-    for (const [name, property] of TIMEOUT_PROPERTIES) {
+    for (const {name, property} of W3C_TIMEOUTS) {
       const value = initialTimeouts[name];
       if (value !== undefined) {
         this[property] = value;
@@ -514,7 +510,7 @@ export class BaseDriver<
       if (!util.isPlainObject(requestedTimeouts)) {
         throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
       }
-      for (const [name] of TIMEOUT_PROPERTIES) {
+      for (const {name} of W3C_TIMEOUTS) {
         const value = requestedTimeouts[name];
         if (value !== undefined) {
           validateTimeoutValue(value, name);

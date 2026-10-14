@@ -54,6 +54,81 @@ describe('Desired Capabilities', function () {
     assert.equal(d.sessionId, 'existing');
   });
 
+  describe('initial timeouts', function () {
+    for (const timeouts of [
+      undefined,
+      null,
+      {},
+      {script: 123, pageLoad: 456, implicit: 789},
+      {implicit: 0},
+      {script: null, pageLoad: null, implicit: null},
+      {script: Number.MAX_SAFE_INTEGER},
+      {implicit: 100, command: 1, unknown: 'ignored'},
+    ]) {
+      it(`should initialize standard timeout state from ${JSON.stringify(timeouts)}`, async function () {
+        const before = await d.getTimeouts();
+        const caps = {alwaysMatch: {platformName: 'iOS', timeouts, 'appium:newCommandTimeout': 42}};
+        const original = structuredClone(caps);
+        // Concrete drivers may only implement remote setters after super.createSession.
+        sandbox.stub(d, 'timeouts').rejects(new Error('Backend has not started'));
+        sandbox.stub(d, 'setScriptTimeout').throws(new Error('Backend has not started'));
+        sandbox.stub(d, 'setPageLoadTimeout').throws(new Error('Backend has not started'));
+        sandbox.stub(d, 'setImplicitWait').throws(new Error('Backend has not started'));
+        await d.createSession(caps as unknown as TestW3CCaps);
+        const expected = {...before, command: 42000};
+        for (const name of ['script', 'pageLoad', 'implicit'] as const) {
+          if (timeouts?.[name] !== undefined) {
+            expected[name] = timeouts[name];
+          }
+        }
+        assert.deepStrictEqual(await d.getTimeouts(), expected);
+        assert.deepStrictEqual(caps, original);
+      });
+    }
+
+    for (const name of ['script', 'pageLoad', 'implicit']) {
+      for (const value of ['100', true, [], {}, -1, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+        it(`should reject initial ${name}=${JSON.stringify(value)} without creating a session or changing state`, async function () {
+          const before = await d.getTimeouts();
+          await assert.rejects(
+            d.createSession({
+              alwaysMatch: {
+                platformName: 'iOS',
+                timeouts: {script: 100, pageLoad: 200, implicit: 300, [name]: value},
+              },
+            } as unknown as TestW3CCaps),
+            (error) => {
+              const [status, body] = getResponseForW3CError(error);
+              assert.equal(status, 400);
+              assert.equal(body.value.error, 'invalid argument');
+              return true;
+            },
+          );
+          assert.equal(d.sessionId, null);
+          assert.deepStrictEqual(await d.getTimeouts(), before);
+        });
+      }
+    }
+
+    for (const timeouts of [[], '100', 100, true]) {
+      it(`should reject a non-object initial timeouts capability: ${JSON.stringify(timeouts)}`, async function () {
+        await assert.rejects(
+          d.createSession({alwaysMatch: {platformName: 'iOS', timeouts}} as unknown as TestW3CCaps),
+          errors.InvalidArgumentError,
+        );
+        assert.equal(d.sessionId, null);
+      });
+    }
+
+    it('should apply timeouts from the selected firstMatch candidate', async function () {
+      await d.createSession({
+        alwaysMatch: {platformName: 'iOS'},
+        firstMatch: [{timeouts: {implicit: 123}}, {timeouts: {implicit: 456}}],
+      });
+      assert.equal((await d.getTimeouts()).implicit, 123);
+    });
+  });
+
   it('should require platformName and deviceName', async function () {
     await assert.rejects(
       d.createSession({

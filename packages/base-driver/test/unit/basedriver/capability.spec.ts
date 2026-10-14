@@ -291,14 +291,25 @@ describe('Desired Capabilities', function () {
     });
 
     it('should reject noReset and fullReset set together', async function () {
+      const originalTimeouts = await d.getTimeouts();
+      const originalOpts = d.opts;
+      const originalCaps = d.caps;
       await assert.rejects(
         d.createSession({
-          alwaysMatch: {platformName: 'iOS', 'appium:noReset': true, 'appium:fullReset': true},
+          alwaysMatch: {
+            platformName: 'iOS',
+            'appium:noReset': true,
+            'appium:fullReset': true,
+            timeouts: {script: 100, pageLoad: 200, implicit: 300},
+          },
           firstMatch: [{}],
         } as unknown as TestW3CCaps),
         {name: 'SessionNotCreatedError', message: /mutually exclusive/},
       );
       assert.equal(d.sessionId, null);
+      assert.deepStrictEqual(await d.getTimeouts(), originalTimeouts);
+      assert.strictEqual(d.opts, originalOpts);
+      assert.strictEqual(d.caps, originalCaps);
       const [sessionId] = await d.createSession({
         alwaysMatch: {platformName: 'iOS', 'appium:fullReset': true},
       } as unknown as TestW3CCaps);

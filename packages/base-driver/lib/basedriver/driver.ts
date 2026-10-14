@@ -9,6 +9,7 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
+  type DriverOpts,
   type LogDefRecord,
   type ServerArgs,
   type SessionCapabilities,
@@ -72,6 +73,11 @@ const EVENT_SESSION_START = 'newSessionStarted';
 const EVENT_SESSION_QUIT_START = 'quitSessionRequested';
 const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+const TIMEOUT_PROPERTIES = [
+  ['script', 'scriptTimeoutMs'],
+  ['pageLoad', 'pageLoadTimeoutMs'],
+  ['implicit', 'implicitWaitMs'],
+] as const;
 
 export class BaseDriver<
   const C extends Constraints,
@@ -315,56 +321,13 @@ export class BaseDriver<
       logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
     );
 
-    let caps: DriverCaps<C>;
-    try {
-      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
-      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
-    } catch (e) {
-      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
-        throw e;
-      }
-      const message = e instanceof Error ? e.message : String(e);
-      throw new errors.SessionNotCreatedError(message);
-    }
+    const caps = this.processSessionCapabilities(originalCaps);
+    const initialTimeouts = this.validateInitialTimeouts(caps.timeouts);
+    const opts = this.configureSessionOptions(caps);
 
-    this.validateDesiredCaps(caps);
-
-    const timeoutProperties = [
-      ['script', 'scriptTimeoutMs'],
-      ['pageLoad', 'pageLoadTimeoutMs'],
-      ['implicit', 'implicitWaitMs'],
-    ] as const;
-    const initialTimeouts: Partial<Timeouts> = {};
-    const requestedTimeouts = caps.timeouts;
-    if (requestedTimeouts !== undefined) {
-      if (!util.isPlainObject(requestedTimeouts)) {
-        throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
-      }
-      for (const [name] of timeoutProperties) {
-        const value = requestedTimeouts[name];
-        if (value !== undefined) {
-          validateTimeoutValue(value);
-          initialTimeouts[name] = value;
-        }
-      }
-    }
-
-    // merge caps onto opts so we don't need to worry about what's where
-    const opts = {...this.initialOpts, ...caps};
-
-    // deal with resets
-    // some people like to do weird things by setting noReset and fullReset
-    // both to true, but this is misguided and strange, so error here instead
-    if (opts.noReset && opts.fullReset) {
-      throw new errors.SessionNotCreatedError(
-        "The 'noReset' and 'fullReset' capabilities are mutually " +
-          'exclusive and should not both be set to true. You ' +
-          "probably meant to just use 'fullReset' on its own",
-      );
-    }
     // Initialize local state before the concrete driver starts its backend.
     // Timeout command/setter overrides may require an already running backend.
-    for (const [name, property] of timeoutProperties) {
+    for (const [name, property] of TIMEOUT_PROPERTIES) {
       const value = initialTimeouts[name];
       if (value !== undefined) {
         this[property] = value;
@@ -374,21 +337,6 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     this.opts = opts;
-    for (const [enabledOption, disabledOption] of [
-      ['noReset', 'fullReset'],
-      ['fullReset', 'noReset'],
-    ] as const) {
-      if (this.opts[enabledOption] === true) {
-        this.opts[disabledOption] = false;
-      }
-    }
-    this.opts.fastReset = !this.opts.fullReset && !this.opts.noReset;
-    this.opts.skipUninstall = this.opts.fastReset || this.opts.noReset;
-
-    // Prevents empty string caps so we don't need to test it everywhere
-    if (typeof this.opts.app === 'string' && this.opts.app.trim() === '') {
-      delete this.opts.app;
-    }
 
     // null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout
     const newCommandTimeout = this.caps.newCommandTimeout;
@@ -539,6 +487,75 @@ export class BaseDriver<
       this.pendingCommandControllers.delete(controller);
       signal.removeEventListener('abort', onAbort);
     }
+  }
+
+  /** Process and validate capabilities while preserving protocol error types. */
+  private processSessionCapabilities(originalCaps: W3CDriverCaps<C>): DriverCaps<C> {
+    let caps: DriverCaps<C>;
+    try {
+      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
+      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
+    } catch (e) {
+      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
+        throw e;
+      }
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
+    }
+
+    this.validateDesiredCaps(caps);
+    return caps;
+  }
+
+  /** Validate all initial timeouts before applying any session state. */
+  private validateInitialTimeouts(requestedTimeouts: DriverCaps<C>['timeouts']): Partial<Timeouts> {
+    const initialTimeouts: Partial<Timeouts> = {};
+    if (requestedTimeouts !== undefined) {
+      if (!util.isPlainObject(requestedTimeouts)) {
+        throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
+      }
+      for (const [name] of TIMEOUT_PROPERTIES) {
+        const value = requestedTimeouts[name];
+        if (value !== undefined) {
+          validateTimeoutValue(value);
+          initialTimeouts[name] = value;
+        }
+      }
+    }
+    return initialTimeouts;
+  }
+
+  /** Merge and normalize session options without changing driver state. */
+  private configureSessionOptions(caps: DriverCaps<C>): DriverOpts<C> {
+    // merge caps onto opts so we don't need to worry about what's where
+    const opts = {...this.initialOpts, ...caps};
+
+    // deal with resets
+    // some people like to do weird things by setting noReset and fullReset
+    // both to true, but this is misguided and strange, so error here instead
+    if (opts.noReset && opts.fullReset) {
+      throw new errors.SessionNotCreatedError(
+        "The 'noReset' and 'fullReset' capabilities are mutually " +
+          'exclusive and should not both be set to true. You ' +
+          "probably meant to just use 'fullReset' on its own",
+      );
+    }
+    for (const [enabledOption, disabledOption] of [
+      ['noReset', 'fullReset'],
+      ['fullReset', 'noReset'],
+    ] as const) {
+      if (opts[enabledOption] === true) {
+        opts[disabledOption] = false;
+      }
+    }
+    opts.fastReset = !opts.fullReset && !opts.noReset;
+    opts.skipUninstall = opts.fastReset || opts.noReset;
+
+    // Prevents empty string caps so we don't need to test it everywhere
+    if (typeof opts.app === 'string' && opts.app.trim() === '') {
+      delete opts.app;
+    }
+    return opts;
   }
 }
 

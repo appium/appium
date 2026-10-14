@@ -302,13 +302,15 @@ function configureHttp({
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
-      if (!tryHandleWebSocketUpgrade({
+      if (
+        !tryHandleWebSocketUpgrade({
           req,
           socket,
           head,
           webSocketsMapping: appiumServer.webSocketsMapping,
           allowCors,
-        })) {
+        })
+      ) {
         socket.destroy();
       }
     });

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import type {AddressInfo} from 'node:net';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {BaseDriver, runWithProxyReq} from '@appium/base-driver';
+import {BaseDriver, getResponseForW3CError, runWithProxyReq} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
 import {FakeDriver} from '@appium/fake-driver';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
@@ -199,6 +199,19 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
         await appium.deleteSession(SESSION_ID);
       });
+
+      for (const caps of [{alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
+        it(`should reject malformed capabilities before selecting a driver: ${JSON.stringify(caps)}`, async function () {
+          mockFakeDriver.expects('createSession').never();
+          await assert.rejects(appium.createSession(caps as any), (error) => {
+            const [status, body] = getResponseForW3CError(error);
+            assert.equal(status, 400);
+            assert.equal(body.value.error, 'invalid argument');
+            return true;
+          });
+          mockFakeDriver.verify();
+        });
+      }
 
       it('should start the idle timeout after applying initial settings', async function () {
         const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});

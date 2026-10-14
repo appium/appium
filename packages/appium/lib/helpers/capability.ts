@@ -24,7 +24,7 @@ export interface InvalidCaps<C extends Constraints = BaseDriverCapConstraints> {
  * Creates an error when a session receives non-W3C capabilities.
  */
 export function makeNonW3cCapsError(): Error {
-  return new errors.SessionNotCreatedError(
+  return new errors.InvalidArgumentError(
     'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. ' +
       'See https://www.w3.org/TR/webdriver/#new-session for more details.',
   );

@@ -14,5 +14,5 @@ export * from './logger.js';
 export * from './package-json.js';
 export * from './plugin.js';
 export * from './server.js';
-export type {TimeoutValue} from './standard-caps.js';
+export type {Timeouts, TimeoutValue} from './standard-caps.js';
 export * from './util.js';

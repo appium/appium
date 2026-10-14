@@ -98,7 +98,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
     port,
     hostname,
     cliArgs = {},
-    allowCors = true,
+    allowCors = false,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     serverUpdaters = [],
@@ -174,7 +174,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   const {
     app,
     addRoutes,
-    allowCors = true,
+    allowCors = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},

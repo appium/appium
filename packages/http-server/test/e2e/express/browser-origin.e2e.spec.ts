@@ -62,6 +62,24 @@ async function get(port: number, origin?: string): Promise<number> {
 }
 
 describe('browser origin protection', function () {
+  describe('server without an explicit allowCors', function () {
+    let appiumServer: AppiumServer;
+    let port: number;
+
+    before(async function () {
+      port = await getTestPort();
+      appiumServer = await server({routeConfiguringFunction: addTestRoutes, port});
+    });
+
+    after(async function () {
+      await appiumServer.close();
+    });
+
+    it('should reject a POST with an Origin header by default', async function () {
+      assert.equal(await post(port, EVIL_ORIGIN), 403);
+    });
+  });
+
   for (const allowCors of [false, true]) {
     describe(`server with allowCors=${allowCors}`, function () {
       let appiumServer: AppiumServer;

@@ -13,6 +13,7 @@ import {
   type ServerArgs,
   type SessionCapabilities,
   type StringRecord,
+  type TimeoutValue,
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
@@ -48,6 +49,7 @@ import {
   setPageLoadTimeout,
   setScriptTimeout,
   timeouts,
+  validateTimeoutValue,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -327,6 +329,21 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
 
+    const initialTimeouts: Partial<Record<'script' | 'pageLoad' | 'implicit', TimeoutValue>> = {};
+    const requestedTimeouts = caps.timeouts;
+    if (requestedTimeouts !== undefined) {
+      if (!util.isPlainObject(requestedTimeouts)) {
+        throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
+      }
+      for (const name of ['script', 'pageLoad', 'implicit'] as const) {
+        const value = requestedTimeouts[name];
+        if (value !== undefined) {
+          validateTimeoutValue(value);
+          initialTimeouts[name] = value;
+        }
+      }
+    }
+
     // merge caps onto opts so we don't need to worry about what's where
     const opts = {...this.initialOpts, ...caps};
 
@@ -339,6 +356,17 @@ export class BaseDriver<
           'exclusive and should not both be set to true. You ' +
           "probably meant to just use 'fullReset' on its own",
       );
+    }
+    // Initialize local state before the concrete driver starts its backend.
+    // Timeout command/setter overrides may require an already running backend.
+    if (initialTimeouts?.script !== undefined) {
+      this.scriptTimeoutMs = initialTimeouts.script;
+    }
+    if (initialTimeouts?.pageLoad !== undefined) {
+      this.pageLoadTimeoutMs = initialTimeouts.pageLoad;
+    }
+    if (initialTimeouts?.implicit !== undefined) {
+      this.implicitWaitMs = initialTimeouts.implicit;
     }
     this.sessionId = util.uuidV4();
     this.sessionCreationTimestampMs = Date.now();

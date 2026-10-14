@@ -4,7 +4,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
 
-import {BaseDriver} from '../../../../lib/index.js';
+import {BaseDriver, errors} from '../../../../lib/index.js';
 
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];
@@ -60,16 +60,16 @@ describe('log commands -', function () {
     });
     it('should throw an error with available log types if log type not supported', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
-      let err: Error | undefined;
-      try {
-        await driver.getLog('three');
-      } catch (_err) {
-        err = _err as Error;
-      }
-      assert.ok(err);
-      assert.strictEqual(
-        err!.message,
-        `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
+      await assert.rejects(
+        driver.getLog('three'),
+        (err: Error) => {
+          assert.ok(err instanceof errors.InvalidArgumentError);
+          assert.strictEqual(
+            err.message,
+            `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
+          );
+          return true;
+        },
       );
       assert.strictEqual(one.called, false);
       assert.strictEqual(two.called, false);

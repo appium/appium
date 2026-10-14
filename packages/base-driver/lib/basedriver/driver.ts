@@ -329,13 +329,18 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
 
+    const timeoutProperties = [
+      ['script', 'scriptTimeoutMs'],
+      ['pageLoad', 'pageLoadTimeoutMs'],
+      ['implicit', 'implicitWaitMs'],
+    ] as const;
     const initialTimeouts: Partial<Timeouts> = {};
     const requestedTimeouts = caps.timeouts;
     if (requestedTimeouts !== undefined) {
       if (!util.isPlainObject(requestedTimeouts)) {
         throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
       }
-      for (const name of ['script', 'pageLoad', 'implicit'] as const) {
+      for (const [name] of timeoutProperties) {
         const value = requestedTimeouts[name];
         if (value !== undefined) {
           validateTimeoutValue(value);
@@ -359,14 +364,11 @@ export class BaseDriver<
     }
     // Initialize local state before the concrete driver starts its backend.
     // Timeout command/setter overrides may require an already running backend.
-    if (initialTimeouts?.script !== undefined) {
-      this.scriptTimeoutMs = initialTimeouts.script;
-    }
-    if (initialTimeouts?.pageLoad !== undefined) {
-      this.pageLoadTimeoutMs = initialTimeouts.pageLoad;
-    }
-    if (initialTimeouts?.implicit !== undefined) {
-      this.implicitWaitMs = initialTimeouts.implicit;
+    for (const [name, property] of timeoutProperties) {
+      const value = initialTimeouts[name];
+      if (value !== undefined) {
+        this[property] = value;
+      }
     }
     this.sessionId = util.uuidV4();
     this.sessionCreationTimestampMs = Date.now();

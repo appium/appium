@@ -60,17 +60,14 @@ describe('log commands -', function () {
     });
     it('should throw an error with available log types if log type not supported', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
-      await assert.rejects(
-        driver.getLog('three'),
-        (err: Error) => {
-          assert.ok(err instanceof errors.InvalidArgumentError);
-          assert.strictEqual(
-            err.message,
-            `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
-          );
-          return true;
-        },
-      );
+      await assert.rejects(driver.getLog('three'), (err: Error) => {
+        assert.ok(err instanceof errors.InvalidArgumentError);
+        assert.strictEqual(
+          err.message,
+          `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`,
+        );
+        return true;
+      });
       assert.strictEqual(one.called, false);
       assert.strictEqual(two.called, false);
     });

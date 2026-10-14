@@ -52,6 +52,36 @@ describe('helpers/capability', function () {
         ...insertAppiumPrefixes(BASE_CAPS),
       });
     });
+    describe('with a driver that only supports Android', function () {
+      const constraints = {
+        platformName: {presence: true, isString: true, inclusionCaseInsensitive: ['Android']},
+      } as const satisfies Constraints;
+      const parse = (firstMatch: Record<string, unknown>[]) =>
+        parseCapsForInnerDriver(
+          {alwaysMatch: {'appium:deviceName': 'Pixel'}, firstMatch} as unknown as W3CCapabilities<typeof constraints>,
+          constraints,
+          {'appium:newCommandTimeout': 60} as NSCapabilities<typeof constraints>,
+        );
+
+      it('should apply default capabilities to a later firstMatch candidate', function () {
+        const {desiredCaps} = parse([{platformName: 'iOS'}, {platformName: 'Android'}]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 60});
+      });
+      it('should apply a default capability when another firstMatch candidate already set it', function () {
+        const {desiredCaps} = parse([
+          {platformName: 'iOS', 'appium:newCommandTimeout': 120},
+          {platformName: 'Android'},
+        ]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 60});
+      });
+      it('should keep the value a matching firstMatch candidate already set', function () {
+        const {desiredCaps} = parse([
+          {platformName: 'iOS'},
+          {platformName: 'Android', 'appium:newCommandTimeout': 120},
+        ]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 120});
+      });
+    });
     it('should allow valid default capabilities', function () {
       const res = parseCapsForInnerDriver(
         W3C_CAPS,

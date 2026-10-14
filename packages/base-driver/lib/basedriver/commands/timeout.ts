@@ -54,7 +54,7 @@ export async function timeouts<C extends Constraints>(
       case 'script':
         return this.setScriptTimeout(this.parseTimeoutArgument(ms));
       default:
-        throw new Error(`'${type}' type is not supported for the timeout API`);
+        throw new errors.InvalidArgumentError(`'${type}' type is not supported for the timeout API`);
     }
   }
 

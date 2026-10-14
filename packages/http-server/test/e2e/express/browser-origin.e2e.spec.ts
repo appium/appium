@@ -27,10 +27,12 @@ function newWsServer(): WebSocketServer {
 async function connect(port: number, origin?: string): Promise<'open' | number> {
   return await new Promise((resolve, reject) => {
     const ws = new WebSocket(`ws://${TEST_HOST}:${port}${WS_PATH}`, origin ? {origin} : {});
+    let opened = false;
     ws.once('open', () => {
+      opened = true;
       ws.close();
-      resolve('open');
     });
+    ws.once('close', () => opened && resolve('open'));
     ws.once('unexpected-response', (_req, res) => {
       res.resume();
       resolve(res.statusCode as number);
@@ -74,6 +76,7 @@ describe('browser origin protection', function () {
       });
 
       after(async function () {
+        await appiumServer.removeAllWebSocketHandlers();
         await appiumServer.close();
       });
 

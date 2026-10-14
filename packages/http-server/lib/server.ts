@@ -2,7 +2,7 @@ import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import https from 'node:https';
 
-import {DEFAULT_BASE_PATH} from '@appium/base-driver';
+import {DEFAULT_BASE_PATH, METHOD_MAP} from '@appium/base-driver';
 import type {RouteConfiguringFunction} from '@appium/base-driver';
 import {fs, timing, net} from '@appium/support';
 import type {
@@ -22,8 +22,8 @@ import {endLogFormatter, startLogFormatter} from './express-logging.js';
 import {log} from './logger.js';
 import {
   allowCrossDomain,
-  catch404Handler,
   catchAllHandler,
+  createCatch404Handler,
   defaultToJSONContentType,
   handleIdempotency,
   handleLogContext,
@@ -139,7 +139,11 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         // once all configurations and updaters have been applied, make sure to set up a catchall
         // handler so that anything unknown 404s. But do this after everything else since we don't
         // want to block extensions' ability to add routes if they want.
-        app.all('/{*all}', catch404Handler);
+        const routeBasePath = normalizeBasePath(basePath);
+        const commandPaths = Object.keys({...METHOD_MAP, ...extraMethodMap}).map(
+          (commandPath) => `${routeBasePath}${commandPath}`,
+        );
+        app.all('/{*all}', createCatch404Handler(commandPaths));
 
         await startServer({
           httpServer,

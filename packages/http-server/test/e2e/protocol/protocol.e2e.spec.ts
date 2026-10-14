@@ -132,6 +132,37 @@ describe('Protocol', function () {
       await assert.rejects(httpGet(`${baseUrl}/blargimarg`), /404/);
     });
 
+    it('should return unknown method when a known url is called with the wrong method', async function () {
+      const {status, data} = await httpPost(
+        `${baseUrl}/status`,
+        {},
+        {
+          throwOnError: false,
+        },
+      );
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown method when a known session url is called with the wrong method', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/session/foo`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown command when the path only shares a prefix with a known url', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/status/extra`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 404);
+      assert.strictEqual(data.value.error, 'unknown command');
+    });
+
     it('4xx responses should have content-type of application/json', async function () {
       const {headers} = await httpGet(`${baseUrl}/blargimargarita`, {
         throwOnError: false,

@@ -155,13 +155,28 @@ function isBodyParseError(err: Error): boolean {
 }
 
 /**
- * 404 handler for unmatched routes.
- * Logs a debug message and responds with `UnknownCommandError` in W3C format.
+ * Creates the handler for requests that matched no route.
+ * A known command URL called with an unsupported HTTP method gets `UnknownMethodError`,
+ * anything else gets `UnknownCommandError`, both in W3C format.
+ *
+ * @param commandPaths - Route patterns of all registered commands, including the base path
+ * @returns Express request handler
  */
-export function catch404Handler(req: Request, res: Response): void {
-  log.debug(`No route found for ${req.url}`);
-  const [status, body] = getResponseForW3CError(new errors.UnknownCommandError());
-  res.status(status).json(body);
+export function createCatch404Handler(commandPaths: string[]): RequestHandler {
+  const commandPathMatchers = commandPaths.map((commandPath) => match(commandPath, {decode: false}));
+
+  return function catch404Handler(req: Request, res: Response): void {
+    if (commandPathMatchers.some((matchPath) => matchPath(req.path))) {
+      log.debug(`Method ${req.method} is not supported for ${req.path}`);
+      const [status, body] = getResponseForW3CError(new errors.UnknownMethodError());
+      res.status(status).json(body);
+      return;
+    }
+
+    log.debug(`No route found for ${req.url}`);
+    const [status, body] = getResponseForW3CError(new errors.UnknownCommandError());
+    res.status(status).json(body);
+  };
 }
 
 function fetchHeaderValue(req: Request, name: string): string | undefined {

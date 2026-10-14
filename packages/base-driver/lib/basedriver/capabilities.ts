@@ -274,35 +274,32 @@ export function parseCaps<C extends Constraints>(
     Object.entries(constraints ?? {}).filter(([key]) => !(key in strippedRequiredCaps)),
   ) as C;
 
-  // Validate all of the first match capabilities and return an array with only the valid caps (see spec #5)
+  // Validate every candidate before merging or matching (spec #5). Required driver
+  // capabilities are checked during matching, since they may come from alwaysMatch.
+  for (const firstMatchCaps of strippedAllFirstMatchCaps) {
+    if (shouldValidateCaps) {
+      validateCaps(firstMatchCaps, constraints, {skipPresenceConstraint: true});
+    }
+  }
+  // Merge every candidate before selecting one (spec #6-7). A duplicate in any
+  // candidate invalidates the request, even if an earlier candidate could match.
+  const mergedCaps = strippedAllFirstMatchCaps.map((firstMatchCaps) => mergeCaps(strippedRequiredCaps, firstMatchCaps));
+
+  // Retain driver presence checks as matching criteria.
   const validationErrors: string[] = [];
+  let matchedCaps: ParsedCaps<C>['matchedCaps'] = null;
   const validatedFirstMatchCaps = strippedAllFirstMatchCaps
-    .map((firstMatchCaps) => {
+    .map((firstMatchCaps, index) => {
       try {
         // Validate firstMatch caps
-        return shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
+        const validatedCaps = shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
+        matchedCaps ??= mergedCaps[index];
+        return validatedCaps;
       } catch (e) {
         validationErrors.push((e as Error).message);
       }
     })
     .filter(Boolean) as Capabilities<C>[];
-
-  /**
-   * Try to merge requiredCaps with first match capabilities, break once it finds its first match
-   * (see spec #6)
-   */
-  let matchedCaps: ParsedCaps<C>['matchedCaps'] = null;
-  for (const firstMatchCaps of validatedFirstMatchCaps) {
-    try {
-      matchedCaps = mergeCaps(strippedRequiredCaps, firstMatchCaps) as ParsedCaps<C>['matchedCaps'];
-      if (matchedCaps) {
-        break;
-      }
-    } catch (err) {
-      log.warn((err as Error).message);
-      validationErrors.push((err as Error).message);
-    }
-  }
 
   // Returns variables for testing purposes
   return {

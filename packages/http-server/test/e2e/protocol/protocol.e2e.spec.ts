@@ -193,6 +193,29 @@ describe('Protocol', function () {
       assert.ok(!data.sessionId);
     });
 
+    for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
+      it(`should preserve optional data in a returned driver error: ${JSON.stringify(errorData)}`, async function () {
+        const value = {
+          error: 'unexpected alert open',
+          message: 'Returned driver error',
+          stacktrace: 'Remote driver stacktrace',
+          ...(errorData === undefined ? {} : {data: errorData}),
+        };
+        sandbox.stub(driver, 'executeCommand').resolves({value});
+
+        const {status, data} = await httpGet(`${baseUrl}/session/foo/url`, {throwOnError: false});
+
+        assert.strictEqual(status, 500);
+        assert.strictEqual(data.value.error, value.error);
+        assert.strictEqual(data.value.message, value.message);
+        assert.strictEqual(data.value.stacktrace, value.stacktrace);
+        assert.strictEqual(Object.hasOwn(data.value, 'data'), errorData !== undefined);
+        if (errorData !== undefined) {
+          assert.deepStrictEqual(data.value.data, errorData);
+        }
+      });
+    }
+
     describe('w3c sendkeys migration', function () {
       it('should not accept value for sendkeys', async function () {
         await assert.rejects(httpPost(`${baseUrl}/session/foo/element/bar/value`, {value: 'text to type'}), /400/);

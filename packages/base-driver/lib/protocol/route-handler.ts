@@ -305,7 +305,12 @@ async function runDriverCommand(
   }
 
   if (util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
-    throw errorFromW3CJsonCode(driverRes.value.error, driverRes.value.message, driverRes.value.stacktrace);
+    throw errorFromW3CJsonCode(
+      driverRes.value.error,
+      driverRes.value.message,
+      driverRes.value.stacktrace,
+      driverRes.value.data,
+    );
   }
 
   return {driverRes, currentProtocol, newSessionId};

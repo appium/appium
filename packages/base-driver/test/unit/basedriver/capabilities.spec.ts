@@ -21,6 +21,63 @@ import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
 type TestW3CCaps = W3CCapabilities<Constraints>;
 
 describe('caps', function () {
+  describe('null capability values', function () {
+    for (const [alwaysMatch, firstMatch] of [
+      [{browserName: null}, {browserName: 'chrome'}],
+      [{browserName: 'chrome'}, {browserName: null}],
+      [{'appium:custom': null}, {'appium:custom': 'value'}],
+      [{'appium:custom': 'value'}, {'appium:custom': null}],
+    ]) {
+      it(`should omit null before merging ${JSON.stringify(alwaysMatch)} and ${JSON.stringify(firstMatch)}`, function () {
+        const caps = {alwaysMatch, firstMatch: [firstMatch]} as unknown as TestW3CCaps;
+        const original = structuredClone(caps);
+        const expected = 'browserName' in alwaysMatch ? {browserName: 'chrome'} : {custom: 'value'};
+        assert.deepStrictEqual(processCapabilities(caps), expected);
+        assert.deepStrictEqual(caps, original);
+      });
+    }
+
+    it('should omit unknown null capabilities before checking vendor prefixes', function () {
+      assert.deepStrictEqual(
+        processCapabilities({alwaysMatch: {unknown: null}, firstMatch: [{other: null}]} as unknown as TestW3CCaps),
+        {},
+      );
+    });
+
+    it('should preserve nested nulls and non-null falsy values', function () {
+      const caps = {timeouts: {script: null}, 'appium:enabled': false, 'appium:count': 0, 'appium:text': ''};
+      assert.deepStrictEqual(processCapabilities({alwaysMatch: caps}), {
+        timeouts: {script: null},
+        enabled: false,
+        count: 0,
+        text: '',
+      });
+    });
+
+    it('should allow a required capability in firstMatch when alwaysMatch supplies null', function () {
+      assert.deepStrictEqual(
+        processCapabilities(
+          {alwaysMatch: {platformName: null}, firstMatch: [{platformName: 'Android'}]} as unknown as TestW3CCaps,
+          {platformName: {presence: true, isString: true}},
+        ),
+        {platformName: 'Android'},
+      );
+    });
+
+    it('should return validated capabilities without null values', function () {
+      assert.deepStrictEqual(validateCaps({browserName: null, timeouts: {script: null}} as any), {
+        timeouts: {script: null},
+      });
+    });
+
+    it('should still reject duplicate non-null capabilities', function () {
+      assert.throws(
+        () => processCapabilities({alwaysMatch: {browserName: 'chrome'}, firstMatch: [{browserName: 'chrome'}]}),
+        /should not exist on both/,
+      );
+    });
+  });
+
   // Tests based on: https://www.w3.org/TR/webdriver/#dfn-validate-caps
   describe('#validateCaps', function () {
     it('returns invalid argument error if "capability" is not a JSON object (1)', function () {

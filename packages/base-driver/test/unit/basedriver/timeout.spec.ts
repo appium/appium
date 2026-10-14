@@ -153,7 +153,7 @@ describe('timeout', function () {
         await assert.rejects(driver.timeouts('random timeout', -42));
       });
       it('should throw an errors if timeout type is unknown', async function () {
-        await assert.rejects(driver.timeouts('random timeout', 42));
+        await assert.rejects(driver.timeouts('random timeout', 42), errors.InvalidArgumentError);
       });
     });
     describe('W3C errors', function () {

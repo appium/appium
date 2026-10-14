@@ -125,6 +125,21 @@ describe('helpers/capability', function () {
   });
 
   describe('insertAppiumPrefixes()', function () {
+    it('should retain the namespace of extension keys that resemble standard names', function () {
+      const result = parseCapsForInnerDriver({
+        alwaysMatch: {
+          platformName: 'aNdRoId',
+          'appium:PlatformName': 'custom',
+          'vendor:BrowserName': 'custom browser',
+        },
+      } as W3CCapabilities<BaseDriverCapConstraints>);
+      assert.deepStrictEqual(result.processedW3CCapabilities!.alwaysMatch, {
+        platformName: 'aNdRoId',
+        'appium:PlatformName': 'custom',
+        'vendor:BrowserName': 'custom browser',
+      });
+    });
+
     it('should apply prefixes to non-standard capabilities', function () {
       assert.deepStrictEqual(
         insertAppiumPrefixes({

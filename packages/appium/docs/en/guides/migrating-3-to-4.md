@@ -14,9 +14,10 @@ tests, client error handling, and server integrations.
 
 Appium 4 focuses on modernizing the codebase (Node.js requirements, ESM-only packages, dropping
 long-deprecated protocol support and APIs) rather than introducing a large number of new
-user-facing features. Most Appium users only need to check the [Node.js version](#node-2222-required)
-section below; the remaining breaking changes mostly affect driver and plugin developers, or users
-of specific removed flags/endpoints.
+user-facing features. Appium users should check the [Node.js version](#node-2222-required),
+[timeout inputs](#timeouts-endpoint-aligned-with-w3c-standard), and
+[capability validation](#stricter-capability-validation). The other breaking changes mostly affect
+driver and plugin developers, or users of specific removed flags/endpoints.
 
 ## Installation
 
@@ -143,22 +144,34 @@ already-executed timed-out command.
 
 `GET/SET /timeouts` is now closer to [the W3C standard](https://w3c.github.io/webdriver/#timeouts):
 
-* `POST /session/:sessionId/timeouts` now also accepts the standard `command` parameter; the
-  legacy `type`/`ms` parameters are deprecated
-* `POST /session/:sessionId/timeouts` no longer errors out when none of `script`/`pageLoad`/`implicit`
-  are provided
+* The standard `script`, `pageLoad`, and `implicit` fields accept `null` or a non-negative safe
+  integer in milliseconds, up to `Number.MAX_SAFE_INTEGER` (`9007199254740991`). Numeric strings,
+  fractions, negative numbers, and other types now fail with HTTP `400` / `invalid argument`
+  instead of being coerced or truncated ([#22961](https://github.com/appium/appium/pull/22961))
+* Explicit `null` is stored, propagated to managed drivers, and returned by
+  `GET /session/:sessionId/timeouts`. It disables that timeout; for the base driver's implicit-wait
+  helper, this means waiting without a time limit, not a zero-duration wait
+* Omitted fields retain their current values, and an empty `{}` update succeeds without changing them
+* `command` is an Appium-specific extension for the new-command idle timeout, not a W3C timeout
+  field. It retains its existing parsing behavior; the legacy `type`/`ms` parameters are deprecated
 * `GET /session/:sessionId/timeouts` now also returns `script` and `pageLoad`, in addition to the
   existing `implicit` and Appium-specific `command` values
-* Driver-level `timeouts()`/`ISessionHandler` type declarations narrow `implicit` to a `number`,
-  matching `script`/`pageLoad` (the wire endpoint still coerces numeric strings at runtime)
+* Driver-level `timeouts()`, the standard timeout setters, and timeout state/readback types now
+  use `TimeoutValue` (`number | null`) for `script`, `pageLoad`, and `implicit`. The Appium-specific
+  `command` timeout remains numeric
 * All supplied timeout values are validated before any are applied. A request such as
   `{script: 456, pageLoad: -1}` now fails without changing the script timeout, including on managed
-  drivers ([#22960](https://github.com/appium/appium/pull/22960))
+  drivers ([#22960](https://github.com/appium/appium/pull/22960),
+  [#22961](https://github.com/appium/appium/pull/22961))
 
 !!! info "Actions Needed"
 
-    Update any code that sends the `type`/`ms` timeout parameters or a `string` value for `implicit`
-    and do not rely on rejected timeout requests applying some of their values
+    Send JSON integers or intentional `null` values for the three standard fields, and migrate
+    away from `type`/`ms`. Update custom timeout setters and readback consumers to handle `null`.
+    Do not rely on rejected timeout requests applying some of their values
+
+These Set Timeouts changes do not add base-driver initialization from the New Session
+`capabilities.timeouts` object; support for that initial capability still depends on the driver.
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
@@ -186,6 +199,17 @@ no commands are executing. Drivers can customize the exemption list by overridin
 * Standard capability names are now case-sensitive: use `platformName` and `browserName`, not
   `PlatformName` or `BrowserName`. Incorrectly cased unprefixed names are rejected as non-standard
   capabilities. This does not change capability value matching or extension capability handling
+  ([#22976](https://github.com/appium/appium/pull/22976))
+* Malformed W3C capability containers and `invalid argument` errors from capability parsing now
+  return HTTP `400` / `invalid argument`, instead of being wrapped as HTTP `500` /
+  `session not created`. This includes non-object `alwaysMatch`, an invalid `firstMatch` array or
+  entry, and unprefixed non-standard capabilities. Driver selection/loading failures still use
+  `session not created` ([#22977](https://github.com/appium/appium/pull/22977))
+* Top-level capability entries whose value is `null` are omitted before validation and merging
+  `alwaysMatch` with `firstMatch`. For example, `alwaysMatch: {browserName: null}` no longer
+  conflicts with `firstMatch: [{browserName: "chrome"}]`. This applies to standard and extension
+  capability entries; nested values such as `timeouts: {script: null}` are preserved
+  ([#22975](https://github.com/appium/appium/pull/22975))
 * An empty `firstMatch` array in the new session request is no longer silently replaced with a
   single empty entry; it is rejected with `InvalidArgumentError`, as required by the W3C standard
 * Setting both `appium:noReset` and `appium:fullReset` to `true` now fails with `SessionNotCreatedError`
@@ -196,7 +220,10 @@ no commands are executing. Drivers can customize the exemption list by overridin
 
 !!! info "Actions Needed"
 
-    Send `firstMatch: [{}]` (or omit `firstMatch`) instead of an empty array
+    Use exact standard capability key names and vendor prefixes for extensions. Send
+    `firstMatch: [{}]` (or omit `firstMatch`) instead of an empty array. Update error assertions to
+    expect `invalid argument` for malformed capabilities, and do not use top-level `null` as a
+    value to pass to a driver
 
 ### Storage Plugin Routes Respect `--base-path`
 
@@ -235,6 +262,10 @@ Most require no changes unless your tests or integrations depend on the previous
 * A downstream `detached shadow root` error is now preserved as HTTP `404` with that WebDriver
   error code instead of being converted to `unknown error` with HTTP `500`
   ([#22968](https://github.com/appium/appium/pull/22968)).
+* Optional WebDriver error `data`, such as unexpected-alert text, is now preserved when supplied
+  by a driver or downstream server, including returned error envelopes and proxied responses.
+  The field is omitted when absent; Appium does not synthesize alert text
+  ([#22974](https://github.com/appium/appium/pull/22974)).
 * With an empty base path, an unregistered `GET /` now returns a WebDriver JSON `unknown command`
   response with HTTP `404` instead of Express's HTML 404 page. Extensions can still register their
   own root route ([#22969](https://github.com/appium/appium/pull/22969)).
@@ -360,7 +391,11 @@ been removed.
 ### Drivers Must Support Shared Command Activity Tracking
 
 Appium keeps the new-command idle timer suspended until the entire plugin command chain
-finishes, including work after `next()` returns. This requires the `@appium/base-driver`
+finishes, including work after `next()` returns ([#22946](https://github.com/appium/appium/pull/22946)).
+The same protection now covers session-bound BiDi commands, including their plugin chain.
+Proxied BiDi commands remain active until a corresponding response arrives or the socket closes
+or errors; forwarding the frame or receiving an event does not finish the command
+([#22947](https://github.com/appium/appium/pull/22947)). This requires the `@appium/base-driver`
 implementation with shared command activity tracking and the `runWithCommandTimeout` helper.
 Older implementations that track only their own in-flight commands are no longer supported
 for this behavior. Appium does not replace a driver's timer methods to provide compatibility.

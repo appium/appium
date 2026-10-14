@@ -1,5 +1,6 @@
 import type {Constraints, Driver, ILogCommands} from '@appium/types';
 
+import {errors} from '../../protocol/index.js';
 import type {BaseDriver} from '../driver.js';
 
 declare module '../driver.js' {
@@ -26,7 +27,7 @@ export async function getLog<C extends Constraints>(this: Driver<C>, logType: st
     const logsTypesWithDescriptions = Object.fromEntries(
       Object.entries(this.supportedLogTypes).map(([key, value]) => [key, value.description]),
     );
-    throw new Error(
+    throw new errors.InvalidArgumentError(
       `Unsupported log type '${String(logType)}'. ` + `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
     );
   }

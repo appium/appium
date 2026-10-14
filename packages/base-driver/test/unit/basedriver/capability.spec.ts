@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+import {inspect} from 'node:util';
 
 import type {Constraints, InitialOpts, W3CCapabilities} from '@appium/types';
 import {asyncmap} from 'asyncbox';
@@ -103,7 +104,7 @@ describe('Desired Capabilities', function () {
               assert.equal(body.value.error, 'invalid argument');
               assert.equal(
                 body.value.message,
-                `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+                `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
               );
               return true;
             },

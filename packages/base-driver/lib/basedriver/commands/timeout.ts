@@ -1,3 +1,5 @@
+import {inspect} from 'node:util';
+
 import {util} from '@appium/support';
 import type {Constraints, ITimeoutCommands, TimeoutValue} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
@@ -89,7 +91,7 @@ export function validateTimeoutValue(
 ): asserts value is TimeoutValue {
   if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
     throw new errors.InvalidArgumentError(
-      `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+      `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
     );
   }
 }

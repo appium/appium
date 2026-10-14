@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
+import {inspect} from 'node:util';
 
 import type {InitialOpts} from '@appium/types';
 import {createSandbox} from 'sinon';
@@ -90,7 +91,7 @@ describe('timeout', function () {
           try {
             await assert.rejects(driver.timeouts(undefined, undefined, ...values, 400), {
               name: 'InvalidArgumentError',
-              message: `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+              message: `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
             });
             assert.deepEqual(await driver.getTimeouts(), before);
             assert.deepEqual(await managedDriver.getTimeouts(), managedBefore);

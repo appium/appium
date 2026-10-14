@@ -491,8 +491,8 @@ The following `@appium/support` exports have been removed: `process` (`getProces
   ([#22880](https://github.com/appium/appium/pull/22880),
   [#22954](https://github.com/appium/appium/pull/22954),
   [#22958](https://github.com/appium/appium/pull/22958)).
-* `fs.walkDir()` now rejects on all walker errors, such as `EACCES` and `ELOOP`, instead of leaving
-  the returned promise pending for errors other than `ENOENT`
+* `fs.walkDir()` now continues after walker errors such as `EACCES` and `ELOOP` instead of hanging.
+  These errors are logged and affected entries skipped; `ENOENT` still rejects the returned promise
   ([#22956](https://github.com/appium/appium/pull/22956)).
 * Both `ipc.unsubscribe(topic, subscriber)` and `subscription.unsubscribe()` now finish waiting
   async iterators and notify observers once. An observer that throws still propagates its error
@@ -502,7 +502,8 @@ The following `@appium/support` exports have been removed: `process` (`getProces
 !!! info "Actions Needed"
 
     If you intend to move a symlink's target, resolve it explicitly before calling `fs.mv()`.
-    Handle directory-walk rejections and allow IPC consumers to finish when unsubscribed
+    A completed directory walk may have skipped entries; check warnings if completeness matters.
+    Allow IPC consumers to finish when unsubscribed
 
 ### Legacy Test Pages Removed From `@appium/base-driver`
 

@@ -61,20 +61,23 @@ export async function timeouts<C extends Constraints>(
   }
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
+  const requestedTimeouts = {script, pageLoad, implicit};
   const timeoutUpdates = [
-    [script, 'setScriptTimeout', 'script'],
-    [pageLoad, 'setPageLoadTimeout', 'pageLoad'],
-    [implicit, 'setImplicitWait', 'implicit'],
+    ['script', 'setScriptTimeout'],
+    ['pageLoad', 'setPageLoadTimeout'],
+    ['implicit', 'setImplicitWait'],
   ] as const;
   // Validate every supplied value before changing this driver or any managed driver.
-  for (const [value, , name] of timeoutUpdates) {
+  for (const [name] of timeoutUpdates) {
+    const value = requestedTimeouts[name];
     if (value !== undefined) {
       validateTimeoutValue(value, name);
     }
   }
   // Keep the Appium extension's legacy parsing separate from W3C timeout validation.
   const parsedCommand = util.hasValue(command) ? this.parseTimeoutArgument(command) : undefined;
-  for (const [value, setter] of timeoutUpdates) {
+  for (const [name, setter] of timeoutUpdates) {
+    const value = requestedTimeouts[name];
     if (value !== undefined) {
       this[setter](value);
     }

@@ -60,14 +60,14 @@ export async function timeouts<C extends Constraints>(
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
   const timeoutUpdates = [
-    [script, 'setScriptTimeout'],
-    [pageLoad, 'setPageLoadTimeout'],
-    [implicit, 'setImplicitWait'],
+    [script, 'setScriptTimeout', 'script'],
+    [pageLoad, 'setPageLoadTimeout', 'pageLoad'],
+    [implicit, 'setImplicitWait', 'implicit'],
   ] as const;
   // Validate every supplied value before changing this driver or any managed driver.
-  for (const [value] of timeoutUpdates) {
+  for (const [value, , name] of timeoutUpdates) {
     if (value !== undefined) {
-      validateTimeoutValue(value);
+      validateTimeoutValue(value, name);
     }
   }
   // Keep the Appium extension's legacy parsing separate from W3C timeout validation.
@@ -83,9 +83,14 @@ export async function timeouts<C extends Constraints>(
 }
 
 /** Validate a standard timeout value shared by New Session and Set Timeouts. */
-export function validateTimeoutValue(value: unknown): asserts value is TimeoutValue {
+export function validateTimeoutValue(
+  value: unknown,
+  name: 'script' | 'pageLoad' | 'implicit',
+): asserts value is TimeoutValue {
   if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
-    throw new errors.InvalidArgumentError('Invalid timeout value: expected null or a non-negative safe integer');
+    throw new errors.InvalidArgumentError(
+      `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+    );
   }
 }
 

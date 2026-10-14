@@ -88,7 +88,10 @@ describe('timeout', function () {
           const values: [number | null, number | null, number | null] = [null, null, null];
           values[index] = value as number;
           try {
-            await assert.rejects(driver.timeouts(undefined, undefined, ...values, 400), errors.InvalidArgumentError);
+            await assert.rejects(driver.timeouts(undefined, undefined, ...values, 400), {
+              name: 'InvalidArgumentError',
+              message: `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+            });
             assert.deepEqual(await driver.getTimeouts(), before);
             assert.deepEqual(await managedDriver.getTimeouts(), managedBefore);
           } finally {

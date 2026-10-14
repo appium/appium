@@ -517,7 +517,7 @@ export class BaseDriver<
       for (const [name] of TIMEOUT_PROPERTIES) {
         const value = requestedTimeouts[name];
         if (value !== undefined) {
-          validateTimeoutValue(value);
+          validateTimeoutValue(value, name);
           initialTimeouts[name] = value;
         }
       }

@@ -101,6 +101,10 @@ describe('Desired Capabilities', function () {
               const [status, body] = getResponseForW3CError(error);
               assert.equal(status, 400);
               assert.equal(body.value.error, 'invalid argument');
+              assert.equal(
+                body.value.message,
+                `Invalid ${name} timeout value: expected null or a non-negative safe integer`,
+              );
               return true;
             },
           );

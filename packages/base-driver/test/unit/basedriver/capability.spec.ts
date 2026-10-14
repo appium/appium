@@ -6,7 +6,7 @@ import {asyncmap} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
 import {validator} from '../../../lib/basedriver/validation.js';
-import {BaseDriver, errors} from '../../../lib/index.js';
+import {BaseDriver, errors, getResponseForW3CError} from '../../../lib/index.js';
 
 /** W3C caps for createSession (tests use partial/invalid caps) */
 type TestW3CCaps = W3CCapabilities<Constraints>;
@@ -29,13 +29,38 @@ describe('Desired Capabilities', function () {
     d.deleteSession();
   });
 
+  for (const caps of [
+    null,
+    [],
+    {alwaysMatch: []},
+    {firstMatch: []},
+    {firstMatch: [null]},
+    {alwaysMatch: {platformName: 'iOS'}, firstMatch: [{platformName: 'iOS'}]},
+  ]) {
+    it(`should report invalid argument without creating a session for ${JSON.stringify(caps)}`, async function () {
+      await assert.rejects(d.createSession(caps as unknown as TestW3CCaps), (error) => {
+        const [status, body] = getResponseForW3CError(error);
+        assert.equal(status, 400);
+        assert.equal(body.value.error, 'invalid argument');
+        return true;
+      });
+      assert.equal(d.sessionId, null);
+    });
+  }
+
+  it('should retain session not created when a session is already active', async function () {
+    d.sessionId = 'existing';
+    await assert.rejects(d.createSession({alwaysMatch: {platformName: 'iOS'}}), errors.SessionNotCreatedError);
+    assert.equal(d.sessionId, 'existing');
+  });
+
   it('should require platformName and deviceName', async function () {
     await assert.rejects(
       d.createSession({
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-      {name: 'SessionNotCreatedError', message: /platformName/},
+      {name: 'InvalidArgumentError', message: /platformName/},
     );
   });
 
@@ -45,7 +70,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {},
         firstMatch: [{}],
       }),
-      {name: 'SessionNotCreatedError', message: /platformName/},
+      {name: 'InvalidArgumentError', message: /platformName/},
     );
   });
 
@@ -77,7 +102,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-      {name: 'SessionNotCreatedError', message: /necessary.*proper/},
+      {name: 'InvalidArgumentError', message: /necessary.*proper/},
     );
   });
 
@@ -98,7 +123,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       }),
-      {name: 'SessionNotCreatedError', message: /platformName/},
+      {name: 'InvalidArgumentError', message: /platformName/},
     );
   });
 
@@ -163,7 +188,7 @@ describe('Desired Capabilities', function () {
         alwaysMatch: {platformname: 'iOS'},
         firstMatch: [{}],
       } as unknown as TestW3CCaps),
-      {name: 'SessionNotCreatedError', message: /platformName/},
+      {name: 'InvalidArgumentError', message: /vendor prefix.*platformname/},
     );
   });
 
@@ -288,7 +313,7 @@ describe('Desired Capabilities', function () {
         } as any,
         firstMatch: [{}],
       }),
-      {name: 'SessionNotCreatedError', message: /platformName/i},
+      {name: 'InvalidArgumentError', message: /platformName/i},
     );
   });
 
@@ -402,7 +427,7 @@ describe('Desired Capabilities', function () {
     it('should raise an error if w3c capabilities is not a plain JSON object', async function () {
       const testValues = [true, 'string', [], 100];
       await asyncmap(testValues, (val) =>
-        assert.rejects(d.createSession(val as unknown as TestW3CCaps), errors.SessionNotCreatedError),
+        assert.rejects(d.createSession(val as unknown as TestW3CCaps), errors.InvalidArgumentError),
       );
     });
   });

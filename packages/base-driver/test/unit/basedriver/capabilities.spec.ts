@@ -7,12 +7,14 @@ import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import {
   APPIUM_VENDOR_PREFIX,
   findNonPrefixedCaps,
+  isStandardCap,
   mergeCaps,
   parseCaps,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
   promoteAppiumOptions,
   stripAppiumPrefixes,
+  STANDARD_CAPS,
   validateCaps,
 } from '../../../lib/basedriver/capabilities.js';
 import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
@@ -21,6 +23,102 @@ import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
 type TestW3CCaps = W3CCapabilities<Constraints>;
 
 describe('caps', function () {
+  describe('standard capability names', function () {
+    it('should recognize only the exact spelling of each standard name', function () {
+      for (const key of STANDARD_CAPS) {
+        assert.equal(isStandardCap(key), true);
+        assert.equal(isStandardCap(key.toUpperCase()), false);
+      }
+    });
+
+    for (const key of ['PlatformName', 'platformname', 'BrowserName', 'TIMEOUTS']) {
+      for (const location of ['alwaysMatch', 'firstMatch']) {
+        it(`should reject ${key} in ${location} as an unprefixed non-standard capability`, function () {
+          const caps = location === 'alwaysMatch' ? {alwaysMatch: {[key]: 'value'}} : {firstMatch: [{[key]: 'value'}]};
+          assert.throws(() => processCapabilities(caps as TestW3CCaps), /should have a vendor prefix/);
+        });
+      }
+    }
+
+    it('should preserve standard values and extension names with mixed casing', function () {
+      assert.deepStrictEqual(
+        processCapabilities({
+          alwaysMatch: {
+            platformName: 'aNdRoId',
+            browserName: 'Chrome',
+            'appium:automationName': 'UIAutomator2',
+            'appium:PlatformName': 'custom',
+            'vendor:MixedCase': true,
+          },
+        } as TestW3CCaps),
+        {
+          platformName: 'aNdRoId',
+          browserName: 'Chrome',
+          automationName: 'UIAutomator2',
+          PlatformName: 'custom',
+          'vendor:MixedCase': true,
+        },
+      );
+    });
+  });
+
+  describe('null capability values', function () {
+    for (const [alwaysMatch, firstMatch] of [
+      [{browserName: null}, {browserName: 'chrome'}],
+      [{browserName: 'chrome'}, {browserName: null}],
+      [{'appium:custom': null}, {'appium:custom': 'value'}],
+      [{'appium:custom': 'value'}, {'appium:custom': null}],
+    ]) {
+      it(`should omit null before merging ${JSON.stringify(alwaysMatch)} and ${JSON.stringify(firstMatch)}`, function () {
+        const caps = {alwaysMatch, firstMatch: [firstMatch]} as unknown as TestW3CCaps;
+        const original = structuredClone(caps);
+        const expected = 'browserName' in alwaysMatch ? {browserName: 'chrome'} : {custom: 'value'};
+        assert.deepStrictEqual(processCapabilities(caps), expected);
+        assert.deepStrictEqual(caps, original);
+      });
+    }
+
+    it('should omit unknown null capabilities before checking vendor prefixes', function () {
+      assert.deepStrictEqual(
+        processCapabilities({alwaysMatch: {unknown: null}, firstMatch: [{other: null}]} as unknown as TestW3CCaps),
+        {},
+      );
+    });
+
+    it('should preserve nested nulls and non-null falsy values', function () {
+      const caps = {timeouts: {script: null}, 'appium:enabled': false, 'appium:count': 0, 'appium:text': ''};
+      assert.deepStrictEqual(processCapabilities({alwaysMatch: caps}), {
+        timeouts: {script: null},
+        enabled: false,
+        count: 0,
+        text: '',
+      });
+    });
+
+    it('should allow a required capability in firstMatch when alwaysMatch supplies null', function () {
+      assert.deepStrictEqual(
+        processCapabilities(
+          {alwaysMatch: {platformName: null}, firstMatch: [{platformName: 'Android'}]} as unknown as TestW3CCaps,
+          {platformName: {presence: true, isString: true}},
+        ),
+        {platformName: 'Android'},
+      );
+    });
+
+    it('should return validated capabilities without null values', function () {
+      assert.deepStrictEqual(validateCaps({browserName: null, timeouts: {script: null}} as any), {
+        timeouts: {script: null},
+      });
+    });
+
+    it('should still reject duplicate non-null capabilities', function () {
+      assert.throws(
+        () => processCapabilities({alwaysMatch: {browserName: 'chrome'}, firstMatch: [{browserName: 'chrome'}]}),
+        /should not exist on both/,
+      );
+    });
+  });
+
   // Tests based on: https://www.w3.org/TR/webdriver/#dfn-validate-caps
   describe('#validateCaps', function () {
     it('returns invalid argument error if "capability" is not a JSON object (1)', function () {

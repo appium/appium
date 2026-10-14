@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import type {AddressInfo} from 'node:net';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {BaseDriver, runWithProxyReq} from '@appium/base-driver';
+import {BaseDriver, getResponseForW3CError, runWithProxyReq} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
 import {FakeDriver} from '@appium/fake-driver';
 import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
@@ -199,6 +199,19 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
         await appium.deleteSession(SESSION_ID);
       });
+
+      for (const caps of [{alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
+        it(`should reject malformed capabilities before selecting a driver: ${JSON.stringify(caps)}`, async function () {
+          mockFakeDriver.expects('createSession').never();
+          await assert.rejects(appium.createSession(caps as any), (error) => {
+            const [status, body] = getResponseForW3CError(error);
+            assert.equal(status, 400);
+            assert.equal(body.value.error, 'invalid argument');
+            return true;
+          });
+          mockFakeDriver.verify();
+        });
+      }
 
       it('should start the idle timeout after applying initial settings', async function () {
         const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
@@ -868,6 +881,64 @@ describe('AppiumDriver', function () {
         upstreamSocket.terminate();
         assert.strictEqual(await clientClosed, 1011);
       });
+
+      for (const {disconnect, commandIds, responseType} of [
+        {disconnect: false, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: true, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'error'},
+        {disconnect: true, commandIds: [1, 1], responseType: 'success'},
+      ]) {
+        it(`should suspend idle expiry for IDs ${commandIds} until ${disconnect ? 'disconnect' : `all ${responseType} responses arrive`}`, async function () {
+          await fakeDriver.clearNewCommandTimeout();
+          sandbox.stub(fakeDriver as any, 'stopClock').resolves();
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          try {
+            fakeDriver.newCommandTimeoutMs = 1000;
+            await fakeDriver.startNewCommandTimeout();
+            for (const id of commandIds) {
+              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
+              await received;
+            }
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            const eventReceived = new Promise((resolve) => client.once('message', resolve));
+            upstreamSocket.send(JSON.stringify({type: 'event', method: 'log.entryAdded', params: {}}));
+            await eventReceived;
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            if (disconnect) {
+              const closed = new Promise((resolve) => client.once('close', resolve));
+              upstreamSocket.close();
+              await closed;
+            } else {
+              for (const [responseIndex, id] of commandIds.toReversed().entries()) {
+                const received = new Promise((resolve) => client.once('message', resolve));
+                upstreamSocket.send(
+                  JSON.stringify(
+                    responseType === 'success'
+                      ? {id, type: 'success', result: {contexts: []}}
+                      : {id, type: 'error', error: 'unknown error', message: 'Test command failed'},
+                  ),
+                );
+                await received;
+                if (responseIndex === 0) {
+                  await clock.tickAsync(2000);
+                  assert.notEqual(fakeDriver.sessionId, null);
+                }
+              }
+            }
+            await clock.tickAsync(999);
+            assert.notEqual(fakeDriver.sessionId, null);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+            clock.restore();
+          }
+        });
+      }
     });
     describe('createPluginInstances', function () {
       class NoArgsPlugin extends BasePlugin {}

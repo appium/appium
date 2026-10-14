@@ -161,6 +161,9 @@ already-executed timed-out command.
     and readback; `implicit: null` allows unlimited waiting
 
 Initial `capabilities.timeouts` support remains driver-dependent.
+Pending [#22983](https://github.com/appium/appium/pull/22983) initializes BaseDriver's local timeout
+state from this capability, with the same value checks as Set Timeouts; backend handling remains
+driver-specific.
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
@@ -206,6 +209,11 @@ no commands are executing. Drivers can customize the exemption list by overridin
 
     Use exact standard key names and vendor-prefixed extensions. Send `firstMatch: [{}]` or omit it.
     Update error assertions for malformed capabilities; top-level `null` values no longer reach drivers
+
+Pending [#22982](https://github.com/appium/appium/pull/22982) validates and merges every `firstMatch`
+candidate before selection. Invalid supplied values or duplicate keys in any candidate will reject
+the request, even when another candidate could match; missing required driver capabilities still
+allow fallback.
 
 ### Storage Plugin Routes Respect `--base-path`
 

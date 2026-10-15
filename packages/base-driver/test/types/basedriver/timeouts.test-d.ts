@@ -1,7 +1,12 @@
 import {BaseDriver} from '@appium/base-driver';
 import {expectNotAssignable, expectType} from 'tsd';
 
-const driver = new BaseDriver();
+const driver = new BaseDriver<{timeouts: {isObject: true}}>();
+await driver.createSession({alwaysMatch: {platformName: 'iOS', timeouts: {implicit: 123}}});
+await driver.createSession({
+  alwaysMatch: {platformName: 'iOS'},
+  firstMatch: [{timeouts: {script: null}}, {timeouts: {}}],
+});
 await driver.timeouts(undefined, undefined, null, null, null);
 driver.setScriptTimeout(null);
 driver.setPageLoadTimeout(null);

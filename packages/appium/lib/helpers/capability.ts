@@ -52,28 +52,25 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
 
   if (!util.isEmpty(defaultCapabilities)) {
     for (const [defaultCapKey, defaultCapValue] of Object.entries(defaultCapabilities)) {
-      let isCapAlreadySet = false;
-      for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
-        if (
-          util.isPlainObject(firstMatchEntry) &&
-          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
-        ) {
-          isCapAlreadySet = true;
-          break;
-        }
-      }
-      isCapAlreadySet =
-        isCapAlreadySet ||
-        (util.isPlainObject(w3cCapabilities.alwaysMatch) &&
-          hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey));
-      if (isCapAlreadySet) {
+      // alwaysMatch already requires this key. Putting the default on firstMatch would make merge fail.
+      if (
+        util.isPlainObject(w3cCapabilities.alwaysMatch) &&
+        hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey)
+      ) {
         continue;
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
         w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
-      } else {
-        (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
+      }
+      for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
+        if (
+          !util.isPlainObject(firstMatchEntry) ||
+          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
+        ) {
+          continue;
+        }
+        (firstMatchEntry as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
     }
   }

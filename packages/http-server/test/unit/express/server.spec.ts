@@ -36,6 +36,7 @@ describe('server configuration', function () {
       use: sandbox.spy(),
       all: sandbox.spy(),
       get: sandbox.spy(),
+      head: sandbox.spy(),
       post: sandbox.spy(),
       delete: sandbox.spy(),
       totalCount: () =>
@@ -52,6 +53,69 @@ describe('server configuration', function () {
 
   afterEach(function () {
     sandbox.restore();
+  });
+
+  for (const basePath of ['', '/wd/hub']) {
+    it(`should reject implicit HEAD commands under '${basePath}' without executing the driver`, async function () {
+      const driver = fakeDriver();
+      const execute = sandbox.spy(driver, 'executeCommand');
+      const exists = sandbox.spy(driver, 'sessionExists');
+      const _server = await server({
+        routeConfiguringFunction: routeConfiguringFunction(driver as any),
+        port,
+        basePath,
+        extraMethodMap: newMethodMap,
+      });
+      try {
+        for (const path of ['/status', '/session/foo/url', '/session/missing/title', '/session/foo/fake']) {
+          const res = await fetch(`http://127.0.0.1:${port}${basePath}${path}`, {method: 'HEAD'});
+          assert.strictEqual(res.status, 405, path);
+          assert.strictEqual(await res.text(), '', 'HEAD responses must not contain a body');
+          assert.strictEqual(res.headers.get('cache-control'), 'no-cache');
+        }
+        assert.strictEqual(execute.callCount, 0);
+        assert.strictEqual(exists.callCount, 0, 'method validation must precede session validation');
+        const unknown = await fetch(`http://127.0.0.1:${port}${basePath}/unknown`, {method: 'HEAD'});
+        assert.strictEqual(unknown.status, 404);
+        const get = await fetch(`http://127.0.0.1:${port}${basePath}/status`);
+        assert.strictEqual(get.status, 200);
+        await get.text();
+        assert.strictEqual(execute.callCount, 1);
+      } finally {
+        await _server.close();
+      }
+    });
+  }
+
+  it('should preserve explicit extension HEAD commands and custom server routes', async function () {
+    const execute = sandbox.stub().resolves({});
+    const driver = {...fakeDriver(), executeCommand: execute, proxyActive: () => false};
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      extraMethodMap: {
+        '/session/:sessionId/explicit-head': {
+          GET: {command: 'fakeGet'},
+          HEAD: {command: 'fakeHead'},
+        },
+      } as MethodMap<Driver>,
+      serverUpdaters: [
+        async (app) => {
+          app.get('/health', (_req, res) => res.sendStatus(204));
+        },
+      ],
+    });
+    try {
+      const explicit = await fetch(`http://127.0.0.1:${port}/session/foo/explicit-head`, {method: 'HEAD'});
+      assert.strictEqual(explicit.status, 200);
+      assert.strictEqual(await explicit.text(), '');
+      assert.strictEqual(execute.firstCall.args[0], 'fakeHead');
+      const custom = await fetch(`http://127.0.0.1:${port}/health`, {method: 'HEAD'});
+      assert.strictEqual(custom.status, 204);
+      assert.strictEqual(execute.callCount, 1);
+    } finally {
+      await _server.close();
+    }
   });
 
   it('should set no-cache on successful responses and errors from each HTTP layer', async function () {

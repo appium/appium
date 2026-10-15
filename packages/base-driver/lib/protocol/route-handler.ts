@@ -51,7 +51,20 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
     for (const [path, methods] of Object.entries(allMethods)) {
-      for (const [method, spec] of Object.entries(methods)) {
+      // Express otherwise executes GET handlers for HEAD requests. Register HEAD first,
+      // preserving explicit extension handlers regardless of their declaration order.
+      if (methods.GET && !('HEAD' in methods)) {
+        app.head(`${basePath}${path}`, (_req: Request, res: Response) => {
+          const [status, body] = getResponseForW3CError(new errors.UnknownMethodError());
+          res.status(status).json(body);
+        });
+      }
+      const entries = Object.entries(methods);
+      const orderedEntries = [
+        ...entries.filter(([method]) => method === 'HEAD'),
+        ...entries.filter(([method]) => method !== 'HEAD'),
+      ];
+      for (const [method, spec] of orderedEntries) {
         const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
         // set up the express route handler
         buildHandler(app, method, `${basePath}${path}`, spec, driver, isSessCommand);

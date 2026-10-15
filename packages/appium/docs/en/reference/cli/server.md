@@ -35,7 +35,7 @@ appium
 |`--callback-port`, `-cp`|Callback port|integer|`4723`|
 |`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
 |`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`|
-|`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities|object||
+|`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
 |`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
@@ -65,6 +65,40 @@ appium
 |`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
 |`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
+
+### Default Capabilities
+
+Capabilities set with `--default-capabilities` are added to the received capabilities before a
+driver is matched. This is Appium's own defaulting behavior, not something defined by the W3C
+WebDriver specification.
+
+* A value the client sends in `alwaysMatch`, or in a given `firstMatch` candidate, takes precedence
+  over the server default
+* Defaults fill missing keys in each `firstMatch` candidate separately. A value in one candidate
+  does not stop the default from being applied to another candidate
+* A key sent in both `alwaysMatch` and `firstMatch` is still rejected by the usual capability
+  validation. Server defaults do not change that
+
+For example, with these server defaults:
+
+```json
+{"appium:newCommandTimeout": 60}
+```
+
+and these received capabilities:
+
+```json
+{
+  "alwaysMatch": {"appium:deviceName": "Pixel"},
+  "firstMatch": [
+    {"platformName": "iOS", "appium:newCommandTimeout": 120},
+    {"platformName": "Android"}
+  ]
+}
+```
+
+the iOS candidate keeps `appium:newCommandTimeout` of `120`, and the Android candidate gets the
+default `60`. The session uses the value from whichever candidate it is created with.
 
 ### Info Options
 

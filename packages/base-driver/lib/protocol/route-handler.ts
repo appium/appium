@@ -66,7 +66,7 @@ function registerCommandRoutes(
   if (methods.GET && !('HEAD' in methods)) {
     const allowedMethods = Object.keys(methods).join(', ');
     app.head(path, (_req, res) => {
-      res.status(405).set('Allow', allowedMethods).end();
+      res.status(405).set('Allow', allowedMethods).set('Content-Type', 'application/json; charset=utf-8').end();
     });
   }
 

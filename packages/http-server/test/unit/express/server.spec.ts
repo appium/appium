@@ -77,6 +77,7 @@ describe('server configuration', function () {
           const res = await fetch(`http://127.0.0.1:${port}${basePath}${path}`, {method: 'HEAD'});
           assert.strictEqual(res.status, 405, path);
           assert.strictEqual(res.headers.get('allow'), allowedMethods, path);
+          assert.strictEqual(res.headers.get('content-type'), 'application/json; charset=utf-8', path);
           assert.strictEqual(await res.text(), '', 'HEAD responses must not contain a body');
           assert.strictEqual(res.headers.get('cache-control'), 'no-cache');
         }

@@ -53,9 +53,9 @@ export interface StandardCapabilities {
    */
   setWindowRect?: boolean;
   /**
-   * Describes the timeouts imposed on certain session operations.
+   * Describes the timeouts imposed on certain session operations. Omitted fields retain their defaults.
    */
-  timeouts?: Timeouts;
+  timeouts?: Partial<Timeouts>;
   /**
    * Defines the current session’s strict file interactability.
    */

@@ -1,7 +1,13 @@
-import type {ITimeoutCommands} from '@appium/types';
+import type {ITimeoutCommands, StandardCapabilities, Timeouts} from '@appium/types';
 import {expectAssignable, expectNotAssignable, expectType} from 'tsd';
 
 declare const driver: ITimeoutCommands;
+expectAssignable<StandardCapabilities>({timeouts: {implicit: 123}});
+expectAssignable<StandardCapabilities>({timeouts: {script: null}});
+expectAssignable<StandardCapabilities>({timeouts: {}});
+expectNotAssignable<StandardCapabilities>({timeouts: {implicit: '123'}});
+expectNotAssignable<Timeouts>({implicit: 123});
+expectNotAssignable<Awaited<ReturnType<ITimeoutCommands['getTimeouts']>>>({implicit: 123, command: 0});
 await driver.timeouts(undefined, undefined, null, null, null);
 driver.setScriptTimeout(null);
 driver.setPageLoadTimeout(null);

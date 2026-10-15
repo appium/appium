@@ -32,6 +32,23 @@ export function allowCrossDomain(req: Request, res: Response, next: NextFunction
   next();
 }
 
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/**
+ * Rejects state-changing requests that carry an `Origin` header (sent by browsers cross-origin),
+ * including CORS "simple" form posts that skip preflight. Only used when CORS is not allowed.
+ */
+export function rejectBrowserOrigin(req: Request, res: Response, next: NextFunction): void {
+  if (!SAFE_METHODS.has(req.method) && fetchHeaderValue(req, 'origin') !== undefined) {
+    log.warn(`Rejecting ${req.method} ${req.path} from the browser origin '${req.headers.origin}'`);
+    // W3C defines no 403 error code, so only the body shape is W3C-compliant
+    const [, body] = getResponseForW3CError(new errors.UnknownError('Browser-origin requests are not allowed'));
+    res.status(403).json(body);
+    return;
+  }
+  next();
+}
+
 /**
  * Populates the logger's async context with request and session metadata.
  * Derives `requestId`, optional session id/signature, and `isSensitive` flag from headers/URL.

@@ -28,6 +28,7 @@ import {
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  rejectBrowserOrigin,
   tryHandleWebSocketUpgrade,
 } from './middleware.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
@@ -97,7 +98,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
     port,
     hostname,
     cliArgs = {},
-    allowCors = true,
+    allowCors = false,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     serverUpdaters = [],
@@ -173,7 +174,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   const {
     app,
     addRoutes,
-    allowCors = true,
+    allowCors = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -196,9 +197,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   if (useLegacyUpgradeHandler) {
     app.use(handleUpgrade(webSocketsMapping, allowCors));
   }
-  if (allowCors) {
-    app.use(allowCrossDomain);
-  }
+  app.use(allowCors ? allowCrossDomain : rejectBrowserOrigin);
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
@@ -304,7 +303,13 @@ function configureHttp({
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
       if (
-        !tryHandleWebSocketUpgrade({req, socket, head, webSocketsMapping: appiumServer.webSocketsMapping, allowCors})
+        !tryHandleWebSocketUpgrade({
+          req,
+          socket,
+          head,
+          webSocketsMapping: appiumServer.webSocketsMapping,
+          allowCors,
+        })
       ) {
         socket.destroy();
       }

@@ -64,10 +64,14 @@ function registerCommandRoutes(
   driver: Core<any>,
 ): void {
   if (methods.GET && !('HEAD' in methods)) {
-    app.head(path, rejectUnsupportedHead);
+    const allowedMethods = Object.keys(methods).join(', ');
+    app.head(path, (_req, res) => {
+      res.status(405).set('Allow', allowedMethods).end();
+    });
   }
 
-  // Preserve explicit extension HEAD handlers regardless of declaration order.
+  // Preserve runtime compatibility with explicit HEAD handlers regardless of declaration
+  // order. MethodMap's public types only declare GET, POST, and DELETE.
   const entries = Object.entries(methods);
   const orderedEntries = [
     ...entries.filter(([method]) => method === 'HEAD'),
@@ -77,11 +81,6 @@ function registerCommandRoutes(
     const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
     buildHandler(app, method, path, spec, driver, isSessCommand);
   }
-}
-
-function rejectUnsupportedHead(_req: Request, res: Response): void {
-  const [status, body] = getResponseForW3CError(new errors.UnknownMethodError());
-  res.status(status).json(body);
 }
 
 function buildHandler(

@@ -67,9 +67,16 @@ describe('server configuration', function () {
         extraMethodMap: newMethodMap,
       });
       try {
-        for (const path of ['/status', '/session/foo/url', '/session/missing/title', '/session/foo/fake']) {
+        const cases = [
+          ['/status', 'GET'],
+          ['/session/foo/url', 'GET, POST'],
+          ['/session/missing/title', 'GET'],
+          ['/session/foo/fake', 'GET, POST'],
+        ];
+        for (const [path, allowedMethods] of cases) {
           const res = await fetch(`http://127.0.0.1:${port}${basePath}${path}`, {method: 'HEAD'});
           assert.strictEqual(res.status, 405, path);
+          assert.strictEqual(res.headers.get('allow'), allowedMethods, path);
           assert.strictEqual(await res.text(), '', 'HEAD responses must not contain a body');
           assert.strictEqual(res.headers.get('cache-control'), 'no-cache');
         }

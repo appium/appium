@@ -18,6 +18,7 @@ import {
   validateCaps,
 } from '../../../lib/basedriver/capabilities.js';
 import {isW3cCaps} from '../../../lib/helpers/capabilities.js';
+import {errors} from '../../../lib/protocol/errors.js';
 
 /** W3C caps argument for parseCaps, processCapabilities, findNonPrefixedCaps, promoteAppiumOptions */
 type TestW3CCaps = W3CCapabilities<Constraints>;
@@ -346,9 +347,6 @@ describe('caps', function () {
       });
 
       it('that equals firstMatch if firstMatch contains two objects that pass the provided constraints', function () {
-        caps.alwaysMatch = {
-          'appium:foo': 'bar',
-        };
         caps.firstMatch = [{'appium:foo': 'bar1'}, {'appium:foo': 'bar2'}];
 
         const constraints = {
@@ -391,17 +389,161 @@ describe('caps', function () {
         });
       });
 
-      it('with merged caps', function () {
+      it('rejects a duplicate instead of falling back to another candidate', function () {
         caps.firstMatch = [{'appium:hello': 'bar', 'appium:foo': 'foo'}, {'appium:foo': 'bar'}];
-        assert.deepStrictEqual(parseCaps(caps as TestW3CCaps).matchedCaps, {
-          hello: 'world',
-          foo: 'bar',
-        });
+        assert.throws(() => parseCaps(caps as TestW3CCaps), errors.InvalidArgumentError);
       });
     });
   });
 
   describe('#processCaps', function () {
+    for (const inclusion of ['inclusion', 'inclusionCaseInsensitive'] as const) {
+      const constraints: Constraints = {
+        platformName: {presence: true, isString: true, [inclusion]: ['Android']},
+      };
+
+      for (const unsupportedFirst of [false, true]) {
+        it(`matches a supported platform with an unsupported candidate ${unsupportedFirst ? 'before' : 'after'} it (${inclusion})`, function () {
+          const firstMatch = [{platformName: 'Android'}, {platformName: 'iOS'}];
+          if (unsupportedFirst) {
+            firstMatch.reverse();
+          }
+          const caps = {firstMatch};
+          const originalCaps = structuredClone(caps);
+          const originalConstraints = structuredClone(constraints);
+          const parsed = parseCaps(caps, constraints);
+          assert.deepStrictEqual(parsed.matchedCaps, {platformName: 'Android'});
+          assert.deepStrictEqual(parsed.validatedFirstMatchCaps, [{platformName: 'Android'}]);
+          assert.deepStrictEqual(caps, originalCaps);
+          assert.deepStrictEqual(constraints, originalConstraints);
+        });
+      }
+
+      it(`checks an alwaysMatch platform during matching (${inclusion})`, function () {
+        assert.deepStrictEqual(
+          processCapabilities({alwaysMatch: {platformName: 'Android'}, firstMatch: [{}]}, constraints),
+          {platformName: 'Android'},
+        );
+        assert.equal(parseCaps({alwaysMatch: {platformName: 'iOS'}} as TestW3CCaps, constraints).matchedCaps, null);
+      });
+
+      it(`returns no match when every platform is unsupported (${inclusion})`, function () {
+        const caps = {firstMatch: [{platformName: 'iOS'}, {platformName: 'Windows'}]};
+        assert.equal(parseCaps(caps, constraints).matchedCaps, null);
+        assert.throws(() => processCapabilities(caps, constraints), errors.InvalidArgumentError);
+      });
+
+      it(`still rejects duplicate keys in an unsupported candidate (${inclusion})`, function () {
+        assert.throws(
+          () =>
+            processCapabilities(
+              {
+                alwaysMatch: {'appium:deviceName': 'device'},
+                firstMatch: [{platformName: 'Android'}, {platformName: 'iOS', 'appium:deviceName': 'other'}],
+              },
+              constraints,
+            ),
+          /property 'deviceName' should not exist on both/,
+        );
+      });
+
+      it(`validates candidate types before matching an unsupported alwaysMatch platform (${inclusion})`, function () {
+        assert.throws(
+          () =>
+            processCapabilities(
+              {alwaysMatch: {platformName: 'iOS'}, firstMatch: [{platformName: 42}]} as unknown as TestW3CCaps,
+              constraints,
+            ),
+          /'platformName' must be of type string/,
+        );
+      });
+    }
+
+    for (const name of ['pageLoadStrategy', 'appium:unlockStrategy']) {
+      it(`still rejects an invalid ${name} value in an unused candidate`, function () {
+        const key = name.replace('appium:', '');
+        assert.throws(
+          () =>
+            processCapabilities(
+              {firstMatch: [{[name]: 'allowed'}, {[name]: 'invalid'}]},
+              {[key]: {isString: true, inclusionCaseInsensitive: ['allowed']}},
+            ),
+          errors.InvalidArgumentError,
+        );
+      });
+    }
+
+    for (const invalidFirst of [false, true]) {
+      it(`rejects an invalid candidate ${invalidFirst ? 'before' : 'after'} a valid candidate`, function () {
+        const firstMatch = [{platformName: 'Android'}, {platformName: 42}];
+        if (invalidFirst) {
+          firstMatch.reverse();
+        }
+        assert.throws(
+          () =>
+            processCapabilities({firstMatch} as TestW3CCaps, {
+              platformName: {isString: true, inclusionCaseInsensitive: ['Android']},
+            }),
+          {name: 'InvalidArgumentError', message: /'platformName' must be of type string/},
+        );
+      });
+    }
+
+    for (const shouldValidate of [true, false]) {
+      it(`rejects a later duplicate even when the earlier candidate matches (validate=${shouldValidate})`, function () {
+        assert.throws(
+          () =>
+            processCapabilities(
+              {
+                alwaysMatch: {platformName: 'Android'},
+                firstMatch: [{}, {platformName: 'Android'}],
+              },
+              {},
+              shouldValidate,
+            ),
+          {name: 'InvalidArgumentError', message: /should not exist on both/},
+        );
+      });
+    }
+
+    it('checks duplicates even in a candidate missing a required driver capability', function () {
+      assert.throws(
+        () =>
+          processCapabilities(
+            {
+              alwaysMatch: {platformName: 'Android'},
+              firstMatch: [{'appium:deviceName': 'device'}, {platformName: 'Android'}],
+            },
+            {platformName: {isString: true}, deviceName: {presence: true}},
+          ),
+        errors.InvalidArgumentError,
+      );
+    });
+
+    it('validates all candidates before checking duplicate keys', function () {
+      assert.throws(
+        () =>
+          processCapabilities(
+            {
+              alwaysMatch: {platformName: 'Android'},
+              firstMatch: [{platformName: 'Android'}, {platformName: 42}],
+            } as unknown as TestW3CCaps,
+            {platformName: {isString: true}},
+          ),
+        /'platformName' must be of type string/,
+      );
+    });
+
+    it('omits nulls in every candidate without changing input or first-match ordering', function () {
+      const caps = {
+        alwaysMatch: {platformName: 'Android'},
+        firstMatch: [{browserName: 'chrome'}, {platformName: null, browserName: 'firefox'}],
+      } as unknown as TestW3CCaps;
+      const original = structuredClone(caps);
+      assert.deepStrictEqual(processCapabilities(caps), {platformName: 'Android', browserName: 'chrome'});
+      assert.deepStrictEqual(caps, original);
+    });
+
     it('should return "alwaysMatch" if "firstMatch" and "constraints" were not provided', function () {
       assert.deepStrictEqual(processCapabilities({} as TestW3CCaps), {});
     });

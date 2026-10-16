@@ -89,6 +89,48 @@ describe('#zip', function () {
 
         describe('JS symlink containment', {skip: isWindows() || !!options.useSystemUnzip}, function () {
           for (const existing of [false, true]) {
+            it(`should validate unrelated links to an ${existing ? 'existing' : 'absent'} target with linear filesystem work`, async function (t) {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'many-links.zip');
+              await fs.mkdir(outputPath);
+              if (existing) {
+                await fs.writeFile(path.resolve(outputPath, 'target'), 'safe');
+              }
+              const linkCount = 64;
+              await createStoredZip(
+                dstPath,
+                Array.from({length: linkCount}, (_, i) => ({
+                  name: `link-${i}`,
+                  contents: 'target',
+                  mode: 0o120777,
+                })),
+              );
+              const lstat = t.mock.method(fs, 'lstat', fs.lstat);
+              await zip.extractAllTo(dstPath, outputPath);
+              // Count filesystem work instead of imposing a machine-dependent time limit.
+              assert.ok(lstat.mock.callCount() <= linkCount * 4);
+              for (let i = 0; i < linkCount; i++) {
+                assert.strictEqual(await fs.readlink(path.resolve(outputPath, `link-${i}`)), 'target');
+              }
+            });
+          }
+
+          it('should track indirect forward references after their dependencies change', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'indirect-forward-chain.zip');
+            await createStoredZip(dstPath, [
+              {name: 's/', contents: '', mode: 0o40755},
+              {name: 'alias', contents: 's', mode: 0o120777},
+              {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
+              {name: 's/t', contents: 'u', mode: 0o120777},
+              {name: 'alias/u', contents: '..', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+            await assert.rejects(fs.lstat(path.resolve(outputPath, 's/u')), {code: 'ENOENT'});
+            await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+          });
+
+          for (const existing of [false, true]) {
             it(`should reject a later link redirecting a forward reference to an ${existing ? 'existing' : 'absent'} outside file`, async function () {
               const outputPath = path.resolve(tmpRoot, 'output');
               const outsidePath = path.resolve(tmpRoot, 'escaped.txt');

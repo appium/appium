@@ -104,3 +104,16 @@ Supported by: `@AppiumTestDistribution`
 ```sh title="Install This Tool"
 npm install -g appium-installer
 ```
+
+### [XPath to Class Chain](https://github.com/domovou69/xpath-to-class-chain)
+
+XPath to Class Chain is a command-line tool for migrating iOS XPath locators in test code to
+`-ios class chain` selectors. It converts the XPaths that have an exact class chain equivalent,
+converts with a warning those that only have a close one (such as grouped positions `(//X)[n]`),
+and skips the rest with a reason (for example, sibling or parent axes).
+
+Supported by: `@domovou69`
+
+```sh title="Install This Tool"
+npm install -g xpath-to-class-chain
+```

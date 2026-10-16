@@ -94,7 +94,7 @@ interface ZipExtractorOptions {
   defaultFileMode?: string;
 }
 
-type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
+type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
@@ -103,6 +103,7 @@ class ZipExtractor {
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
+  private readonly symlinkTargets: Array<{link: string; baseDir: string; fileName: string}> = [];
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
@@ -177,6 +178,18 @@ class ZipExtractor {
       const link = await text(await this.openReadStream(entry));
       await this.assertSymlinkTargetWithinRoot(link, realDestDir, fileName);
       await fs.symlink(link, dest);
+      try {
+        // A new link can change the meaning of an earlier forward reference.
+        // Include the new link itself so self-references cannot escape validation.
+        await this.assertSymlinkTargetWithinRoot(link, realDestDir, fileName);
+        for (const target of this.symlinkTargets) {
+          await this.assertSymlinkTargetWithinRoot(target.link, target.baseDir, target.fileName);
+        }
+      } catch (err) {
+        await fs.unlink(dest);
+        throw err;
+      }
+      this.symlinkTargets.push({link, baseDir: realDestDir, fileName});
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
       const flags =
@@ -184,11 +197,17 @@ class ZipExtractor {
         fs.constants.O_CREAT |
         fs.constants.O_TRUNC |
         (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
-      const file = await fs.openFile(dest, flags, procMode);
+      const readStream = await this.openReadStream(entry);
       try {
-        await pipeline(await this.openReadStream(entry), file.createWriteStream());
+        const file = await fs.openFile(dest, flags, procMode);
+        try {
+          await pipeline(readStream, file.createWriteStream());
+        } finally {
+          await file.close();
+        }
       } finally {
-        await file.close();
+        // Opening the output may fail before pipeline takes ownership of the input.
+        readStream.destroy();
       }
     }
   }

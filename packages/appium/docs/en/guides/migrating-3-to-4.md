@@ -9,12 +9,15 @@ title: Migrating to Appium 4
 
 This document is a guide for those who are using Appium 3 and would like to upgrade to Appium 4.
 It contains a list of breaking changes, as well as suggestions for handling them.
+The [behavior fixes](#behavior-fixes) section also highlights corrections that can affect existing
+tests, client error handling, and server integrations.
 
 Appium 4 focuses on modernizing the codebase (Node.js requirements, ESM-only packages, dropping
 long-deprecated protocol support and APIs) rather than introducing a large number of new
-user-facing features. Most Appium users only need to check the [Node.js version](#node-2222-required)
-section below; the remaining breaking changes mostly affect driver and plugin developers, or users
-of specific removed flags/endpoints.
+user-facing features. Appium users should check the [Node.js version](#node-2222-required),
+[timeout inputs](#timeouts-endpoint-aligned-with-w3c-standard), and
+[capability validation](#stricter-capability-validation). The other breaking changes mostly affect
+driver and plugin developers, or users of specific removed flags/endpoints.
 
 ## Installation
 
@@ -141,18 +144,26 @@ already-executed timed-out command.
 
 `GET/SET /timeouts` is now closer to [the W3C standard](https://w3c.github.io/webdriver/#timeouts):
 
-* `POST /session/:sessionId/timeouts` now also accepts the standard `command` parameter; the
-  legacy `type`/`ms` parameters are deprecated
-* `POST /session/:sessionId/timeouts` no longer errors out when none of `script`/`pageLoad`/`implicit`
-  are provided
-* `GET /session/:sessionId/timeouts` now also returns `script` and `pageLoad`, in addition to the
-  existing `implicit` and Appium-specific `command` values
-* Driver-level `timeouts()`/`ISessionHandler` type declarations narrow `implicit` to a `number`,
-  matching `script`/`pageLoad` (the wire endpoint still coerces numeric strings at runtime)
+* `script`, `pageLoad`, and `implicit` accept `null` or integers from `0` to `Number.MAX_SAFE_INTEGER`
+  milliseconds. Strings and fractions now return HTTP `400` / `invalid argument`
+  ([#22961](https://github.com/appium/appium/pull/22961))
+* `null` disables the timeout and is preserved in managed drivers and readback. These fields now
+  use `TimeoutValue` (`number | null`); `GET /timeouts` returns all three
+* Omitted fields keep their values; `{}` succeeds without changes. Invalid updates change no values
+  ([#22960](https://github.com/appium/appium/pull/22960),
+  [#22961](https://github.com/appium/appium/pull/22961))
+* `command` remains an Appium-specific numeric idle timeout with legacy parsing. The `type`/`ms`
+  parameters are deprecated
 
 !!! info "Actions Needed"
 
-    Update any code that sends the `type`/`ms` timeout parameters or a `string` value for `implicit`
+    Replace numeric strings and `type`/`ms` with standard fields. Handle `null` in custom setters
+    and readback; `implicit: null` allows unlimited waiting
+
+Initial `capabilities.timeouts` support remains driver-dependent.
+Pending [#22983](https://github.com/appium/appium/pull/22983) initializes BaseDriver's local timeout
+state from this capability, with the same value checks as Set Timeouts; backend handling remains
+driver-specific.
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
@@ -177,9 +188,15 @@ no commands are executing. Drivers can customize the exemption list by overridin
 
 ### Stricter Capability Validation
 
-* Standard capability names are now case-sensitive: use `platformName` and `browserName`, not
-  `PlatformName` or `BrowserName`. Incorrectly cased unprefixed names are rejected as non-standard
-  capabilities. This does not change capability value matching or extension capability handling
+* Standard capability keys are case-sensitive (e.g. `platformName`, not `PlatformName`).
+  Value matching and namespaced extensions are unchanged
+  ([#22976](https://github.com/appium/appium/pull/22976))
+* Malformed capability containers and parser `invalid argument` errors now return HTTP `400`,
+  not HTTP `500` / `session not created`. Driver selection/loading failures still use
+  `session not created` ([#22977](https://github.com/appium/appium/pull/22977))
+* Top-level `null` capabilities are omitted before validation and merging, avoiding false
+  duplicate-key errors. Nested nulls, such as `timeouts: {script: null}`, are preserved
+  ([#22975](https://github.com/appium/appium/pull/22975))
 * An empty `firstMatch` array in the new session request is no longer silently replaced with a
   single empty entry; it is rejected with `InvalidArgumentError`, as required by the W3C standard
 * Setting both `appium:noReset` and `appium:fullReset` to `true` now fails with `SessionNotCreatedError`
@@ -190,7 +207,13 @@ no commands are executing. Drivers can customize the exemption list by overridin
 
 !!! info "Actions Needed"
 
-    Send `firstMatch: [{}]` (or omit `firstMatch`) instead of an empty array
+    Use exact standard key names and vendor-prefixed extensions. Send `firstMatch: [{}]` or omit it.
+    Update error assertions for malformed capabilities; top-level `null` values no longer reach drivers
+
+Pending [#22982](https://github.com/appium/appium/pull/22982) validates and merges every `firstMatch`
+candidate before selection. Invalid supplied values or duplicate keys in any candidate will reject
+the request, even when another candidate could match; missing required driver capabilities still
+allow fallback.
 
 ### Storage Plugin Routes Respect `--base-path`
 
@@ -203,6 +226,102 @@ are now rejected.
 !!! info "Actions Needed"
 
     If the server uses a non-default `--base-path`, update storage plugin clients to include it in the URLs
+    and avoid file names starting with a dot or ending in `.filepart` (case-insensitive).
+    Concurrent WebSocket uploads to the same case-insensitive file name now close with code `1013`;
+    retry with a new connection after the active upload finishes
+
+Pending upload WebSocket routes are also preserved across retries,
+and errors on upload event sockets are logged instead of potentially terminating the server.
+
+## Behavior Fixes
+
+These fixes are relevant when upgrading from Appium 3, even though they do not remove APIs.
+Most require no changes unless your tests or integrations depend on the previous behavior.
+
+### HTTP Responses and WebDriver Errors
+
+* WebDriver HTTP responses now include `Cache-Control: no-cache`, including successful responses,
+  errors, and responses reconstructed by `WebDriverProxy`
+  ([#22971](https://github.com/appium/appium/pull/22971)). Caches must revalidate these responses
+  before reusing them; this header does not mean `no-store`.
+* When no installed driver matches the requested platform/automation combination, or the matching
+  driver cannot be loaded or does not export its class, New Session now returns `session not created`
+  instead of `unknown error`. The HTTP status remains `500`, and the diagnostic message is preserved.
+  Validation of missing `platformName`/`appium:automationName` is unchanged
+  ([#22970](https://github.com/appium/appium/pull/22970)).
+* A downstream `detached shadow root` error is now preserved as HTTP `404` with that WebDriver
+  error code instead of being converted to `unknown error` with HTTP `500`
+  ([#22968](https://github.com/appium/appium/pull/22968)).
+* Supplied WebDriver error `data` (e.g. alert text) is preserved in driver and proxy responses;
+  absent data remains omitted
+  ([#22974](https://github.com/appium/appium/pull/22974)).
+* With an empty base path, an unregistered `GET /` now returns a WebDriver JSON `unknown command`
+  response with HTTP `404` instead of Express's HTML 404 page. Extensions can still register their
+  own root route ([#22969](https://github.com/appium/appium/pull/22969)).
+* Driver commands rejecting with `null` or `undefined` now produce a WebDriver `unknown error`
+  response instead of causing the error handler itself to fail
+  ([#22869](https://github.com/appium/appium/pull/22869)).
+
+!!! info "Actions Needed"
+
+    Update assertions or retry logic that inspect raw error codes, HTTP status codes, response
+    headers, or root-path response bodies. Use `GET /status` for server health checks
+
+### Initial Settings and Session Lifecycle
+
+* Initial settings now come from the selected `firstMatch` candidate, with defaults and
+  `alwaysMatch` settings applied first. Unselected candidates no longer override them, and settings
+  inside `appium:options` are now honored
+  ([#22882](https://github.com/appium/appium/pull/22882)).
+* The new-command idle timeout starts after initial settings and BiDi response setup finish,
+  preventing a session from expiring during initialization
+  ([#22881](https://github.com/appium/appium/pull/22881)). If post-create initialization fails,
+  Appium now attempts to delete the newly created session and removes its registration while
+  preserving the original initialization error
+  ([#22873](https://github.com/appium/appium/pull/22873)).
+* Commands still waiting in the queue when their session ends now reject with `invalid session id`
+  instead of remaining pending indefinitely; their driver methods are not executed
+  ([#22874](https://github.com/appium/appium/pull/22874)).
+* A driver cleanup failure during idle-timeout shutdown is now logged instead of becoming an
+  unhandled rejection that can terminate the server and unrelated sessions
+  ([#22964](https://github.com/appium/appium/pull/22964)).
+
+!!! info "Actions Needed"
+
+    Put initial settings in `alwaysMatch` or the intended `firstMatch` candidate. Handle
+    `invalid session id` for queued requests when a session ends, and make driver cleanup safe
+    to call after a partially completed initialization
+
+### BiDi Subscription Scope and Event Delivery
+
+Subscriptions without `contexts` now receive events carrying a context, and module subscriptions
+such as `events: ["log"]` now match events such as `log.entryAdded`. Overlapping subscriptions
+deliver each event only once ([#22883](https://github.com/appium/appium/pull/22883)).
+
+The base implementation of `session.subscribe` now rejects `userContexts` with `unsupported operation`
+instead of silently creating an unscoped subscription. Malformed `userContexts`, or supplying both
+`contexts` and `userContexts`, produce `invalid argument`. Drivers implementing user-context support
+can override `bidiSubscribe` ([#22877](https://github.com/appium/appium/pull/22877)).
+
+!!! info "Actions Needed"
+
+    Use `contexts` for browsing-context scope, or a driver that implements `userContexts` for
+    user-context scope. Review event-count assertions and workarounds for previously missing events
+
+### App Downloads and IPv6 Connections
+
+Percent-encoded credentials in `appium:app` URLs are now decoded once before Basic authentication,
+and complete HTTP-compressed downloads are no longer rejected because the decompressed file size
+differs from `Content-Length` ([#22887](https://github.com/appium/appium/pull/22887),
+[#22886](https://github.com/appium/appium/pull/22886)). IPv6 literals are now bracketed when constructing
+URLs, including advertised BiDi WebSocket URLs and execute-driver plugin connections
+([#22872](https://github.com/appium/appium/pull/22872),
+[#22912](https://github.com/appium/appium/pull/22912),
+[#22914](https://github.com/appium/appium/pull/22914)).
+
+!!! info "Actions Needed"
+
+    Remove any workarounds for literal percent escapes in download credentials or malformed IPv6 URLs
 
 ## Endpoint Changes
 
@@ -260,11 +379,11 @@ been removed.
 
 ### Drivers Must Support Shared Command Activity Tracking
 
-Appium keeps the new-command idle timer suspended until the entire plugin command chain
-finishes, including work after `next()` returns. This requires the `@appium/base-driver`
-implementation with shared command activity tracking and the `runWithCommandTimeout` helper.
-Older implementations that track only their own in-flight commands are no longer supported
-for this behavior. Appium does not replace a driver's timer methods to provide compatibility.
+The idle timer stays suspended through HTTP/BiDi plugin chains, including work after `next()`,
+and while proxied BiDi commands await a response. Drivers must use `@appium/base-driver` with
+shared command activity tracking; legacy timer implementations are no longer supported
+([#22946](https://github.com/appium/appium/pull/22946),
+[#22947](https://github.com/appium/appium/pull/22947)).
 
 !!! info "Actions Needed"
 
@@ -363,6 +482,28 @@ The following `@appium/support` exports have been removed: `process` (`getProces
 
     None for typical drivers/plugins, which don't use these low-level helpers directly. If you do,
     switch to the suggested replacement or a native Node.js API
+
+### Filesystem and IPC Fixes
+
+* `@appium/support`'s `fs.mv()` now preserves symlinks inside moved directories and moves source
+  symlinks themselves without moving their targets' contents. Dangling source links are supported,
+  and Windows case-only renames update the entry's spelling
+  ([#22880](https://github.com/appium/appium/pull/22880),
+  [#22954](https://github.com/appium/appium/pull/22954),
+  [#22958](https://github.com/appium/appium/pull/22958)).
+* `fs.walkDir()` now continues after walker errors such as `EACCES` and `ELOOP` instead of hanging.
+  These errors are logged and affected entries skipped; `ENOENT` still rejects the returned promise
+  ([#22956](https://github.com/appium/appium/pull/22956)).
+* Both `ipc.unsubscribe(topic, subscriber)` and `subscription.unsubscribe()` now finish waiting
+  async iterators and notify observers once. An observer that throws still propagates its error
+  to the caller, but no longer prevents waiting iterators from finishing
+  ([#22955](https://github.com/appium/appium/pull/22955)).
+
+!!! info "Actions Needed"
+
+    If you intend to move a symlink's target, resolve it explicitly before calling `fs.mv()`.
+    A completed directory walk may have skipped entries; check warnings if completeness matters.
+    Allow IPC consumers to finish when unsubscribed
 
 ### Legacy Test Pages Removed From `@appium/base-driver`
 

@@ -94,7 +94,14 @@ interface ZipExtractorOptions {
   defaultFileMode?: string;
 }
 
-type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
+type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
+
+interface SymlinkTarget {
+  link: string;
+  baseDir: string;
+  fileName: string;
+  missingPaths: Set<string>;
+}
 
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
@@ -103,6 +110,7 @@ class ZipExtractor {
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
+  private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
@@ -154,8 +162,6 @@ class ZipExtractor {
       return;
     }
 
-    const {dir} = this.opts;
-
     // convert external file attr int into a fs stat mode int
     const mode = (entry.externalFileAttributes >> 16) & 0xffff;
     // check if it's a symlink or dir (using stat mode constants)
@@ -175,17 +181,47 @@ class ZipExtractor {
       return;
     }
 
-    const readStream = await this.openReadStream(entry);
     if (isSymlink) {
-      const link = await text(readStream);
-      const resolvedLink = path.resolve(realDestDir, link);
-      if (!isSubPath(resolvedLink, dir)) {
-        throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
-      }
+      const link = await text(await this.openReadStream(entry));
+      await this.assertSymlinkTargetWithinRoot(link, realDestDir, fileName);
       await fs.symlink(link, dest);
+      try {
+        const target: SymlinkTarget = {link, baseDir: realDestDir, fileName, missingPaths: new Set()};
+        // Only unresolved components can become new symlinks. Recheck their
+        // dependents, including indirect references, instead of every earlier link.
+        const key = path.join(realDestDir, path.basename(dest)).toLowerCase();
+        const affected = [target, ...(this.symlinkDependents.get(key) ?? [])];
+        for (const affectedTarget of affected) {
+          const missingPaths = await this.assertSymlinkTargetWithinRoot(
+            affectedTarget.link,
+            affectedTarget.baseDir,
+            affectedTarget.fileName,
+          );
+          this.updateSymlinkDependencies(affectedTarget, missingPaths);
+        }
+      } catch (err) {
+        await fs.unlink(dest);
+        throw err;
+      }
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
+      const flags =
+        fs.constants.O_WRONLY |
+        fs.constants.O_CREAT |
+        fs.constants.O_TRUNC |
+        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+      const readStream = await this.openReadStream(entry);
+      try {
+        const file = await fs.openFile(dest, flags, procMode);
+        try {
+          await pipeline(readStream, file.createWriteStream());
+        } finally {
+          await file.close();
+        }
+      } finally {
+        // Opening the output may fail before pipeline takes ownership of the input.
+        readStream.destroy();
+      }
     }
   }
 
@@ -230,6 +266,9 @@ class ZipExtractor {
     const {dir} = this.opts;
     let realDest: string | null = null;
     try {
+      if ((await fs.lstat(dest)).isSymbolicLink()) {
+        throw new Error(`Cannot write a file over existing symlink "${dest}"`);
+      }
       realDest = await fs.realpath(dest);
     } catch (err: any) {
       if (err.code !== 'ENOENT') {
@@ -269,6 +308,74 @@ class ZipExtractor {
     }
 
     return mode;
+  }
+
+  private async assertSymlinkTargetWithinRoot(link: string, baseDir: string, fileName: string): Promise<Set<string>> {
+    // Resolve components before collapsing '..': a symlink may change its meaning.
+    // realpath alone cannot validate links whose targets have not been extracted yet.
+    const separator = isWindows() ? /[\\/]+/ : /\/+/;
+    let current = path.isAbsolute(link) ? path.parse(link).root : baseDir;
+    const pending = (path.isAbsolute(link) ? link.slice(current.length) : link).split(separator);
+    let followedLinks = 0;
+    const missingPaths = new Set<string>();
+    while (pending.length) {
+      const segment = pending.shift();
+      if (!segment || segment === '.') {
+        continue;
+      }
+      if (segment === '..') {
+        current = path.dirname(current);
+        continue;
+      }
+      const candidate = path.join(current, segment);
+      let target: string;
+      try {
+        if (!(await fs.lstat(candidate)).isSymbolicLink()) {
+          current = candidate;
+          continue;
+        }
+        target = await fs.readlink(candidate);
+      } catch (err: any) {
+        if (err.code !== 'ENOENT') {
+          throw err;
+        }
+        // Fold case conservatively for filesystems with case-insensitive names.
+        missingPaths.add(candidate.toLowerCase());
+        current = candidate;
+        continue;
+      }
+      if (++followedLinks > 40) {
+        throw new Error(`Too many symlinks while processing file ${fileName}`);
+      }
+      if (path.isAbsolute(target)) {
+        current = path.parse(target).root;
+        target = target.slice(current.length);
+      }
+      pending.unshift(...target.split(separator));
+    }
+    if (!isSubPath(current, this.opts.dir)) {
+      throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
+    }
+    return missingPaths;
+  }
+
+  private updateSymlinkDependencies(target: SymlinkTarget, missingPaths: Set<string>): void {
+    for (const missingPath of target.missingPaths) {
+      const dependents = this.symlinkDependents.get(missingPath);
+      dependents?.delete(target);
+      if (!dependents?.size) {
+        this.symlinkDependents.delete(missingPath);
+      }
+    }
+    target.missingPaths = missingPaths;
+    for (const missingPath of missingPaths) {
+      let dependents = this.symlinkDependents.get(missingPath);
+      if (!dependents) {
+        dependents = new Set();
+        this.symlinkDependents.set(missingPath, dependents);
+      }
+      dependents.add(target);
+    }
   }
 }
 

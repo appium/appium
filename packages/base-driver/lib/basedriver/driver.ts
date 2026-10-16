@@ -1,3 +1,5 @@
+import {AsyncResource} from 'node:async_hooks';
+
 import {logger, util} from '@appium/support';
 import {
   type AppiumServer,
@@ -472,12 +474,17 @@ export class BaseDriver<
     signal.addEventListener('abort', onAbort, {once: true});
     this.pendingCommandControllers.add(controller);
     try {
-      const execution = this.commandsQueueGuard.acquire(key, async () => {
-        this.pendingCommandControllers.delete(controller);
-        signal.removeEventListener('abort', onAbort);
-        signal.throwIfAborted();
-        return await command();
-      });
+      // async-lock starts queued tasks from the previous task's promise chain;
+      // bind so the command keeps its own request's async context (e.g. isSensitive logging)
+      const execution = this.commandsQueueGuard.acquire(
+        key,
+        AsyncResource.bind(async () => {
+          this.pendingCommandControllers.delete(controller);
+          signal.removeEventListener('abort', onAbort);
+          signal.throwIfAborted();
+          return await command();
+        }),
+      );
       return await Promise.race([execution, cancellation.promise]);
     } finally {
       this.pendingCommandControllers.delete(controller);

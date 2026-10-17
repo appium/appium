@@ -13,3 +13,27 @@ documentation for more details.
 ## License
 
 Apache-2.0
+
+## Testing capability validation without a session
+
+Driver authors can import `diagnoseCaps` from `@appium/base-driver` to assert both
+validation errors and previously log-only unknown capability names without
+starting Appium, creating a driver session, or capturing warning logs.
+
+```ts
+import {diagnoseCaps} from '@appium/base-driver';
+
+const result = diagnoseCaps(
+  {deviceName: 'Pixel', deviceNmae: 'typo'} as any,
+  {deviceName: {isString: true}},
+);
+// result.valid === true: unknown keys are still permissible
+// result.errors === []
+// result.unknownCapabilities === [{name: 'deviceNmae', suggestion: 'deviceName'}]
+```
+
+Supply the same combined standard/base/driver constraints used by the driver,
+and pass capability keys **after** vendor-prefix normalization. The helper uses
+`validateCaps` internally, so its `valid` and `errors` correspond to existing
+validation behavior. Unknown entries are advisory and are not validation
+failures. Normal session handling and logging are unchanged.

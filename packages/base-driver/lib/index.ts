@@ -28,6 +28,7 @@ export {codes as statusCodes, getSummaryByCode} from './jsonwp-status/status';
 
 // W3C capabilities parser
 export {
+  diagnoseCaps,
   isStandardCap,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
@@ -48,3 +49,5 @@ export {generateDriverLogPrefix} from './basedriver/helpers';
 export {isW3cCaps} from './helpers/capabilities';
 
 export type {ServerOpts} from './express/server';
+
+export type {CapDiagnostics} from './basedriver/capabilities';

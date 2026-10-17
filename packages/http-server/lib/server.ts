@@ -23,7 +23,7 @@ import {log} from './logger.js';
 import {
   allowCrossDomain,
   catchAllHandler,
-  createCatch404Handler,
+  createUnmatchedRouteHandler,
   defaultToJSONContentType,
   handleIdempotency,
   handleLogContext,
@@ -106,6 +106,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
 
   const app = express();
   const httpServer = await createServer(app, cliArgs);
+  const normalizedBasePath = normalizeBasePath(basePath);
 
   return await new Promise<AppiumServer>((resolve, reject) => {
     // we use a promise here because some elements of server start failure only happen in
@@ -115,7 +116,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
       try {
         const appiumServer = configureHttp({
           httpServer,
-          basePath: normalizeBasePath(basePath),
+          basePath: normalizedBasePath,
           reject,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
@@ -125,7 +126,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           app,
           addRoutes: routeConfiguringFunction,
           allowCors,
-          basePath,
+          basePath: normalizedBasePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
@@ -137,13 +138,12 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         }
 
         // once all configurations and updaters have been applied, make sure to set up a catchall
-        // handler so that anything unknown 404s. But do this after everything else since we don't
-        // want to block extensions' ability to add routes if they want.
-        const routeBasePath = normalizeBasePath(basePath);
+        // handler so that anything still unmatched is answered here. But do this after everything
+        // else since we don't want to block extensions' ability to add routes if they want.
         const commandPaths = Object.keys({...METHOD_MAP, ...extraMethodMap}).map(
-          (commandPath) => `${routeBasePath}${commandPath}`,
+          (commandPath) => `${normalizedBasePath}${commandPath}`,
         );
-        app.all('/{*all}', createCatch404Handler(commandPaths));
+        app.all('/{*all}', createUnmatchedRouteHandler(commandPaths));
 
         await startServer({
           httpServer,
@@ -156,7 +156,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         const protocol = appiumServer.isSecure() ? 'https' : 'http';
         const displayAddress = hostname ?? V4_BROADCAST_IP;
         const bracketedAddress = net.formatHostnameForUrl(displayAddress);
-        logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizeBasePath(basePath)}`);
+        logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizedBasePath}`);
 
         resolve(appiumServer);
       } catch (err) {

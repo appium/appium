@@ -21,8 +21,9 @@ appium
 
 !!! note
 
-    All of these options can also be set via a [Configuration File](../../guides/config.md). Options
-    set on the command line will override any options found in a configuration file.
+    Except for `--ext-search-root`, all of these options can also be set via a
+    [Configuration File](../../guides/config.md). Options set on the command line will override any
+    options found in a configuration file.
 
 |<div style="width:15em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
 |--|--|--|--|
@@ -39,6 +40,7 @@ appium
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
 |`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
+|`--ext-search-root`|Search the dependencies of this project directory for installed extensions|string||
 |`--keep-alive-timeout`, `-ka`|Timeout (in seconds) to use as both the keep-alive timeout and the connection timeout for all client requests. Disabled if set to `0`.|integer|`600`|
 |`--request-timeout`|Timeout (in seconds) for waiting to receive the entire HTTP request from the client. Disabled if set to `0`. Requests exceeding this timeout will be rejected with the code `HTTP 408`.|integer|`3600`|
 |`--local-timezone`|Use local timezone for log timestamps|boolean|`false`|

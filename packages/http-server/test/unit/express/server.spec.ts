@@ -275,6 +275,26 @@ describe('server configuration', function () {
     }
   });
 
+  it('should return unknown method for an extension command url called with the wrong method', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      basePath: '/wd/hub',
+      extraMethodMap: newMethodMap,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/wd/hub/session/foo/fake`, {method: 'DELETE'});
+      assert.strictEqual(res.status, 405);
+      assert.strictEqual(((await res.json()) as any).value.error, 'unknown method');
+
+      const resWithoutBasePath = await fetch(`http://127.0.0.1:${port}/session/foo/fake`, {method: 'DELETE'});
+      assert.strictEqual(resWithoutBasePath.status, 404);
+      assert.strictEqual(((await resWithoutBasePath.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
   it('should respond with a W3C error when the request body is not valid JSON', async function () {
     const driver = fakeDriver();
     const _server = await server({

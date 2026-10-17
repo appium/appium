@@ -194,8 +194,14 @@ export class Manifest {
    */
   async syncWithInstalledExtensions(hasAppiumDependency = false): Promise<boolean> {
     let didChange = false;
+    const scannedPaths = new Set<string>();
 
     const onMatch = async (filepath: string, devType = false): Promise<void> => {
+      if (scannedPaths.has(filepath)) {
+        return;
+      }
+      scannedPaths.add(filepath);
+
       try {
         const pkg = JSON.parse(await fs.readFile(filepath, 'utf8')) as unknown;
         if (isExtension(pkg)) {
@@ -208,7 +214,27 @@ export class Manifest {
       }
     };
 
-    const queue: Promise<void>[] = [onMatch(path.join(this.#appiumHome, 'package.json'), true)];
+    const appiumHomePkgPath = path.join(this.#appiumHome, 'package.json');
+    const queue: Promise<void>[] = [onMatch(appiumHomePkgPath, true)];
+
+    try {
+      const pkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8')) as {
+        dependencies?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+        peerDependencies?: Record<string, string>;
+      };
+      const deps = Object.keys({...pkg?.dependencies, ...pkg?.devDependencies, ...pkg?.peerDependencies});
+      for (const dep of deps) {
+        try {
+          const depPkgPath = require.resolve(`${dep}/package.json`, {paths: [this.#appiumHome]});
+          queue.push(onMatch(depPkgPath));
+        } catch {
+          // ignore packages that cannot be resolved or don't export package.json
+        }
+      }
+    } catch {
+      // ignore
+    }
 
     const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
       cwd: this.#appiumHome,

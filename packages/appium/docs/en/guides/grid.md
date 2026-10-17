@@ -137,7 +137,7 @@ all parameters and descriptions see
 Once you start the Appium server it will register with the grid, and you will see your device on
 the grid console page:
 
-`http://**\<grid-ip-adress\>**:**\<grid-port\>**/grid/console`
+`http://**\<grid-ip-address\>**:**\<grid-port\>**/grid/console`
 
 ### Example Grid Node Configuration JSON
 

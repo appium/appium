@@ -22,7 +22,7 @@ import type {
 } from './types.js';
 
 // Used to compare ratio and screen width
-// Pixel is basically under 1080 for example. 100K is probably enough fo a while.
+// Pixel is basically under 1080 for example. 100K is probably enough for a while.
 const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;

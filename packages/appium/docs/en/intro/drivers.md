@@ -81,7 +81,7 @@ from there is up to you, the driver author!
 ## Automation mapping
 
 But *typically* what driver authors want to do is to provide automation behaviours for a given
-platform(s) that are semantically very similar to the the WebDriver spec implementations for
+platform(s) that are semantically very similar to the WebDriver spec implementations for
 browsers. When you want to find an element, you should get a reference to a UI element. When you
 want to click or tap that element, the resulting behaviour should be the same as if a person were
 to click or tap on the element. And so on.

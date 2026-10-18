@@ -162,7 +162,7 @@ export interface IFindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
 
   /**
-   * Find a a list of all UI elements matching a given a locator strategy and a selector
+   * Find a list of all UI elements matching a given a locator strategy and a selector
    * @see {@link https://w3c.github.io/webdriver/#find-elements}
    *
    * @param strategy - the locator strategy
@@ -187,7 +187,7 @@ export interface IFindCommands {
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
 
   /**
-   * Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+   * Find a list of all UI elements matching a given a locator strategy and a selector. Only
    * look for elements among the set of descendants of a given element
    * @see {@link https://w3c.github.io/webdriver/#find-elements-from-element}
    *

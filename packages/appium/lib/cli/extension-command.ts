@@ -1185,7 +1185,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       const extServerVersion = await getRemoteExtensionVersionReq(pkgName, pkgVer);
       const isExtCompatible = areVersionsCompatible(serverVersion, extServerVersion);
       if (!isExtCompatible) {
-        if (pkgVer || (extServerVersion && semver.gtr(serverVersion, extServerVersion))) {
+        if (pkgVer || (extServerVersion && semver.gtr(serverVersion, extServerVersion, {includePrerelease: true}))) {
           throw this._createFatalError(
             `'${installSpec}' cannot be installed because the server version it requires (${extServerVersion}) ` +
               `does not meet the currently installed one (${serverVersion}). Please install ` +
@@ -1231,7 +1231,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
         }
         // Check the oldest version first - if it requires a newer server, no version can match
         const oldestReq = await getRemoteExtensionVersionReq(pkgName, versions[versions.length - 1]);
-        if (oldestReq && semver.ltr(serverVersion, oldestReq)) {
+        if (oldestReq && semver.ltr(serverVersion, oldestReq, {includePrerelease: true})) {
           return throwIncompatible();
         }
         // Newest first; skip latest (already checked) and oldest (requirement in `oldestReq`)
@@ -1354,7 +1354,7 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): P
  * Extensions with no declared range (null) are considered compatible.
  */
 function areVersionsCompatible(serverVersion: string, extServerVersion: string | null): boolean {
-  return !extServerVersion || semver.satisfies(serverVersion, extServerVersion);
+  return !extServerVersion || semver.satisfies(serverVersion, extServerVersion, {includePrerelease: true});
 }
 
 /**

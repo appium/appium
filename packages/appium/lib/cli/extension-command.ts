@@ -341,7 +341,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
           pkgName = name;
         } else {
           // if we're installing a named appium driver (like 'xcuitest') we need to
-          // dereference the actual npm package ('appiupm-xcuitest-driver'), so
+          // dereference the actual npm package ('appium-xcuitest-driver'), so
           // check it exists and get the correct package
           const knownNames = Object.keys(this.knownExtensions);
           if (!knownNames.includes(name)) {

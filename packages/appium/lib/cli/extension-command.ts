@@ -1126,6 +1126,22 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
   }
 
   /**
+   * For any `package.json` fields which a particular type of extension requires, validate the
+   * presence and form of those fields on the `package.json` data, throwing an error if anything is
+   * amiss.
+   *
+   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
+   * @param installSpec - Extension name/spec
+   */
+  protected abstract validateExtensionFields(extMetadata: ExtMetadata<ExtType>, installSpec: string): void;
+
+  /**
+   * Get the text which should be displayed to the user after an extension has been installed. This
+   * is designed to be overridden by drivers/plugins with their own particular text.
+   */
+  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
+
+  /**
    * Finds the latest extension version compatible with the currently installed server.
    * If a specific version is requested, only that one is checked.
    *
@@ -1235,22 +1251,6 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
     return latestCompatibleVersion;
   }
-
-  /**
-   * For any `package.json` fields which a particular type of extension requires, validate the
-   * presence and form of those fields on the `package.json` data, throwing an error if anything is
-   * amiss.
-   *
-   * @param extMetadata - the data in the "appium" field of `package.json` for an extension
-   * @param installSpec - Extension name/spec
-   */
-  protected abstract validateExtensionFields(extMetadata: ExtMetadata<ExtType>, installSpec: string): void;
-
-  /**
-   * Get the text which should be displayed to the user after an extension has been installed. This
-   * is designed to be overridden by drivers/plugins with their own particular text.
-   */
-  protected abstract getPostInstallText(args: ExtensionArgs<ExtType>): PostInstallText;
 }
 
 /**

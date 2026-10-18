@@ -78,11 +78,16 @@ export class NPM {
       // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
       // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
       const npmShim = await fs.realpath(await fs.which('npm.cmd'));
-      const npmBin = path.join(path.dirname(npmShim), 'node_modules', 'npm', 'bin');
+      const shimDir = path.dirname(npmShim);
+      // Project-local npm shims live in node_modules/.bin and target the sibling npm package.
+      const isLocalShim = path.basename(shimDir).toLowerCase() === '.bin';
+      const npmBin = isLocalShim
+        ? path.join(shimDir, '..', 'npm', 'bin')
+        : path.join(shimDir, 'node_modules', 'npm', 'bin');
       let npmCli = path.join(npmBin, 'npm-cli.js');
       // Official npm shims prefer a globally updated npm when one exists at the configured prefix.
       const prefixScript = path.join(npmBin, 'npm-prefix.js');
-      if (await fs.exists(prefixScript)) {
+      if (!isLocalShim && (await fs.exists(prefixScript))) {
         const {stdout} = await exec(process.execPath, [prefixScript], teenProcessExecOpts);
         const prefixCli = path.join(stdout.trim(), 'node_modules', 'npm', 'bin', 'npm-cli.js');
         if (stdout.trim() && (await fs.exists(prefixCli))) {

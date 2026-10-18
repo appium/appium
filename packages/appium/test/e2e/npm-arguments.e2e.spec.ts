@@ -26,6 +26,31 @@ describe('npm argument boundaries', function () {
     });
   }
 
+  it('preserves arguments with a project-local Windows npm shim', {skip: !system.isWindows()}, async function (t) {
+    const root = await tempDir.openDir();
+    try {
+      const shimDir = path.join(root, 'project with spaces', 'node_modules', '.bin');
+      const shim = path.join(shimDir, 'npm.cmd');
+      const npmBin = path.join(shimDir, '..', 'npm', 'bin');
+      await fs.mkdir(shimDir, {recursive: true});
+      await fs.mkdir(npmBin, {recursive: true});
+      await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
+      // Local shims run their package directly, without global-prefix selection.
+      await fs.writeFile(path.join(npmBin, 'npm-prefix.js'), 'process.exit(1);');
+      await fs.writeFile(path.join(npmBin, 'npm-cli.js'), 'console.log(JSON.stringify(process.argv.slice(2)));');
+      t.mock.method(fs, 'which', async () => shim);
+      const args = ['path with spaces', 'a&b', '%TEMP%', '^1.0.0', '日本語'];
+
+      const result = await npm.exec('probe', args, {cwd: root, json: true}, {shell: true});
+
+      assert.deepEqual(result.json, ['probe', ...args, '--json']);
+      assert.equal(result.code, 0);
+    } finally {
+      t.mock.restoreAll();
+      await fs.rimraf(root);
+    }
+  });
+
   it('preserves arguments when the Windows shim selects a global npm', {skip: !system.isWindows()}, async function (t) {
     const root = await tempDir.openDir();
     try {

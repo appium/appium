@@ -28,6 +28,7 @@ import {
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  rejectBrowserOrigin,
   tryHandleWebSocketUpgrade,
 } from './middleware.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
@@ -73,6 +74,7 @@ export interface ConfigureHttpOpts {
   /** Normalized base path the server is mounted at */
   basePath: string;
   reject: (error?: unknown) => void;
+  allowCors?: boolean;
   keepAliveTimeout: number;
   gracefulShutdownTimeout?: number;
 }
@@ -96,7 +98,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
     port,
     hostname,
     cliArgs = {},
-    allowCors = true,
+    allowCors = false,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     serverUpdaters = [],
@@ -117,6 +119,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           httpServer,
           basePath: normalizeBasePath(basePath),
           reject,
+          allowCors,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
@@ -139,7 +142,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         // once all configurations and updaters have been applied, make sure to set up a catchall
         // handler so that anything unknown 404s. But do this after everything else since we don't
         // want to block extensions' ability to add routes if they want.
-        app.all('/*all', catch404Handler);
+        app.all('/{*all}', catch404Handler);
 
         await startServer({
           httpServer,
@@ -171,7 +174,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   const {
     app,
     addRoutes,
-    allowCors = true,
+    allowCors = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -182,16 +185,19 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
+  app.use((_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    next();
+  });
 
   // Only use legacy Express middleware for WebSocket upgrades if shouldUpgradeCallback is not available.
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
   // to avoid Express middleware timeout issues with long-lived connections
   if (useLegacyUpgradeHandler) {
-    app.use(handleUpgrade(webSocketsMapping));
+    app.use(handleUpgrade(webSocketsMapping, allowCors));
   }
-  if (allowCors) {
-    app.use(allowCrossDomain);
-  }
+  app.use(allowCors ? allowCrossDomain : rejectBrowserOrigin);
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
@@ -272,6 +278,7 @@ function configureHttp({
   httpServer,
   basePath,
   reject,
+  allowCors,
   keepAliveTimeout,
   gracefulShutdownTimeout,
 }: ConfigureHttpOpts): AppiumServer {
@@ -295,7 +302,15 @@ function configureHttp({
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
-      if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
+      if (
+        !tryHandleWebSocketUpgrade({
+          req,
+          socket,
+          head,
+          webSocketsMapping: appiumServer.webSocketsMapping,
+          allowCors,
+        })
+      ) {
         socket.destroy();
       }
     });

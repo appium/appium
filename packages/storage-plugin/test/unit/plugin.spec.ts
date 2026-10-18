@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {once} from 'node:events';
+import {EventEmitter, once} from 'node:events';
 import {createServer} from 'node:http';
 import {describe, it} from 'node:test';
 
@@ -8,7 +8,7 @@ import {fs, tempDir} from '@appium/support';
 import type {AppiumServer, WSServer} from '@appium/types';
 import type {Express, Request, Response} from 'express';
 import sinon from 'sinon';
-import WebSocket from 'ws';
+import {WebSocket} from 'ws';
 
 import {StoragePlugin} from '../../lib/plugin.js';
 
@@ -54,6 +54,23 @@ async function routeCaller(
 }
 
 describe('StoragePlugin routes', function () {
+  it('should contain errors on each upload events connection', async function () {
+    const server = makeServer();
+    try {
+      const callRoute = await routeCaller('/appium/storage/add', '', server);
+      const {body} = await callRoute({name: 'test.apk', sha1: 'a'.repeat(40)});
+      const eventsServer = server.webSocketsMapping[body.value.ws.events];
+      for (let i = 0; i < 2; ++i) {
+        // Simulate a connection error without sending malformed traffic.
+        const connection = new EventEmitter();
+        eventsServer.emit('connection', connection);
+        assert.doesNotThrow(() => connection.emit('error', new Error('simulated connection error')));
+      }
+    } finally {
+      await closeSockets(server);
+    }
+  });
+
   for (const sha1 of ['['.repeat(40), '/'.repeat(40), 'g'.repeat(40), Array(40).fill('a')]) {
     it(`should reject invalid SHA1 input ${JSON.stringify(sha1)} before mounting sockets`, async function () {
       const server = makeServer();

@@ -9,10 +9,12 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
+  type DriverOpts,
   type LogDefRecord,
   type ServerArgs,
   type SessionCapabilities,
   type StringRecord,
+  type Timeouts,
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
@@ -21,9 +23,10 @@ import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
 import {calcSignature} from '../helpers/session.js';
-import {DELETE_SESSION_COMMAND, errors} from '../protocol/index.js';
+import {DELETE_SESSION_COMMAND, errors, isErrorType} from '../protocol/index.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
+import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
 // oxlint-disable import/no-duplicates -- see comment below
 import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
 import {getLogEvents, logCustomEvent} from './commands/event.js';
@@ -47,6 +50,8 @@ import {
   setPageLoadTimeout,
   setScriptTimeout,
   timeouts,
+  validateTimeoutValue,
+  W3C_TIMEOUTS,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -90,9 +95,6 @@ export class BaseDriver<
   serverPath?: string;
   supportedLogTypes: Readonly<LogDefRecord> = {};
 
-  // Number of commands (queued or queue-exempt) currently executing. Used so the new command
-  // timeout is only restarted once the driver is fully idle again, not after every exempt command.
-  private inFlightCommandCount = 0;
   private readonly pendingCommandControllers = new Set<AbortController>();
 
   /**
@@ -123,63 +125,36 @@ export class BaseDriver<
     const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
     if (!command) {
-      if (this.isCommandsQueueEnabled && this.inFlightCommandCount === 0) {
+      if (this.isCommandsQueueEnabled && !hasRunningCommands(this)) {
         await this.startNewCommandTimeout();
       }
       throw new errors.NotYetImplementedError();
     }
 
     const runCommandPromise = async () => {
-      let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
-      let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
       let wasSessionShutdownUnexpectedly = false;
-      const onUnexpectedShutdown = (e: Error) => {
-        wasSessionShutdownUnexpectedly = true;
-        unexpectedShutdownRejecter?.(e);
-      };
-      this.inFlightCommandCount++;
-      try {
-        // The preceding queued command may have armed the timer after this request arrived.
-        await this.clearNewCommandTimeout();
-        return await Promise.race([
-          command.call(this, ...args),
-          // This promise is needed to monitor if the session has been
-          // shut down unexpectedly while the command was running
-          new Promise((resolve, reject) => {
-            unexpectedShutdownResolver = resolve;
-            unexpectedShutdownRejecter = reject;
+      return await runWithCommandTimeout(
+        this,
+        async () => {
+          const shutdown = Promise.withResolvers<void>();
+          const onUnexpectedShutdown = (e: Error) => {
+            wasSessionShutdownUnexpectedly = true;
+            shutdown.reject(e);
+          };
+          try {
             this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          }),
-        ]);
-      } finally {
-        this.inFlightCommandCount--;
-
-        if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
-          // This is needed to prevent memory leaks
-          this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          unexpectedShutdownRejecter = null;
-          // @ts-ignore typescript cannot understand this
-          unexpectedShutdownResolver?.();
-        }
-
-        // if we have set a new command timeout (which is the default), start a
-        // timer once we've finished executing this command. If we don't clear
-        // the timer (which is done when a new command comes in), we will trigger
-        // automatic session deletion in this.onCommandTimeout. Of course we don't
-        // want to trigger the timer when the user is shutting down the session
-        // intentionally. Also, since queue-exempt commands can run concurrently with a
-        // still-executing command, only (re)start the timer once the driver is fully idle,
-        // otherwise we would prematurely time out the command that is still in flight.
-        if (
-          !wasSessionShutdownUnexpectedly &&
-          this.isCommandsQueueEnabled &&
-          cmd !== DELETE_SESSION_COMMAND &&
-          this.inFlightCommandCount === 0
-        ) {
-          // resetting existing timeout
-          await this.startNewCommandTimeout();
-        }
-      }
+            return await Promise.race([
+              shutdown.promise,
+              // Observe both promises before the command can emit shutdown or throw synchronously.
+              Promise.resolve().then(() => command.call(this, ...args)),
+            ]);
+          } finally {
+            this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+            shutdown.resolve();
+          }
+        },
+        {restart: () => cmd !== DELETE_SESSION_COMMAND && !wasSessionShutdownUnexpectedly},
+      );
     };
 
     // exempt commands bypass the queue, so they can run while other commands are queued/running,
@@ -271,7 +246,7 @@ export class BaseDriver<
     await this.clearNewCommandTimeout();
 
     // arming this while a command is still running shuts that command down
-    if (this.inFlightCommandCount > 0) {
+    if (hasRunningCommands(this)) {
       return;
     }
 
@@ -287,7 +262,14 @@ export class BaseDriver<
         `${this.newCommandTimeoutMs / 1000.0} seconds ` +
         `expired. Try customizing the timeout using the ` +
         `'newCommandTimeout' desired capability`;
-      await this.startUnexpectedShutdown(new Error(errorMessage));
+      try {
+        await this.startUnexpectedShutdown(new Error(errorMessage));
+      } catch (err) {
+        // Timer callbacks have no caller to handle a rejected shutdown promise.
+        this.log.warn(
+          `Failed to clean up the session after the new command timeout: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
     }, this.newCommandTimeoutMs);
   }
 
@@ -321,7 +303,7 @@ export class BaseDriver<
 
     const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
     if (!originalCaps) {
-      throw new errors.SessionNotCreatedError(
+      throw new errors.InvalidArgumentError(
         'Appium only supports W3C-style capability objects. ' +
           'Your client is sending an older capabilities format. Please update your client library.',
       );
@@ -335,47 +317,22 @@ export class BaseDriver<
       logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
     );
 
-    let caps: DriverCaps<C>;
-    try {
-      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
-      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      throw new errors.SessionNotCreatedError(message);
-    }
+    const caps = this.processSessionCapabilities(originalCaps);
+    const initialTimeouts = this.validateInitialTimeouts(caps.timeouts);
+    const opts = this.configureSessionOptions(caps);
 
-    this.validateDesiredCaps(caps);
-
-    // merge caps onto opts so we don't need to worry about what's where
-    const opts = {...this.initialOpts, ...caps};
-
-    // deal with resets
-    // some people like to do weird things by setting noReset and fullReset
-    // both to true, but this is misguided and strange, so error here instead
-    if (opts.noReset && opts.fullReset) {
-      throw new errors.SessionNotCreatedError(
-        "The 'noReset' and 'fullReset' capabilities are mutually " +
-          'exclusive and should not both be set to true. You ' +
-          "probably meant to just use 'fullReset' on its own",
-      );
+    // Initialize local state before the concrete driver starts its backend.
+    // Timeout command/setter overrides may require an already running backend.
+    for (const {name, property} of W3C_TIMEOUTS) {
+      const value = initialTimeouts[name];
+      if (value !== undefined) {
+        this[property] = value;
+      }
     }
     this.sessionId = util.uuidV4();
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     this.opts = opts;
-    if (this.opts.noReset === true) {
-      this.opts.fullReset = false;
-    }
-    if (this.opts.fullReset === true) {
-      this.opts.noReset = false;
-    }
-    this.opts.fastReset = !this.opts.fullReset && !this.opts.noReset;
-    this.opts.skipUninstall = this.opts.fastReset || this.opts.noReset;
-
-    // Prevents empty string caps so we don't need to test it everywhere
-    if (typeof this.opts.app === 'string' && this.opts.app.trim() === '') {
-      delete this.opts.app;
-    }
 
     // null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout
     const newCommandTimeout = this.caps.newCommandTimeout;
@@ -526,6 +483,75 @@ export class BaseDriver<
       this.pendingCommandControllers.delete(controller);
       signal.removeEventListener('abort', onAbort);
     }
+  }
+
+  /** Process and validate capabilities while preserving protocol error types. */
+  private processSessionCapabilities(originalCaps: W3CDriverCaps<C>): DriverCaps<C> {
+    let caps: DriverCaps<C>;
+    try {
+      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
+      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
+    } catch (e) {
+      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
+        throw e;
+      }
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
+    }
+
+    this.validateDesiredCaps(caps);
+    return caps;
+  }
+
+  /** Validate all initial timeouts before applying any session state. */
+  private validateInitialTimeouts(requestedTimeouts: DriverCaps<C>['timeouts']): Partial<Timeouts> {
+    const initialTimeouts: Partial<Timeouts> = {};
+    if (requestedTimeouts !== undefined) {
+      if (!util.isPlainObject(requestedTimeouts)) {
+        throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
+      }
+      for (const {name} of W3C_TIMEOUTS) {
+        const value = requestedTimeouts[name];
+        if (value !== undefined) {
+          validateTimeoutValue(value, name);
+          initialTimeouts[name] = value;
+        }
+      }
+    }
+    return initialTimeouts;
+  }
+
+  /** Merge and normalize session options without changing driver state. */
+  private configureSessionOptions(caps: DriverCaps<C>): DriverOpts<C> {
+    // merge caps onto opts so we don't need to worry about what's where
+    const opts = {...this.initialOpts, ...caps};
+
+    // deal with resets
+    // some people like to do weird things by setting noReset and fullReset
+    // both to true, but this is misguided and strange, so error here instead
+    if (opts.noReset && opts.fullReset) {
+      throw new errors.SessionNotCreatedError(
+        "The 'noReset' and 'fullReset' capabilities are mutually " +
+          'exclusive and should not both be set to true. You ' +
+          "probably meant to just use 'fullReset' on its own",
+      );
+    }
+    for (const [enabledOption, disabledOption] of [
+      ['noReset', 'fullReset'],
+      ['fullReset', 'noReset'],
+    ] as const) {
+      if (opts[enabledOption] === true) {
+        opts[disabledOption] = false;
+      }
+    }
+    opts.fastReset = !opts.fullReset && !opts.noReset;
+    opts.skipUninstall = opts.fastReset || opts.noReset;
+
+    // Prevents empty string caps so we don't need to test it everywhere
+    if (typeof opts.app === 'string' && opts.app.trim() === '') {
+      delete opts.app;
+    }
+    return opts;
   }
 }
 

@@ -58,6 +58,11 @@ const errorsList: ErrorListItem[] = [
     error: 'no such shadow root',
   },
   {
+    errorName: 'DetachedShadowRootError',
+    errorMsg: 'The referenced shadow root is no longer attached to the DOM.',
+    error: 'detached shadow root',
+  },
+  {
     errorName: 'UnknownCommandError',
     errorMsg:
       'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
@@ -232,6 +237,7 @@ describe('w3c Status Codes', function () {
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
       ['NoSuchShadowRootError', 404],
+      ['DetachedShadowRootError', 404],
       ['NoAlertOpenError', 404],
       ['NoSuchWindowError', 404],
       ['StaleElementReferenceError', 404],
@@ -304,7 +310,38 @@ describe('.getResponseForW3CError', function () {
 });
 
 describe('.getActualError', function () {
+  for (const data of [{text: 'Unsaved changes'}, {}, {details: {items: [1, null, false]}}]) {
+    it(`should preserve optional error data ${JSON.stringify(data)} through a proxy round trip`, function () {
+      const value = {error: 'unexpected alert open', message: 'alert', stacktrace: 'remote stack', data};
+      const proxyError = new errors.ProxyRequestError('Proxy failed', JSON.stringify({value}), 500);
+      assert.deepStrictEqual(getResponseForW3CError(proxyError.getActualError()), [500, {value}]);
+    });
+  }
+
+  it('should serialize data supplied by a local driver without changing BiDi errors', function () {
+    const error = new errors.UnexpectedAlertOpenError('alert');
+    error.data = {text: 'Unsaved changes'};
+    assert.deepStrictEqual(getResponseForW3CError(error)[1].value.data, error.data);
+    assert.equal(Object.hasOwn(error.bidiErrObject(1), 'data'), false);
+  });
+
+  it('should omit error data when none was supplied', function () {
+    const error = errorFromW3CJsonCode('unexpected alert open', 'alert', 'remote stack');
+    assert.equal(Object.hasOwn(getResponseForW3CError(error)[1].value, 'data'), false);
+  });
+
   describe('W3C', function () {
+    it('should preserve a downstream detached shadow root response', function () {
+      const value = {
+        error: 'detached shadow root',
+        message: 'Shadow root has been detached',
+        stacktrace: 'downstream stacktrace',
+      };
+      const actualError = new errors.ProxyRequestError('Proxy request failed', {value}, 404).getActualError();
+      assert.ok(isErrorType(actualError, errors.DetachedShadowRootError));
+      assert.deepStrictEqual(getResponseForW3CError(actualError), [404, {value}]);
+    });
+
     it('should map a 404 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',

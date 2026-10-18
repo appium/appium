@@ -303,6 +303,7 @@ export class WebDriverProxy {
         value.error as string,
         (value.message as string) ?? '',
         value.stacktrace as string | undefined,
+        value.data as Record<string, unknown> | undefined,
       );
     }
     throw new errors.UnknownError(

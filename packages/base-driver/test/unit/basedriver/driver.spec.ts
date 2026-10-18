@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import {execFile} from 'node:child_process';
 import {describe, it} from 'node:test';
+import {promisify} from 'node:util';
 
 import type {InitialOpts} from '@appium/types';
 
@@ -23,6 +25,61 @@ class CustomExemptDriver extends SlowCommandDriver {
 }
 
 describe('BaseDriver', function () {
+  describe('idle timeout cleanup', function () {
+    for (const rejection of ["new Error('simulated cleanup failure')", "'simulated cleanup failure'"]) {
+      it(`should keep the process alive when cleanup rejects with ${rejection}`, async function () {
+        // A separate process proves that no unhandled rejection can terminate other sessions.
+        // Everything runs in memory; no devices or network connections are used.
+        const moduleUrl = new URL('../../../lib/index.js', import.meta.url).href;
+        const {stdout, stderr} = await promisify(execFile)(
+          process.execPath,
+          [
+            '--input-type=module',
+            '--eval',
+            `
+              import assert from 'node:assert/strict';
+              import {BaseDriver} from ${JSON.stringify(moduleUrl)};
+              const expired = new BaseDriver();
+              const healthy = new BaseDriver();
+              expired.sessionId = 'expired-session';
+              healthy.sessionId = 'healthy-session';
+              expired.newCommandTimeoutMs = 10;
+              healthy.newCommandTimeoutMs = 0;
+              let shutdowns = 0;
+              let cleanups = 0;
+              expired.onUnexpectedShutdown(() => shutdowns++);
+              expired.deleteSession = async () => { cleanups++; throw ${rejection}; };
+              await expired.startNewCommandTimeout();
+              await new Promise((resolve) => setTimeout(resolve, 100));
+              assert.equal(shutdowns, 1);
+              assert.equal(cleanups, 1);
+              assert.equal(expired.shutdownUnexpectedly, false);
+              assert.equal(healthy.sessionId, 'healthy-session');
+              await healthy.executeCommand('getStatus');
+              console.log('other session remains usable');
+              await expired.clearNewCommandTimeout();
+              await healthy.clearNewCommandTimeout();
+            `,
+          ],
+          {timeout: 5000},
+        );
+        assert.match(stdout, /other session remains usable/);
+        assert.match(stderr, /simulated cleanup failure/);
+      });
+    }
+
+    it('should still propagate cleanup failures to callers awaiting shutdown', async function () {
+      const driver = new BaseDriver();
+      driver.sessionId = 'session';
+      const error = new Error('cleanup failed');
+      driver.deleteSession = async () => {
+        throw error;
+      };
+      await assert.rejects(driver.startUnexpectedShutdown(), (actual) => actual === error);
+      assert.equal(driver.shutdownUnexpectedly, false);
+    });
+  });
+
   describe('constructor', function () {
     it('should initialize "opts"', function () {
       const driver = new BaseDriver({} as InitialOpts);
@@ -31,6 +88,41 @@ describe('BaseDriver', function () {
   });
 
   describe('executeCommand', function () {
+    for (const outcome of ['success', 'reject', 'throw', 'shutdown', 'shutdown-throw']) {
+      it(`should clean up shutdown monitoring after ${outcome}`, async function () {
+        const error = new Error(outcome);
+        const driver = Object.assign(new BaseDriver(), {
+          monitoredCommand(this: BaseDriver<any>) {
+            if (outcome.startsWith('shutdown')) {
+              this.eventEmitter.emit('onUnexpectedShutdown', error);
+            }
+            if (outcome.endsWith('throw')) {
+              throw error;
+            }
+            return outcome === 'reject' ? Promise.reject(error) : Promise.resolve('done');
+          },
+        });
+        driver.sessionId = 'shutdown-monitor-test';
+        let timerStarts = 0;
+        driver.startNewCommandTimeout = async () => {
+          timerStarts++;
+        };
+        const listenerCount = driver.eventEmitter.listenerCount('onUnexpectedShutdown');
+        try {
+          const result = driver.executeCommand('monitoredCommand');
+          if (outcome === 'success') {
+            assert.equal(await result, 'done');
+          } else {
+            await assert.rejects(result, (actual) => actual === error);
+          }
+          assert.equal(driver.eventEmitter.listenerCount('onUnexpectedShutdown'), listenerCount);
+          assert.equal(timerStarts, outcome.startsWith('shutdown') ? 0 : 1);
+        } finally {
+          await driver.clearNewCommandTimeout();
+        }
+      });
+    }
+
     it('should only time out after the last queued command finishes', async function () {
       const driver = new SlowCommandDriver({} as InitialOpts);
       driver.sessionId = 'queued-timeout-test';

@@ -51,13 +51,36 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
     for (const [path, methods] of Object.entries(allMethods)) {
-      for (const [method, spec] of Object.entries(methods)) {
-        const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
-        // set up the express route handler
-        buildHandler(app, method, `${basePath}${path}`, spec, driver, isSessCommand);
-      }
+      registerCommandRoutes(app, `${basePath}${path}`, methods, driver);
     }
   };
+}
+
+/** Registers a command path with HEAD handling before Express's GET fallback. */
+function registerCommandRoutes(
+  app: Express,
+  path: string,
+  methods: MethodMap<Driver>[string],
+  driver: Core<any>,
+): void {
+  if (methods.GET && !('HEAD' in methods)) {
+    const allowedMethods = Object.keys(methods).join(', ');
+    app.head(path, (_req, res) => {
+      res.status(405).set('Allow', allowedMethods).set('Content-Type', 'application/json; charset=utf-8').end();
+    });
+  }
+
+  // Preserve runtime compatibility with explicit HEAD handlers regardless of declaration
+  // order. MethodMap's public types only declare GET, POST, and DELETE.
+  const entries = Object.entries(methods);
+  const orderedEntries = [
+    ...entries.filter(([method]) => method === 'HEAD'),
+    ...entries.filter(([method]) => method !== 'HEAD'),
+  ];
+  for (const [method, spec] of orderedEntries) {
+    const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
+    buildHandler(app, method, path, spec, driver, isSessCommand);
+  }
 }
 
 function buildHandler(
@@ -305,7 +328,12 @@ async function runDriverCommand(
   }
 
   if (util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
-    throw errorFromW3CJsonCode(driverRes.value.error, driverRes.value.message, driverRes.value.stacktrace);
+    throw errorFromW3CJsonCode(
+      driverRes.value.error,
+      driverRes.value.message,
+      driverRes.value.stacktrace,
+      driverRes.value.data,
+    );
   }
 
   return {driverRes, currentProtocol, newSessionId};

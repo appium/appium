@@ -1,5 +1,7 @@
+import {inspect} from 'node:util';
+
 import {util} from '@appium/support';
-import type {Constraints, ITimeoutCommands} from '@appium/types';
+import type {Constraints, ITimeoutCommands, Timeouts, TimeoutValue} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
 
 import {errors} from '../../protocol/index.js';
@@ -11,15 +13,22 @@ declare module '../driver.js' {
 
 const MIN_TIMEOUT = 0;
 
+// Standard timeout names and their local state fields and command setters.
+export const W3C_TIMEOUTS = [
+  {name: 'script', property: 'scriptTimeoutMs', setter: 'setScriptTimeout'},
+  {name: 'pageLoad', property: 'pageLoadTimeoutMs', setter: 'setPageLoadTimeout'},
+  {name: 'implicit', property: 'implicitWaitMs', setter: 'setImplicitWait'},
+] as const;
+
 /**
  * Set the various timeouts associated with a session
  * @see {@link https://w3c.github.io/webdriver/#set-timeouts}
  *
  * @param type - the type of the timeout (deprecated)
  * @param ms - the ms for the timeout (deprecated)
- * @param script - the number in ms for the script timeout, used for the W3C command
- * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
- * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
+ * @param script - the script timeout in ms, or null to disable the timeout
+ * @param pageLoad - the page load timeout in ms, or null to disable the timeout
+ * @param implicit - the implicit wait timeout in ms, or null to disable the timeout
  * @param command - the number in ms for the Appium-specific command timeout
  */
 export async function timeouts<C extends Constraints>(
@@ -32,9 +41,9 @@ export async function timeouts<C extends Constraints>(
    * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
    */
   ms?: number | string,
-  script?: number,
-  pageLoad?: number,
-  implicit?: number,
+  script?: TimeoutValue,
+  pageLoad?: TimeoutValue,
+  implicit?: TimeoutValue,
   command?: number,
 ): Promise<void> {
   if (type && typeof type === 'string' && util.hasValue(ms)) {
@@ -54,22 +63,38 @@ export async function timeouts<C extends Constraints>(
       case 'script':
         return this.setScriptTimeout(this.parseTimeoutArgument(ms));
       default:
-        throw new Error(`'${type}' type is not supported for the timeout API`);
+        throw new errors.InvalidArgumentError(`'${type}' type is not supported for the timeout API`);
     }
   }
 
   this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit, command})}`);
-  if (util.hasValue(script)) {
-    this.setScriptTimeout(this.parseTimeoutArgument(script));
+  const requestedTimeouts = {script, pageLoad, implicit};
+  // Validate every supplied value before changing this driver or any managed driver.
+  for (const {name} of W3C_TIMEOUTS) {
+    const value = requestedTimeouts[name];
+    if (value !== undefined) {
+      validateTimeoutValue(value, name);
+    }
   }
-  if (util.hasValue(pageLoad)) {
-    this.setPageLoadTimeout(this.parseTimeoutArgument(pageLoad));
+  // Keep the Appium extension's legacy parsing separate from W3C timeout validation.
+  const parsedCommand = util.hasValue(command) ? this.parseTimeoutArgument(command) : undefined;
+  for (const {name, setter} of W3C_TIMEOUTS) {
+    const value = requestedTimeouts[name];
+    if (value !== undefined) {
+      this[setter](value);
+    }
   }
-  if (util.hasValue(implicit)) {
-    this.setImplicitWait(this.parseTimeoutArgument(implicit));
+  if (parsedCommand !== undefined) {
+    this.setNewCommandTimeout(parsedCommand);
   }
-  if (util.hasValue(command)) {
-    this.setNewCommandTimeout(this.parseTimeoutArgument(command));
+}
+
+/** Validate a standard timeout value shared by New Session and Set Timeouts. */
+export function validateTimeoutValue(value: unknown, name: keyof Timeouts): asserts value is TimeoutValue {
+  if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
+    throw new errors.InvalidArgumentError(
+      `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
+    );
   }
 }
 
@@ -91,9 +116,9 @@ export async function getTimeouts<C extends Constraints>(this: BaseDriver<C>) {
 /**
  * A helper method (not a command) used to set the implicit wait value
  *
- * @param ms - the implicit wait in ms
+ * @param ms - the implicit wait in ms, or null to disable the timeout
  */
-export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number): void {
+export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.implicitWaitMs = ms;
   this.log.debug(`Set implicit wait to ${ms}ms`);
   if (this.managedDrivers?.length) {
@@ -109,9 +134,9 @@ export function setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: 
 /**
  *  A helper method (not a command) used to set the page load timeout value
  *
- * @param ms - the page load timeout in ms
+ * @param ms - the page load timeout in ms, or null to disable the timeout
  */
-export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number): void {
+export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.pageLoadTimeoutMs = ms;
   this.log.debug(`Set page load timeout to ${ms}ms`);
   if (this.managedDrivers?.length) {
@@ -127,9 +152,9 @@ export function setPageLoadTimeout<C extends Constraints>(this: BaseDriver<C>, m
 /**
  *  A helper method (not a command) used to set the script timeout value
  *
- * @param ms - the script timeout in ms
+ * @param ms - the script timeout in ms, or null to disable the timeout
  */
-export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number): void {
+export function setScriptTimeout<C extends Constraints>(this: BaseDriver<C>, ms: TimeoutValue): void {
   this.scriptTimeoutMs = ms;
   this.log.debug(`Set script timeout to ${ms}ms`);
   if (this.managedDrivers?.length) {
@@ -179,7 +204,7 @@ export async function implicitWaitForCondition<C extends Constraints>(
     return await condFn(...args);
   };
   return await waitForCondition(wrappedCondFn, {
-    waitMs: this.implicitWaitMs,
+    waitMs: this.implicitWaitMs ?? Infinity,
     intervalMs: 500,
     logger: this.log,
   });

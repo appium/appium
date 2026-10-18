@@ -42,6 +42,8 @@ class BaseError extends Error {
 export class ProtocolError extends BaseError {
   public error: string;
   public w3cStatus: number;
+  /** Optional WebDriver error data supplied by the driver or downstream server. */
+  public data?: Record<string, unknown>;
   protected _stacktrace: string | undefined;
 
   constructor(msg: string, w3cStatus: number, w3cErrorSignature: string, cause?: Error) {
@@ -120,8 +122,8 @@ export class NoSuchElementError extends ProtocolError {
 
 /**
  * W3C WebDriver "no such shadow root" error. Issued when a command
- * targets an element's shadow root that does not exist (or has been
- * detached). Previously this was mis-classified as UnknownError — see
+ * targets an element that does not have a shadow root.
+ * Previously this was mis-classified as UnknownError — see
  * https://github.com/appium/appium/issues/22209.
  */
 export class NoSuchShadowRootError extends ProtocolError {
@@ -137,6 +139,28 @@ export class NoSuchShadowRootError extends ProtocolError {
   static error() {
     return 'no such shadow root';
   }
+  static w3cStatus() {
+    return HTTPStatusCodes.NOT_FOUND;
+  }
+}
+
+/** A command references a shadow root that is no longer attached to the DOM. */
+export class DetachedShadowRootError extends ProtocolError {
+  constructor(message: string = '', cause?: Error) {
+    super(
+      message || 'The referenced shadow root is no longer attached to the DOM.',
+      DetachedShadowRootError.w3cStatus(),
+      DetachedShadowRootError.error(),
+      cause,
+    );
+  }
+
+  /** Returns the WebDriver JSON error code. */
+  static error() {
+    return 'detached shadow root';
+  }
+
+  /** Returns the WebDriver HTTP status code. */
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
@@ -741,6 +765,7 @@ export class ProxyRequestError extends BaseError {
         this._w3cError.error,
         this._w3cError.message || this.message,
         this._w3cError.stacktrace || this.stack,
+        this._w3cError.data,
       );
     }
     return new UnknownError(this.message, this.cause);
@@ -821,6 +846,7 @@ export const errors = {
   InvalidContextError,
   NoSuchFrameError,
   NoSuchShadowRootError,
+  DetachedShadowRootError,
   UnableToCaptureScreen,
   UnknownMethodError,
   UnsupportedOperationError,
@@ -841,6 +867,7 @@ interface W3CError {
   error: string;
   message?: string;
   stacktrace?: string;
+  data?: Record<string, unknown>;
 }
 
 interface ParameterRequirements {
@@ -860,13 +887,20 @@ export function isErrorType<T>(err: any, type: Class<T>): err is T {
  * @param signature W3C error string (see https://www.w3.org/TR/webdriver/#handling-errors `JSON Error Code` column)
  * @param message the error message
  * @param stacktrace an optional error stacktrace
+ * @param data optional WebDriver error data
  * @return The error that is associated with the W3C error string
  */
-export function errorFromW3CJsonCode(signature: string, message: string, stacktrace?: string): ProtocolError {
+export function errorFromW3CJsonCode(
+  signature: string,
+  message: string,
+  stacktrace?: string,
+  data?: Record<string, unknown>,
+): ProtocolError {
   const ErrorClass = w3cErrorCodeMap[signature.toLowerCase()] ?? UnknownError;
   w3cLog.debug(`Matched W3C error code '${signature}' to ${ErrorClass.name}`);
   const resultError = new ErrorClass(message);
   resultError.stacktrace = stacktrace;
+  resultError.data = data;
   return resultError;
 }
 
@@ -883,6 +917,7 @@ export function getResponseForW3CError(err: any): [number, {value: W3CError}] {
         error: e.error,
         message: e.message,
         stacktrace: e.stacktrace || e.stack,
+        ...(e.data === undefined ? {} : {data: e.data}),
       },
     },
   ];

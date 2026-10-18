@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.3...@appium/support@8.0.0-beta.4) (2026-10-18)
+
+### Bug Fixes
+
+* **support:** move source symlinks without following their targets ([#22954](https://github.com/appium/appium/issues/22954)) ([81dc35d](https://github.com/appium/appium/commit/81dc35dc6b34caed8acd189c756d1faddffbf1e0))
+* **support:** preserve case-only moves on Windows ([#22958](https://github.com/appium/appium/issues/22958)) ([7b13975](https://github.com/appium/appium/commit/7b139753406062ccd0ddcc33ba06508d404a852a))
+* **support:** reject all directory walk errors ([#22956](https://github.com/appium/appium/issues/22956)) ([6bae658](https://github.com/appium/appium/commit/6bae658c4bfdfd00d50bebb182a5fcf1b7558a5d))
+
+
 ## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.2...@appium/support@8.0.0-beta.3) (2026-10-09)
 
 ### Bug Fixes

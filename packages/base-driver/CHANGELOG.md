@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.4](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.3...@appium/base-driver@11.0.0-beta.4) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** match standard capability names case-sensitively (#22976)
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+* **types:** the locale, language, autoWebview, orientation and udid capabilities are no longer part of the standard capability constraints. They are not generic enough and must be defined by the corresponding drivers.
+
+### Features
+
+* **types:** remove driver-specific capabilities from base constraints ([#22952](https://github.com/appium/appium/issues/22952)) ([cce0b58](https://github.com/appium/appium/commit/cce0b5814d94157caa6a25834a469277ad1a4dcc))
+
+### Bug Fixes
+
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c10c413](https://github.com/appium/appium/commit/c10c41384cdb4276faaab1a908cf9f80a77464a5))
+* **base-driver:** apply initial session timeouts ([#22983](https://github.com/appium/appium/issues/22983)) ([d05423e](https://github.com/appium/appium/commit/d05423e77da5083b38a08a760b2c37db0a657791)), closes [#22966](https://github.com/appium/appium/issues/22966) [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** contain idle timeout cleanup failures ([#22964](https://github.com/appium/appium/issues/22964)) ([b54c51d](https://github.com/appium/appium/commit/b54c51da1a99251d3ca107dee6c965f8c924a1b6))
+* **base-driver:** match standard capability names case-sensitively ([#22976](https://github.com/appium/appium/issues/22976)) ([f3edfc5](https://github.com/appium/appium/commit/f3edfc5e03deb6821599614a35cf5ec5df03a3c3)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** notify IPC waiters on either unsubscribe path ([#22955](https://github.com/appium/appium/issues/22955)) ([f0d1cad](https://github.com/appium/appium/commit/f0d1cad091504eb2ce607d9a4b4d56d8e173d8ef))
+* **base-driver:** omit null capabilities before merging ([#22975](https://github.com/appium/appium/issues/22975)) ([f1cf93e](https://github.com/appium/appium/commit/f1cf93e368f14c5ac8055720e136409ad7f0f108)), closes [#22966](https://github.com/appium/appium/issues/22966) [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** preserve capability invalid argument errors ([#22977](https://github.com/appium/appium/issues/22977)) ([b452a5e](https://github.com/appium/appium/commit/b452a5eade468d6c20a62c89357f72f492441038)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** preserve detached shadow root errors ([#22968](https://github.com/appium/appium/issues/22968)) ([122c157](https://github.com/appium/appium/commit/122c1572921c8167f6b71591be8da2be2a3a39a6))
+* **base-driver:** preserve encoded proxy path parameters ([#22945](https://github.com/appium/appium/issues/22945)) ([e870487](https://github.com/appium/appium/commit/e870487757800f91fbba948e471ce2193b1775b0))
+* **base-driver:** preserve optional WebDriver error data ([#22974](https://github.com/appium/appium/issues/22974)) ([07d324b](https://github.com/appium/appium/commit/07d324b4880550373fce0724081ed7f160a37697)), closes [#22966](https://github.com/appium/appium/issues/22966) [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** reject an unknown timeout type with InvalidArgumentError ([#22987](https://github.com/appium/appium/issues/22987)) ([a9d1b12](https://github.com/appium/appium/commit/a9d1b1212dc4739e13d889660dca2831edfd30ed))
+* **base-driver:** reject an unsupported log type with InvalidArgumentError ([#22986](https://github.com/appium/appium/issues/22986)) ([814357a](https://github.com/appium/appium/commit/814357aa7fb23699cb785d542d26998bac0d2086))
+* **base-driver:** reject implicit HEAD command routing ([#22992](https://github.com/appium/appium/issues/22992)) ([a090505](https://github.com/appium/appium/commit/a090505184cbda715e064be887a20a3308d90730))
+* **base-driver:** validate and merge all capability candidates ([#22982](https://github.com/appium/appium/issues/22982)) ([aba33a2](https://github.com/appium/appium/commit/aba33a2d17621e5db28e4505773c6603b075e7f2))
+* **base-driver:** validate standard timeouts and preserve null values ([#22961](https://github.com/appium/appium/issues/22961)) ([eef8246](https://github.com/appium/appium/commit/eef8246f8a6983c7818c99bfd94d5ae7ec8bfa1e))
+* **base-driver:** validate timeouts before applying changes ([#22960](https://github.com/appium/appium/issues/22960)) ([a520720](https://github.com/appium/appium/commit/a520720d06199a65dc0b17da19f6648be5d7e2bf))
+
+
 ## [11.0.0-beta.3](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.2...@appium/base-driver@11.0.0-beta.3) (2026-10-09)
 
 ### Bug Fixes

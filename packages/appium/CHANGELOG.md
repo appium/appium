@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.5](https://github.com/appium/appium/compare/appium@4.0.0-beta.4...appium@4.0.0-beta.5) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** match standard capability names case-sensitively (#22976)
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* fix(appium): release one proxied BiDi command per response
+
+* test(appium): cover overlapping duplicate BiDi command IDs
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+* **types:** the locale, language, autoWebview, orientation and udid capabilities are no longer part of the standard capability constraints. They are not generic enough and must be defined by the corresponding drivers.
+* **types:** the deprecated appium:autoLaunch capability is no longer part of the standard capability constraints.
+
+### Features
+
+* **appium:** fallback to latest compatible extension version for CLI &#x60;install&#x60; ([#22951](https://github.com/appium/appium/issues/22951)) ([0b3fe1c](https://github.com/appium/appium/commit/0b3fe1ce35fd40eea8f91a3e8f9846ee03445276))
+* **types:** remove deprecated autoLaunch capability ([#22950](https://github.com/appium/appium/issues/22950)) ([8822cea](https://github.com/appium/appium/commit/8822ceaabb68a213a8244e4f955d8ee68221e329))
+* **types:** remove driver-specific capabilities from base constraints ([#22952](https://github.com/appium/appium/issues/22952)) ([cce0b58](https://github.com/appium/appium/commit/cce0b5814d94157caa6a25834a469277ad1a4dcc))
+
+### Bug Fixes
+
+* **appium:** apply default capabilities to every firstMatch candidate ([#22988](https://github.com/appium/appium/issues/22988)) ([f820e04](https://github.com/appium/appium/commit/f820e04000f138addab57917ef92d01071596f96))
+* **appium:** classify driver selection failures as session not created ([#22970](https://github.com/appium/appium/issues/22970)) ([9b1ddb8](https://github.com/appium/appium/commit/9b1ddb8bf6cb51ce93114b70c536d0db18b39bfa))
+* **appium:** suspend idle timeout during BiDi commands ([#22947](https://github.com/appium/appium/issues/22947)) ([3f82e6a](https://github.com/appium/appium/commit/3f82e6a1817de5acb6584b92c98bd156295060d3))
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c10c413](https://github.com/appium/appium/commit/c10c41384cdb4276faaab1a908cf9f80a77464a5))
+* **base-driver:** match standard capability names case-sensitively ([#22976](https://github.com/appium/appium/issues/22976)) ([f3edfc5](https://github.com/appium/appium/commit/f3edfc5e03deb6821599614a35cf5ec5df03a3c3)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** preserve capability invalid argument errors ([#22977](https://github.com/appium/appium/issues/22977)) ([b452a5e](https://github.com/appium/appium/commit/b452a5eade468d6c20a62c89357f72f492441038)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** validate and merge all capability candidates ([#22982](https://github.com/appium/appium/issues/22982)) ([aba33a2](https://github.com/appium/appium/commit/aba33a2d17621e5db28e4505773c6603b075e7f2))
+* **base-driver:** validate standard timeouts and preserve null values ([#22961](https://github.com/appium/appium/issues/22961)) ([eef8246](https://github.com/appium/appium/commit/eef8246f8a6983c7818c99bfd94d5ae7ec8bfa1e))
+
+
 ## [4.0.0-beta.4](https://github.com/appium/appium/compare/appium@4.0.0-beta.3...appium@4.0.0-beta.4) (2026-10-09)
 
 ### ⚠ BREAKING CHANGES

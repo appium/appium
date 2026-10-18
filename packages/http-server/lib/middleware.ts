@@ -165,26 +165,13 @@ export function catch404Handler(req: Request, res: Response): void {
 }
 
 /**
- * Creates the handler for requests that matched no route.
- * A known command URL called with an unsupported HTTP method gets `UnknownMethodError`.
- * An unknown URL is answered by {@linkcode catch404Handler}.
- *
- * @param commandPaths - Route patterns of all registered commands, including the base path
- * @returns Express request handler
+ * 405 handler for a known command URL called with an unsupported HTTP method.
+ * The route itself is registered beside the command routes, so Express has already matched the path.
  */
-export function createUnmatchedRouteHandler(commandPaths: string[]): RequestHandler {
-  const commandPathMatchers = commandPaths.map((commandPath) => match(commandPath, {decode: false}));
-
-  return function unmatchedRouteHandler(req: Request, res: Response): void {
-    if (commandPathMatchers.some((matchPath) => matchPath(req.path))) {
-      log.debug(`Method ${req.method} is not supported for ${req.path}`);
-      const [status, body] = getResponseForW3CError(new errors.UnknownMethodError());
-      res.status(status).json(body);
-      return;
-    }
-
-    catch404Handler(req, res);
-  };
+export function unknownMethodHandler(req: Request, res: Response): void {
+  log.debug(`Method ${req.method} is not supported for ${req.path}`);
+  const [status, body] = getResponseForW3CError(new errors.UnknownMethodError());
+  res.status(status).json(body);
 }
 
 function fetchHeaderValue(req: Request, name: string): string | undefined {

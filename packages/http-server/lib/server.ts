@@ -22,8 +22,9 @@ import {endLogFormatter, startLogFormatter} from './express-logging.js';
 import {log} from './logger.js';
 import {
   allowCrossDomain,
+  catch404Handler,
   catchAllHandler,
-  createUnmatchedRouteHandler,
+  unknownMethodHandler,
   defaultToJSONContentType,
   handleIdempotency,
   handleLogContext,
@@ -137,13 +138,13 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           await updater(app, appiumServer, cliArgs);
         }
 
-        // once all configurations and updaters have been applied, make sure to set up a catchall
-        // handler so that anything still unmatched is answered here. But do this after everything
-        // else since we don't want to block extensions' ability to add routes if they want.
-        const commandPaths = Object.keys({...METHOD_MAP, ...extraMethodMap}).map(
-          (commandPath) => `${normalizedBasePath}${commandPath}`,
-        );
-        app.all('/{*all}', createUnmatchedRouteHandler(commandPaths));
+        // Register these after extension routes. Express matches the path once, and this
+        // handler only runs when none of the command's methods did. Anything still unmatched
+        // falls through to the 404 handler.
+        for (const commandPath of Object.keys({...METHOD_MAP, ...extraMethodMap})) {
+          app.all(`${normalizedBasePath}${commandPath}`, unknownMethodHandler);
+        }
+        app.all('/{*all}', catch404Handler);
 
         await startServer({
           httpServer,

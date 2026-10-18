@@ -64,10 +64,16 @@ Support for registering with a legacy Selenium Grid 3 hub has been removed, alon
 
 CORS is now gated behind the same [insecure feature](./security.md) mechanism used for other
 server-level features (e.g. `session_discovery`), instead of its own dedicated flag.
+Without CORS enabled, state-changing HTTP requests carrying an `Origin` header and WebSocket
+upgrades carrying that header now receive HTTP `403`. Ordinary `GET`, `HEAD`, and `OPTIONS`
+requests are exempt from the HTTP check; requests without `Origin` are unaffected.
+Library callers of `@appium/http-server`'s `server()` and `configureServer()` now default to
+`allowCors: false` ([#22990](https://github.com/appium/appium/pull/22990)).
 
 !!! info "Actions Needed"
 
     Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
+    for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
 ### Extension Auto-Install on `npm install` Removed
 
@@ -148,8 +154,13 @@ already-executed timed-out command.
   milliseconds. Strings and fractions now return HTTP `400` / `invalid argument`
   ([#22961](https://github.com/appium/appium/pull/22961))
 * `null` disables the timeout and is preserved in managed drivers and readback. These fields now
-  use `TimeoutValue` (`number | null`); `GET /timeouts` returns all three
-* Omitted fields keep their values; `{}` succeeds without changes. Invalid updates change no values
+  use `TimeoutValue` (`number | null`), including driver-level `timeouts()`/`ISessionHandler` types
+* `GET /session/:sessionId/timeouts` now returns `script` and `pageLoad` in addition to the existing
+  `implicit` and Appium-specific `command` values
+* `POST /session/:sessionId/timeouts` accepts `command` directly as an Appium-specific idle timeout
+  in milliseconds; it is not a standard W3C timeout field
+* Updates without `script`, `pageLoad`, or `implicit` no longer fail: omitted fields keep their
+  values and `{}` succeeds without changes. Invalid updates change no values
   ([#22960](https://github.com/appium/appium/pull/22960),
   [#22961](https://github.com/appium/appium/pull/22961))
 * `command` remains an Appium-specific numeric idle timeout with legacy parsing. The `type`/`ms`
@@ -160,10 +171,10 @@ already-executed timed-out command.
     Replace numeric strings and `type`/`ms` with standard fields. Handle `null` in custom setters
     and readback; `implicit: null` allows unlimited waiting
 
-Initial `capabilities.timeouts` support remains driver-dependent.
-Pending [#22983](https://github.com/appium/appium/pull/22983) initializes BaseDriver's local timeout
-state from this capability, with the same value checks as Set Timeouts; backend handling remains
-driver-specific.
+Initial `capabilities.timeouts` now initializes BaseDriver's local timeout state before backend
+startup, using the same value checks as Set Timeouts. Partial objects are accepted and omitted
+fields keep their defaults; backend handling remains driver-specific
+([#22983](https://github.com/appium/appium/pull/22983)).
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
@@ -210,10 +221,23 @@ no commands are executing. Drivers can customize the exemption list by overridin
     Use exact standard key names and vendor-prefixed extensions. Send `firstMatch: [{}]` or omit it.
     Update error assertions for malformed capabilities; top-level `null` values no longer reach drivers
 
-Pending [#22982](https://github.com/appium/appium/pull/22982) validates and merges every `firstMatch`
-candidate before selection. Invalid supplied values or duplicate keys in any candidate will reject
-the request, even when another candidate could match; missing required driver capabilities still
-allow fallback.
+Every `firstMatch` candidate is now validated and merged before selection. Invalid supplied values
+or duplicate keys in any candidate reject the request, even when another candidate could match;
+missing required driver capabilities and unsupported platforms still allow matching to continue
+([#22982](https://github.com/appium/appium/pull/22982)).
+
+### Default Capabilities Apply to Every Candidate
+
+`--default-capabilities` now fills missing keys in each `firstMatch` candidate independently.
+Client values in `alwaysMatch` or the current candidate take precedence; a value in another
+candidate does not suppress the default. Duplicate keys between `alwaysMatch` and `firstMatch`
+are still rejected. This is Appium-specific defaulting behavior
+([#22988](https://github.com/appium/appium/pull/22988)); see
+[Default Capabilities](../reference/cli/server.md#default-capabilities) for an example.
+
+!!! info "Actions Needed"
+
+    Check defaults when sending multiple candidates: later candidates now receive missing defaults too
 
 ### Storage Plugin Routes Respect `--base-path`
 
@@ -240,6 +264,13 @@ Most require no changes unless your tests or integrations depend on the previous
 
 ### HTTP Responses and WebDriver Errors
 
+* `HEAD` requests to GET command URLs now return HTTP `405` without executing the GET command.
+  Explicit extension HEAD handlers and custom server routes retain their behavior. Use `GET /status`
+  for health checks ([#22992](https://github.com/appium/appium/pull/22992)).
+* Unsupported log types and unknown legacy timeout `type` values now return HTTP `400` /
+  `invalid argument` instead of HTTP `500` / `unknown error`
+  ([#22986](https://github.com/appium/appium/pull/22986),
+  [#22987](https://github.com/appium/appium/pull/22987)).
 * WebDriver HTTP responses now include `Cache-Control: no-cache`, including successful responses,
   errors, and responses reconstructed by `WebDriverProxy`
   ([#22971](https://github.com/appium/appium/pull/22971)). Caches must revalidate these responses

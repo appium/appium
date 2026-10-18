@@ -89,7 +89,7 @@ Retrieves the URL endpoints and WebDriver BiDi commands supported in the current
 #### Response
 
 `ListCommandsResponse` - an object containing all supported endpoints and BiDi commands, grouped by
-their origin (base Appium, driver-specific, or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command.ts)
+their origin (base Appium, driver-specific, or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command-maps.ts)
 for a detailed structure of this object.
 
 ### listExtensions
@@ -103,7 +103,7 @@ Retrieves the [execute methods](../../guides/execute-methods.md) supported in th
 #### Response
 
 `ListExtensionsResponse` - an object containing all supported execute methods, grouped by their
-origin (driver-specific or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command.ts)
+origin (driver-specific or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command-maps.ts)
 for a detailed structure of this object.
 
 ### getCurrentAppiumContext

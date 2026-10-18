@@ -274,9 +274,9 @@ describe('ExtensionCommand', function () {
 
       // Creates a stub for the `npm info` command,
       // handling packages with or without version suffixes, plus the `versions` argument
-      function stubRegistry(reqs: Record<string, string>, latestTag?: string): void {
+      function stubRegistry(reqs: Record<string, string>): void {
         const versions = Object.keys(reqs);
-        const latest = latestTag ?? semver.maxSatisfying(versions, '*');
+        const latest = semver.maxSatisfying(versions, '*');
         infoStub.callsFake(async (spec: string, entries: string[]) => {
           if (entries.includes('versions')) {
             return versions;
@@ -344,7 +344,6 @@ describe('ExtensionCommand', function () {
         assert.deepStrictEqual(queriedVersions(), [
           pkgName,
           `${pkgName}@1.5.0`,
-          `${pkgName}@4.0.0`,
           `${pkgName}@3.0.0`,
           `${pkgName}@2.10.0`,
         ]);
@@ -353,22 +352,7 @@ describe('ExtensionCommand', function () {
       it('should fall back to the oldest major if only it is compatible', async function () {
         stubRegistry({'1.0.0': COMPATIBLE, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
         assert.strictEqual(await findCompatible(), '1.0.0');
-        assert.deepStrictEqual(queriedVersions(), [
-          pkgName,
-          `${pkgName}@1.0.0`,
-          `${pkgName}@3.0.0`,
-          `${pkgName}@2.0.0`,
-        ]);
-      });
-
-      it('should fall back to a stable version if npm latest is an incompatible prerelease', async function () {
-        stubRegistry({'1.0.0': COMPATIBLE, '2.0.0-beta.1': TOO_NEW}, '2.0.0-beta.1');
-        assert.strictEqual(await findCompatible(), '1.0.0');
-      });
-
-      it('should check every stable major if npm latest is a prerelease', async function () {
-        stubRegistry({'1.0.0': COMPATIBLE, '2.0.0': COMPATIBLE, '3.0.0-beta.1': TOO_NEW}, '3.0.0-beta.1');
-        assert.strictEqual(await findCompatible(), '2.0.0');
+        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`, `${pkgName}@2.0.0`]);
       });
 
       it('should fail fast if even the oldest version requires a newer server', async function () {
@@ -386,12 +370,7 @@ describe('ExtensionCommand', function () {
       it('should throw if no version is compatible', async function () {
         stubRegistry({'1.0.0': TOO_OLD, '2.0.0': TOO_NEW, '3.0.0': TOO_NEW});
         await assert.rejects(findCompatible(), /none of its versions are compatible/);
-        assert.deepStrictEqual(queriedVersions(), [
-          pkgName,
-          `${pkgName}@1.0.0`,
-          `${pkgName}@3.0.0`,
-          `${pkgName}@2.0.0`,
-        ]);
+        assert.deepStrictEqual(queriedVersions(), [pkgName, `${pkgName}@1.0.0`, `${pkgName}@2.0.0`]);
       });
 
       it('should throw if the latest is the only version and it is incompatible', async function () {

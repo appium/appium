@@ -1225,23 +1225,23 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       `Looking for latest compatible version of '${pkgName}'`,
       async () => {
         const versions = await getRemoteExtensionLatestStableMajors(pkgName);
-        if (!versions.length) {
+        // At most one version (= latest), which has already been checked
+        if (versions.length < 2) {
           return throwIncompatible();
         }
         // Check the oldest version first - if it requires a newer server, no version can match
-        const oldestVersion = versions[versions.length - 1];
-        const oldestReq = await getRemoteExtensionVersionReq(pkgName, oldestVersion);
+        const oldestReq = await getRemoteExtensionVersionReq(pkgName, versions[versions.length - 1]);
         if (oldestReq && semver.ltr(serverVersion, oldestReq)) {
           return throwIncompatible();
         }
-        // Newest first. npm `latest` may be a prerelease or an older release, so no candidate is skipped
-        for (const version of versions.slice(0, -1)) {
+        // Newest first; skip latest (already checked) and oldest (requirement in `oldestReq`)
+        for (const version of versions.slice(1, -1)) {
           if (areVersionsCompatible(serverVersion, await getRemoteExtensionVersionReq(pkgName, version))) {
             return version;
           }
         }
         if (areVersionsCompatible(serverVersion, oldestReq)) {
-          return oldestVersion;
+          return versions[versions.length - 1];
         }
         return throwIncompatible();
       },
@@ -1312,7 +1312,8 @@ function receiptToManifest<ExtType extends ExtensionType>(receipt: ExtInstallRec
 /**
  * Fetches the latest published non-prerelease version of each extension major, newest first.
  *
- * Assumes extensions only raise their server range in a major release and never widen it.
+ * Assumes extensions only raise their server range in a major release, and that npm `latest`
+ * points to the newest stable version.
  *
  * @param pkgName Extension name
  */

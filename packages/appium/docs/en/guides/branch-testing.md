@@ -52,6 +52,6 @@ After the PR is merged there is no need to use the local plugin/driver deploymen
 to switch back to the package managed by NPM. Follow the next steps for that:
 
 - Unlink the installed driver/plugin from the server by running `appium driver uninstall <driver_name>` or
-  `appium plugin uninstall <driver_name>`.
+  `appium plugin uninstall <plugin_name>`.
 - Delete the local source folder (`rm -rf <full_path_to_plugin_or_driver_folder_with_fetched_sources>`).
 - Install the driver or the plugin from NPM. Check the component README in order to find a proper command for that.

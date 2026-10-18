@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.4](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.3...@appium/types@2.0.0-beta.4) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **types:** the locale, language, autoWebview, orientation and udid capabilities are no longer part of the standard capability constraints. They are not generic enough and must be defined by the corresponding drivers.
+* **types:** the deprecated appium:autoLaunch capability is no longer part of the standard capability constraints.
+
+### Features
+
+* **types:** remove deprecated autoLaunch capability ([#22950](https://github.com/appium/appium/issues/22950)) ([8822cea](https://github.com/appium/appium/commit/8822ceaabb68a213a8244e4f955d8ee68221e329))
+* **types:** remove driver-specific capabilities from base constraints ([#22952](https://github.com/appium/appium/issues/22952)) ([cce0b58](https://github.com/appium/appium/commit/cce0b5814d94157caa6a25834a469277ad1a4dcc))
+
+### Bug Fixes
+
+* **base-driver:** apply initial session timeouts ([#22983](https://github.com/appium/appium/issues/22983)) ([d05423e](https://github.com/appium/appium/commit/d05423e77da5083b38a08a760b2c37db0a657791)), closes [#22966](https://github.com/appium/appium/issues/22966) [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** validate standard timeouts and preserve null values ([#22961](https://github.com/appium/appium/issues/22961)) ([eef8246](https://github.com/appium/appium/commit/eef8246f8a6983c7818c99bfd94d5ae7ec8bfa1e))
+
+
 ## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.2...@appium/types@2.0.0-beta.3) (2026-10-09)
 
 ### ⚠ BREAKING CHANGES

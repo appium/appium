@@ -283,7 +283,7 @@ WebDriver Protocol, plus the various Appium extensions, has a corresponding func
 implement if you want to support that command in your driver. The best way to see which commands
 Appium supports and which method you need to implement for each command is to look at Appium's
 [routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes).
-Each route object in this file tells you the command name as well as the parameters you'd expect to
+Each route object in this directory's files tells you the command name as well as the parameters you'd expect to
 receive for that command.
 
 Let's take this block for example:

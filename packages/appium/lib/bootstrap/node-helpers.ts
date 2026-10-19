@@ -118,13 +118,13 @@ export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}: De
 }
 
 /**
- * Ensures a directory exists and (optionally) is writeable.
+ * Ensures a directory exists and (optionally) is writable.
  *
  * If the directory does not exist, this attempts to create it recursively.
  *
  * @throws {Error}
  */
-export async function requireDir(root: string, requireWriteable = true, displayName = 'folder path'): Promise<void> {
+export async function requireDir(root: string, requireWritable = true, displayName = 'folder path'): Promise<void> {
   let stat;
   try {
     stat = await fs.stat(root);
@@ -140,12 +140,12 @@ export async function requireDir(root: string, requireWriteable = true, displayN
   if (stat && !stat.isDirectory()) {
     throw new Error(`The ${displayName} '${root}' must be a valid directory`);
   }
-  if (requireWriteable) {
+  if (requireWritable) {
     try {
       await fs.access(root, fs.constants.W_OK);
     } catch (e) {
       throw new Error(
-        `The ${displayName} '${root}' must be writeable for the current user account '${os.userInfo().username}'`,
+        `The ${displayName} '${root}' must be writable for the current user account '${os.userInfo().username}'`,
         {cause: e},
       );
     }

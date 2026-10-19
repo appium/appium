@@ -37,7 +37,8 @@ bundle add test-unit
 `appium_lib` 有各种辅助方法，但驱动程序实例通常被设计为全局变量使用。它可能导致处理实例的问题。
 `appium_lib_core` 没有这样的全局变量。
 
-此示例使用 `appium_lib_core` 和 `test-unit` gem 模块。在 `appium_lib` 中的测试代码应该类似。
+此示例使用 `appium_lib_core` 和 `test-unit` gem 模块。
+Test code in `appium_lib` should be similar.
 
 ```ruby title="test.rb"
 --8<-- "./sample-code/quickstarts/rb/test.rb"

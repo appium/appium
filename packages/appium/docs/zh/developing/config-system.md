@@ -49,7 +49,8 @@ _基础_ schema 是由 `lib/schema/appium-config-schema.js` 导出的一个符�
 请注意这个文件只是基础 schema；这一点后面会体现得很"刻骨铭心"。
 ```
 
-这个文&#x4EF6;_&#x4E0D;是_ JSON 文件，因为 a) JSON 对人来说很难编写，b) 它尤其让 @jlipps 讨厌，c) `ajv`接受的是对象而不是 JSON 文件。
+This file is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is
+especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.
 
 解释配置文件的校验流程更直接一些，所以我们从那里开始。
 

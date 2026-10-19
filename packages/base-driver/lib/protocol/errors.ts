@@ -133,7 +133,7 @@ export class NoSuchElementError extends ProtocolError {
 /**
  * W3C WebDriver "no such shadow root" error. Issued when a command
  * targets an element's shadow root that does not exist (or has been
- * detached). Previously this was mis-classified as UnknownError — see
+ * detached). Previously this was misclassified as UnknownError — see
  * https://github.com/appium/appium/issues/22209.
  */
 export class NoSuchShadowRootError extends ProtocolError {

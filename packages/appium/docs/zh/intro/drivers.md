@@ -47,7 +47,9 @@ async setUrl(url) {
 
 ## 自动化映射
 
-&#x4F46;_&#x901A;&#x5E38;_&#x9A71;动程序作者想要做的是为给定的平台提供自动化行为，这些行为在语义上与浏览器的 WebDriver 规范实现非常相似。当你想查找一个元素时，你应该得到一个 UI 元素的引用。当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。等等。
+But _typically_ what driver authors want to do is to provide automation behaviours for a given
+platform(s) that are semantically very similar to the WebDriver spec implementations for
+browsers. 当你想查找一个元素时，你应该得到一个 UI 元素的引用。当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。等等。
 
 因此，驱动程序作者面临的真正挑战不是如何使用 WebDriver 协议（因为 `BaseDriver` 为你封装了所有这些），而是如何在目标平台上实现实际的自动化。每个驱动程序都依赖于自己的一套底层技术。正如[概览](index.md)中提到的，iOS 驱动程序使用 Apple 的一项名为 [XCUITest](https://developer.apple.com/documentation/xctest/xcuielement) 的技术。这些底层自动化技术通常都有自己专有或特殊的 API。编写驱动程序就是将 WebDriver 协议映射到这个底层 API 的任务（有时是一组不同的底层 API——例如，UiAutomator2 驱动程序不仅依赖于 Google 的 [UiAutomator2](https://developer.android.com/training/testing/other-components/ui-automator) 技术，还依赖于只能通过 [ADB](https://developer.android.com/tools/adb) 获得的功能，以及只能通过辅助应用内的 Android SDK 获得的功能）。将所有这些整合到一个单一、可用的 WebDriver 接口中，是驱动程序开发这项非常有用（但极具挑战性）的艺术！
 

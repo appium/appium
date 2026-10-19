@@ -31,7 +31,7 @@ appium
 |`--allow-insecure`|List of [insecure features](../../guides/security.md) that should be allowed in this server's sessions. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`|
 |`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
-|`--callback-address`, `-ca`|Callback IP address|string|`0.0.0.0`|
+|`--callback-address`, `-ca`|Callback IP address|string|same as `--address`|
 |`--callback-port`, `-cp`|Callback port|integer|`4723`|
 |`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
 |`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`|

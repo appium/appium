@@ -63,7 +63,7 @@ like any other dependency. Basically, whenever you run Appium, if you have not e
 1. Try to determine whether the _current directory_ is inside an `npm` package.
 1. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
    `package.json`
-1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
+1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will load
    drivers and plugins defined in that `package.json` file instead.
 
 This means you are freely able to add Appium drivers and plugins as regular package dependencies or

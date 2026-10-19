@@ -282,7 +282,7 @@ You handle WebDriver commands by implementing functions in your driver class. Ea
 WebDriver Protocol, plus the various Appium extensions, has a corresponding function that you
 implement if you want to support that command in your driver. The best way to see which commands
 Appium supports and which method you need to implement for each command is to look at Appium's
-[routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
+[routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes).
 Each route object in this file tells you the command name as well as the parameters you'd expect to
 receive for that command.
 
@@ -324,7 +324,7 @@ Websockets. Implementing handlers for BiDi commands works just the same as imple
 for WebDriver classic commands (described in the previous section). You simply define a method on
 your driver of the appropriate name, and it will be called when the BiDi command is requested by
 the client. To see which specific names you should use for BiDi commands, have a look at
-[bidi-commands.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.js)
+[bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)
 
 You are not limited to BiDi commands that are defined in the official BiDi specification. If you
 wish to define new commands, you may do so; you just need to tell Appium about them! See

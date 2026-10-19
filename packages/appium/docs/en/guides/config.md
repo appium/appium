@@ -34,7 +34,7 @@ discovered and loaded by Appium:
 - `appium.config.cjs`
 - `.appiumrc` (which is considered to be JSON)
 
-Further, _if your project uses Node.js,_ you can use store the configuration inside an `appium`
+Further, _if your project uses Node.js,_ you can store the configuration inside an `appiumConfig`
 property in your `package.json` and it will be automatically discovered.
 
 ### Config File Search

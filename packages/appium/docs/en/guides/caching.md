@@ -8,7 +8,7 @@ principles, so you could create more performant and efficient test suite executi
 
 ## Why Caching Is Necessary
 
-Mobile application bundles could reach hundreds of megabytes is size. This could become a serious
+Mobile application bundles could reach hundreds of megabytes in size. This could become a serious
 performance issue if a test suite is executed, and it is necessary to fetch/extract the same application
 bundle for each test.
 

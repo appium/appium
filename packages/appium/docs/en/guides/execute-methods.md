@@ -16,7 +16,7 @@ by client libraries. There are two main strategies for this:
    based client library (including all Selenium and Appium clients).
 
 There are pros and cons for each strategy, but it is ultimately up to the extension author to
-decide how they wish implement new commands. 
+decide how they wish to implement new commands. 
 
 This guide is designed to specifically help you understand the "Execute Method" strategy.  This
 pattern is commonly used in official Appium drivers and other third-party extensions.

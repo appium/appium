@@ -282,9 +282,10 @@ export class NPM {
   private async _resolveWindowsNpmCli(execOpts: TeenProcessExecOptions): Promise<string> {
     // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
     // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
+    const env = {...(execOpts.env ?? process.env)};
     let npmShim: string;
     try {
-      npmShim = await fs.which('npm.cmd');
+      npmShim = await this._findWindowsNpmShim(execOpts.cwd?.toString() ?? process.cwd(), env);
     } catch (cause) {
       throw new Error('Cannot find npm.cmd on PATH. Install npm and ensure its directory is on PATH.', {cause});
     }
@@ -293,7 +294,6 @@ export class NPM {
     if (Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key))) {
       return await this._resolveWindowsNpmCliFromShim(npmShim, execOpts);
     }
-    const env = {...(execOpts.env ?? process.env)};
     const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
     const pending = this._pendingWindowsNpmCli.get(key);
     if (pending) {
@@ -308,6 +308,34 @@ export class NPM {
       // newly installed npm versions, and recovery after a failed resolution.
       this._pendingWindowsNpmCli.delete(key);
     }
+  }
+
+  /** Searches the child working directory and PATH without falling back to the parent environment. */
+  private async _findWindowsNpmShim(cwd: string, env: NodeJS.ProcessEnv): Promise<string> {
+    // Node passes only the first lexicographically sorted key for case-insensitive
+    // duplicates on Windows (for example PATH and Path).
+    const pathKey = Object.keys(env)
+      .sort()
+      .find((key) => key.toUpperCase() === 'PATH');
+    const searchPath = pathKey === undefined ? '' : (env[pathKey] ?? '');
+    const directories = [
+      cwd,
+      ...searchPath.split(path.delimiter).map((entry) => path.resolve(cwd, entry.replace(/^"(.*)"$/, '$1'))),
+    ];
+    let lookupError: unknown;
+    for (const directory of new Set(directories)) {
+      try {
+        // Absolute candidates prevent which from adding process.cwd() or using
+        // process.env.PATH when the supplied PATH is empty.
+        return await fs.which(path.resolve(directory, 'npm.cmd'), {pathExt: '.CMD'});
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw error;
+        }
+        lookupError = error;
+      }
+    }
+    throw lookupError;
   }
 
   /** Resolves the CLI for a discovered shim, including its configured global prefix. */

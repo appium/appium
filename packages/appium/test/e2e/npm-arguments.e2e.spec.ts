@@ -78,6 +78,74 @@ describe('npm argument boundaries', function () {
   });
 });
 
+describe('Windows npm search path', {skip: !system.isWindows()}, function () {
+  for (const key of ['PATH', 'Path']) {
+    it(`uses the caller's ${key} instead of the parent PATH`, async function (t) {
+      const fixture = await createPathFixture(t);
+      const result = await fixture.npm.exec(
+        'probe',
+        [],
+        {cwd: fixture.cwd, json: true},
+        {
+          env: {...fixture.env, [key]: fixture.callerDirectory},
+        },
+      );
+      assert.equal(result.json, 'caller');
+    });
+  }
+
+  it('finds the caller npm even when the parent PATH has no npm', async function (t) {
+    const fixture = await createPathFixture(t);
+    process.env.PATH = fixture.cwd;
+    const result = await fixture.npm.exec(
+      'probe',
+      [],
+      {cwd: fixture.cwd, json: true},
+      {
+        env: {...fixture.env, PATH: fixture.callerDirectory},
+      },
+    );
+    assert.equal(result.json, 'caller');
+  });
+
+  it('uses the same case-insensitive PATH key selection as Node', async function (t) {
+    const fixture = await createPathFixture(t);
+    const result = await fixture.npm.exec(
+      'probe',
+      [],
+      {cwd: fixture.cwd, json: true},
+      {
+        env: {...fixture.env, Path: process.env.PATH, PATH: fixture.callerDirectory},
+      },
+    );
+    assert.equal(result.json, 'caller');
+  });
+
+  it('resolves quoted relative PATH entries against the child working directory', async function (t) {
+    const fixture = await createPathFixture(t);
+    const result = await fixture.npm.exec(
+      'probe',
+      [],
+      {cwd: fixture.cwd, json: true},
+      {
+        env: {...fixture.env, PATH: `"${path.relative(fixture.cwd, fixture.callerDirectory)}"`},
+      },
+    );
+    assert.equal(result.json, 'caller');
+  });
+
+  for (const searchPath of ['', undefined]) {
+    it(`does not use the parent PATH when the child PATH is ${searchPath === '' ? 'empty' : 'absent'}`, async function (t) {
+      const fixture = await createPathFixture(t);
+      const env = searchPath === undefined ? fixture.env : {...fixture.env, PATH: searchPath};
+      await assert.rejects(
+        fixture.npm.exec('probe', [], {cwd: fixture.cwd, json: true}, {env}),
+        /Cannot find npm\.cmd on PATH/,
+      );
+    });
+  }
+});
+
 describe('Windows npm resolver reuse', {skip: !system.isWindows()}, function () {
   for (const customOptions of [false, true]) {
     it(`shares concurrent prefix lookups only without custom process options (${customOptions})`, async function (t) {
@@ -157,6 +225,35 @@ describe('Windows npm resolver reuse', {skip: !system.isWindows()}, function () 
     assert.equal((await fixture.npm.exec('probe', [], {cwd: fixture.root, json: true})).json, 'first');
   });
 });
+
+async function createPathFixture(t: TestContext) {
+  const root = await tempDir.openDir();
+  const originalPath = process.env.PATH;
+  t.after(async () => {
+    if (originalPath === undefined) {
+      delete process.env.PATH;
+    } else {
+      process.env.PATH = originalPath;
+    }
+    await fs.rimraf(root);
+  });
+  const cwd = path.join(root, 'child project');
+  const callerDirectory = path.join(root, 'caller npm');
+  const parentDirectory = path.join(root, 'parent npm');
+  await fs.mkdir(cwd);
+  for (const [directory, label] of [
+    [callerDirectory, 'caller'],
+    [parentDirectory, 'parent'],
+  ]) {
+    const bin = path.join(directory, 'node_modules', 'npm', 'bin');
+    await fs.mkdir(bin, {recursive: true});
+    await fs.writeFile(path.join(directory, 'npm.cmd'), '@echo off\r\nexit /b 1\r\n');
+    await fs.writeFile(path.join(bin, 'npm-cli.js'), `console.log(JSON.stringify(${JSON.stringify(label)}));`);
+  }
+  process.env.PATH = parentDirectory;
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toUpperCase() !== 'PATH'));
+  return {cwd, callerDirectory, env, npm: new NPM()};
+}
 
 async function createResolverFixture(t: TestContext) {
   const root = await tempDir.openDir();

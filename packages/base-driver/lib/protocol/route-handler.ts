@@ -4,7 +4,13 @@ import type {Application, Express, Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
-import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
+import {
+  errorFromW3CJsonCode,
+  errors,
+  getResponseForW3CError,
+  isErrorType,
+  type InvalidArgumentError,
+} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
@@ -15,6 +21,9 @@ import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './sess
 import {getCommandValidator} from './validators.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
+
+// The JSON parser runs before routing. The failure stays here until the route and the session check have run.
+const jsonParseErrors = new WeakMap<Request, Error>();
 
 /** Options for {@linkcode RouteConfiguringFunction} */
 export interface RouteConfiguringFunctionOpts {
@@ -54,6 +63,22 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
       registerCommandRoutes(app, `${basePath}${path}`, methods, driver);
     }
   };
+}
+
+/**
+ * Stores a JSON parse failure on this request without ending it.
+ * An unknown route or a missing session is reported before `invalid argument`.
+ */
+export function rememberJsonParseError(req: Request, err: Error): void {
+  jsonParseErrors.set(req, err);
+}
+
+/**
+ * `invalid argument` for a JSON body that failed to parse, after the route has matched.
+ */
+export function invalidJsonParseError(req: Request): InvalidArgumentError | undefined {
+  const err = jsonParseErrors.get(req);
+  return err ? new errors.InvalidArgumentError(err.message) : undefined;
 }
 
 /** Registers a command path with HEAD handling before Express's GET fallback. */
@@ -101,6 +126,10 @@ function buildHandler(
     try {
       logDeprecationWarning(driver, method, path, spec, sessionId);
       ensureSessionExists(driver, sessionId, isSessCmd);
+      const jsonParseError = invalidJsonParseError(req);
+      if (jsonParseError) {
+        throw jsonParseError;
+      }
 
       const proxyOutcome = await tryWdProxy(driver, req, res, spec, isSessCmd, sessionId);
       if (proxyOutcome === 'handled') {

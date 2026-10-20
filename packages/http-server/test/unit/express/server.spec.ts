@@ -4,6 +4,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 import {errors, routeConfiguringFunction, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort} from '@appium/driver-test-support';
 import type {Driver, MethodMap} from '@appium/types';
+import express from 'express';
 import {createSandbox} from 'sinon';
 
 import {configureServer, normalizeBasePath, server} from '../../../lib/server.js';
@@ -290,6 +291,176 @@ describe('server configuration', function () {
       assert.equal(res.status, 400);
       assert.match(res.headers.get('content-type') ?? '', /application\/json/);
       assert.equal(((await res.json()) as any).value.error, 'invalid argument');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should report an unknown command when the JSON body cannot be parsed', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/no-such`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      assert.strictEqual(res.status, 404);
+      assert.match(res.headers.get('content-type') ?? '', /application\/json/);
+      assert.strictEqual(((await res.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should report an invalid session id when the JSON body cannot be parsed', async function () {
+    const driver = {sessionExists: () => false, executeCommand: () => {}};
+    const execute = sandbox.spy(driver, 'executeCommand');
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session/missing/url`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      assert.strictEqual(res.status, 404);
+      assert.strictEqual(((await res.json()) as any).value.error, 'invalid session id');
+      assert.strictEqual(execute.callCount, 0);
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject invalid JSON for a session command when the session exists', async function () {
+    const driver = fakeDriver();
+    const execute = sandbox.spy(driver, 'executeCommand');
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session/foo/url`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      const body = (await res.json()) as any;
+      assert.strictEqual(res.status, 400);
+      assert.strictEqual(body.value.error, 'invalid argument');
+      assert.match(body.value.message, /not valid JSON/);
+      assert.strictEqual(execute.callCount, 0);
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should not proxy a session command whose JSON body cannot be parsed', async function () {
+    const proxy = new WebDriverProxy();
+    const proxyCommand = sandbox.stub(proxy, 'proxyCommand');
+    const driver = {
+      sessionExists: () => true,
+      proxyActive: () => true,
+      canProxy: () => true,
+      proxyRouteIsAvoided: () => false,
+      executeCommand: (_command: string, req: any, res: any) => proxy.proxyReqRes(req, res),
+    };
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session/test/url`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      assert.strictEqual(res.status, 400);
+      assert.strictEqual(((await res.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(proxyCommand.called, false);
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject invalid JSON for an extension route', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app, httpServer) => {
+          app.post('/extension', (_req: any, res: any) => {
+            res.send('ok');
+          });
+          httpServer.frontRouter.post('/front', (_req: any, res: any) => {
+            res.send('front');
+          });
+        },
+      ],
+    });
+    try {
+      const badExtension = await fetch(`http://127.0.0.1:${port}/extension`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      assert.strictEqual(badExtension.status, 400);
+      assert.strictEqual(((await badExtension.json()) as any).value.error, 'invalid argument');
+
+      const badFront = await fetch(`http://127.0.0.1:${port}/front`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badFront.status, 400);
+      assert.strictEqual(((await badFront.json()) as any).value.error, 'invalid argument');
+
+      const ok = await fetch(`http://127.0.0.1:${port}/extension`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"a":1}',
+      });
+      assert.strictEqual(ok.status, 200);
+      assert.strictEqual(await ok.text(), 'ok');
+
+      const unknown = await fetch(`http://127.0.0.1:${port}/no-such`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(unknown.status, 404);
+      assert.strictEqual(((await unknown.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should report an unknown command for a bad JSON body under a mounted router', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          const router = express.Router();
+          router.post('/item', (_req, res) => {
+            res.send('item');
+          });
+          app.use('/mounted', router);
+        },
+      ],
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/mounted/missing`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{"url": not json}',
+      });
+      assert.strictEqual(res.status, 404);
+      assert.strictEqual(((await res.json()) as any).value.error, 'unknown command');
     } finally {
       await _server.close();
     }

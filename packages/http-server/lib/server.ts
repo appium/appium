@@ -25,9 +25,11 @@ import {
   catch404Handler,
   catchAllHandler,
   defaultToJSONContentType,
+  guardExtensionRoutes,
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  parseJsonBody,
   rejectBrowserOrigin,
   tryHandleWebSocketUpgrade,
 } from './middleware.js';
@@ -134,9 +136,17 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           useLegacyUpgradeHandler,
           frontRouter: appiumServer.frontRouter,
         });
-        // allow extensions to update the app and http server objects
-        for (const updater of serverUpdaters) {
-          await updater(app, appiumServer, cliArgs);
+        // Extension routes match on their own paths. A bad JSON body is still invalid argument
+        // there. Unwrap before the 404 handler, which matches every leftover URL.
+        const restoreAppRoutes = guardExtensionRoutes(app);
+        const restoreFrontRouter = guardExtensionRoutes(appiumServer.frontRouter);
+        try {
+          for (const updater of serverUpdaters) {
+            await updater(app, appiumServer, cliArgs);
+          }
+        } finally {
+          restoreAppRoutes();
+          restoreFrontRouter();
         }
 
         // once all configurations and updaters have been applied, make sure to set up a catchall
@@ -203,8 +213,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(methodOverride());
 
-  // make sure appium never fails because of a file size upload limit
-  app.use(bodyParser.json({limit: '1gb'}));
+  app.use(parseJsonBody);
 
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);

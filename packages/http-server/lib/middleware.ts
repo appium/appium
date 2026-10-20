@@ -1,10 +1,17 @@
 import type {IncomingMessage} from 'node:http';
 import type {Duplex} from 'node:stream';
 
-import {calcSignature, errors, getResponseForW3CError} from '@appium/base-driver';
+import {
+  calcSignature,
+  errors,
+  getResponseForW3CError,
+  invalidJsonParseError,
+  rememberJsonParseError,
+} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {StringRecord, WSServer} from '@appium/types';
-import type {NextFunction, Request, RequestHandler, Response} from 'express';
+import bodyParser from 'body-parser';
+import type {Express, NextFunction, Request, RequestHandler, Response, Router} from 'express';
 import {match} from 'path-to-regexp';
 
 import {log} from './logger.js';
@@ -185,10 +192,69 @@ export function catchAllHandler(err: Error, _req: Request, res: Response, next: 
 
 /**
  * Detects the error body-parser raises for a request body that is not valid JSON.
- * The protocol expects such a request to be rejected as an invalid argument.
  */
-function isBodyParseError(err: Error): boolean {
-  return (err as Error & {type?: string})?.type === 'entity.parse.failed';
+function isBodyParseError(err: unknown): err is Error {
+  return (err as {type?: string} | null)?.type === 'entity.parse.failed';
+}
+
+// make sure appium never fails because of a file size upload limit
+const jsonBodyParser = bodyParser.json({limit: '1gb'});
+
+/**
+ * Parses a JSON body. A parse failure is remembered and the request continues, so an unknown
+ * route or a missing session can be reported before `invalid argument`.
+ */
+export function parseJsonBody(req: Request, res: Response, next: NextFunction): void {
+  jsonBodyParser(req, res, (err?: unknown) => {
+    if (isBodyParseError(err)) {
+      rememberJsonParseError(req, err);
+      next();
+      return;
+    }
+    next(err as Error | undefined);
+  });
+}
+
+// `use` stays out. It matches a prefix, so a bad body would be invalid argument for a URL the mounted router does not own.
+const MATCHED_ROUTE_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'all'] as const;
+
+function sendJsonParseError(req: Request, res: Response, next: NextFunction): void {
+  const jsonParseError = invalidJsonParseError(req);
+  if (!jsonParseError) {
+    next();
+    return;
+  }
+  const [status, body] = getResponseForW3CError(jsonParseError);
+  res.status(status).json(body);
+}
+
+/**
+ * Extension routes are registered after the protocol routes.
+ * A remembered JSON parse failure is `invalid argument` when one of those routes matches.
+ * Call the returned function before the 404 handler: that handler matches every leftover URL.
+ */
+export function guardExtensionRoutes(router: Router | Express): () => void {
+  const restore: (() => void)[] = [];
+  for (const method of MATCHED_ROUTE_METHODS) {
+    const original = (router[method] as (...args: any[]) => any).bind(router);
+    restore.push(() => {
+      (router as any)[method] = original;
+    });
+    (router as any)[method] = (...args: any[]) => {
+      const pathAt = args.findIndex((arg) => typeof arg !== 'function');
+      if (pathAt === -1) {
+        return original(...args);
+      }
+      const guarded = args.slice();
+      guarded.splice(pathAt + 1, 0, sendJsonParseError);
+      return original(...guarded);
+    };
+  }
+  return () => {
+    for (const undo of restore) {
+      undo();
+    }
+  };
 }
 
 /**

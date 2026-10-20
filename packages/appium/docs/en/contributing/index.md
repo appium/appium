@@ -61,7 +61,7 @@ cd appium
 
 !!! info
 
-    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
+    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/).
 
 Install dependencies:
 ```sh

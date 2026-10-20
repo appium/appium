@@ -178,9 +178,9 @@ documentation on [How Does Appium Work?](https://appium.io/docs/en/latest/intro/
 
 ## Sponsors
 
-Appium has a [Sponsorship Program](GOVERNANCE.md#sponsorship)! If you or your company uses Appium
+Appium has a [Sponsorship Program](../../GOVERNANCE.md#sponsorship)! If you or your company uses Appium
 and wants to give back financially to the project, we use these funds to [encourage development and
-contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
+contributions](../../GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
 rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
 
 ### Development and Strategic Partners

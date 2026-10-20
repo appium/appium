@@ -42,7 +42,7 @@ Source command, as well as element node/attribute names provided in Find Element
 |`XCUIElementTypeAlert`|`android.widget.Toast`|`Alert`|
 |`XCUIElementTypeSwitch`|`android.widget.Switch`|`SwitchInput`|
 
-See [the mapping file](./lib/node-map.js) for a full list of node name translations. Any names not
+See [the mapping file](./lib/node-map.ts) for a full list of node name translations. Any names not
 specified are left as-is.
 
 ### Attribute names
@@ -53,7 +53,7 @@ specified are left as-is.
 |`visible`|`displayed`|`visible`|
 
 Note that this plugin also removes a few attributes from the transformed XML. See
-[the mapping file](./lib/attr-map.js) for a full list of attribute name translations and removed
+[the mapping file](./lib/attr-map.ts) for a full list of attribute name translations and removed
 attributes. Any names not specified are left as-is.
 
 ## License

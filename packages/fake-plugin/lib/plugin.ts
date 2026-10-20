@@ -208,7 +208,7 @@ export class FakePlugin extends BasePlugin {
    *   return await loadSessionData(); // Application-specific asynchronous work
    * });
    *
-   * @see ../../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
+   * @see ../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
    */
   async refreshSessionData(driver: DriverLike, fetchData: () => Promise<unknown>): Promise<void> {
     await runWithCommandTimeout(driver, async () => {

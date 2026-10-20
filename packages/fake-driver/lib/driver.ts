@@ -230,7 +230,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
    *   await saveHandle(handle); // Application-specific asynchronous work
    * });
    *
-   * @see ../../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
+   * @see ../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
    */
   async getWindowHandleWithPostProcessing(postProcess: (handle: string) => Promise<void>): Promise<string> {
     return await runWithCommandTimeout(this, async () => {

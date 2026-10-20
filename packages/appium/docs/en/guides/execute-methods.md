@@ -67,7 +67,7 @@ function, but the function itself—the snippet—is always a string and is the 
 In the world of Appium, we are usually not automating a web browser, which means this command is
 not particularly useful. But it *is* useful as a way to encode the name of an arbitrary command and
 to provide parameters. For example, the [XCUITest
-Driver](https://github.com/appium/appium-xcuitest-driver) has implemented a command that lets a client
+Driver](https://appium.github.io/appium-xcuitest-driver/) has implemented a command that lets a client
 terminate a running application if you know the ID (the `bundleId`) of the app. The way that the
 driver makes this command available is via the Execute Method `mobile: terminateApp`. Instead of
 providing a JavaScript function to the "Execute Script" command, the user provides a _known string_

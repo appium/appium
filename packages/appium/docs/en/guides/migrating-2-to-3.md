@@ -148,9 +148,9 @@ Icons are used to indicate endpoint support in either certain drivers, or in the
 
 -   :simple-appium:{ .lg } - Appium server
 -   :material-apple:{ .lg } - [XCUITest driver](https://appium.github.io/appium-xcuitest-driver/latest/)
--   :material-android:{ .lg } - [UiAutomator2 driver](https://github.com/appium/appium-uiautomator2-driver/)
--   :material-coffee:{ .lg } - [Espresso driver](https://github.com/appium/appium-espresso-driver)
--   :material-apple-finder:{ .lg } - [Mac2 driver](https://github.com/appium/appium-mac2-driver)
+-   :material-android:{ .lg } - [UiAutomator2 driver](https://appium.github.io/appium-uiautomator2-driver/)
+-   :material-coffee:{ .lg } - [Espresso driver](https://appium.github.io/appium-espresso-driver/)
+-   :material-apple-finder:{ .lg } - [Mac2 driver](https://appium.github.io/appium-mac2-driver/)
 -   :material-microsoft-windows:{ .lg } - [Windows driver](https://github.com/appium/appium-windows-driver)
 
 </div>

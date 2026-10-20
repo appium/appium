@@ -60,6 +60,14 @@ Support for registering with a legacy Selenium Grid 3 hub has been removed, alon
 
     If you relied on Grid 3 registration, use the [Selenium Grid 4 relay feature](./grid.md) instead
 
+### `--trace-dir` Flag Removed
+
+The `trace-dir` server config was dead: no code ever read it. It referred to the directory used to save iOS instrument traces, but the instruments-based iOS tooling was removed years ago. Dropping it removes both the `server.trace-dir` config file property and the resulting `--trace-dir` CLI flag.
+
+!!! info "Actions Needed"
+
+    Remove `--trace-dir`/`server.trace-dir` from your CLI arguments and config files
+
 ### `--allow-cors` Flag Removed
 
 CORS is now gated behind the same [insecure feature](./security.md) mechanism used for other

@@ -33,7 +33,6 @@ module.exports = {
     'session-override': false,
     'strict-caps': true,
     tmp: '/tmp',
-    'trace-dir': '/tmp/appium-instruments',
     'use-drivers': ['foo', 'bar'],
     'use-plugins': ['baz', 'quux'],
     webhook: 'https://some-url.com',

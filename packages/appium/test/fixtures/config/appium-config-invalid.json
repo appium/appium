@@ -23,7 +23,6 @@
     "session-override": false,
     "strict-caps": false,
     "tmp": '/tmp',
-    "trace-dir": "/tmp/appium-instruments",
     "webhook": "http://0.0.0.0/hook"
   }
 }

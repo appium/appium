@@ -454,24 +454,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'trace-dir',
-      defaultValue: undefined,
-      dest: 'traceDir',
-      extName: undefined,
-      extType: undefined,
-      name: 'trace-dir',
-      rawDest: 'traceDir',
-      ref: 'appium.json#/properties/server/properties/trace-dir',
-    },
-    schema: {
-      description:
-        'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-      title: 'trace-dir config',
-      type: 'string',
-    },
-  },
-  {
-    argSpec: {
       arg: 'use-drivers',
       defaultValue: [],
       dest: 'useDrivers',

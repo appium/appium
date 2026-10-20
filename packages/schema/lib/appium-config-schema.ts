@@ -301,12 +301,6 @@ export const AppiumConfigJsonSchema = {
           title: 'tmp config',
           type: 'string',
         },
-        'trace-dir': {
-          description:
-            'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-          title: 'trace-dir config',
-          type: 'string',
-        },
         'use-drivers': {
           appiumCliDescription:
             'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',

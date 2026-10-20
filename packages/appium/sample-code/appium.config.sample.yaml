@@ -31,7 +31,6 @@ server:
   session-override: false
   strict-caps: true
   tmp: /tmp
-  trace-dir: /tmp/appium-instruments
   use-drivers:
     - foo
     - bar

@@ -160,10 +160,6 @@ export type StrictCapsConfig = boolean;
  */
 export type TmpConfig = string;
 /**
- * Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments
- */
-export type TraceDirConfig = string;
-/**
  * A list of drivers to activate. By default, all installed drivers will be activated.
  */
 export type UseDriversConfig = string[];
@@ -231,7 +227,6 @@ export interface ServerConfig {
   "ssl-key-path"?: KeyFilePath;
   "strict-caps"?: StrictCapsConfig;
   tmp?: TmpConfig;
-  "trace-dir"?: TraceDirConfig;
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;

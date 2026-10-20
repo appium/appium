@@ -21,7 +21,6 @@ export default {
     'session-override': false,
     'strict-caps': false,
     tmp: '/tmp',
-    'trace-dir': '/tmp/appium-instruments',
     'use-drivers': [] as string[],
     'use-plugins': ['all'],
     webhook: 'http://0.0.0.0/hook',

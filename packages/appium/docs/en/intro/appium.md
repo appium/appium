@@ -99,7 +99,7 @@ a driver does this by relying on platform-specific automation technologies. For 
 maintains an iOS automation technology called
 [XCUITest](https://developer.apple.com/documentation/xctest/user_interface_tests). The Appium
 driver that supports iOS app automation is called the [XCUITest
-Driver](https://github.com/appium/appium-xcuitest-driver) because ultimately what it does is
+Driver](https://appium.github.io/appium-xcuitest-driver/) because ultimately what it does is
 convert the WebDriver protocol to XCUITest library calls.
 
 One of the reasons that drivers are independent, pluggable modules is that they work completely

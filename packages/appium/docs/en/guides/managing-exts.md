@@ -25,7 +25,7 @@ appium driver install xcuitest
 ```
 
 This command will install the latest version of the
-[XCUITest Driver](https://github.com/appium/appium-xcuitest-driver). The Extension CLI comes with a variety
+[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/). The Extension CLI comes with a variety
 of commands and parameters; see the documentation for that command for all the specifics.
 
 The all-important question when Appium is managing your extensions for you is: where are they installed?

@@ -72,7 +72,7 @@ The plugin also supports [several environment variables](https://appium.io/docs/
 
 ## Examples
 
-Check [integration tests](./test/e2e/storage.e2e.spec.cjs) for a working
+Check [integration tests](./test/e2e/storage.e2e.spec.ts) for a working
 [WebdriverIO](https://webdriver.io/) example.
 
 ## License

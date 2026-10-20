@@ -106,7 +106,7 @@ Retrieves the [execute methods](../../guides/execute-methods.md) supported in th
 origin (driver-specific or plugin-specific). Refer to [the type definition file](https://github.com/appium/appium/blob/master/packages/types/lib/command-maps.ts)
 for a detailed structure of this object.
 
-### getCurrentAppiumContext
+### getCurrentContext
 
 ```
 GET /session/:sessionId/appium/context
@@ -118,7 +118,7 @@ Retrieves the active application context.
 
 `string` - the name of the active context
 
-### setAppiumContext
+### setContext
 
 ```
 POST /session/:sessionId/appium/context
@@ -136,7 +136,7 @@ Sets an application context as the active context.
 
 `null`
 
-### getAppiumContexts
+### getContexts
 
 ```
 GET /session/:sessionId/appium/contexts
@@ -435,7 +435,7 @@ Retrieves data from a directory on the device under test.
 
 `string` - the Base64-encoded zip file of the directory contents
 
-### getAppiumRotation
+### getRotation
 
 ```
 GET /session/:sessionId/appium/device/rotation
@@ -453,7 +453,7 @@ Retrieves the current spatial orientation of the device under test.
 |`y`|Degrees by which the device is rotated on its Y axis|number|
 |`z`|Degrees by which the device is rotated on its Z axis|number|
 
-### setAppiumRotation
+### setRotation
 
 ```
 POST /session/:sessionId/appium/device/rotation
@@ -473,7 +473,7 @@ Sets the spatial orientation of the device under test.
 
 `null`
 
-### getAppiumOrientation
+### getOrientation
 
 ```
 GET /session/:sessionId/appium/device/orientation
@@ -485,7 +485,7 @@ Retrieves the current orientation of the device under test.
 
 `string` - either `PORTRAIT` or `LANDSCAPE`
 
-### setAppiumOrientation
+### setOrientation
 
 ```
 POST /session/:sessionId/appium/device/orientation

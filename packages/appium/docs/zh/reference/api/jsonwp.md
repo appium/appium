@@ -142,7 +142,7 @@ Retrieves the current orientation of the device under test.
 
 !!! warning "Deprecated"
 
-    Please use [`getAppiumOrientation`](./appium.md#getappiumorientation) instead
+    Please use [`getOrientation`](./appium.md#getorientation) instead
 
 #### Response
 
@@ -160,7 +160,7 @@ Sets the orientation of the device under test.
 
 !!! warning "Deprecated"
 
-    Please use [`setAppiumOrientation`](./appium.md#setappiumorientation) instead
+    Please use [`setOrientation`](./appium.md#setorientation) instead
 
 #### Parameters
 

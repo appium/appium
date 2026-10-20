@@ -22,7 +22,7 @@ Retrieves the current spatial orientation of the device under test.
 
 !!! warning "Deprecated"
 
-    Please use [`getAppiumRotation`](./appium.md#getappiumrotation) instead
+    Please use [`getRotation`](./appium.md#getrotation) instead
 
 #### Response
 
@@ -46,7 +46,7 @@ Sets the spatial orientation of the device under test.
 
 !!! warning "Deprecated"
 
-    Please use [`setAppiumRotation`](./appium.md#setappiumrotation) instead
+    Please use [`setRotation`](./appium.md#setrotation) instead
 
 #### Parameters
 
@@ -72,7 +72,7 @@ Retrieves the active application context.
 
 !!! warning "Deprecated"
 
-    Please use [`getCurrentAppiumContext`](./appium.md#getcurrentappiumcontext) instead
+    Please use [`getCurrentContext`](./appium.md#getcurrentcontext) instead
 
 #### Response
 
@@ -90,7 +90,7 @@ Sets an application context as the active context.
 
 !!! warning "Deprecated"
 
-    Please use [`setAppiumContext`](./appium.md#setappiumcontext) instead
+    Please use [`setContext`](./appium.md#setcontext) instead
 
 #### Parameters
 
@@ -114,7 +114,7 @@ Retrieves all available application contexts.
 
 !!! warning "Deprecated"
 
-    Please use [`getAppiumContexts`](./appium.md#getappiumcontexts) instead
+    Please use [`getContexts`](./appium.md#getcontexts) instead
 
 #### Response
 

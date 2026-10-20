@@ -352,8 +352,10 @@ async execute(next, driver, script, args) {
 
 ### 更新 Appium 服务器对象
 
-通常你不需要更新 Appium 服务器对象（它是一个 [Express](https://expressjs.com/) 服务器，并且已经以多种方式进行过
-[配置](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.js)）。但你可以为服务器添加新的路由来支撑你的插件的需求。要更新服务器，你必须在类中实现 `static async updateServer` 方法。该方法接收三个参数：
+You probably don't normally need to update the Appium server object (which is an
+[Express](https://expressjs.com/) server having already been
+[configured](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.ts)
+in a variety of ways). 但你可以为服务器添加新的路由来支撑你的插件的需求。要更新服务器，你必须在类中实现 `static async updateServer` 方法。该方法接收三个参数：
 
 - `expressApp`：Express app 对象
 - `httpServer`：Node HTTP 服务器对象

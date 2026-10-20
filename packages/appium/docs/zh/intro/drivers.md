@@ -29,7 +29,10 @@ async setUrl(url) {
 }
 ```
 
-[^1]: 你可能会注意到 `setUrl` 看起来与 `Navigate To` 完全不同，那么我们怎么知道使用它而不是其他随机字符串呢？其实，Appium 的 WebDriver 协议到方法名的映射是在 `@appium/base-driver` 包中的一个特殊文件中定义的，叫做 [routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js)。所以如果你正在编写驱动程序，这就是你要去找出要使用什么方法名和期望什么参数的地方。或者你可以查看任何主要 Appium 驱动程序的源代码！
+[^1]: 你可能会注意到 `setUrl` 看起来与 `Navigate To` 完全不同，那么我们怎么知道使用它而不是其他随机字符串呢？ Well, Appium's WebDriver-protocol-to-method-name
+    mappings are defined in special files within the `@appium/base-driver` package's
+    [routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes) directory.
+    所以如果你正在编写驱动程序，这就是你要去找出要使用什么方法名和期望什么参数的地方。或者你可以查看任何主要 Appium 驱动程序的源代码！
 
 就是这样！我们如何实际实现该命令完全取决于我们自己，并取决于我们想要支持的平台。以下是针对不同平台的此命令的一些不同示例实现：
 

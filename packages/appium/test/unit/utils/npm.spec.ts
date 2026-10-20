@@ -2,9 +2,23 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
+import {fs, system} from '@appium/support';
+
 import {NPM, resolveFrom} from '../../../lib/utils/npm.js';
 
 describe('utils/npm', function () {
+  it('explains when npm.cmd cannot be found and preserves the cause', {skip: !system.isWindows()}, async function (t) {
+    const cause = new Error('not found: npm.cmd');
+    t.mock.method(fs, 'which', async () => {
+      throw cause;
+    });
+    await assert.rejects(new NPM().exec('version', [], {cwd: process.cwd()}), (error: Error) => {
+      assert.match(error.message, /Cannot find npm\.cmd on PATH/);
+      assert.equal(error.cause, cause);
+      return true;
+    });
+  });
+
   describe('resolveFrom()', function () {
     const appiumRoot = path.join(import.meta.dirname, '..', '..', '..');
 

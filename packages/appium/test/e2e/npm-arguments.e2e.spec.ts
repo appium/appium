@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
+import type {TestContext} from 'node:test';
 
 import {fs, system, tempDir} from '@appium/support';
 
-import {npm} from '../../lib/utils/npm.js';
+import {NPM, npm} from '../../lib/utils/npm.js';
 
 describe('npm argument boundaries', function () {
   for (const name of ['driver with spaces', 'driver & %TEMP% 日本語']) {
@@ -76,3 +77,122 @@ describe('npm argument boundaries', function () {
     }
   });
 });
+
+describe('Windows npm resolver reuse', {skip: !system.isWindows()}, function () {
+  for (const customOptions of [false, true]) {
+    it(`shares concurrent prefix lookups only without custom process options (${customOptions})`, async function (t) {
+      const fixture = await createResolverFixture(t);
+      let notifyStarted!: () => void;
+      let releaseLookup!: () => void;
+      const started = new Promise<void>((resolve) => {
+        notifyStarted = resolve;
+      });
+      const release = new Promise<void>((resolve) => {
+        releaseLookup = resolve;
+      });
+      const exists = fs.exists;
+      t.mock.method(fs, 'exists', async (file: Parameters<typeof fs.exists>[0]) => {
+        if (file === fixture.prefixScript) {
+          notifyStarted();
+          await release;
+        }
+        return await exists(file);
+      });
+      const opts = customOptions ? {timeout: 5000} : {};
+      const first = fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}, opts);
+      await started;
+      const second = fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}, opts);
+      // which/realpath are mocked below, so the second lookup reaches the pending
+      // resolution before the next event-loop turn, without timing a subprocess.
+      await new Promise<void>((resolve) => setImmediate(resolve));
+      releaseLookup();
+      const results = await Promise.all([first, second]);
+      assert.deepEqual(
+        results.map((result) => result.json),
+        ['first', 'first'],
+      );
+      assert.equal((await fs.readFile(fixture.counter, 'utf8')).length, customOptions ? 2 : 1);
+    });
+  }
+
+  it('keeps concurrent resolutions separate for different environments and working directories', async function (t) {
+    const fixture = await createResolverFixture(t);
+    const otherRoot = path.join(fixture.root, 'other project');
+    await fs.mkdir(otherRoot);
+    await fs.writeFile(path.join(otherRoot, '.npmrc'), fixture.secondPrefix);
+    const results = await Promise.all([
+      fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}),
+      fixture.npm.exec('probe', [], {cwd: otherRoot, json: true}),
+      fixture.npm.exec(
+        'probe',
+        [],
+        {cwd: fixture.root, json: true},
+        {
+          env: {...process.env, APPIUM_TEST_NPM_PREFIX: fixture.secondPrefix},
+        },
+      ),
+    ]);
+    assert.deepEqual(
+      results.map((result) => result.json),
+      ['first', 'second', 'second'],
+    );
+    assert.equal((await fs.readFile(fixture.counter, 'utf8')).length, 3);
+  });
+
+  it('observes npm configuration changes after a successful resolution', async function (t) {
+    const fixture = await createResolverFixture(t);
+    const first = await fixture.npm.exec('probe', [], {cwd: fixture.root, json: true});
+    await fs.writeFile(path.join(fixture.root, '.npmrc'), fixture.secondPrefix);
+    const second = await fixture.npm.exec('probe', [], {cwd: fixture.root, json: true});
+    assert.equal(first.json, 'first');
+    assert.equal(second.json, 'second');
+  });
+
+  it('retries after a failed prefix resolution', async function (t) {
+    const fixture = await createResolverFixture(t);
+    const script = await fs.readFile(fixture.prefixScript, 'utf8');
+    await fs.writeFile(fixture.prefixScript, 'process.exit(1);');
+    await assert.rejects(fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}));
+    await fs.writeFile(fixture.prefixScript, script);
+    assert.equal((await fixture.npm.exec('probe', [], {cwd: fixture.root, json: true})).json, 'first');
+  });
+});
+
+async function createResolverFixture(t: TestContext) {
+  const root = await tempDir.openDir();
+  t.after(async () => {
+    t.mock.restoreAll();
+    await fs.rimraf(root);
+  });
+  const shim = path.join(root, 'npm.cmd');
+  const npmBin = path.join(root, 'node_modules', 'npm', 'bin');
+  const prefixScript = path.join(npmBin, 'npm-prefix.js');
+  const counter = path.join(root, 'prefix-invocations');
+  const firstPrefix = path.join(root, 'first npm');
+  const secondPrefix = path.join(root, 'second npm');
+  await fs.mkdir(npmBin, {recursive: true});
+  await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
+  for (const [prefix, label] of [
+    [firstPrefix, 'first'],
+    [secondPrefix, 'second'],
+  ]) {
+    const bin = path.join(prefix, 'node_modules', 'npm', 'bin');
+    await fs.mkdir(bin, {recursive: true});
+    await fs.writeFile(path.join(bin, 'npm-cli.js'), `console.log(JSON.stringify(${JSON.stringify(label)}));`);
+  }
+  await fs.writeFile(path.join(root, '.npmrc'), firstPrefix);
+  await fs.writeFile(
+    prefixScript,
+    [
+      "const fs = require('node:fs');",
+      `fs.appendFileSync(${JSON.stringify(counter)}, 'x');`,
+      "console.log(process.env.APPIUM_TEST_NPM_PREFIX || fs.readFileSync('.npmrc', 'utf8'));",
+    ].join('\n'),
+  );
+  t.mock.method(fs, 'which', async () => shim);
+  const realpath = fs.realpath;
+  t.mock.method(fs, 'realpath', async (file: Parameters<typeof fs.realpath>[0]) =>
+    file === shim ? shim : await realpath(file),
+  );
+  return {root, prefixScript, counter, secondPrefix, npm: new NPM()};
+}

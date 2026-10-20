@@ -48,6 +48,8 @@ export interface NpmExecResult {
  * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
  */
 export class NPM {
+  private readonly _pendingWindowsNpmCli = new Map<string, Promise<string>>();
+
   /**
    * Execute `npm` with given args.
    *
@@ -280,7 +282,36 @@ export class NPM {
   private async _resolveWindowsNpmCli(execOpts: TeenProcessExecOptions): Promise<string> {
     // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
     // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
-    const npmShim = await fs.realpath(await fs.which('npm.cmd'));
+    let npmShim: string;
+    try {
+      npmShim = await fs.which('npm.cmd');
+    } catch (cause) {
+      throw new Error('Cannot find npm.cmd on PATH. Install npm and ensure its directory is on PATH.', {cause});
+    }
+    npmShim = await fs.realpath(npmShim);
+    // Custom process options (for example cancellation or logging) belong to each caller.
+    if (Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key))) {
+      return await this._resolveWindowsNpmCliFromShim(npmShim, execOpts);
+    }
+    const env = {...(execOpts.env ?? process.env)};
+    const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
+    const pending = this._pendingWindowsNpmCli.get(key);
+    if (pending) {
+      return await pending;
+    }
+    const resolution = this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
+    this._pendingWindowsNpmCli.set(key, resolution);
+    try {
+      return await resolution;
+    } finally {
+      // Share concurrent work only: later calls must observe edits to npmrc files,
+      // newly installed npm versions, and recovery after a failed resolution.
+      this._pendingWindowsNpmCli.delete(key);
+    }
+  }
+
+  /** Resolves the CLI for a discovered shim, including its configured global prefix. */
+  private async _resolveWindowsNpmCliFromShim(npmShim: string, execOpts: TeenProcessExecOptions): Promise<string> {
     const shimDir = path.dirname(npmShim);
     // Project-local npm shims live in node_modules/.bin and target the sibling npm package.
     const isLocalShim = path.basename(shimDir).toLowerCase() === '.bin';

@@ -330,7 +330,7 @@ export class NPM {
         return npmShim;
       }
     }
-    throw Object.assign(new Error('not found: npm.cmd'), {code: 'ENOENT'});
+    throw new Error('Cannot find npm.cmd in the supplied search path');
   }
 
   /** Resolves the CLI for a discovered shim, including its configured global prefix. */

@@ -133,7 +133,8 @@ describe('Windows npm search path', {skip: !system.isWindows()}, function () {
       const env = searchPath === undefined ? fixture.env : {...fixture.env, PATH: searchPath};
       await assert.rejects(fixture.npm.exec('probe', [], {cwd: fixture.cwd, json: true}, {env}), (error: Error) => {
         assert.match(error.message, /Cannot find npm\.cmd on PATH/);
-        assert.equal((error.cause as NodeJS.ErrnoException).code, 'ENOENT');
+        assert.ok(error.cause instanceof Error);
+        assert.equal(error.cause.message, 'Cannot find npm.cmd in the supplied search path');
         return true;
       });
     });

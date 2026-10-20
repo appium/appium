@@ -322,20 +322,15 @@ export class NPM {
       cwd,
       ...searchPath.split(path.delimiter).map((entry) => path.resolve(cwd, entry.replace(/^"(.*)"$/, '$1'))),
     ];
-    let lookupError: unknown;
     for (const directory of new Set(directories)) {
-      try {
-        // Absolute candidates prevent which from adding process.cwd() or using
-        // process.env.PATH when the supplied PATH is empty.
-        return await fs.which(path.resolve(directory, 'npm.cmd'), {pathExt: '.CMD'});
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-          throw error;
-        }
-        lookupError = error;
+      // Absolute candidates prevent which from adding process.cwd() or using
+      // process.env.PATH when the supplied PATH is empty.
+      const npmShim = await fs.which(path.resolve(directory, 'npm.cmd'), {pathExt: '.CMD', nothrow: true});
+      if (npmShim) {
+        return npmShim;
       }
     }
-    throw lookupError;
+    throw Object.assign(new Error('not found: npm.cmd'), {code: 'ENOENT'});
   }
 
   /** Resolves the CLI for a discovered shim, including its configured global prefix. */

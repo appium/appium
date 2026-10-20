@@ -31,14 +31,13 @@ describe('npm argument boundaries', function () {
     const root = await tempDir.openDir();
     try {
       const shimDir = path.join(root, 'project with spaces', 'node_modules', '.bin');
-      const shim = path.join(shimDir, 'npm.cmd');
-      const npmBin = path.join(shimDir, '..', 'npm', 'bin');
-      await fs.mkdir(shimDir, {recursive: true});
-      await fs.mkdir(npmBin, {recursive: true});
-      await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
+      const {shim, prefixScript} = await createNpmFixture(
+        shimDir,
+        'console.log(JSON.stringify(process.argv.slice(2)));',
+        path.join(shimDir, '..', 'npm', 'bin'),
+      );
       // Local shims run their package directly, without global-prefix selection.
-      await fs.writeFile(path.join(npmBin, 'npm-prefix.js'), 'process.exit(1);');
-      await fs.writeFile(path.join(npmBin, 'npm-cli.js'), 'console.log(JSON.stringify(process.argv.slice(2)));');
+      await fs.writeFile(prefixScript, 'process.exit(1);');
       t.mock.method(fs, 'which', async () => shim);
       const args = ['path with spaces', 'a&b', '%TEMP%', '^1.0.0', '日本語'];
 
@@ -55,16 +54,10 @@ describe('npm argument boundaries', function () {
   it('preserves arguments when the Windows shim selects a global npm', {skip: !system.isWindows()}, async function (t) {
     const root = await tempDir.openDir();
     try {
-      const shim = path.join(root, 'npm.cmd');
-      const npmBin = path.join(root, 'node_modules', 'npm', 'bin');
+      const {shim, prefixScript} = await createNpmFixture(root, 'process.exit(1);');
       const prefix = path.join(root, 'global npm');
-      const prefixBin = path.join(prefix, 'node_modules', 'npm', 'bin');
-      await fs.mkdir(npmBin, {recursive: true});
-      await fs.mkdir(prefixBin, {recursive: true});
-      await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
-      await fs.writeFile(path.join(npmBin, 'npm-prefix.js'), `console.log(${JSON.stringify(prefix)});`);
-      await fs.writeFile(path.join(npmBin, 'npm-cli.js'), 'process.exit(1);');
-      await fs.writeFile(path.join(prefixBin, 'npm-cli.js'), 'console.log(JSON.stringify(process.argv.slice(2)));');
+      await createNpmFixture(prefix, 'console.log(JSON.stringify(process.argv.slice(2)));');
+      await fs.writeFile(prefixScript, `console.log(${JSON.stringify(prefix)});`);
       t.mock.method(fs, 'which', async () => shim);
       const args = ['path with spaces', 'a&b', '%TEMP%', '^1.0.0', '日本語'];
 
@@ -138,10 +131,11 @@ describe('Windows npm search path', {skip: !system.isWindows()}, function () {
     it(`does not use the parent PATH when the child PATH is ${searchPath === '' ? 'empty' : 'absent'}`, async function (t) {
       const fixture = await createPathFixture(t);
       const env = searchPath === undefined ? fixture.env : {...fixture.env, PATH: searchPath};
-      await assert.rejects(
-        fixture.npm.exec('probe', [], {cwd: fixture.cwd, json: true}, {env}),
-        /Cannot find npm\.cmd on PATH/,
-      );
+      await assert.rejects(fixture.npm.exec('probe', [], {cwd: fixture.cwd, json: true}, {env}), (error: Error) => {
+        assert.match(error.message, /Cannot find npm\.cmd on PATH/);
+        assert.equal((error.cause as NodeJS.ErrnoException).code, 'ENOENT');
+        return true;
+      });
     });
   }
 });
@@ -245,10 +239,7 @@ async function createPathFixture(t: TestContext) {
     [callerDirectory, 'caller'],
     [parentDirectory, 'parent'],
   ]) {
-    const bin = path.join(directory, 'node_modules', 'npm', 'bin');
-    await fs.mkdir(bin, {recursive: true});
-    await fs.writeFile(path.join(directory, 'npm.cmd'), '@echo off\r\nexit /b 1\r\n');
-    await fs.writeFile(path.join(bin, 'npm-cli.js'), `console.log(JSON.stringify(${JSON.stringify(label)}));`);
+    await createNpmFixture(directory, `console.log(JSON.stringify(${JSON.stringify(label)}));`);
   }
   process.env.PATH = parentDirectory;
   const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toUpperCase() !== 'PATH'));
@@ -261,21 +252,15 @@ async function createResolverFixture(t: TestContext) {
     t.mock.restoreAll();
     await fs.rimraf(root);
   });
-  const shim = path.join(root, 'npm.cmd');
-  const npmBin = path.join(root, 'node_modules', 'npm', 'bin');
-  const prefixScript = path.join(npmBin, 'npm-prefix.js');
+  const {shim, prefixScript} = await createNpmFixture(root, 'process.exit(1);');
   const counter = path.join(root, 'prefix-invocations');
   const firstPrefix = path.join(root, 'first npm');
   const secondPrefix = path.join(root, 'second npm');
-  await fs.mkdir(npmBin, {recursive: true});
-  await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
   for (const [prefix, label] of [
     [firstPrefix, 'first'],
     [secondPrefix, 'second'],
   ]) {
-    const bin = path.join(prefix, 'node_modules', 'npm', 'bin');
-    await fs.mkdir(bin, {recursive: true});
-    await fs.writeFile(path.join(bin, 'npm-cli.js'), `console.log(JSON.stringify(${JSON.stringify(label)}));`);
+    await createNpmFixture(prefix, `console.log(JSON.stringify(${JSON.stringify(label)}));`);
   }
   await fs.writeFile(path.join(root, '.npmrc'), firstPrefix);
   await fs.writeFile(
@@ -292,4 +277,17 @@ async function createResolverFixture(t: TestContext) {
     file === shim ? shim : await realpath(file),
   );
   return {root, prefixScript, counter, secondPrefix, npm: new NPM()};
+}
+
+async function createNpmFixture(
+  shimDir: string,
+  cliSource: string,
+  npmBin = path.join(shimDir, 'node_modules', 'npm', 'bin'),
+) {
+  const shim = path.join(shimDir, 'npm.cmd');
+  await fs.mkdir(shimDir, {recursive: true});
+  await fs.mkdir(npmBin, {recursive: true});
+  await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
+  await fs.writeFile(path.join(npmBin, 'npm-cli.js'), cliSource);
+  return {shim, prefixScript: path.join(npmBin, 'npm-prefix.js')};
 }

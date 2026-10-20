@@ -24,7 +24,7 @@ to launch. In order to achieve this, Appium defines its own [extension capabilit
 ## 一般的なAppiumのCapabilities
 
 According to the WebDriver spec, extension capabilities must include a namespace prefix (signifying
-the vendor introducing the capability), and the namespace must end a colon (`:`). Appium's vendor
+the vendor introducing the capability), and the namespace must end in a colon (`:`). Appium's vendor
 prefix is `appium:`, and so any Appium-specific capabilities must include this prefix. Depending on
 your Appium client, the prefix may be added automatically or in conjunction with certain interfaces,
 but it is always a good practice to explicitly include it for clarity.
@@ -78,7 +78,7 @@ BiDi commands, so make sure to reference their documentation.
 
 ## `appium:options` を使用して機能をグループ化する
 
-テストで `appium:` 機能を多用すると、繰り返しが多くなる可能性があります。 代わりに、すべての機能を単一の `appium:options` 機能のオブジェクト値として組み合わせることもできます。その場合、オブジェクト内の機能にプレフィックスを使用する必要はありません。 例：
+テストで `appium:` 機能を多用すると、繰り返しが多くなる可能性があります。代わりに、すべての機能を単一の `appium:options` 機能のオブジェクト値として組み合わせることもできます。その場合、オブジェクト内の機能にプレフィックスを使用する必要はありません。例：
 
 ```json
 {

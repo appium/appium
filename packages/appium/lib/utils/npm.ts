@@ -44,11 +44,16 @@ export interface NpmExecResult {
   json?: unknown;
 }
 
+interface WindowsNpmCommand {
+  node: string;
+  cli: string;
+}
+
 /**
  * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
  */
 export class NPM {
-  private readonly _pendingWindowsNpmCli = new Map<string, Promise<string>>();
+  private readonly _pendingWindowsNpmCli = new Map<string, Promise<WindowsNpmCommand>>();
 
   /**
    * Execute `npm` with given args.
@@ -77,9 +82,9 @@ export class NPM {
     }
     let npmCmd = 'npm';
     if (isWindows) {
-      const npmCli = await this._resolveWindowsNpmCli(teenProcessExecOpts);
-      npmCmd = process.execPath;
-      argsCopy.unshift(npmCli);
+      const {node, cli} = await this._resolveWindowsNpmCli(teenProcessExecOpts);
+      npmCmd = node;
+      argsCopy.unshift(cli);
     }
     type ExecRunnerResult = {stdout: string; stderr: string; code: number | null};
     let runner = async (): Promise<ExecRunnerResult> => await exec(npmCmd, argsCopy, teenProcessExecOpts);
@@ -279,20 +284,20 @@ export class NPM {
   }
 
   /** Resolves the CLI selected by the Windows npm shim on PATH. */
-  private async _resolveWindowsNpmCli(execOpts: TeenProcessExecOptions): Promise<string> {
+  private async _resolveWindowsNpmCli(execOpts: TeenProcessExecOptions): Promise<WindowsNpmCommand> {
     // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
     // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
     const env = {...(execOpts.env ?? process.env)};
     let npmShim: string;
     try {
-      npmShim = await this._findWindowsNpmShim(execOpts.cwd?.toString() ?? process.cwd(), env);
+      npmShim = await this._findWindowsExecutable('npm.cmd', execOpts.cwd?.toString() ?? process.cwd(), env);
     } catch (cause) {
       throw new Error('Cannot find npm.cmd on PATH. Install npm and ensure its directory is on PATH.', {cause});
     }
     npmShim = await fs.realpath(npmShim);
     // Custom process options (for example cancellation or logging) belong to each caller.
     if (Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key))) {
-      return await this._resolveWindowsNpmCliFromShim(npmShim, execOpts);
+      return await this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
     }
     const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
     const pending = this._pendingWindowsNpmCli.get(key);
@@ -311,7 +316,7 @@ export class NPM {
   }
 
   /** Searches the child working directory and PATH without falling back to the parent environment. */
-  private async _findWindowsNpmShim(cwd: string, env: NodeJS.ProcessEnv): Promise<string> {
+  private async _findWindowsExecutable(command: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string> {
     // Node passes only the first lexicographically sorted key for case-insensitive
     // duplicates on Windows (for example PATH and Path).
     const pathKey = Object.keys(env)
@@ -325,19 +330,35 @@ export class NPM {
     for (const directory of new Set(directories)) {
       // Absolute candidates prevent which from adding process.cwd() or using
       // process.env.PATH when the supplied PATH is empty.
-      const npmShim = await fs.which(path.resolve(directory, 'npm.cmd'), {pathExt: '.CMD', nothrow: true});
-      if (npmShim) {
-        return npmShim;
+      const executable = await fs.which(path.resolve(directory, command), {
+        pathExt: path.extname(command).toUpperCase(),
+        nothrow: true,
+      });
+      if (executable) {
+        return executable;
       }
     }
-    throw new Error('Cannot find npm.cmd in the supplied search path');
+    throw new Error(`Cannot find ${command} in the supplied search path`);
   }
 
   /** Resolves the CLI for a discovered shim, including its configured global prefix. */
-  private async _resolveWindowsNpmCliFromShim(npmShim: string, execOpts: TeenProcessExecOptions): Promise<string> {
+  private async _resolveWindowsNpmCliFromShim(
+    npmShim: string,
+    execOpts: TeenProcessExecOptions,
+  ): Promise<WindowsNpmCommand> {
     const shimDir = path.dirname(npmShim);
+    const adjacentNode = path.join(shimDir, 'node.exe');
+    const node = (await fs.exists(adjacentNode))
+      ? adjacentNode
+      : await this._findWindowsExecutable(
+          'node.exe',
+          execOpts.cwd?.toString() ?? process.cwd(),
+          execOpts.env ?? process.env,
+        );
     // Project-local npm shims live in node_modules/.bin and target the sibling npm package.
-    const isLocalShim = path.basename(shimDir).toLowerCase() === '.bin';
+    const isLocalShim =
+      path.basename(shimDir).toLowerCase() === '.bin' &&
+      path.basename(path.dirname(shimDir)).toLowerCase() === 'node_modules';
     const npmBin = isLocalShim
       ? path.join(shimDir, '..', 'npm', 'bin')
       : path.join(shimDir, 'node_modules', 'npm', 'bin');
@@ -345,16 +366,46 @@ export class NPM {
     // Official npm shims prefer a globally updated npm when one exists at the configured prefix.
     const prefixScript = path.join(npmBin, 'npm-prefix.js');
     if (!isLocalShim && (await fs.exists(prefixScript))) {
-      const {stdout} = await exec(process.execPath, [prefixScript], execOpts);
-      const prefixCli = path.join(stdout.trim(), 'node_modules', 'npm', 'bin', 'npm-cli.js');
-      if (stdout.trim() && (await fs.exists(prefixCli))) {
+      const prefix = await this._getWindowsNpmPrefix(node, prefixScript, execOpts);
+      const prefixCli = path.join(prefix, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+      if (prefix && (await fs.exists(prefixCli))) {
         npmCli = prefixCli;
       }
     }
     if (!(await fs.exists(npmCli))) {
       throw new Error(`Cannot find the npm CLI adjacent to '${npmShim}': '${npmCli}'`);
     }
-    return npmCli;
+    return {node, cli: npmCli};
+  }
+
+  /** Captures the shim's prefix probe independently of the final npm command's output settings. */
+  private async _getWindowsNpmPrefix(
+    node: string,
+    prefixScript: string,
+    execOpts: TeenProcessExecOptions,
+  ): Promise<string> {
+    try {
+      const {stdout} = await exec(node, [prefixScript], {
+        ...execOpts,
+        stdio: 'pipe',
+        ignoreOutput: false,
+        isBuffer: false,
+        encoding: 'utf8',
+        logger: undefined,
+        maxStdoutBufferSize: undefined,
+        maxStderrBufferSize: undefined,
+      });
+      return stdout.trim();
+    } catch (error) {
+      const {code, stdout} = error as ExecError;
+      // cmd's FOR /F consumes output even on an unsuccessful helper exit.
+      // Without a selected prefix, the shim keeps its adjacent CLI.
+      // Spawn errors, cancellation and timeouts are not normal helper exits.
+      if (typeof code !== 'number' || code === 0 || execOpts.signal?.aborted) {
+        throw error;
+      }
+      return stdout.trim();
+    }
   }
 }
 

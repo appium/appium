@@ -4,6 +4,7 @@ import {describe, it} from 'node:test';
 import type {TestContext} from 'node:test';
 
 import {fs, system, tempDir} from '@appium/support';
+import type {TeenProcessExecOptions} from 'teen_process';
 
 import {NPM, npm} from '../../lib/utils/npm.js';
 
@@ -38,7 +39,7 @@ describe('npm argument boundaries', function () {
       );
       // Local shims run their package directly, without global-prefix selection.
       await fs.writeFile(prefixScript, 'process.exit(1);');
-      t.mock.method(fs, 'which', async () => shim);
+      t.mock.method(fs, 'which', async (command: string) => (command.endsWith('npm.cmd') ? shim : process.execPath));
       const args = ['path with spaces', 'a&b', '%TEMP%', '^1.0.0', '日本語'];
 
       const result = await npm.exec('probe', args, {cwd: root, json: true}, {shell: true});
@@ -58,7 +59,7 @@ describe('npm argument boundaries', function () {
       const prefix = path.join(root, 'global npm');
       await createNpmFixture(prefix, 'console.log(JSON.stringify(process.argv.slice(2)));');
       await fs.writeFile(prefixScript, `console.log(${JSON.stringify(prefix)});`);
-      t.mock.method(fs, 'which', async () => shim);
+      t.mock.method(fs, 'which', async (command: string) => (command.endsWith('npm.cmd') ? shim : process.execPath));
       const args = ['path with spaces', 'a&b', '%TEMP%', '^1.0.0', '日本語'];
 
       const result = await npm.exec('probe', args, {cwd: root, json: true}, {shell: true});
@@ -139,6 +140,91 @@ describe('Windows npm search path', {skip: !system.isWindows()}, function () {
       });
     });
   }
+});
+
+describe('Windows npm shim compatibility', {skip: !system.isWindows()}, function () {
+  for (const adjacent of [true, false]) {
+    it(`uses the ${adjacent ? 'adjacent' : 'child PATH'} Node for the prefix probe and npm`, async function (t) {
+      const fixture = await createSelectionFixture(t);
+      const node = adjacent ? path.join(fixture.shimDir, 'node.exe') : fixture.node;
+      if (adjacent) {
+        await fs.copyFile(process.execPath, node);
+      }
+      const probeNode = path.join(fixture.root, 'probe-node');
+      await fs.writeFile(
+        fixture.prefixScript,
+        [
+          `require('node:fs').writeFileSync(${JSON.stringify(probeNode)}, process.execPath);`,
+          `console.log(${JSON.stringify(fixture.prefix)});`,
+        ].join('\n'),
+      );
+      const result = await fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env});
+      assert.equal(await fs.readFile(probeNode, 'utf8'), node);
+      assert.deepEqual(result.json, {label: 'global', node});
+    });
+  }
+
+  it('recognizes a global prefix named .bin', async function (t) {
+    const fixture = await createSelectionFixture(t, '.bin');
+    const result = await fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env});
+    assert.deepEqual(result.json, {label: 'global', node: fixture.node});
+  });
+
+  const outputOptions: [string, TeenProcessExecOptions][] = [
+    ['ignoreOutput', {ignoreOutput: true}],
+    ['inherited stdio', {stdio: 'inherit'}],
+    ['buffer output', {isBuffer: true}],
+    ['non-UTF-8 encoding', {encoding: 'hex'}],
+    ['small output buffer', {maxStdoutBufferSize: 1}],
+  ];
+  for (const [name, options] of outputOptions) {
+    it(`captures the prefix independently of ${name}`, async function (t) {
+      const fixture = await createSelectionFixture(t);
+      const result = await fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env, ...options});
+      assert.equal(await fs.readFile(fixture.marker, 'utf8'), 'global');
+      if (options.isBuffer) {
+        assert.ok(Buffer.isBuffer(result.stdout));
+      } else if (options.ignoreOutput || options.stdio === 'inherit') {
+        assert.equal(result.stdout, '');
+      } else if (options.encoding === 'hex') {
+        assert.deepEqual(JSON.parse(Buffer.from(result.stdout, 'hex').toString()), {
+          label: 'global',
+          node: fixture.node,
+        });
+      } else {
+        assert.equal(Buffer.byteLength(result.stdout), 1);
+      }
+    });
+  }
+
+  for (const hasPrefix of [false, true]) {
+    it(`handles an unsuccessful prefix helper ${hasPrefix ? 'with' : 'without'} a selected prefix`, async function (t) {
+      const fixture = await createSelectionFixture(t);
+      await fs.writeFile(
+        fixture.prefixScript,
+        `${hasPrefix ? `console.log(${JSON.stringify(fixture.prefix)});` : ''}process.exit(7);`,
+      );
+      const result = await fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env});
+      assert.deepEqual(result.json, {label: hasPrefix ? 'global' : 'adjacent', node: fixture.node});
+    });
+  }
+
+  it('propagates a prefix probe timeout without launching npm', async function (t) {
+    const fixture = await createSelectionFixture(t);
+    await fs.writeFile(fixture.prefixScript, 'setInterval(() => {}, 1000);');
+    await assert.rejects(fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env, timeout: 100}), /timed out/);
+    assert.equal(await fs.exists(fixture.marker), false);
+  });
+
+  it('propagates cancellation without launching npm', async function (t) {
+    const fixture = await createSelectionFixture(t);
+    const controller = new AbortController();
+    controller.abort();
+    await assert.rejects(fixture.npm.exec('probe', [], fixture.opts, {env: fixture.env, signal: controller.signal}), {
+      name: 'AbortError',
+    });
+    assert.equal(await fs.exists(fixture.marker), false);
+  });
 });
 
 describe('Windows npm resolver reuse', {skip: !system.isWindows()}, function () {
@@ -236,6 +322,8 @@ async function createPathFixture(t: TestContext) {
   const callerDirectory = path.join(root, 'caller npm');
   const parentDirectory = path.join(root, 'parent npm');
   await fs.mkdir(cwd);
+  // The child PATH deliberately contains only fixture npm installations.
+  await fs.copyFile(process.execPath, path.join(cwd, 'node.exe'));
   for (const [directory, label] of [
     [callerDirectory, 'caller'],
     [parentDirectory, 'parent'],
@@ -272,7 +360,7 @@ async function createResolverFixture(t: TestContext) {
       "console.log(process.env.APPIUM_TEST_NPM_PREFIX || fs.readFileSync('.npmrc', 'utf8'));",
     ].join('\n'),
   );
-  t.mock.method(fs, 'which', async () => shim);
+  t.mock.method(fs, 'which', async (command: string) => (command.endsWith('npm.cmd') ? shim : process.execPath));
   const realpath = fs.realpath;
   t.mock.method(fs, 'realpath', async (file: Parameters<typeof fs.realpath>[0]) =>
     file === shim ? shim : await realpath(file),
@@ -291,4 +379,31 @@ async function createNpmFixture(
   await fs.writeFile(shim, '@echo off\r\nexit /b 1\r\n');
   await fs.writeFile(path.join(npmBin, 'npm-cli.js'), cliSource);
   return {shim, prefixScript: path.join(npmBin, 'npm-prefix.js')};
+}
+
+async function createSelectionFixture(t: TestContext, shimName = 'npm installation') {
+  const root = await tempDir.openDir();
+  t.after(async () => {
+    await fs.rimraf(root);
+  });
+  const shimDir = path.join(root, shimName);
+  const marker = path.join(root, 'selected-cli');
+  const source = (label: string) =>
+    [
+      `require('node:fs').writeFileSync(${JSON.stringify(marker)}, ${JSON.stringify(label)});`,
+      `console.log(JSON.stringify({label: ${JSON.stringify(label)}, node: process.execPath}));`,
+    ].join('\n');
+  const {prefixScript} = await createNpmFixture(shimDir, source('adjacent'));
+  const prefix = path.join(root, 'global npm');
+  await createNpmFixture(prefix, source('global'));
+  await fs.writeFile(prefixScript, `console.log(${JSON.stringify(prefix)});`);
+  const runtime = path.join(root, 'other node');
+  await fs.mkdir(runtime);
+  const node = path.join(runtime, 'node.exe');
+  await fs.copyFile(process.execPath, node);
+  const env = {
+    ...Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toUpperCase() !== 'PATH')),
+    PATH: [shimDir, runtime].join(path.delimiter),
+  };
+  return {root, shimDir, marker, prefix, prefixScript, node, env, npm: new NPM(), opts: {cwd: root, json: true}};
 }

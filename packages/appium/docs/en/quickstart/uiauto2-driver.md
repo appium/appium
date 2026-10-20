@@ -76,8 +76,8 @@ appium driver install uiautomator2
 It should produce output that looks something like:
 
 ```
-Attempting to find and install driver 'uiautomator2'
-✔ Installing 'uiautomator2' using NPM install spec 'appium-uiautomator2-driver'
+✔ Installing 'uiautomator2'
+✔ Validating 'uiautomator2'
 Driver uiautomator2@2.0.5 successfully installed
 - automationName: UiAutomator2
 - platformNames: ["Android"]
@@ -122,12 +122,12 @@ appium driver doctor uiautomator2
 This guide has focused on essential requirements, so Appium Doctor may suggest one or more optional
 fixes. But if you see `0 required fixes needed`, that means everything is set up!
 
-Now, start the Appium server again (run `appium`), and you should see that the newly-installed
-driver is listed as available:
+Now, start the Appium server again (run `appium`), and you should see the newly-installed
+driver being loaded:
 
 ```
-[Appium] Available drivers:
-[Appium]   - uiautomator2@2.0.5 (automationName 'UiAutomator2')
+[Appium] Welcome to Appium v3.8.0
+[Appium] Attempting to load driver uiautomator2...
 ```
 
 With the Android setup complete and the UiAutomator2 driver installed, you're ready to write your

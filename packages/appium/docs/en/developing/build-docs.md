@@ -49,8 +49,8 @@ npx appium-docs init
 
 This will:
 
-1. Create a `tsconfig.json` if one does not already exist. This is necessary even if your extension
-is not written in TypeScript.
+1. Install the Python dependencies required for building the docs (MkDocs, the
+`mkdocs-material` theme, Mike, etc.).
 2. Create a `mkdocs.yml` with the necessary configuration for MkDocs.
 
 ### Documenting Your Extension

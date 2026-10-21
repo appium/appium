@@ -297,7 +297,7 @@ export const AppiumConfigJsonSchema = {
         tmp: {
           appiumCliDest: 'tmpDir',
           description:
-            'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
+            'Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().',
           title: 'tmp config',
           type: 'string',
         },

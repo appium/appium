@@ -14,8 +14,14 @@ describe('validators', function () {
     });
 
     it('should reject an empty or unparseable string', function () {
-      assert.throws(() => validators.setUrl(''), errors.InvalidArgumentError);
-      assert.throws(() => validators.setUrl('example.com'), errors.InvalidArgumentError);
+      assert.throws(() => validators.setUrl(''), {
+        constructor: errors.InvalidArgumentError,
+        message: "'' must be a valid URL",
+      });
+      assert.throws(() => validators.setUrl('example.com'), {
+        constructor: errors.InvalidArgumentError,
+        message: "'example.com' must be a valid URL",
+      });
     });
 
     it('should reject a non-string url without throwing TypeError', function () {
@@ -24,7 +30,7 @@ describe('validators', function () {
           () => validators.setUrl(url),
           (err: Error) => {
             assert.ok(err instanceof errors.InvalidArgumentError);
-            assert.match(err.message, /must be a valid URL/);
+            assert.equal(err.message, 'The url parameter must be a valid URL');
             return true;
           },
         );

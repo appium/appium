@@ -116,11 +116,18 @@ function buildHandler(
       }
       const command = spec.command;
 
-      // As with direct proxying, let the remote end validate navigation after checking
-      // its current window. A pass-through plugin must not change that error ordering.
-      const validateCommand = !(didPluginOverrideProxy && command === 'setUrl');
-      const jsonObj = preparePayload(spec, req.body, validateCommand);
-      const args = buildCommandArgs(req, jsonObj, spec, command, validateCommand);
+      // Direct proxying delegates payload and command validation to the remote end.
+      // A plugin intercepting that same proxy path must preserve this ownership.
+      const jsonObj = preparePayload(spec, req.body, {
+        validatePayloadParams: !didPluginOverrideProxy,
+      });
+      const args = buildCommandArgs({
+        req,
+        jsonObj,
+        spec,
+        command,
+        validateCommandArguments: !didPluginOverrideProxy,
+      });
 
       // run the driver command wrapped inside the argument validators
       getLogger(driver, sessionId).debug(
@@ -272,17 +279,29 @@ function acceptsWrappedBody(req: Request, spec: DriverMethodDef<Driver>): boolea
 /**
  * Wraps/unwraps and validates the JSON payload against the route's payload spec.
  */
-function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any, validateCommand: boolean): any {
+function preparePayload(
+  spec: DriverMethodDef<Driver>,
+  jsonObj: any,
+  {validatePayloadParams}: {validatePayloadParams: boolean},
+): any {
   if (spec.payloadParams?.wrap) {
     jsonObj = wrapParams(spec.payloadParams, jsonObj);
   }
   if (spec.payloadParams?.unwrap) {
     jsonObj = unwrapParams(spec.payloadParams, jsonObj);
   }
-  if (spec.payloadParams && validateCommand) {
+  if (spec.payloadParams && validatePayloadParams) {
     checkParams(spec.payloadParams, jsonObj);
   }
   return jsonObj;
+}
+
+interface CommandArgsOptions {
+  req: Request;
+  jsonObj: any;
+  spec: DriverMethodDef<Driver>;
+  command: string;
+  validateCommandArguments: boolean;
 }
 
 /**
@@ -290,16 +309,10 @@ function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any, validateCom
  * command-specific validator. Proxy info a plugin might need is appended separately, after
  * the args have been logged, since it carries the raw (circular) request/response objects.
  */
-function buildCommandArgs(
-  req: Request,
-  jsonObj: any,
-  spec: DriverMethodDef<Driver>,
-  command: string,
-  validateCommand: boolean,
-): any[] {
+function buildCommandArgs({req, jsonObj, spec, command, validateCommandArguments}: CommandArgsOptions): any[] {
   const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
   const validator = getCommandValidator(command);
-  if (validator && validateCommand) {
+  if (validator && validateCommandArguments) {
     validator(...args);
   }
   return args;

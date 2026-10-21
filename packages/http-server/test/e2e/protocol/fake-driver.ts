@@ -7,6 +7,9 @@ class FakeDriver extends BaseDriver<Constraints> {
     '/session/:sessionId/noproxy': {
       GET: {command: 'notProxiedCommand', neverProxy: true},
     },
+    '/session/:sessionId/wrapped': {
+      POST: {command: 'wrappedCommand', payloadParams: {wrap: 'items', required: ['items']}},
+    },
   };
 
   declare wdProxyActive: boolean;
@@ -130,6 +133,10 @@ class FakeDriver extends BaseDriver<Constraints> {
 
   async notProxiedCommand(): Promise<string> {
     return 'This was not proxied';
+  }
+
+  async wrappedCommand(items: unknown[]): Promise<unknown[]> {
+    return items;
   }
 }
 

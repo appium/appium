@@ -42,7 +42,11 @@ describe('Protocol', function () {
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
+      const {
+        baseUrl: baseUrlStr,
+        setup,
+        teardown: teardownFn,
+      } = await createServer(driver, {extraMethodMap: FakeDriver.newMethodMap});
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -95,6 +99,41 @@ describe('Protocol', function () {
       assert.deepStrictEqual(data, {
         value: 'foo',
       });
+    });
+
+    it('should reject a command POST that has no body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should reject a command POST whose body is a JSON array', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, [], {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should accept a JSON array body for a route that wraps its payload', async function () {
+      const {data} = await httpPost(`${baseUrl}/session/foo/wrapped`, [1, 2, 3]);
+      assert.deepStrictEqual(data.value, [1, 2, 3]);
+    });
+
+    it('should reject a command POST that omits a required body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/url`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
     });
 
     it('should include url request parameters for methods to use - elementid', async function () {

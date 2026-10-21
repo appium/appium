@@ -92,7 +92,7 @@ npm run test:unit
 npm run test:types
 npm run test:smoke
 npm run test:e2e
-npm run test:quick # unit and types
+npm run test:quick # lint, unit and types
 npm run test:slow # everything
 ```
 

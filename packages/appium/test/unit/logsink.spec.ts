@@ -31,6 +31,21 @@ describe('parseWebhookUri', function () {
     });
   });
 
+  it('should give winston a connectable host for an ipv6 url', function () {
+    assert.deepStrictEqual(parseWebhookUri('http://[::1]:9003/logs'), {
+      host: '::1',
+      port: 9003,
+      path: '/logs',
+      ssl: false,
+    });
+    assert.deepStrictEqual(parseWebhookUri('https://[2001:db8::1]/a'), {
+      host: '2001:db8::1',
+      port: 443,
+      path: '/a',
+      ssl: true,
+    });
+  });
+
   it('should keep understanding the legacy host:port form', function () {
     assert.deepStrictEqual(parseWebhookUri('localhost:9003'), {
       host: 'localhost',

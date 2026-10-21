@@ -172,8 +172,10 @@ export function parseWebhookUri(
     }
     const isSsl = url.protocol === HTTPS_PROTOCOL;
     const defaultPort = isSsl ? DEFAULT_HTTPS_WEBHOOK_PORT : DEFAULT_HTTP_WEBHOOK_PORT;
+    // http.request looks up `[::1]` as a name and returns ENOTFOUND
+    const host = url.hostname.startsWith('[') && url.hostname.endsWith(']') ? url.hostname.slice(1, -1) : url.hostname;
     return {
-      host: url.hostname,
+      host,
       port: url.port ? parseInt(url.port, 10) : defaultPort,
       path: `${url.pathname}${url.search}`,
       ssl: isSsl,

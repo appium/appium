@@ -33,7 +33,7 @@ appium
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
 |`--callback-address`, `-ca`|Callback IP address|string|same as `--address`|
 |`--callback-port`, `-cp`|Callback port|integer|`4723`|
-|`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
+|`--config`|Path to an [Appium configuration file](../../guides/config.md)|string||
 |`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`|
 |`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
@@ -69,7 +69,7 @@ appium
 
 ### Info Options
 
-The following options are used for reference or debug purposes. They are only supported for the base `appium` command (not `appium server`), and will not launch the server.
+The following options are used for reference or debug purposes. They are supported by the `appium` command, with or without the explicit `server` subcommand, and will not launch the server.
 
 |<div style="width:10em">Argument</div>|Description|
 |--|--|

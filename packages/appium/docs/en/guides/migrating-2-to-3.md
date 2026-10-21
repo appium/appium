@@ -454,9 +454,6 @@ longer accepts, as well as the parameters it continues to accept in Appium 3.
 * `POST /session/:sessionId/element/:elementId/value`
     * :octicons-x-24: `value`
     * :octicons-check-24: `text`
-* `POST /session/:sessionId/timeouts`
-    * :octicons-x-24: `type`, `ms`
-    * :octicons-check-24: `script`, `pageLoad`, `implicit`
 * `POST /session/:sessionId/window`
     * :octicons-x-24: `name`
     * :octicons-check-24: `handle`

@@ -8,15 +8,14 @@ title: Write a Test (.NET)
 The [Appium .NET Client](https://github.com/appium/dotnet-client/) is
 an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is available on the public NuGet Gallery as [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/).
 
-Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
+Now, create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
 
 ```bash
-cd dotnet-client
 dotnet new nunit --name appiumtest
 
 cd appiumtest
 
-# This will install the latest 5.x version
+# This will install the latest version
 dotnet add package Appium.WebDriver  --prerelease
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
@@ -47,7 +46,7 @@ public class Tests
 
         driverOptions.AddAdditionalAppiumOption("appPackage", "com.android.settings");
         driverOptions.AddAdditionalAppiumOption("appActivity", ".Settings");
-        // NoReset assumes the app com.google.android is preinstalled on the emulator
+        // NoReset assumes the app com.android.settings is preinstalled on the emulator
         driverOptions.AddAdditionalAppiumOption("noReset", true);
 
         _driver = new AndroidDriver(serverUri, driverOptions, TimeSpan.FromSeconds(180));

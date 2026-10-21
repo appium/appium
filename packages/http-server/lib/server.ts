@@ -25,7 +25,6 @@ import {
   catch404Handler,
   catchAllHandler,
   defaultToJSONContentType,
-  guardExtensionRoutes,
   unknownMethodHandler,
   handleIdempotency,
   handleLogContext,
@@ -33,7 +32,7 @@ import {
   parseJsonBody,
   rejectBrowserOrigin,
   tryHandleWebSocketUpgrade,
-} from './middleware.js';
+} from './middleware/index.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
 import {
   addWebSocketHandler,
@@ -138,17 +137,8 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           useLegacyUpgradeHandler,
           frontRouter: appiumServer.frontRouter,
         });
-        // Extension routes match on their own paths. A bad JSON body is still invalid argument
-        // there. Unwrap before the 404 handler, which matches every leftover URL.
-        const restoreAppRoutes = guardExtensionRoutes(app);
-        const restoreFrontRouter = guardExtensionRoutes(appiumServer.frontRouter);
-        try {
-          for (const updater of serverUpdaters) {
-            await updater(app, appiumServer, cliArgs);
-          }
-        } finally {
-          restoreAppRoutes();
-          restoreFrontRouter();
+        for (const updater of serverUpdaters) {
+          await updater(app, appiumServer, cliArgs);
         }
 
         // After extension routes, so a method added on a known URL still matches.

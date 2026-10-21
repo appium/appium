@@ -452,7 +452,7 @@ describe('server configuration', function () {
     }
   });
 
-  it('should reject invalid JSON for an extension route', async function () {
+  it('should leave an extension route to its own handler when the JSON body cannot be parsed', async function () {
     const _server = await server({
       routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
       port,
@@ -473,24 +473,16 @@ describe('server configuration', function () {
         headers: {'content-type': 'application/json', connection: 'close'},
         body: '{"url": not json}',
       });
-      assert.strictEqual(badExtension.status, 400);
-      assert.strictEqual(((await badExtension.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(badExtension.status, 200);
+      assert.strictEqual(await badExtension.text(), 'ok');
 
       const badFront = await fetch(`http://127.0.0.1:${port}/front`, {
         method: 'POST',
         headers: {'content-type': 'application/json', connection: 'close'},
         body: '{',
       });
-      assert.strictEqual(badFront.status, 400);
-      assert.strictEqual(((await badFront.json()) as any).value.error, 'invalid argument');
-
-      const ok = await fetch(`http://127.0.0.1:${port}/extension`, {
-        method: 'POST',
-        headers: {'content-type': 'application/json', connection: 'close'},
-        body: '{"a":1}',
-      });
-      assert.strictEqual(ok.status, 200);
-      assert.strictEqual(await ok.text(), 'ok');
+      assert.strictEqual(badFront.status, 200);
+      assert.strictEqual(await badFront.text(), 'front');
 
       const unknown = await fetch(`http://127.0.0.1:${port}/no-such`, {
         method: 'POST',

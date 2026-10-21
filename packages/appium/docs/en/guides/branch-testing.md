@@ -41,9 +41,9 @@ environment before it is merged or published. This tutorial describes how to ach
 After you have tested the PR and there are issues it might be necessary to update the local branch with
 the recent changes from Git. Follow the next steps for that:
 
-- Navigate to the parent folder of your local driver/plugin and run `git pull`.
+- Navigate to your local driver/plugin folder and run `git pull`.
 - Stop Appium server if it is running.
-- Run `npm i` in the parent folder of your local driver/plugin to rebuild it and update any dependencies if necessary.
+- Run `npm i` in your local driver/plugin folder to rebuild it and update any dependencies if necessary.
 - Start Appium server again similarly to how this is done in the corresponding [Installation](#installation) step above.
 
 ## Switching Back To a Stable Release

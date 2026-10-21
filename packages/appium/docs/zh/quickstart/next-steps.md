@@ -12,7 +12,9 @@ title: 下一步
 - [功能](../guides/caps.md)
 - [设置](../guides/settings.md)
 
-您还会发现[Appium Inspector](https://github.com/appium/appium-inspector)是编写Appium测试不可或缺的工具，因为它允许对应用进行视觉检查，并帮助您发现测试脚本中使用的元素定位器。
+You'll also find that the [Appium Inspector](https://appium.github.io/appium-inspector/) is an
+indispensable tool for writing Appium tests, as it enables visual inspection of apps and
+helps you to discover element locators for use in your test scripts.
 
 您还可以利用众多可用的在线Appium课程之一。
 

@@ -47,7 +47,7 @@ cd appium
 
 !!! info
 
-    如果您是 VS Code 用户，您可以使用  [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md) 轻松地查看项目。
+    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/).
 
 安装依赖：
 

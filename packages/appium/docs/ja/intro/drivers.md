@@ -175,7 +175,7 @@ be passed back directly to the client, without any XCUITest driver code seeing i
 This architectural pattern provides a nice bonus for driver authors who choose to deal with the
 WebDriver protocol everywhere, rather than constructing bespoke protocols. It also means that
 Appium can create wrapper drivers for any other existing WebDriver implementation very easily. If
-you look at the [Appium Safari driver](https://github.com/appium/appium-safari-driver) code, for
+you look at the [Appium Safari driver](https://appium.github.io/appium-safari-driver/) code, for
 example, you'll see that it implements basically no standard commands, because all of these are
 proxied directly to an underlying SafariDriver process.
 

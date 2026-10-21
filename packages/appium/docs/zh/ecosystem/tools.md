@@ -114,6 +114,20 @@ Supported by: `@AppiumTestDistribution`
 npm install -g appium-installer
 ```
 
+### [Optics](https://github.com/mozarkai/optics-framework)
+
+Optics is an open-source test automation framework that uses Appium to drive Android, iOS,
+Android TV, Samsung Tizen and LG webOS apps (and Selenium or Playwright for web). Tests are written
+as CSV or YAML keyword steps, and the same keywords are available as a Python library, a Robot
+Framework library, an HTTP API and an MCP server. Element lookup falls back from XPath to visible
+text, OCR and image matching.
+
+Supported by: `@chinmayajha`
+
+```sh title="Install This Tool"
+pip install "optics-framework[mobile]"
+```
+
 ### [XPath to Class Chain](https://github.com/domovou69/xpath-to-class-chain)
 
 XPath to Class Chain is a command-line tool for migrating iOS XPath locators in test code to

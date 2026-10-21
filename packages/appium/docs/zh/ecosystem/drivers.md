@@ -62,7 +62,7 @@ appium driver install mac2
 appium driver install safari
 ```
 
-### [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)
+### [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/)
 
 - Target: Android applications (mobile, TV, Wear, XR, Automotive)
 - Modes: Native, Hybrid, Web

@@ -66,63 +66,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'callback-address',
-      defaultValue: undefined,
-      dest: 'callbackAddress',
-      extName: undefined,
-      extType: undefined,
-      name: 'callback-address',
-      rawDest: 'callbackAddress',
-      ref: 'appium.json#/properties/server/properties/callback-address',
-    },
-    schema: {
-      appiumCliAliases: ['ca'],
-      description: 'Callback IP address (default: same as "address")',
-      title: 'callback-address config',
-      type: 'string',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'callback-port',
-      defaultValue: 4723,
-      dest: 'callbackPort',
-      extName: undefined,
-      extType: undefined,
-      name: 'callback-port',
-      rawDest: 'callbackPort',
-      ref: 'appium.json#/properties/server/properties/callback-port',
-    },
-    schema: {
-      appiumCliAliases: ['cp'],
-      default: 4723,
-      description: 'Callback port (default: same as "port")',
-      maximum: 65535,
-      minimum: 1,
-      title: 'callback-port config',
-      type: 'integer',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'debug-log-spacing',
-      defaultValue: false,
-      dest: 'debugLogSpacing',
-      extName: undefined,
-      extType: undefined,
-      name: 'debug-log-spacing',
-      rawDest: 'debugLogSpacing',
-      ref: 'appium.json#/properties/server/properties/debug-log-spacing',
-    },
-    schema: {
-      default: false,
-      description: 'Add exaggerated spacing in logs to help with visual inspection',
-      title: 'debug-log-spacing config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'default-capabilities',
       defaultValue: undefined,
       dest: 'defaultCapabilities',
@@ -416,25 +359,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'strict-caps',
-      defaultValue: false,
-      dest: 'strictCaps',
-      extName: undefined,
-      extType: undefined,
-      name: 'strict-caps',
-      rawDest: 'strictCaps',
-      ref: 'appium.json#/properties/server/properties/strict-caps',
-    },
-    schema: {
-      default: false,
-      description:
-        'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-      title: 'strict-caps config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'tmp',
       defaultValue: undefined,
       dest: 'tmpDir',
@@ -449,24 +373,6 @@ export default [
       description:
         'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
       title: 'tmp config',
-      type: 'string',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'trace-dir',
-      defaultValue: undefined,
-      dest: 'traceDir',
-      extName: undefined,
-      extType: undefined,
-      name: 'trace-dir',
-      rawDest: 'traceDir',
-      ref: 'appium.json#/properties/server/properties/trace-dir',
-    },
-    schema: {
-      description:
-        'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-      title: 'trace-dir config',
       type: 'string',
     },
   },

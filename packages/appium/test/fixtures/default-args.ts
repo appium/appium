@@ -3,8 +3,6 @@ export default {
   allowInsecure: [] as string[],
   allowUnknownArgs: false,
   basePath: '',
-  callbackPort: 4723,
-  debugLogSpacing: false,
   denyInsecure: [] as string[],
   driversImportChunkSize: 3,
   keepAliveTimeout: 600,
@@ -23,7 +21,6 @@ export default {
   relaxedSecurityEnabled: false,
   sessionOverride: false,
   shutdownTimeout: 5000,
-  strictCaps: false,
   useDrivers: [] as string[],
   usePlugins: [],
 };

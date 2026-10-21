@@ -73,6 +73,24 @@ Library callers of `@appium/http-server`'s `server()` and `configureServer()` no
 !!! info "Actions Needed"
 
     Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
+
+### Unused Server Arguments Removed
+
+The following server arguments had no effect for a long time and have been removed, together with
+their `server.*` config file properties:
+
+* `--callback-address` (`-ca`) and `--callback-port` (`-cp`)
+* `--debug-log-spacing`
+* `--strict-caps`
+* `--trace-dir`
+
+Passing any of them on the command line now fails with an unrecognized argument error (unless
+[`--allow-unknown-args`](../reference/cli/server.md) is set), and config files containing them
+fail schema validation.
+
+!!! info "Actions Needed"
+
+    Remove these arguments from startup scripts and config files
     for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
 ### Extension Auto-Install on `npm install` Removed

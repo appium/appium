@@ -5,6 +5,13 @@ import type {Timeouts, TimeoutValue} from '@appium/types';
 
 import {errors} from '../../protocol/errors.js';
 
+/** Standard timeout names and their local state fields and command setters. */
+export const W3C_TIMEOUTS = [
+  {name: 'script', property: 'scriptTimeoutMs', setter: 'setScriptTimeout'},
+  {name: 'pageLoad', property: 'pageLoadTimeoutMs', setter: 'setPageLoadTimeout'},
+  {name: 'implicit', property: 'implicitWaitMs', setter: 'setImplicitWait'},
+] as const;
+
 /** Validate a timeout capability without adding defaults or modifying its values. */
 export function deserializeTimeouts(requestedTimeouts: unknown): Partial<Timeouts> {
   const timeouts: Partial<Timeouts> = {};
@@ -15,7 +22,7 @@ export function deserializeTimeouts(requestedTimeouts: unknown): Partial<Timeout
     throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
   }
   const requested = requestedTimeouts as Record<string, unknown>;
-  for (const name of ['script', 'pageLoad', 'implicit'] as const) {
+  for (const {name} of W3C_TIMEOUTS) {
     const value = requested[name];
     if (value !== undefined) {
       validateTimeoutValue(value, name);

@@ -4,22 +4,13 @@ import {waitForCondition} from 'asyncbox';
 
 import {errors} from '../../protocol/index.js';
 import type {BaseDriver} from '../driver.js';
-import {validateTimeoutValue} from '../helpers/timeouts.js';
-
-export {validateTimeoutValue};
+import {validateTimeoutValue, W3C_TIMEOUTS} from '../helpers/timeouts.js';
 
 declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends ITimeoutCommands {}
 }
 
 const MIN_TIMEOUT = 0;
-
-// Standard timeout names and their local state fields and command setters.
-export const W3C_TIMEOUTS = [
-  {name: 'script', property: 'scriptTimeoutMs', setter: 'setScriptTimeout'},
-  {name: 'pageLoad', property: 'pageLoadTimeoutMs', setter: 'setPageLoadTimeout'},
-  {name: 'implicit', property: 'implicitWaitMs', setter: 'setImplicitWait'},
-] as const;
 
 /**
  * Set the various timeouts associated with a session

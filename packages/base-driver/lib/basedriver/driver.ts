@@ -49,7 +49,6 @@ import {
   setPageLoadTimeout,
   setScriptTimeout,
   timeouts,
-  W3C_TIMEOUTS,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -64,7 +63,7 @@ import './commands/log.js';
 import './commands/timeout.js';
 import {DriverCore} from './core.js';
 import * as helpers from './helpers/index.js';
-import {deserializeTimeouts} from './helpers/timeouts.js';
+import {deserializeTimeouts, W3C_TIMEOUTS} from './helpers/timeouts.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 

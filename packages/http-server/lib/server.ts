@@ -2,7 +2,7 @@ import http from 'node:http';
 import type {Server as HttpServer} from 'node:http';
 import https from 'node:https';
 
-import {DEFAULT_BASE_PATH} from '@appium/base-driver';
+import {DEFAULT_BASE_PATH, METHOD_MAP} from '@appium/base-driver';
 import type {RouteConfiguringFunction} from '@appium/base-driver';
 import {fs, timing, net} from '@appium/support';
 import type {
@@ -26,6 +26,7 @@ import {
   catchAllHandler,
   defaultToJSONContentType,
   guardExtensionRoutes,
+  unknownMethodHandler,
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
@@ -110,6 +111,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
 
   const app = express();
   const httpServer = await createServer(app, cliArgs);
+  const normalizedBasePath = normalizeBasePath(basePath);
 
   return await new Promise<AppiumServer>((resolve, reject) => {
     // we use a promise here because some elements of server start failure only happen in
@@ -119,7 +121,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
       try {
         const appiumServer = configureHttp({
           httpServer,
-          basePath: normalizeBasePath(basePath),
+          basePath: normalizedBasePath,
           reject,
           allowCors,
           keepAliveTimeout,
@@ -130,7 +132,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           app,
           addRoutes: routeConfiguringFunction,
           allowCors,
-          basePath,
+          basePath: normalizedBasePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
           useLegacyUpgradeHandler,
@@ -149,9 +151,12 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           restoreFrontRouter();
         }
 
-        // once all configurations and updaters have been applied, make sure to set up a catchall
-        // handler so that anything unknown 404s. But do this after everything else since we don't
-        // want to block extensions' ability to add routes if they want.
+        // After extension routes, so a method added on a known URL still matches.
+        // Express matches the path once. Anything left on that path is unknown method.
+        for (const [commandPath, methods] of Object.entries({...METHOD_MAP, ...extraMethodMap})) {
+          app.all(`${normalizedBasePath}${commandPath}`, unknownMethodHandler(Object.keys(methods).join(', ')));
+        }
+        // The catch-all stays last so a URL that is not a command can still 404.
         app.all('/{*all}', catch404Handler);
 
         await startServer({
@@ -165,7 +170,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         const protocol = appiumServer.isSecure() ? 'https' : 'http';
         const displayAddress = hostname ?? V4_BROADCAST_IP;
         const bracketedAddress = net.formatHostnameForUrl(displayAddress);
-        logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizeBasePath(basePath)}`);
+        logServerAddress(`${protocol}://${bracketedAddress}:${port}${normalizedBasePath}`);
 
         resolve(appiumServer);
       } catch (err) {

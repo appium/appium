@@ -130,6 +130,7 @@ function buildHandler(
       if (jsonParseError) {
         throw jsonParseError;
       }
+      assertPostBodyIsJsonObject(req, spec);
 
       const proxyOutcome = await tryWdProxy(driver, req, res, spec, isSessCmd, sessionId);
       if (proxyOutcome === 'handled') {
@@ -266,6 +267,32 @@ function ensureSessionExists(driver: Core<any>, sessionId: string | undefined, i
   if (isSessCmd && !driver.sessionExists(sessionId)) {
     throw new errors.NoSuchDriverError();
   }
+}
+
+/**
+ * WebDriver requires a command POST body to be a JSON object.
+ * The JSON parser turns a zero-length body into `{}`, so that case is recognized
+ * from `Content-Length` before it can be treated as an empty object.
+ * A route that sets `payloadParams.wrap` may instead receive one bare array or value.
+ */
+function assertPostBodyIsJsonObject(req: Request, spec: DriverMethodDef<Driver>): void {
+  if (req.method !== 'POST' || acceptsWrappedBody(req, spec)) {
+    return;
+  }
+  const lengthHeader = req.headers['content-length'];
+  const lengthValue = Array.isArray(lengthHeader) ? lengthHeader[0] : lengthHeader;
+  const omittedBody = lengthValue !== undefined && Number(lengthValue) === 0;
+  if (omittedBody || !util.isPlainObject(req.body)) {
+    throw new errors.InvalidArgumentError('HTTP request body must be a JSON object');
+  }
+}
+
+function acceptsWrappedBody(req: Request, spec: DriverMethodDef<Driver>): boolean {
+  if (!spec.payloadParams?.wrap) {
+    return false;
+  }
+  const {body} = req;
+  return Array.isArray(body) || (body != null && typeof body !== 'object');
 }
 
 /**

@@ -73,6 +73,7 @@ Library callers of `@appium/http-server`'s `server()` and `configureServer()` no
 !!! info "Actions Needed"
 
     Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
+    for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
 ### Unused Server Arguments Removed
 
@@ -91,7 +92,6 @@ fail schema validation.
 !!! info "Actions Needed"
 
     Remove these arguments from startup scripts and config files
-    for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
 ### Extension Auto-Install on `npm install` Removed
 

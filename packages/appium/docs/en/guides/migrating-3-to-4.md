@@ -146,6 +146,18 @@ already-executed timed-out command.
 
     None, unless your code inspects the raw HTTP status code of a timeout response
 
+### Missing Standard Command Handlers Return Unsupported Operation
+
+When `BaseDriver` has no handler for a registered W3C WebDriver command, it now returns HTTP `500`
+with `unsupported operation`, instead of HTTP `405` with `unknown method`. A wrong HTTP method on
+a known command URL still returns `405`. Errors thrown by implemented handlers or returned by
+downstream servers are unchanged, as are the missing-handler errors for extension and internal
+command names.
+
+!!! info "Actions Needed"
+
+    Update assertions that expect `405` when a driver does not implement a standard command
+
 ### Timeouts Endpoint Aligned With W3C Standard
 
 `GET/SET /timeouts` is now closer to [the W3C standard](https://w3c.github.io/webdriver/#timeouts):

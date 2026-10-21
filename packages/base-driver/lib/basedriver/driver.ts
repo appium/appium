@@ -24,6 +24,7 @@ import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js'
 import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
 import {calcSignature} from '../helpers/session.js';
 import {DELETE_SESSION_COMMAND, errors, isErrorType} from '../protocol/index.js';
+import {W3C_ROUTES} from '../protocol/routes/w3c.js';
 import {mergePlainObjects} from '../utils.js';
 import {processCapabilities, validateCaps} from './capabilities.js';
 import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
@@ -68,6 +69,10 @@ import {DriverCore} from './core.js';
 import * as helpers from './helpers/index.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
+
+const W3C_COMMANDS = new Set<string>(
+  Object.values(W3C_ROUTES).flatMap((methods) => Object.values(methods).map(({command}) => command)),
+);
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -127,6 +132,9 @@ export class BaseDriver<
     if (!command) {
       if (this.isCommandsQueueEnabled && !hasRunningCommands(this)) {
         await this.startNewCommandTimeout();
+      }
+      if (W3C_COMMANDS.has(cmd)) {
+        throw new errors.UnsupportedOperationError(`The '${cmd}' command is not implemented by this driver.`);
       }
       throw new errors.NotYetImplementedError();
     }

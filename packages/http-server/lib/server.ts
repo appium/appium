@@ -24,11 +24,12 @@ import {
   allowCrossDomain,
   catch404Handler,
   catchAllHandler,
-  unknownMethodHandler,
   defaultToJSONContentType,
+  unknownMethodHandler,
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  rejectBrowserOrigin,
   tryHandleWebSocketUpgrade,
 } from './middleware.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
@@ -74,6 +75,7 @@ export interface ConfigureHttpOpts {
   /** Normalized base path the server is mounted at */
   basePath: string;
   reject: (error?: unknown) => void;
+  allowCors?: boolean;
   keepAliveTimeout: number;
   gracefulShutdownTimeout?: number;
 }
@@ -97,7 +99,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
     port,
     hostname,
     cliArgs = {},
-    allowCors = true,
+    allowCors = false,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     serverUpdaters = [],
@@ -119,6 +121,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           httpServer,
           basePath: normalizedBasePath,
           reject,
+          allowCors,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
@@ -138,12 +141,12 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           await updater(app, appiumServer, cliArgs);
         }
 
-        // Register these after extension routes. Express matches the path once, and this
-        // handler only runs when none of the command's methods did. Anything still unmatched
-        // falls through to the 404 handler.
-        for (const commandPath of Object.keys({...METHOD_MAP, ...extraMethodMap})) {
-          app.all(`${normalizedBasePath}${commandPath}`, unknownMethodHandler);
+        // After extension routes, so a method added on a known URL still matches.
+        // Express matches the path once. Anything left on that path is unknown method.
+        for (const [commandPath, methods] of Object.entries({...METHOD_MAP, ...extraMethodMap})) {
+          app.all(`${normalizedBasePath}${commandPath}`, unknownMethodHandler(Object.keys(methods).join(', ')));
         }
+        // The catch-all stays last so a URL that is not a command can still 404.
         app.all('/{*all}', catch404Handler);
 
         await startServer({
@@ -176,7 +179,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   const {
     app,
     addRoutes,
-    allowCors = true,
+    allowCors = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -197,11 +200,9 @@ export function configureServer(opts: ConfigureServerOpts): void {
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
   // to avoid Express middleware timeout issues with long-lived connections
   if (useLegacyUpgradeHandler) {
-    app.use(handleUpgrade(webSocketsMapping));
+    app.use(handleUpgrade(webSocketsMapping, allowCors));
   }
-  if (allowCors) {
-    app.use(allowCrossDomain);
-  }
+  app.use(allowCors ? allowCrossDomain : rejectBrowserOrigin);
   app.use(handleIdempotency);
   app.use(defaultToJSONContentType);
   app.use(bodyParser.urlencoded({extended: true}));
@@ -282,6 +283,7 @@ function configureHttp({
   httpServer,
   basePath,
   reject,
+  allowCors,
   keepAliveTimeout,
   gracefulShutdownTimeout,
 }: ConfigureHttpOpts): AppiumServer {
@@ -305,7 +307,15 @@ function configureHttp({
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
-      if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
+      if (
+        !tryHandleWebSocketUpgrade({
+          req,
+          socket,
+          head,
+          webSocketsMapping: appiumServer.webSocketsMapping,
+          allowCors,
+        })
+      ) {
         socket.destroy();
       }
     });

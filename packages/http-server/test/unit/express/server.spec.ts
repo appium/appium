@@ -36,6 +36,7 @@ describe('server configuration', function () {
       use: sandbox.spy(),
       all: sandbox.spy(),
       get: sandbox.spy(),
+      head: sandbox.spy(),
       post: sandbox.spy(),
       delete: sandbox.spy(),
       totalCount: () =>
@@ -52,6 +53,77 @@ describe('server configuration', function () {
 
   afterEach(function () {
     sandbox.restore();
+  });
+
+  for (const basePath of ['', '/wd/hub']) {
+    it(`should reject implicit HEAD commands under '${basePath}' without executing the driver`, async function () {
+      const driver = fakeDriver();
+      const execute = sandbox.spy(driver, 'executeCommand');
+      const exists = sandbox.spy(driver, 'sessionExists');
+      const _server = await server({
+        routeConfiguringFunction: routeConfiguringFunction(driver as any),
+        port,
+        basePath,
+        extraMethodMap: newMethodMap,
+      });
+      try {
+        const cases = [
+          ['/status', 'GET'],
+          ['/session/foo/url', 'GET, POST'],
+          ['/session/missing/title', 'GET'],
+          ['/session/foo/fake', 'GET, POST'],
+        ];
+        for (const [path, allowedMethods] of cases) {
+          const res = await fetch(`http://127.0.0.1:${port}${basePath}${path}`, {method: 'HEAD'});
+          assert.strictEqual(res.status, 405, path);
+          assert.strictEqual(res.headers.get('allow'), allowedMethods, path);
+          assert.strictEqual(res.headers.get('content-type'), 'application/json; charset=utf-8', path);
+          assert.strictEqual(await res.text(), '', 'HEAD responses must not contain a body');
+          assert.strictEqual(res.headers.get('cache-control'), 'no-cache');
+        }
+        assert.strictEqual(execute.callCount, 0);
+        assert.strictEqual(exists.callCount, 0, 'method validation must precede session validation');
+        const unknown = await fetch(`http://127.0.0.1:${port}${basePath}/unknown`, {method: 'HEAD'});
+        assert.strictEqual(unknown.status, 404);
+        const get = await fetch(`http://127.0.0.1:${port}${basePath}/status`);
+        assert.strictEqual(get.status, 200);
+        await get.text();
+        assert.strictEqual(execute.callCount, 1);
+      } finally {
+        await _server.close();
+      }
+    });
+  }
+
+  it('should preserve explicit extension HEAD commands and custom server routes', async function () {
+    const execute = sandbox.stub().resolves({});
+    const driver = {...fakeDriver(), executeCommand: execute, proxyActive: () => false};
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      extraMethodMap: {
+        '/session/:sessionId/explicit-head': {
+          GET: {command: 'fakeGet'},
+          HEAD: {command: 'fakeHead'},
+        },
+      } as MethodMap<Driver>,
+      serverUpdaters: [
+        async (app) => {
+          app.get('/health', (_req, res) => res.sendStatus(204));
+        },
+      ],
+    });
+    try {
+      const explicit = await fetch(`http://127.0.0.1:${port}/session/foo/explicit-head`, {method: 'HEAD'});
+      assert.strictEqual(explicit.status, 200);
+      assert.strictEqual(await explicit.text(), '');
+      assert.strictEqual(execute.firstCall.args[0], 'fakeHead');
+      const custom = await fetch(`http://127.0.0.1:${port}/health`, {method: 'HEAD'});
+      assert.strictEqual(custom.status, 204);
+      assert.strictEqual(execute.callCount, 1);
+    } finally {
+      await _server.close();
+    }
   });
 
   it('should set no-cache on successful responses and errors from each HTTP layer', async function () {
@@ -218,6 +290,51 @@ describe('server configuration', function () {
       const resWithoutBasePath = await fetch(`http://127.0.0.1:${port}/session/foo/fake`, {method: 'DELETE'});
       assert.strictEqual(resWithoutBasePath.status, 404);
       assert.strictEqual(((await resWithoutBasePath.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject HEAD on a post-only command without a body', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session`, {method: 'HEAD'});
+      assert.strictEqual(res.status, 405);
+      assert.strictEqual(res.headers.get('allow'), 'POST');
+      assert.strictEqual(res.headers.get('content-type'), 'application/json; charset=utf-8');
+      assert.strictEqual(await res.text(), '');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should let updateServer add a method on a known command url', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.put('/status', (_req: any, res: any) => {
+            res.sendStatus(204);
+          });
+        },
+      ],
+    });
+    try {
+      const put = await fetch(`http://127.0.0.1:${port}/status`, {method: 'PUT'});
+      assert.strictEqual(put.status, 204);
+      assert.strictEqual(await put.text(), '');
+
+      const post = await fetch(`http://127.0.0.1:${port}/status`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(post.status, 405);
+      assert.strictEqual(((await post.json()) as any).value.error, 'unknown method');
     } finally {
       await _server.close();
     }

@@ -200,6 +200,30 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
+      for (const caps of [
+        {
+          alwaysMatch: {platformName: 'Fake'},
+          firstMatch: [
+            {'appium:automationName': 42, 'appium:settings': {rejected: true}},
+            {'appium:automationName': 'Fake', 'appium:settings': {selected: true}},
+          ],
+        },
+        {
+          alwaysMatch: {platformName: 'Fake'},
+          firstMatch: [{'appium:automationName': 'Fake'}, {platformName: 'Fake'}],
+        },
+      ]) {
+        it(`should reject invalid candidates before selecting a driver: ${JSON.stringify(caps)}`, async function () {
+          mockFakeDriver.expects('createSession').never();
+          const {error} = await appium.createSession(caps as any);
+          assert.ok(error);
+          const [status, body] = getResponseForW3CError(error);
+          assert.equal(status, 400);
+          assert.equal(body.value.error, 'invalid argument');
+          mockFakeDriver.verify();
+        });
+      }
+
       for (const caps of [{alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
         it(`should reject malformed capabilities before selecting a driver: ${JSON.stringify(caps)}`, async function () {
           mockFakeDriver.expects('createSession').never();
@@ -283,17 +307,6 @@ describe('AppiumDriver', function () {
             ],
           },
           expected: {shared: true, choice: 'first'},
-        },
-        {
-          name: 'the next valid firstMatch candidate',
-          caps: {
-            alwaysMatch: {platformName: 'Fake'},
-            firstMatch: [
-              {'appium:automationName': 42, 'appium:settings': {rejected: true}},
-              {'appium:automationName': 'Fake', 'appium:settings': {selected: true}},
-            ],
-          },
-          expected: {selected: true},
         },
         {
           name: 'settings inside appium:options with nested values taking precedence',

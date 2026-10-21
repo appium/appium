@@ -51,13 +51,36 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
     for (const [path, methods] of Object.entries(allMethods)) {
-      for (const [method, spec] of Object.entries(methods)) {
-        const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
-        // set up the express route handler
-        buildHandler(app, method, `${basePath}${path}`, spec, driver, isSessCommand);
-      }
+      registerCommandRoutes(app, `${basePath}${path}`, methods, driver);
     }
   };
+}
+
+/** Registers a command path with HEAD handling before Express's GET fallback. */
+function registerCommandRoutes(
+  app: Express,
+  path: string,
+  methods: MethodMap<Driver>[string],
+  driver: Core<any>,
+): void {
+  if (methods.GET && !('HEAD' in methods)) {
+    const allowedMethods = Object.keys(methods).join(', ');
+    app.head(path, (_req, res) => {
+      res.status(405).set('Allow', allowedMethods).set('Content-Type', 'application/json; charset=utf-8').end();
+    });
+  }
+
+  // Preserve runtime compatibility with explicit HEAD handlers regardless of declaration
+  // order. MethodMap's public types only declare GET, POST, and DELETE.
+  const entries = Object.entries(methods);
+  const orderedEntries = [
+    ...entries.filter(([method]) => method === 'HEAD'),
+    ...entries.filter(([method]) => method !== 'HEAD'),
+  ];
+  for (const [method, spec] of orderedEntries) {
+    const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
+    buildHandler(app, method, path, spec, driver, isSessCommand);
+  }
 }
 
 function buildHandler(
@@ -78,6 +101,7 @@ function buildHandler(
     try {
       logDeprecationWarning(driver, method, path, spec, sessionId);
       ensureSessionExists(driver, sessionId, isSessCmd);
+      assertPostBodyIsJsonObject(req, spec);
 
       const proxyOutcome = await tryWdProxy(driver, req, res, spec, isSessCmd, sessionId);
       if (proxyOutcome === 'handled') {
@@ -214,6 +238,32 @@ function ensureSessionExists(driver: Core<any>, sessionId: string | undefined, i
   if (isSessCmd && !driver.sessionExists(sessionId)) {
     throw new errors.NoSuchDriverError();
   }
+}
+
+/**
+ * WebDriver requires a command POST body to be a JSON object.
+ * The JSON parser turns a zero-length body into `{}`, so that case is recognized
+ * from `Content-Length` before it can be treated as an empty object.
+ * A route that sets `payloadParams.wrap` may instead receive one bare array or value.
+ */
+function assertPostBodyIsJsonObject(req: Request, spec: DriverMethodDef<Driver>): void {
+  if (req.method !== 'POST' || acceptsWrappedBody(req, spec)) {
+    return;
+  }
+  const lengthHeader = req.headers['content-length'];
+  const lengthValue = Array.isArray(lengthHeader) ? lengthHeader[0] : lengthHeader;
+  const omittedBody = lengthValue !== undefined && Number(lengthValue) === 0;
+  if (omittedBody || !util.isPlainObject(req.body)) {
+    throw new errors.InvalidArgumentError('HTTP request body must be a JSON object');
+  }
+}
+
+function acceptsWrappedBody(req: Request, spec: DriverMethodDef<Driver>): boolean {
+  if (!spec.payloadParams?.wrap) {
+    return false;
+  }
+  const {body} = req;
+  return Array.isArray(body) || (body != null && typeof body !== 'object');
 }
 
 /**

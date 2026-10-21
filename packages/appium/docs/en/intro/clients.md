@@ -64,10 +64,10 @@ setup and command reference):
 === "Java"
 
     ```java
-    WebElement element = driver.findElement(By.Xpath("//*[@text='Foo']"))
-    element.click()
-    System.out.println(element.getText())
-    System.out.println(driver.getPageSource())
+    WebElement element = driver.findElement(By.xpath("//*[@text='Foo']"));
+    element.click();
+    System.out.println(element.getText());
+    System.out.println(driver.getPageSource());
     ```
 
 === "Python"
@@ -91,8 +91,8 @@ setup and command reference):
 === "C#"
 
     ```dotnet
-    AppiumElement element = driver.FindElement(MobileBy.AccessibilityId("Views"));   
-    element.click();
+    AppiumElement element = driver.FindElement(By.XPath("//*[@text='Foo']"));
+    element.Click();
     System.Console.WriteLine(element.Text);
     System.Console.WriteLine(driver.PageSource);
     ```

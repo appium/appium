@@ -115,12 +115,12 @@ The Appium 1 ecosystem included several drivers, clients and other packages that
 deprecated and replaced with newer packages. Appium 2 no longer includes support for these packages,
 and it is recommended to migrate to the following replacements:
 
-| Appium 1 Package   | Replacement in Appium 2                                                    |
-| ------------------ | -------------------------------------------------------------------------- |
-| iOS Driver         | [XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/latest/) |
-| UiAutomator Driver | [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver/)      |
-| `wd` Client        | [WebdriverIO Client](https://webdriver.io/)                                |
-| Appium Desktop     | [Appium Inspector](https://github.com/appium/appium-inspector)             |
+| Appium 1 Package   | Replacement in Appium 2                                              |
+| ------------------ | -------------------------------------------------------------------- |
+| iOS Driver         | [XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/)  |
+| UiAutomator Driver | [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/) |
+| `wd` Client        | [WebdriverIO Client](https://webdriver.io/)                          |
+| Appium Desktop     | [Appium Inspector](https://appium.github.io/appium-inspector/)       |
 
 !!! info "Actions Needed"
 

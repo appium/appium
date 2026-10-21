@@ -109,7 +109,7 @@ appium setup
 ```
 
 Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
-(only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
+(only if running macOS), and [Espresso](https://appium.github.io/appium-espresso-driver/).
 
 You can also use this command to batch install drivers for desktop applications or desktop browsers.
 For more details on this, refer to the [Setup command documentation](../reference/cli/setup.md).

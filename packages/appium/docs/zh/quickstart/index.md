@@ -11,7 +11,7 @@ title: 入门指南
 
 1. 安装Appium
 2. 安装Appium驱动程序及其依赖项
-   - 本指南提供了[UiAutomator2 驱动程序](https://github.com/appium/appium-uiautomator2-driver) 的说明
+   - This guide provides instructions for the [UiAutomator2 driver](https://appium.github.io/appium-uiautomator2-driver/)
 3. 在您选择的语言中安装Appium客户端库
    - 本指南包含JavaScript、Python、Java、Ruby和.NET的选项
 4. 使用示例应用程序编写并运行简单的Appium自动化脚本

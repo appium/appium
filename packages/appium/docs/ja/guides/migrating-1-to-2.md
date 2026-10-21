@@ -2,7 +2,7 @@
 title: Appium 2 へ移行する
 ---
 
-このドキュメントは既にAppium 1 を利用している人がAppium 2 に移行するための手引きです。 破壊的変更の一覧や、実行環境・テストコードをAppium 2 互換にするための方法が含まれます。
+このドキュメントは既にAppium 1 を利用している人がAppium 2 に移行するための手引きです。破壊的変更の一覧や、実行環境・テストコードをAppium 2 互換にするための方法が含まれます。
 
 Appium 2 is the biggest Appium release in over 5 years. It is _not_ focused on changing the
 automation behavior for any particular platform, but instead re-envisions Appium into an
@@ -111,12 +111,12 @@ The Appium 1 ecosystem included several drivers, clients and other packages that
 deprecated and replaced with newer packages. Appium 2 no longer includes support for these packages,
 and it is recommended to migrate to the following replacements:
 
-| Appium 1 Package   | Replacement in Appium 2                                                    |
-| ------------------ | -------------------------------------------------------------------------- |
-| iOS Driver         | [XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/latest/) |
-| UiAutomator Driver | [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver/)      |
-| `wd` Client        | [WebdriverIO Client](https://webdriver.io/)                                |
-| Appium Desktop     | [Appium Inspector](https://github.com/appium/appium-inspector)             |
+| Appium 1 Package   | Replacement in Appium 2                                              |
+| ------------------ | -------------------------------------------------------------------- |
+| iOS Driver         | [XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/)  |
+| UiAutomator Driver | [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/) |
+| `wd` Client        | [WebdriverIO Client](https://webdriver.io/)                          |
+| Appium Desktop     | [Appium Inspector](https://appium.github.io/appium-inspector/)       |
 
 !!! info "Actions Needed"
 

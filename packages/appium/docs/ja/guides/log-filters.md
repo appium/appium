@@ -18,8 +18,11 @@ Each rule is an object with a set of predefined properties. The following rule p
 supported:
 
 - `pattern`: A valid Javascript RegExp pattern to replace. Must be a valid non-empty pattern.
-- `text`: A simple non-empty exact text match to replace. Either this property or the above one must
-  be provided. `pattern` has priority over `text` if both are provided.
+- `text`: A simple non-empty exact text to replace. Either this property or the above one must
+  be provided. `pattern` has priority over `text` if both are provided. Note that the text is
+  matched as a whole word: special characters are escaped and word boundaries (`\b`) are added on
+  the sides where the value begins or ends with a word character. For example, a rule with text
+  `pass` replaces `pass` in `my pass here`, but does not match inside `password`.
 - `flags`: Regular expression flags for the given pattern. Supported flags are the same as for the
   standard JavaScript [RegExp constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2).
   Note that the `g` (global matching) flag is always enabled.

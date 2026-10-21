@@ -10,7 +10,8 @@ title: 安装 UiAutomator2 驱动程序
 对于这个快速入门指南，我们将在 Android 平台上自动化一个应用，因为通过 Appium 进行 Android 自动化的系统要求与 Appium 本身相同（而 iOS 驱动程序，则要求您使用 macOS）。
 ```
 
-我们要使用的驱动程序称为 [UiAutomator2 驱动程序](https://github.com/appium/appium-uiautomator2-driver)。请访问该驱动程序的文档并将其加入书签，因为它将成为未来宝贵的参考。
+The driver we're going to use is called the UiAutomator2
+Driver. 请访问该驱动程序的文档并将其加入书签，因为它将成为未来宝贵的参考。
 
 ## 设置 Android 自动化要求
 
@@ -79,7 +80,8 @@ Driver uiautomator2@2.0.5 successfully installed
 appium setup
 ```
 
-运行此命令将安装 Appium 的移动端特定驱动程序：UiAutomator2、[XCUITest](https://appium.github.io/appium-xcuitest-driver/)（仅在运行 macOS 时），以及 [Espresso](https://github.com/appium/appium-espresso-driver)。
+Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
+(only if running macOS), and [Espresso](https://appium.github.io/appium-espresso-driver/).
 
 您也可以使用此命令批量安装桌面应用程序或桌面浏览器的驱动程序。有关更多详细信息，请参考[设置命令文档](../reference/cli/setup.md)。
 

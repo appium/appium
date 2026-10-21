@@ -98,7 +98,10 @@ WebDriver 协议！没错，XCUITest 驱动程序的 Objective-C 端本身就是
 
 如果你不熟悉"代理"的概念，在这种情况下，它只是意味着 XCUITest 驱动程序根本不会参与处理该命令。相反，它只会在协议级别被重新打包并转发到 WebDriverAgent，WebDriverAgent 的响应同样会直接传回客户端，而不会有任何 XCUITest 驱动程序代码看到或修改它。
 
-这种架构模式为选择在各处使用 WebDriver 协议而不是构建定制协议的驱动程序作者提供了一个很好的额外好处。这也意味着 Appium 可以非常轻松地为任何其他现有的 WebDriver 实现创建包装驱动程序。例如，如果你查看 [Appium Safari 驱动程序](https://github.com/appium/appium-safari-driver)代码，你会发现它基本上没有实现任何标准命令，因为所有这些命令都直接代理到底层的 SafariDriver 进程。
+这种架构模式为选择在各处使用 WebDriver 协议而不是构建定制协议的驱动程序作者提供了一个很好的额外好处。这也意味着 Appium 可以非常轻松地为任何其他现有的 WebDriver 实现创建包装驱动程序。 If
+you look at the [Appium Safari driver](https://appium.github.io/appium-safari-driver/) code, for
+example, you'll see that it implements basically no standard commands, because all of these are
+proxied directly to an underlying SafariDriver process.
 
 了解这种代理机制有时在幕后发生是很重要的，因为如果你曾经深入研究一些开源驱动程序代码试图找出命令的实现位置，你可能会惊讶地发现 Node.js 驱动程序代码本身根本没有任何实现！在这种情况下，你需要找出命令被代理到哪里，以便你可以在那里查找相应的实现。
 

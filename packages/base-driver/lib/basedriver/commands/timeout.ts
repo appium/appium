@@ -1,11 +1,12 @@
-import {inspect} from 'node:util';
-
 import {util} from '@appium/support';
-import type {Constraints, ITimeoutCommands, Timeouts, TimeoutValue} from '@appium/types';
+import type {Constraints, ITimeoutCommands, TimeoutValue} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
 
 import {errors} from '../../protocol/index.js';
 import type {BaseDriver} from '../driver.js';
+import {validateTimeoutValue} from '../helpers/timeouts.js';
+
+export {validateTimeoutValue};
 
 declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends ITimeoutCommands {}
@@ -86,15 +87,6 @@ export async function timeouts<C extends Constraints>(
   }
   if (parsedCommand !== undefined) {
     this.setNewCommandTimeout(parsedCommand);
-  }
-}
-
-/** Validate a standard timeout value shared by New Session and Set Timeouts. */
-export function validateTimeoutValue(value: unknown, name: keyof Timeouts): asserts value is TimeoutValue {
-  if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
-    throw new errors.InvalidArgumentError(
-      `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
-    );
   }
 }
 

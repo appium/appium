@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.5](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.4...@appium/storage-plugin@3.0.0-beta.5) (2026-10-18)
+
+### Bug Fixes
+
+* **storage-plugin:** contain upload event socket errors ([#22963](https://github.com/appium/appium/issues/22963)) ([139f086](https://github.com/appium/appium/commit/139f086941acb06a189892887e829639e525fee8))
+* **storage-plugin:** preserve pending upload sockets across retries ([#22948](https://github.com/appium/appium/issues/22948)) ([d8fff40](https://github.com/appium/appium/commit/d8fff407cfa8a005de0dfe65df6c6ed8e715245e))
+* **storage-plugin:** reject concurrent WebSocket uploads ([#22962](https://github.com/appium/appium/issues/22962)) ([9940156](https://github.com/appium/appium/commit/9940156d1a316619d2709c91d216e1cb3e81ef43))
+* **storage-plugin:** reject reserved partial-file names ([#22959](https://github.com/appium/appium/issues/22959)) ([ef5468c](https://github.com/appium/appium/commit/ef5468ceac8dec3c26748211a21dc52dbd007037))
+
+
 ## [3.0.0-beta.4](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.3...@appium/storage-plugin@3.0.0-beta.4) (2026-10-09)
 
 ### ⚠ BREAKING CHANGES

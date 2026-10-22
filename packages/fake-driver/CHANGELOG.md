@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.0-beta.5](https://github.com/appium/appium/compare/@appium/fake-driver@7.0.0-beta.4...@appium/fake-driver@7.0.0-beta.5) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+
+### Bug Fixes
+
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c10c413](https://github.com/appium/appium/commit/c10c41384cdb4276faaab1a908cf9f80a77464a5))
+* **base-driver:** preserve capability invalid argument errors ([#22977](https://github.com/appium/appium/issues/22977)) ([b452a5e](https://github.com/appium/appium/commit/b452a5eade468d6c20a62c89357f72f492441038)), closes [#22966](https://github.com/appium/appium/issues/22966)
+
+
 ## [7.0.0-beta.4](https://github.com/appium/appium/compare/@appium/fake-driver@7.0.0-beta.3...@appium/fake-driver@7.0.0-beta.4) (2026-10-09)
 
 **Note:** Version bump only for package @appium/fake-driver

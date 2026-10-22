@@ -23,6 +23,8 @@ const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
 const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
+// Bound link traversal so cyclic targets cannot keep validation running indefinitely.
+const MAX_SYMLINK_TRAVERSALS = 40;
 
 export interface ExtractAllOptions {
   /**
@@ -303,49 +305,61 @@ class ZipExtractor {
     linkParentDir: string,
     fileName: string,
   ): Promise<Set<string>> {
-    // Resolve components before collapsing '..': a symlink may change its meaning.
-    // realpath alone cannot validate links whose targets have not been extracted yet.
+    // Walk components in filesystem order. Normalizing '..' before following symlinks
+    // changes its meaning, and realpath cannot resolve targets that do not exist yet.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
-    let current = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : linkParentDir;
-    const pending = (path.isAbsolute(linkTarget) ? linkTarget.slice(current.length) : linkTarget).split(separator);
-    let followedLinks = 0;
+    const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';
+    let resolvedPath = targetRoot || linkParentDir;
+    const remainingSegments = linkTarget.slice(targetRoot.length).split(separator);
     const missingPaths = new Set<string>();
-    while (pending.length) {
-      const segment = pending.shift();
+    let followedLinks = 0;
+
+    while (remainingSegments.length) {
+      const segment = remainingSegments.shift();
       if (!segment || segment === '.') {
         continue;
       }
       if (segment === '..') {
-        current = path.dirname(current);
+        resolvedPath = path.dirname(resolvedPath);
         continue;
       }
-      const candidate = path.join(current, segment);
-      let target: string;
+
+      const candidatePath = path.join(resolvedPath, segment);
+      let nestedLinkTarget: string | null = null;
       try {
-        if (!(await fs.lstat(candidate)).isSymbolicLink()) {
-          current = candidate;
-          continue;
+        const stats = await fs.lstat(candidatePath);
+        if (stats.isSymbolicLink()) {
+          nestedLinkTarget = await fs.readlink(candidatePath);
         }
-        target = await fs.readlink(candidate);
       } catch (err: any) {
         if (err.code !== 'ENOENT') {
           throw err;
         }
+        // An absent component may become a symlink in a later ZIP entry.
         // Fold case conservatively for filesystems with case-insensitive names.
-        missingPaths.add(candidate.toLowerCase());
-        current = candidate;
+        missingPaths.add(candidatePath.toLowerCase());
+      }
+
+      // Ordinary and missing components both advance the path without expanding a link.
+      if (nestedLinkTarget === null) {
+        resolvedPath = candidatePath;
         continue;
       }
-      if (++followedLinks > 40) {
+
+      followedLinks += 1;
+      if (followedLinks > MAX_SYMLINK_TRAVERSALS) {
         throw new Error(`Too many symlinks while processing file ${fileName}`);
       }
-      if (path.isAbsolute(target)) {
-        current = path.parse(target).root;
-        target = target.slice(current.length);
+      // Relative targets start at the link's parent (resolvedPath); absolute targets reset it.
+      // Resolve the link's components before resuming the original path, especially any '..'.
+      if (path.isAbsolute(nestedLinkTarget)) {
+        resolvedPath = path.parse(nestedLinkTarget).root;
+        nestedLinkTarget = nestedLinkTarget.slice(resolvedPath.length);
       }
-      pending.unshift(...target.split(separator));
+      remainingSegments.unshift(...nestedLinkTarget.split(separator));
     }
-    if (!isSubPath(current, this.opts.dir)) {
+
+    if (!isSubPath(resolvedPath, this.opts.dir)) {
       throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
     }
     return missingPaths;

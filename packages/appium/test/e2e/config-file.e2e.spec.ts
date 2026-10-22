@@ -40,9 +40,6 @@ describe('config file behavior', function () {
               address: '0.0.0.0',
               allowInsecure: [],
               basePath: '/',
-              callbackAddress: '0.0.0.0',
-              callbackPort: 31337,
-              debugLogSpacing: false,
               defaultCapabilities: {},
               denyInsecure: [],
               keepAliveTimeout: 600,
@@ -56,9 +53,7 @@ describe('config file behavior', function () {
               port: 31337,
               relaxedSecurityEnabled: true,
               sessionOverride: false,
-              strictCaps: false,
               tmpDir: '/tmp',
-              traceDir: '/tmp/appium-instruments',
               useDrivers: [],
               usePlugins: ['all'],
               webhook: 'http://0.0.0.0/hook',
@@ -131,9 +126,6 @@ describe('config file behavior', function () {
               address: '0.0.0.0',
               allowInsecure: {},
               basePath: '/',
-              callbackAddress: '0.0.0.0',
-              callbackPort: 43243234,
-              debugLogSpacing: false,
               defaultCapabilities: {},
               denyInsecure: [],
               keepAliveTimeout: 0,
@@ -147,16 +139,14 @@ describe('config file behavior', function () {
               port: '31337',
               relaxedSecurityEnabled: false,
               sessionOverride: false,
-              strictCaps: false,
               tmpDir: '/tmp',
-              traceDir: '/tmp/appium-instruments',
               useDrivers: [],
               usePlugins: ['all'],
               webhook: 'http://0.0.0.0/hook',
             },
           });
           assert.strictEqual(result.filepath, BAD_FILEPATH);
-          assert.strictEqual(result.errors?.length, 6);
+          assert.strictEqual(result.errors?.length, 5);
           assert.ok(
             result.errors?.some((error) =>
               util.isEqual(error, {

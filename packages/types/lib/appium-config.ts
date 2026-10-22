@@ -26,18 +26,6 @@ export type AppUrlRulesConfig = AppUrlRules;
  */
 export type BasePathConfig = string;
 /**
- * Callback IP address (default: same as "address")
- */
-export type CallbackAddressConfig = string;
-/**
- * Callback port (default: same as "port")
- */
-export type CallbackPortConfig = number;
-/**
- * Add exaggerated spacing in logs to help with visual inspection
- */
-export type DebugLogSpacingConfig = boolean;
-/**
  * Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.
  */
 export type DenyInsecureConfig = string[];
@@ -152,17 +140,9 @@ export type CertFilePath = string;
  */
 export type KeyFilePath = string;
 /**
- * Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device
- */
-export type StrictCapsConfig = boolean;
-/**
- * Absolute path to directory Appium can use to manage temp files. Defaults to C:\Windows\Temp on Windows and /tmp otherwise.
+ * Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().
  */
 export type TmpConfig = string;
-/**
- * Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments
- */
-export type TraceDirConfig = string;
 /**
  * A list of drivers to activate. By default, all installed drivers will be activated.
  */
@@ -203,9 +183,6 @@ export interface ServerConfig {
   "allow-unknown-args"?: AllowUnknownArgsConfig;
   "app-url-rules"?: AppUrlRulesConfig;
   "base-path"?: BasePathConfig;
-  "callback-address"?: CallbackAddressConfig;
-  "callback-port"?: CallbackPortConfig;
-  "debug-log-spacing"?: DebugLogSpacingConfig;
   "default-capabilities"?: DefaultCapabilitiesConfig;
   "deny-insecure"?: DenyInsecureConfig;
   driver?: DriverConfig;
@@ -229,9 +206,7 @@ export interface ServerConfig {
   "session-override"?: SessionOverrideConfig;
   "ssl-cert-path"?: CertFilePath;
   "ssl-key-path"?: KeyFilePath;
-  "strict-caps"?: StrictCapsConfig;
   tmp?: TmpConfig;
-  "trace-dir"?: TraceDirConfig;
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;

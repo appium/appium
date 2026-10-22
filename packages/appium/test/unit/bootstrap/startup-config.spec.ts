@@ -37,7 +37,7 @@ describe('bootstrap/startup-config', function () {
           {
             config: {
               // @ts-expect-error
-              server: {'callback-address': 'quux'},
+              server: {basePath: 'quux'},
             },
           },
           {port: 1234},

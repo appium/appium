@@ -74,27 +74,6 @@ export const AppiumConfigJsonSchema = {
           title: 'base-path config',
           type: 'string',
         },
-        'callback-address': {
-          appiumCliAliases: ['ca'],
-          description: 'Callback IP address (default: same as "address")',
-          title: 'callback-address config',
-          type: 'string',
-        },
-        'callback-port': {
-          appiumCliAliases: ['cp'],
-          default: 4723,
-          description: 'Callback port (default: same as "port")',
-          maximum: 65535,
-          minimum: 1,
-          title: 'callback-port config',
-          type: 'integer',
-        },
-        'debug-log-spacing': {
-          default: false,
-          description: 'Add exaggerated spacing in logs to help with visual inspection',
-          title: 'debug-log-spacing config',
-          type: 'boolean',
-        },
         'default-capabilities': {
           $comment: 'TODO',
           appiumCliAliases: ['dc'],
@@ -287,24 +266,11 @@ export const AppiumConfigJsonSchema = {
           appiumCliDest: 'sslKeyPath',
           type: 'string',
         },
-        'strict-caps': {
-          default: false,
-          description:
-            'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-          title: 'strict-caps config',
-          type: 'boolean',
-        },
         tmp: {
           appiumCliDest: 'tmpDir',
           description:
             'Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().',
           title: 'tmp config',
-          type: 'string',
-        },
-        'trace-dir': {
-          description:
-            'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-          title: 'trace-dir config',
           type: 'string',
         },
         'use-drivers': {

@@ -97,8 +97,8 @@ interface ZipExtractorOptions {
 type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
 interface SymlinkTarget {
-  link: string;
-  baseDir: string;
+  linkTarget: string;
+  linkParentDir: string;
   fileName: string;
   missingPaths: Set<string>;
 }
@@ -110,6 +110,8 @@ class ZipExtractor {
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
+  // Missing path key -> links that must be revalidated when that path becomes a symlink.
+  // Keys are case-folded absolute paths, matching the keys returned by validateSymlinkTarget.
   private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
@@ -182,27 +184,8 @@ class ZipExtractor {
     }
 
     if (isSymlink) {
-      const link = await text(await this.openReadStream(entry));
-      await this.assertSymlinkTargetWithinRoot(link, realDestDir, fileName);
-      await fs.symlink(link, dest);
-      try {
-        const target: SymlinkTarget = {link, baseDir: realDestDir, fileName, missingPaths: new Set()};
-        // Only unresolved components can become new symlinks. Recheck their
-        // dependents, including indirect references, instead of every earlier link.
-        const key = path.join(realDestDir, path.basename(dest)).toLowerCase();
-        const affected = [target, ...(this.symlinkDependents.get(key) ?? [])];
-        for (const affectedTarget of affected) {
-          const missingPaths = await this.assertSymlinkTargetWithinRoot(
-            affectedTarget.link,
-            affectedTarget.baseDir,
-            affectedTarget.fileName,
-          );
-          this.updateSymlinkDependencies(affectedTarget, missingPaths);
-        }
-      } catch (err) {
-        await fs.unlink(dest);
-        throw err;
-      }
+      const linkTarget = await text(await this.openReadStream(entry));
+      await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
       const flags =
@@ -310,12 +293,21 @@ class ZipExtractor {
     return mode;
   }
 
-  private async assertSymlinkTargetWithinRoot(link: string, baseDir: string, fileName: string): Promise<Set<string>> {
+  /**
+   * Reject targets that resolve outside the extraction root or exceed the symlink traversal limit.
+   * Returns case-folded absolute keys for missing path components. Track these dependencies so
+   * later symlink entries cannot silently redirect an already accepted target outside the root.
+   */
+  private async validateSymlinkTarget(
+    linkTarget: string,
+    linkParentDir: string,
+    fileName: string,
+  ): Promise<Set<string>> {
     // Resolve components before collapsing '..': a symlink may change its meaning.
     // realpath alone cannot validate links whose targets have not been extracted yet.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
-    let current = path.isAbsolute(link) ? path.parse(link).root : baseDir;
-    const pending = (path.isAbsolute(link) ? link.slice(current.length) : link).split(separator);
+    let current = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : linkParentDir;
+    const pending = (path.isAbsolute(linkTarget) ? linkTarget.slice(current.length) : linkTarget).split(separator);
     let followedLinks = 0;
     const missingPaths = new Set<string>();
     while (pending.length) {
@@ -354,7 +346,7 @@ class ZipExtractor {
       pending.unshift(...target.split(separator));
     }
     if (!isSubPath(current, this.opts.dir)) {
-      throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
+      throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
     }
     return missingPaths;
   }
@@ -375,6 +367,37 @@ class ZipExtractor {
         this.symlinkDependents.set(missingPath, dependents);
       }
       dependents.add(target);
+    }
+  }
+
+  private async createValidatedSymlink(
+    linkTarget: string,
+    dest: string,
+    linkParentDir: string,
+    fileName: string,
+  ): Promise<void> {
+    // Reject an escaping target before creating the link on disk.
+    await this.validateSymlinkTarget(linkTarget, linkParentDir, fileName);
+    await fs.symlink(linkTarget, dest);
+    try {
+      const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
+      // Validate again with the new link present: it may complete a cycle in its own target
+      // or redirect an earlier forward reference. For example, f -> s/t/../outside is initially
+      // contained, but creating s/t -> .. makes f escape the root.
+      const key = path.join(linkParentDir, path.basename(dest)).toLowerCase();
+      const affectedTargets = [target, ...(this.symlinkDependents.get(key) ?? [])];
+      for (const affectedTarget of affectedTargets) {
+        const missingPaths = await this.validateSymlinkTarget(
+          affectedTarget.linkTarget,
+          affectedTarget.linkParentDir,
+          affectedTarget.fileName,
+        );
+        this.updateSymlinkDependencies(affectedTarget, missingPaths);
+      }
+    } catch (err) {
+      // Remove the new link that invalidated a target before aborting extraction.
+      await fs.unlink(dest);
+      throw err;
     }
   }
 }

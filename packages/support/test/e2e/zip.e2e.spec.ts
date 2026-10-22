@@ -89,97 +89,6 @@ describe('#zip', function () {
 
         describe('JS symlink containment', {skip: isWindows() || !!options.useSystemUnzip}, function () {
           for (const existing of [false, true]) {
-            it(`should validate unrelated links to an ${existing ? 'existing' : 'absent'} target with linear filesystem work`, async function (t) {
-              const outputPath = path.resolve(tmpRoot, 'output');
-              const dstPath = path.resolve(tmpRoot, 'many-links.zip');
-              await fs.mkdir(outputPath);
-              if (existing) {
-                await fs.writeFile(path.resolve(outputPath, 'target'), 'safe');
-              }
-              const linkCount = 64;
-              await createStoredZip(
-                dstPath,
-                Array.from({length: linkCount}, (_, i) => ({
-                  name: `link-${i}`,
-                  contents: 'target',
-                  mode: 0o120777,
-                })),
-              );
-              const lstat = t.mock.method(fs, 'lstat', fs.lstat);
-              await zip.extractAllTo(dstPath, outputPath);
-              // Count filesystem work instead of imposing a machine-dependent time limit.
-              assert.ok(lstat.mock.callCount() <= linkCount * 4);
-              for (let i = 0; i < linkCount; i++) {
-                assert.strictEqual(await fs.readlink(path.resolve(outputPath, `link-${i}`)), 'target');
-              }
-            });
-          }
-
-          it('should track indirect forward references after their dependencies change', async function () {
-            const outputPath = path.resolve(tmpRoot, 'output');
-            const dstPath = path.resolve(tmpRoot, 'indirect-forward-chain.zip');
-            await createStoredZip(dstPath, [
-              {name: 's/', contents: '', mode: 0o40755},
-              {name: 'alias', contents: 's', mode: 0o120777},
-              {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
-              {name: 's/t', contents: 'u', mode: 0o120777},
-              {name: 'alias/u', contents: '..', mode: 0o120777},
-            ]);
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
-            await assert.rejects(fs.lstat(path.resolve(outputPath, 's/u')), {code: 'ENOENT'});
-            await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
-          });
-
-          for (const existing of [false, true]) {
-            it(`should reject a later link redirecting a forward reference to an ${existing ? 'existing' : 'absent'} outside file`, async function () {
-              const outputPath = path.resolve(tmpRoot, 'output');
-              const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
-              const dstPath = path.resolve(tmpRoot, 'forward-chain.zip');
-              if (existing) {
-                await fs.writeFile(outsidePath, 'original');
-              }
-              await createStoredZip(dstPath, [
-                {name: 's/', contents: '', mode: 0o40755},
-                {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
-                {name: 's/t', contents: '..', mode: 0o120777},
-              ]);
-              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
-              await assert.rejects(fs.lstat(path.resolve(outputPath, 's/t')), {code: 'ENOENT'});
-              await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
-              if (existing) {
-                assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
-              } else {
-                assert.strictEqual(await fs.exists(outsidePath), false);
-              }
-            });
-          }
-
-          it('should preserve a forward reference completed by a safe later link', async function () {
-            const outputPath = path.resolve(tmpRoot, 'output');
-            const dstPath = path.resolve(tmpRoot, 'safe-forward-chain.zip');
-            await createStoredZip(dstPath, [
-              {name: 's/', contents: '', mode: 0o40755},
-              {name: 'f', contents: 's/t/../target', mode: 0o120777},
-              {name: 's/t', contents: 'nested', mode: 0o120777},
-              {name: 's/nested/', contents: '', mode: 0o40755},
-              {name: 's/target', contents: 'safe', mode: 0o100644},
-            ]);
-            await zip.extractAllTo(dstPath, outputPath);
-            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'safe');
-          });
-
-          it('should remove a later link that completes a cycle', async function () {
-            const outputPath = path.resolve(tmpRoot, 'output');
-            const dstPath = path.resolve(tmpRoot, 'forward-cycle.zip');
-            await createStoredZip(dstPath, [
-              {name: 'a', contents: 'b', mode: 0o120777},
-              {name: 'b', contents: 'a', mode: 0o120777},
-            ]);
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
-            await assert.rejects(fs.lstat(path.resolve(outputPath, 'b')), {code: 'ENOENT'});
-          });
-
-          for (const existing of [false, true]) {
             it(`should reject a symlink chain targeting an ${existing ? 'existing' : 'absent'} outside file`, async function () {
               const outputPath = path.resolve(tmpRoot, 'output');
               const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
@@ -239,28 +148,6 @@ describe('#zip', function () {
             assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'absolute'), 'utf8'), 'safe');
           });
 
-          it('should not follow a destination symlink introduced after validation', async function (t) {
-            const outputPath = path.resolve(tmpRoot, 'output');
-            const dstPath = path.resolve(tmpRoot, 'race.zip');
-            const outsidePath = path.resolve(tmpRoot, 'outside');
-            const dest = path.resolve(outputPath, 'f');
-            await fs.mkdir(outputPath);
-            await fs.writeFile(dest, 'inside');
-            await fs.writeFile(outsidePath, 'original');
-            await createStoredZip(dstPath, [{name: 'f', contents: 'replacement', mode: 0o100644}]);
-            const realpath = fs.realpath;
-            t.mock.method(fs, 'realpath', async (candidate: string) => {
-              const result = await realpath(candidate);
-              if (candidate === dest) {
-                await fs.unlink(dest);
-                await fs.symlink(outsidePath, dest);
-              }
-              return result;
-            });
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), {code: 'ELOOP'});
-            assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
-          });
-
           it('should extract files through an internal directory symlink', async function () {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'directory-link.zip');
@@ -287,6 +174,72 @@ describe('#zip', function () {
             assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'safe');
           });
 
+          for (const existing of [false, true]) {
+            it(`should reject a later link redirecting a forward reference to an ${existing ? 'existing' : 'absent'} outside file`, async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
+              const dstPath = path.resolve(tmpRoot, 'forward-chain.zip');
+              if (existing) {
+                await fs.writeFile(outsidePath, 'original');
+              }
+              await createStoredZip(dstPath, [
+                {name: 's/', contents: '', mode: 0o40755},
+                {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
+                {name: 's/t', contents: '..', mode: 0o120777},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+              await assert.rejects(fs.lstat(path.resolve(outputPath, 's/t')), {code: 'ENOENT'});
+              await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+              if (existing) {
+                assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+              } else {
+                assert.strictEqual(await fs.exists(outsidePath), false);
+              }
+            });
+          }
+
+          it('should preserve a forward reference completed by a safe later link', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'safe-forward-chain.zip');
+            await createStoredZip(dstPath, [
+              {name: 's/', contents: '', mode: 0o40755},
+              {name: 'f', contents: 's/t/../target', mode: 0o120777},
+              {name: 's/t', contents: 'nested', mode: 0o120777},
+              {name: 's/nested/', contents: '', mode: 0o40755},
+              {name: 's/target', contents: 'safe', mode: 0o100644},
+            ]);
+            await zip.extractAllTo(dstPath, outputPath);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'safe');
+          });
+
+          it('should track indirect forward references after their dependencies change', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'indirect-forward-chain.zip');
+            // f first depends on missing s/t, then on s/u after t -> u is created.
+            // Creating alias/u -> .. (the same path as s/u) redirects f outside the root.
+            await createStoredZip(dstPath, [
+              {name: 's/', contents: '', mode: 0o40755},
+              {name: 'alias', contents: 's', mode: 0o120777},
+              {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
+              {name: 's/t', contents: 'u', mode: 0o120777},
+              {name: 'alias/u', contents: '..', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+            await assert.rejects(fs.lstat(path.resolve(outputPath, 's/u')), {code: 'ENOENT'});
+            await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+          });
+
+          it('should remove a later link that completes a cycle', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'forward-cycle.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a', contents: 'b', mode: 0o120777},
+              {name: 'b', contents: 'a', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
+            await assert.rejects(fs.lstat(path.resolve(outputPath, 'b')), {code: 'ENOENT'});
+          });
+
           it('should reject cyclic symlink targets without hanging', async function () {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'cycle.zip');
@@ -296,6 +249,55 @@ describe('#zip', function () {
             ]);
             await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
           });
+
+          it('should not follow a destination symlink introduced after validation', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'race.zip');
+            const outsidePath = path.resolve(tmpRoot, 'outside');
+            const dest = path.resolve(outputPath, 'f');
+            await fs.mkdir(outputPath);
+            await fs.writeFile(dest, 'inside');
+            await fs.writeFile(outsidePath, 'original');
+            await createStoredZip(dstPath, [{name: 'f', contents: 'replacement', mode: 0o100644}]);
+            const realpath = fs.realpath;
+            t.mock.method(fs, 'realpath', async (candidate: string) => {
+              const result = await realpath(candidate);
+              if (candidate === dest) {
+                await fs.unlink(dest);
+                await fs.symlink(outsidePath, dest);
+              }
+              return result;
+            });
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), {code: 'ELOOP'});
+            assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+          });
+
+          for (const existing of [false, true]) {
+            it(`should validate unrelated links to an ${existing ? 'existing' : 'absent'} target with linear filesystem work`, async function (t) {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'many-links.zip');
+              await fs.mkdir(outputPath);
+              if (existing) {
+                await fs.writeFile(path.resolve(outputPath, 'target'), 'safe');
+              }
+              const linkCount = 64;
+              await createStoredZip(
+                dstPath,
+                Array.from({length: linkCount}, (_, i) => ({
+                  name: `link-${i}`,
+                  contents: 'target',
+                  mode: 0o120777,
+                })),
+              );
+              const lstat = t.mock.method(fs, 'lstat', fs.lstat);
+              await zip.extractAllTo(dstPath, outputPath);
+              // Count filesystem work instead of imposing a machine-dependent time limit.
+              assert.ok(lstat.mock.callCount() <= linkCount * 4);
+              for (let i = 0; i < linkCount; i++) {
+                assert.strictEqual(await fs.readlink(path.resolve(outputPath, `link-${i}`)), 'target');
+              }
+            });
+          }
         });
 
         it(

@@ -3,11 +3,8 @@ server:
   port: 31337
   allow-insecure: []
   base-path: /
-  callback-address: '0.0.0.0'
-  callback-port: 31337
   log-level: info
   log-timestamp: false
-  debug-log-spacing: false
   default-capabilities: {}
   deny-insecure: []
   keep-alive-timeout: 600
@@ -18,9 +15,7 @@ server:
   no-perms-check: false
   relaxed-security: true # not default
   session-override: false
-  strict-caps: false
   tmp: /tmp
-  trace-dir: /tmp/appium-instruments
   use-drivers: []
   use-plugins:
     - all

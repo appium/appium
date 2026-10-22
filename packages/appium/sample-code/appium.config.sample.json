@@ -3,9 +3,6 @@
     "address": "127.0.0.1",
     "allow-insecure": ["*:foo", "*:bar"],
     "base-path": "/",
-    "callback-address": "127.0.0.1",
-    "callback-port": 4723,
-    "debug-log-spacing": true,
     "default-capabilities": {
       "key": "value"
     },
@@ -31,9 +28,7 @@
     "port": 4723,
     "relaxed-security": false,
     "session-override": false,
-    "strict-caps": true,
     "tmp": "/tmp",
-    "trace-dir": "/tmp/appium-instruments",
     "use-drivers": ["foo", "bar"],
     "use-plugins": ["baz", "quux"],
     "webhook": "https://some-url.com"

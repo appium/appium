@@ -113,7 +113,7 @@ class ZipExtractor {
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
   // Missing path key -> links that must be revalidated when that path becomes a symlink.
-  // Keys are case-folded absolute paths, matching the keys returned by validateSymlinkTarget.
+  // Keys are Unicode-normalized, case-folded absolute paths from getSymlinkDependencyKey.
   private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
@@ -297,7 +297,7 @@ class ZipExtractor {
 
   /**
    * Reject targets that resolve outside the extraction root or exceed the symlink traversal limit.
-   * Returns case-folded absolute keys for missing path components. Track these dependencies so
+   * Returns normalized dependency keys for missing path components. Track these dependencies so
    * later symlink entries cannot silently redirect an already accepted target outside the root.
    */
   private async validateSymlinkTarget(
@@ -336,8 +336,7 @@ class ZipExtractor {
           throw err;
         }
         // An absent component may become a symlink in a later ZIP entry.
-        // Fold case conservatively for filesystems with case-insensitive names.
-        missingPaths.add(candidatePath.toLowerCase());
+        missingPaths.add(this.getSymlinkDependencyKey(candidatePath));
       }
 
       // Ordinary and missing components both advance the path without expanding a link.
@@ -398,7 +397,7 @@ class ZipExtractor {
       // Validate again with the new link present: it may complete a cycle in its own target
       // or redirect an earlier forward reference. For example, f -> s/t/../outside is initially
       // contained, but creating s/t -> .. makes f escape the root.
-      const key = path.join(linkParentDir, path.basename(dest)).toLowerCase();
+      const key = this.getSymlinkDependencyKey(path.join(linkParentDir, path.basename(dest)));
       const affectedTargets = [target, ...(this.symlinkDependents.get(key) ?? [])];
       for (const affectedTarget of affectedTargets) {
         const missingPaths = await this.validateSymlinkTarget(
@@ -413,6 +412,13 @@ class ZipExtractor {
       await fs.unlink(dest);
       throw err;
     }
+  }
+
+  private getSymlinkDependencyKey(absolutePath: string): string {
+    // Filesystems may treat composed/decomposed Unicode names and letter case as equivalent.
+    // Normalize only the lookup key, never the path used for filesystem access. On filesystems
+    // that distinguish these names, a shared key only causes extra containment checks.
+    return absolutePath.normalize('NFD').toLowerCase();
   }
 }
 

@@ -198,6 +198,46 @@ describe('#zip', function () {
             });
           }
 
+          for (const [referenceName, entryName] of [
+            ['\u00e9', 'e\u0301'],
+            ['e\u0301', '\u00e9'],
+          ]) {
+            for (const existing of [false, true]) {
+              it(`should recheck Unicode-equivalent forward references (${JSON.stringify(referenceName)} -> ${JSON.stringify(entryName)}, outside target ${existing ? 'exists' : 'missing'})`, async function (t) {
+                // Probe this filesystem instead of assuming all macOS volumes normalize names.
+                const probePath = path.resolve(tmpRoot, referenceName);
+                await fs.writeFile(probePath, 'probe');
+                const equivalentNames = await fs.exists(path.resolve(tmpRoot, entryName));
+                await fs.unlink(probePath);
+                if (!equivalentNames) {
+                  t.skip('Filesystem treats the Unicode spellings as distinct names');
+                  return;
+                }
+
+                const outputPath = path.resolve(tmpRoot, 'output');
+                const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
+                const dstPath = path.resolve(tmpRoot, 'unicode-forward-chain.zip');
+                if (existing) {
+                  await fs.writeFile(outsidePath, 'original');
+                }
+                await createStoredZip(dstPath, [
+                  {name: 's/', contents: '', mode: 0o40755},
+                  {name: 'f', contents: `s/${referenceName}/../escaped.txt`, mode: 0o120777},
+                  {name: `s/${entryName}`, contents: '..', mode: 0o120777},
+                ]);
+
+                await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+                await assert.rejects(fs.lstat(path.resolve(outputPath, 's', entryName)), {code: 'ENOENT'});
+                await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+                if (existing) {
+                  assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+                } else {
+                  assert.strictEqual(await fs.exists(outsidePath), false);
+                }
+              });
+            }
+          }
+
           it('should preserve a forward reference completed by a safe later link', async function () {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'safe-forward-chain.zip');
@@ -595,6 +635,7 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
   for (const entry of entries) {
     const localHeaderOffset = Buffer.concat(chunks).length;
     const name = Buffer.from(entry.name);
+    const utf8Flag = 0x800; // Names are encoded as UTF-8 in both ZIP headers.
     const contents = Buffer.from(entry.contents);
     const crc = crc32(contents);
 
@@ -602,7 +643,7 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
       createZipHeader(30, [
         [0, 0x04034b50, 4],
         [4, 20, 2],
-        [6, 0, 2],
+        [6, utf8Flag, 2],
         [8, entry.compressionMethod ?? 0, 2],
         [10, 0, 2],
         [12, 0, 2],
@@ -621,7 +662,7 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
         [0, 0x02014b50, 4],
         [4, (3 << 8) | 20, 2],
         [6, 20, 2],
-        [8, 0, 2],
+        [8, utf8Flag, 2],
         [10, entry.compressionMethod ?? 0, 2],
         [12, 0, 2],
         [14, 0, 2],

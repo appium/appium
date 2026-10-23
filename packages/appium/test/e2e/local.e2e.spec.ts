@@ -93,7 +93,8 @@ describe('when Appium is a dependency of the current project', function () {
     describe('when a driver is installed via npm', function () {
       before(async function () {
         await fs.rimraf(path.dirname(hashPath));
-        await npm.exec(INSTALL, [FAKE_DRIVER_DIR], {
+        // Exercise installation without waiting for the registry's audit service.
+        await npm.exec(INSTALL, [FAKE_DRIVER_DIR, '--no-audit'], {
           json: true,
           cwd: appiumHome,
         });

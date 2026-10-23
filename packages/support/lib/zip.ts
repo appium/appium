@@ -185,15 +185,27 @@ class ZipExtractor {
     }
 
     if (isSymlink) {
-      const link = await text(readStream);
-      const resolvedLink = path.resolve(realDestDir, link);
-      if (!isSubPath(resolvedLink, dir)) {
-        throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
-      }
-      await fs.symlink(link, dest);
+      const linkTarget = await text(await this.openReadStream(entry));
+      await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
+      const flags =
+        fs.constants.O_WRONLY |
+        fs.constants.O_CREAT |
+        fs.constants.O_TRUNC |
+        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+      const readStream = await this.openReadStream(entry);
+      try {
+        const file = await fs.openFile(dest, flags, procMode);
+        try {
+          await pipeline(readStream, file.createWriteStream());
+        } finally {
+          await file.close();
+        }
+      } finally {
+        // Opening the output may fail before pipeline takes ownership of the input.
+        readStream.destroy();
+      }
     }
   }
 
@@ -238,6 +250,9 @@ class ZipExtractor {
     const {dir} = this.opts;
     let realDest: string | null = null;
     try {
+      if ((await fs.lstat(dest)).isSymbolicLink()) {
+        throw new Error(`Cannot write a file over existing symlink "${dest}"`);
+      }
       realDest = await fs.realpath(dest);
     } catch (err: any) {
       if (err.code !== 'ENOENT') {
@@ -287,11 +302,6 @@ class ZipExtractor {
     linkParentDir: string,
     fileName: string,
   ): Promise<Set<string>> {
-    // Windows resolves drive-relative targets (`C:foo`) against the drive's CWD, not the link's parent
-    if (isWindows() && /^[A-Za-z]:/.test(linkTarget) && !path.win32.isAbsolute(linkTarget)) {
-      throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
-    }
-
     // Resolve links before '..'; realpath alone cannot handle missing targets.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
     const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';
@@ -343,7 +353,7 @@ class ZipExtractor {
       remainingSegments.unshift(...nestedLinkTarget.split(separator));
     }
 
-    if (!isContainedPath(resolvedPath, this.opts.dir)) {
+    if (!isSubPath(resolvedPath, this.opts.dir)) {
       throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
     }
     return missingPaths;
@@ -400,84 +410,6 @@ class ZipExtractor {
   private getSymlinkDependencyKey(absolutePath: string): string {
     // Normalize keys, not filesystem paths. Collisions only cause extra checks.
     return absolutePath.normalize('NFD').toLowerCase();
-  }
-}
-
-async function ensureDirWithinRoot(dir: string, dirPath: string, fileName: string, mode?: number): Promise<string> {
-  if (!isContainedPath(dirPath, dir)) {
-    throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-  }
-
-  const relativePath = path.relative(dir, dirPath);
-  if (!relativePath) {
-    return dir;
-  }
-
-  let currentPath = dir;
-  for (const segment of relativePath.split(path.sep)) {
-    currentPath = path.join(currentPath, segment);
-    try {
-      const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
-      if (!isContainedPath(realPath, dir)) {
-        throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
-      }
-      if (!stats.isDirectory() && !stats.isSymbolicLink()) {
-        throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
-      }
-    } catch (err: any) {
-      if (err.code !== 'ENOENT') {
-        throw err;
-      }
-      await fs.mkdir(currentPath, {mode});
-    }
-  }
-
-  const realPath = await fs.realpath(dirPath);
-  if (!isContainedPath(realPath, dir)) {
-    throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-  }
-  return realPath;
-}
-
-async function assertFileDestinationWithinRoot(
-  dir: string,
-  dest: string,
-  realDestDir: string,
-  fileName: string,
-): Promise<void> {
-  let realDest: string | null = null;
-  try {
-    if ((await fs.lstat(dest)).isSymbolicLink()) {
-      throw new Error(`Cannot write a file over existing symlink "${dest}"`);
-    }
-    realDest = await fs.realpath(dest);
-  } catch (err: any) {
-    if (err.code !== 'ENOENT') {
-      throw err;
-    }
-  }
-
-  realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
-  if (!isContainedPath(realDest, dir)) {
-    throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
-  }
-}
-
-async function writeFileNoFollow(readStream: stream.Readable, dest: string, mode: number): Promise<void> {
-  const flags =
-    fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
-  let file;
-  try {
-    file = await fs.openFile(dest, flags, mode);
-  } catch (err) {
-    // pipeline has not taken ownership of the input yet
-    readStream.destroy();
-    throw err;
-  }
-  try {
-    await pipeline(readStream, file.createWriteStream());
-  } finally {
-    await file.close();
   }
 }
 

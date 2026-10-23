@@ -87,6 +87,285 @@ describe('#zip', function () {
           },
         );
 
+        describe('JS symlink containment', {skip: isWindows() || !!options.useSystemUnzip}, function () {
+          for (const existing of [false, true]) {
+            it(`should reject a symlink chain targeting an ${existing ? 'existing' : 'absent'} outside file`, async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
+              const dstPath = path.resolve(tmpRoot, 'chain.zip');
+              if (existing) {
+                await fs.writeFile(outsidePath, 'original');
+              }
+              await createStoredZip(dstPath, [
+                {name: 'd/', contents: '', mode: 0o40755},
+                {name: 'd/up', contents: '..', mode: 0o120777},
+                {name: 'f', contents: 'd/up/../escaped.txt', mode: 0o120777},
+                {name: 'f', contents: 'replacement', mode: 0o100644},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+              await assert.rejects(fs.lstat(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+              if (existing) {
+                assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+              } else {
+                assert.strictEqual(await fs.exists(outsidePath), false);
+              }
+            });
+
+            it(`should refuse a regular file over a ${existing ? 'non-dangling' : 'dangling'} symlink`, async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'duplicate.zip');
+              await fs.mkdir(outputPath);
+              const targetPath = path.resolve(outputPath, 'target');
+              if (existing) {
+                await fs.writeFile(targetPath, 'original');
+              }
+              await createStoredZip(dstPath, [
+                {name: 'f', contents: 'target', mode: 0o120777},
+                {name: 'f', contents: 'replacement', mode: 0o100644},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /existing symlink/);
+              assert.strictEqual((await fs.lstat(path.resolve(outputPath, 'f'))).isSymbolicLink(), true);
+              if (existing) {
+                assert.strictEqual(await fs.readFile(targetPath, 'utf8'), 'original');
+              } else {
+                assert.strictEqual(await fs.exists(targetPath), false);
+              }
+            });
+          }
+
+          it('should preserve framework links to files extracted later', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'framework.zip');
+            await createStoredZip(dstPath, [
+              {name: 'Versions/', contents: '', mode: 0o40755},
+              {name: 'Versions/Current', contents: 'A', mode: 0o120777},
+              {name: 'Resources', contents: 'Versions/Current/Resources', mode: 0o120777},
+              {name: 'Versions/A/Resources/data', contents: 'safe', mode: 0o100644},
+              {name: 'absolute', contents: path.resolve(outputPath, 'Resources/data'), mode: 0o120777},
+            ]);
+            await zip.extractAllTo(dstPath, outputPath);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'Resources/data'), 'utf8'), 'safe');
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'absolute'), 'utf8'), 'safe');
+          });
+
+          it('should extract files through an internal directory symlink', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'directory-link.zip');
+            await createStoredZip(dstPath, [
+              {name: 'target/', contents: '', mode: 0o40755},
+              {name: 'alias', contents: 'target', mode: 0o120777},
+              {name: 'alias/data', contents: 'safe', mode: 0o100644},
+            ]);
+            await zip.extractAllTo(dstPath, outputPath);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'target/data'), 'utf8'), 'safe');
+          });
+
+          it('should resolve parent components after following an internal directory link', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'internal.zip');
+            await createStoredZip(dstPath, [
+              {name: 'd/', contents: '', mode: 0o40755},
+              {name: 'd/down', contents: 'nested', mode: 0o120777},
+              {name: 'f', contents: 'd/down/../target', mode: 0o120777},
+              {name: 'd/nested/', contents: '', mode: 0o40755},
+              {name: 'd/target', contents: 'safe', mode: 0o100644},
+            ]);
+            await zip.extractAllTo(dstPath, outputPath);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'safe');
+          });
+
+          for (const existing of [false, true]) {
+            it(`should reject a later link redirecting a forward reference to an ${existing ? 'existing' : 'absent'} outside file`, async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
+              const dstPath = path.resolve(tmpRoot, 'forward-chain.zip');
+              if (existing) {
+                await fs.writeFile(outsidePath, 'original');
+              }
+              await createStoredZip(dstPath, [
+                {name: 's/', contents: '', mode: 0o40755},
+                {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
+                {name: 's/t', contents: '..', mode: 0o120777},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+              await assert.rejects(fs.lstat(path.resolve(outputPath, 's/t')), {code: 'ENOENT'});
+              await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+              if (existing) {
+                assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+              } else {
+                assert.strictEqual(await fs.exists(outsidePath), false);
+              }
+            });
+          }
+
+          for (const [referenceName, entryName] of [
+            ['\u00e9', 'e\u0301'],
+            ['e\u0301', '\u00e9'],
+          ]) {
+            for (const existing of [false, true]) {
+              it(`should recheck Unicode-equivalent forward references (${JSON.stringify(referenceName)} -> ${JSON.stringify(entryName)}, outside target ${existing ? 'exists' : 'missing'})`, async function (t) {
+                // Probe this filesystem instead of assuming all macOS volumes normalize names.
+                const probePath = path.resolve(tmpRoot, referenceName);
+                await fs.writeFile(probePath, 'probe');
+                const equivalentNames = await fs.exists(path.resolve(tmpRoot, entryName));
+                await fs.unlink(probePath);
+                if (!equivalentNames) {
+                  t.skip('Filesystem treats the Unicode spellings as distinct names');
+                  return;
+                }
+
+                const outputPath = path.resolve(tmpRoot, 'output');
+                const outsidePath = path.resolve(tmpRoot, 'escaped.txt');
+                const dstPath = path.resolve(tmpRoot, 'unicode-forward-chain.zip');
+                if (existing) {
+                  await fs.writeFile(outsidePath, 'original');
+                }
+                await createStoredZip(dstPath, [
+                  {name: 's/', contents: '', mode: 0o40755},
+                  {name: 'f', contents: `s/${referenceName}/../escaped.txt`, mode: 0o120777},
+                  {name: `s/${entryName}`, contents: '..', mode: 0o120777},
+                ]);
+
+                await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+                await assert.rejects(fs.lstat(path.resolve(outputPath, 's', entryName)), {code: 'ENOENT'});
+                await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+                if (existing) {
+                  assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+                } else {
+                  assert.strictEqual(await fs.exists(outsidePath), false);
+                }
+              });
+            }
+          }
+
+          it('should preserve a forward reference completed by a safe later link', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'safe-forward-chain.zip');
+            await createStoredZip(dstPath, [
+              {name: 's/', contents: '', mode: 0o40755},
+              {name: 'f', contents: 's/t/../target', mode: 0o120777},
+              {name: 's/t', contents: 'nested', mode: 0o120777},
+              {name: 's/nested/', contents: '', mode: 0o40755},
+              {name: 's/target', contents: 'safe', mode: 0o100644},
+            ]);
+            await zip.extractAllTo(dstPath, outputPath);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'safe');
+          });
+
+          it('should track indirect forward references after their dependencies change', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'indirect-forward-chain.zip');
+            // f first depends on missing s/t, then on s/u after t -> u is created.
+            // Creating alias/u -> .. (the same path as s/u) redirects f outside the root.
+            await createStoredZip(dstPath, [
+              {name: 's/', contents: '', mode: 0o40755},
+              {name: 'alias', contents: 's', mode: 0o120777},
+              {name: 'f', contents: 's/t/../escaped.txt', mode: 0o120777},
+              {name: 's/t', contents: 'u', mode: 0o120777},
+              {name: 'alias/u', contents: '..', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound symlink target/);
+            await assert.rejects(fs.lstat(path.resolve(outputPath, 's/u')), {code: 'ENOENT'});
+            await assert.rejects(fs.realpath(path.resolve(outputPath, 'f')), {code: 'ENOENT'});
+          });
+
+          it('should remove a later link that completes a cycle', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'forward-cycle.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a', contents: 'b', mode: 0o120777},
+              {name: 'b', contents: 'a', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
+            await assert.rejects(fs.lstat(path.resolve(outputPath, 'b')), {code: 'ENOENT'});
+          });
+
+          it('should reject cyclic symlink targets without hanging', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'cycle.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a', contents: 'a', mode: 0o120777},
+              {name: 'b', contents: 'a', mode: 0o120777},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
+          });
+
+          it('should not follow a destination symlink introduced after validation', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'race.zip');
+            const outsidePath = path.resolve(tmpRoot, 'outside');
+            const dest = path.resolve(outputPath, 'f');
+            await fs.mkdir(outputPath);
+            await fs.writeFile(dest, 'inside');
+            await fs.writeFile(outsidePath, 'original');
+            await createStoredZip(dstPath, [{name: 'f', contents: 'replacement', mode: 0o100644}]);
+            const realpath = fs.realpath;
+            t.mock.method(fs, 'realpath', async (candidate: string) => {
+              const result = await realpath(candidate);
+              if (candidate === dest) {
+                await fs.unlink(dest);
+                await fs.symlink(outsidePath, dest);
+              }
+              return result;
+            });
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), {code: 'ELOOP'});
+            assert.strictEqual(await fs.readFile(outsidePath, 'utf8'), 'original');
+          });
+
+          for (const existing of [false, true]) {
+            it(`should validate unrelated links to an ${existing ? 'existing' : 'absent'} target with linear filesystem work`, async function (t) {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'many-links.zip');
+              await fs.mkdir(outputPath);
+              if (existing) {
+                await fs.writeFile(path.resolve(outputPath, 'target'), 'safe');
+              }
+              const linkCount = 64;
+              await createStoredZip(
+                dstPath,
+                Array.from({length: linkCount}, (_, i) => ({
+                  name: `link-${i}`,
+                  contents: 'target',
+                  mode: 0o120777,
+                })),
+              );
+              const lstat = t.mock.method(fs, 'lstat', fs.lstat);
+              await zip.extractAllTo(dstPath, outputPath);
+              // Count filesystem work instead of imposing a machine-dependent time limit.
+              assert.ok(lstat.mock.callCount() <= linkCount * 4);
+              for (let i = 0; i < linkCount; i++) {
+                assert.strictEqual(await fs.readlink(path.resolve(outputPath, `link-${i}`)), 'target');
+              }
+            });
+          }
+        });
+
+        it(
+          'should preserve an existing file when opening a ZIP entry fails',
+          {skip: !!options.useSystemUnzip},
+          async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'unsupported-compression.zip');
+            await fs.mkdir(outputPath);
+            await fs.writeFile(path.resolve(outputPath, 'f'), 'original contents');
+            await createStoredZip(dstPath, [
+              {name: 'f', contents: 'replacement', mode: 0o100644, compressionMethod: 99},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /unsupported compression method/);
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'original contents');
+          },
+        );
+
+        it('should continue to overwrite regular files', async function () {
+          const outputPath = path.resolve(tmpRoot, 'output');
+          const dstPath = path.resolve(tmpRoot, 'overwrite.zip');
+          await fs.mkdir(outputPath);
+          await fs.writeFile(path.resolve(outputPath, 'f'), 'original contents');
+          await createStoredZip(dstPath, [{name: 'f', contents: 'new', mode: 0o100644}]);
+          await zip.extractAllTo(dstPath, outputPath, options);
+          assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'f'), 'utf8'), 'new');
+        });
+
         it('should extract an entry whose name starts with dots but stays in the destination', async function () {
           const outputPath = path.resolve(tmpRoot, 'output-dotdot');
           const dstPath = path.resolve(tmpRoot, 'dotdot-name.zip');
@@ -346,6 +625,7 @@ interface StoredZipEntry {
   name: string;
   contents: string;
   mode: number;
+  compressionMethod?: number;
 }
 
 async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Promise<void> {
@@ -355,6 +635,7 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
   for (const entry of entries) {
     const localHeaderOffset = Buffer.concat(chunks).length;
     const name = Buffer.from(entry.name);
+    const utf8Flag = 0x800; // Names are encoded as UTF-8 in both ZIP headers.
     const contents = Buffer.from(entry.contents);
     const crc = crc32(contents);
 
@@ -362,8 +643,8 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
       createZipHeader(30, [
         [0, 0x04034b50, 4],
         [4, 20, 2],
-        [6, 0, 2],
-        [8, 0, 2],
+        [6, utf8Flag, 2],
+        [8, entry.compressionMethod ?? 0, 2],
         [10, 0, 2],
         [12, 0, 2],
         [14, crc, 4],
@@ -381,8 +662,8 @@ async function createStoredZip(dstPath: string, entries: StoredZipEntry[]): Prom
         [0, 0x02014b50, 4],
         [4, (3 << 8) | 20, 2],
         [6, 20, 2],
-        [8, 0, 2],
-        [10, 0, 2],
+        [8, utf8Flag, 2],
+        [10, entry.compressionMethod ?? 0, 2],
         [12, 0, 2],
         [14, 0, 2],
         [16, crc, 4],

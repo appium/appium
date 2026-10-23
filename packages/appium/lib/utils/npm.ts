@@ -244,7 +244,8 @@ export class NPM {
    * @param pkg - Package name to uninstall
    */
   async uninstallPackage(cwd: string, pkg: string): Promise<void> {
-    await this.exec('uninstall', [pkg], {
+    // Match installPackage: audit requests are unrelated to removing an extension.
+    await this.exec('uninstall', [pkg, '--no-audit'], {
       cwd,
       lockFile: this._getInstallLockfilePath(cwd),
     });

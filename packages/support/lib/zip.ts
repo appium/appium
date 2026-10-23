@@ -23,7 +23,7 @@ const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
 const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
-// Bound link traversal so cyclic targets cannot keep validation running indefinitely.
+// Limit traversal to stop symlink cycles.
 const MAX_SYMLINK_TRAVERSALS = 40;
 
 export interface ExtractAllOptions {
@@ -112,8 +112,7 @@ class ZipExtractor {
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
   private canceled = false;
-  // Missing path key -> links that must be revalidated when that path becomes a symlink.
-  // Keys are Unicode-normalized, case-folded absolute paths from getSymlinkDependencyKey.
+  // Normalized missing-path keys -> links to recheck when those paths become symlinks.
   private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
@@ -296,17 +295,14 @@ class ZipExtractor {
   }
 
   /**
-   * Reject targets that resolve outside the extraction root or exceed the symlink traversal limit.
-   * Returns normalized dependency keys for missing path components. Track these dependencies so
-   * later symlink entries cannot silently redirect an already accepted target outside the root.
+   * Reject escaping targets or excessive traversal; return missing-path keys for later rechecks.
    */
   private async validateSymlinkTarget(
     linkTarget: string,
     linkParentDir: string,
     fileName: string,
   ): Promise<Set<string>> {
-    // Walk components in filesystem order. Normalizing '..' before following symlinks
-    // changes its meaning, and realpath cannot resolve targets that do not exist yet.
+    // Resolve links before '..'; realpath alone cannot handle missing targets.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
     const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';
     let resolvedPath = targetRoot || linkParentDir;
@@ -339,7 +335,7 @@ class ZipExtractor {
         missingPaths.add(this.getSymlinkDependencyKey(candidatePath));
       }
 
-      // Ordinary and missing components both advance the path without expanding a link.
+      // Advance past ordinary or missing components.
       if (nestedLinkTarget === null) {
         resolvedPath = candidatePath;
         continue;
@@ -349,8 +345,7 @@ class ZipExtractor {
       if (followedLinks > MAX_SYMLINK_TRAVERSALS) {
         throw new Error(`Too many symlinks while processing file ${fileName}`);
       }
-      // Relative targets start at the link's parent (resolvedPath); absolute targets reset it.
-      // Resolve the link's components before resuming the original path, especially any '..'.
+      // Resolve relative targets from the link's parent, absolute targets from their root.
       if (path.isAbsolute(nestedLinkTarget)) {
         resolvedPath = path.parse(nestedLinkTarget).root;
         nestedLinkTarget = nestedLinkTarget.slice(resolvedPath.length);
@@ -394,9 +389,7 @@ class ZipExtractor {
     await fs.symlink(linkTarget, dest);
     try {
       const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
-      // Validate again with the new link present: it may complete a cycle in its own target
-      // or redirect an earlier forward reference. For example, f -> s/t/../outside is initially
-      // contained, but creating s/t -> .. makes f escape the root.
+      // Recheck for cycles and redirected forward references after creating the link.
       const key = this.getSymlinkDependencyKey(path.join(linkParentDir, path.basename(dest)));
       const affectedTargets = [target, ...(this.symlinkDependents.get(key) ?? [])];
       for (const affectedTarget of affectedTargets) {
@@ -408,16 +401,14 @@ class ZipExtractor {
         this.updateSymlinkDependencies(affectedTarget, missingPaths);
       }
     } catch (err) {
-      // Remove the new link that invalidated a target before aborting extraction.
+      // Roll back the link that invalidated a target.
       await fs.unlink(dest);
       throw err;
     }
   }
 
   private getSymlinkDependencyKey(absolutePath: string): string {
-    // Filesystems may treat composed/decomposed Unicode names and letter case as equivalent.
-    // Normalize only the lookup key, never the path used for filesystem access. On filesystems
-    // that distinguish these names, a shared key only causes extra containment checks.
+    // Normalize keys, not filesystem paths. Collisions only cause extra checks.
     return absolutePath.normalize('NFD').toLowerCase();
   }
 }

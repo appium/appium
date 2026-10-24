@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@appium/types": "1.7.1",
-    "express": "5.2.1"
+    "express": "5.3.0"
   },
   "peerDependencies": {
     "appium": "^3.0.0-beta.0"

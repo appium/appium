@@ -100,11 +100,9 @@ interface ZipExtractorOptions {
 
 type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
-/** A folder inside of the root that was checked, with the identity it had at that moment */
+/** A folder inside of the root that was checked, with the real path it resolved to at that moment */
 interface VerifiedDir {
   realPath: string;
-  /** Null for the root, which is never replaced */
-  identity: {ino: number; dev: number} | null;
 }
 
 interface SymlinkTarget {
@@ -236,7 +234,7 @@ class ZipExtractor {
 
     const relativePath = path.relative(dir, dirPath);
     if (!relativePath) {
-      return {realPath: dir, identity: null};
+      return {realPath: dir};
     }
 
     if (this.verifiedDirs.size > MAX_VERIFIED_DIRS) {
@@ -280,7 +278,7 @@ class ZipExtractor {
       if (!stats.isDirectory()) {
         throw new Error(`Cannot create a directory over existing file "${dirPath}"`);
       }
-      return {realPath, identity: {ino: stats.ino, dev: stats.dev}};
+      return {realPath};
     } catch (err: any) {
       if (err.code === 'ENOENT') {
         return undefined;
@@ -294,13 +292,11 @@ class ZipExtractor {
    * the folder nor any of its parents was replaced (e.g. with a link) since it was verified.
    */
   private async assertDirUnchanged(dirPath: string, verified: VerifiedDir): Promise<void> {
-    const {identity} = verified;
-    if (!identity) {
+    if (dirPath === this.opts.dir) {
       return;
     }
-    // Looking up the folder passes through its parents and links, so replacing any of them changes the result
-    const stats = await fs.stat(dirPath);
-    if (stats.ino !== identity.ino || stats.dev !== identity.dev) {
+    // The resolved path passes through the parents and links, so replacing or relocating any of them changes it
+    if ((await fs.realpath(dirPath)) !== verified.realPath) {
       throw new Error(`Out of bound path "${dirPath}": the folder was replaced during the extraction`);
     }
   }

@@ -115,9 +115,10 @@ describe('#zip', function () {
             const lstat = t.mock.method(fs, 'lstat', fs.lstat);
             const realpath = t.mock.method(fs, 'realpath', fs.realpath);
             await zip.extractAllTo(dstPath, outputPath);
-            // Per file: one lstat of the remembered folder and one of the destination, plus a constant number for the folders
-            assert.ok(lstat.mock.callCount() <= 2 * fileCount + 10, `lstat calls: ${lstat.mock.callCount()}`);
-            assert.ok(realpath.mock.callCount() <= 10, `realpath calls: ${realpath.mock.callCount()}`);
+            // Per file: one lstat of the destination and one realpath of the remembered folder,
+            // plus a constant number for the folders (independent of the nesting depth)
+            assert.ok(lstat.mock.callCount() <= fileCount + 10, `lstat calls: ${lstat.mock.callCount()}`);
+            assert.ok(realpath.mock.callCount() <= fileCount + 10, `realpath calls: ${realpath.mock.callCount()}`);
           },
         );
 
@@ -421,6 +422,31 @@ describe('#zip', function () {
             });
             await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
             assert.deepStrictEqual(await fs.readdir(outsidePath), []);
+          });
+
+          it('should reject a remembered folder moved outside of the root and linked back', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const movedPath = path.resolve(tmpRoot, 'moved');
+            const dstPath = path.resolve(tmpRoot, 'relocated.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a/1.txt', contents: '1', mode: 0o100644},
+              {name: 'a/2.txt', contents: '2', mode: 0o100644},
+            ]);
+            const openFile = fs.openFile;
+            let swapped = false;
+            t.mock.method(fs, 'openFile', async (target: any, flags: any, mode: any) => {
+              const handle = await openFile(target, flags, mode);
+              if (!swapped) {
+                // The folder keeps its identity, but now lives outside of the root behind a link
+                swapped = true;
+                const dirPath = path.resolve(await fs.realpath(outputPath), 'a');
+                await fs.rename(dirPath, movedPath);
+                await fs.symlink(movedPath, dirPath);
+              }
+              return handle;
+            });
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+            assert.deepStrictEqual(await fs.readdir(movedPath), ['1.txt']);
           });
 
           it('should reject a remembered folder link whose target was replaced during the extraction', async function (t) {

@@ -241,8 +241,12 @@ class ZipExtractor {
       this.verifiedDirs.clear();
     }
     let current: VerifiedDir | undefined;
+    let parent: VerifiedDir = {realPath: dir};
     let currentPath = dir;
     for (const segment of relativePath.split(path.sep)) {
+      if (current) {
+        parent = current;
+      }
       currentPath = path.join(currentPath, segment);
       current = this.verifiedDirs.get(currentPath);
       if (current) {
@@ -250,6 +254,8 @@ class ZipExtractor {
       }
       current = await this.inspectDir(currentPath, fileName);
       if (!current) {
+        // The remembered parent is not looked up again by mkdir, so make sure it is still the verified one
+        await this.assertDirUnchanged(path.dirname(currentPath), parent);
         // The result of mkdir is not trusted: whatever is there now is checked like an existing folder
         await fs.mkdir(currentPath, {mode});
         current = await this.inspectDir(currentPath, fileName);

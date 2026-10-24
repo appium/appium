@@ -114,6 +114,8 @@ class ZipExtractor {
   private canceled = false;
   // Normalized missing-path keys -> links to recheck when those paths become symlinks.
   private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
+  // Directories already validated within the root -> their real paths.
+  private readonly verifiedDirs = new Map<string, string>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
@@ -220,9 +222,19 @@ class ZipExtractor {
       return dir;
     }
 
+    const cachedRealPath = this.verifiedDirs.get(dirPath);
+    if (cachedRealPath) {
+      return cachedRealPath;
+    }
+
     let currentPath = dir;
     for (const segment of relativePath.split(path.sep)) {
+      const parentRealPath = this.verifiedDirs.get(currentPath) ?? dir;
       currentPath = path.join(currentPath, segment);
+      if (this.verifiedDirs.has(currentPath)) {
+        continue;
+      }
+      let currentRealPath: string;
       try {
         const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
         if (!isSubPath(realPath, dir)) {
@@ -231,18 +243,22 @@ class ZipExtractor {
         if (!stats.isDirectory() && !stats.isSymbolicLink()) {
           throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
         }
+        currentRealPath = realPath;
       } catch (err: any) {
         if (err.code !== 'ENOENT') {
           throw err;
         }
         await fs.mkdir(currentPath, {mode});
+        currentRealPath = path.join(parentRealPath, segment);
       }
+      this.verifiedDirs.set(currentPath, currentRealPath);
     }
 
     const realPath = await fs.realpath(dirPath);
     if (!isSubPath(realPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
     }
+    this.verifiedDirs.set(dirPath, realPath);
     return realPath;
   }
 
@@ -387,6 +403,7 @@ class ZipExtractor {
     // Reject an escaping target before creating the link on disk.
     await this.validateSymlinkTarget(linkTarget, linkParentDir, fileName);
     await fs.symlink(linkTarget, dest);
+    this.verifiedDirs.delete(dest);
     try {
       const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
       // Recheck for cycles and redirected forward references after creating the link.

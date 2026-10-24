@@ -290,6 +290,20 @@ describe('#zip', function () {
             await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
           });
 
+          it('should extract many entries sharing nested parent directories', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'nested.zip');
+            const names = ['a/b/c/1.txt', 'a/b/2.txt', 'a/b/c/d/3.txt', 'a/4.txt', 'a/b/c/5.txt', 'e/6.txt'];
+            await createStoredZip(
+              dstPath,
+              names.map((name) => ({name, contents: name, mode: 0o100644})),
+            );
+            await zip.extractAllTo(dstPath, outputPath);
+            for (const name of names) {
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, name), 'utf8'), name);
+            }
+          });
+
           it('should not follow a destination symlink introduced after validation', async function (t) {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'race.zip');

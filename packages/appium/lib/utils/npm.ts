@@ -3,7 +3,6 @@ import path from 'node:path';
 
 import {fs, system, util} from '@appium/support';
 import type {PackageJson, StringRecord} from '@appium/types';
-import AsyncLock from 'async-lock';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
@@ -51,8 +50,7 @@ interface WindowsNpmCommand {
 }
 
 export class NPM {
-  private readonly _windowsNpmCliLock = new AsyncLock();
-  private readonly _pendingWindowsNpmCli = new Map<string, {resolution?: Promise<WindowsNpmCommand>}>();
+  private readonly _pendingWindowsNpmCli = new Map<string, Promise<WindowsNpmCommand>>();
 
   /**
    * Execute `npm` with given args.
@@ -301,20 +299,20 @@ export class NPM {
     // npmrc values can interpolate arbitrary environment variables, so even variables
     // unrelated to PATH or npm_config_* may change the selected global prefix.
     const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
-    const pending = this._pendingWindowsNpmCli.get(key) ?? {};
-    this._pendingWindowsNpmCli.set(key, pending);
+    const pending = this._pendingWindowsNpmCli.get(key);
+    if (pending) {
+      return await pending;
+    }
+    // No await between lookup and insertion: concurrent callers share this promise
+    // without a lock or repeating the prefix probe.
+    const resolution = this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
+    this._pendingWindowsNpmCli.set(key, resolution);
     try {
-      return await this._windowsNpmCliLock.acquire(key, async () => {
-        // Queued callers share this resolution instead of repeating the prefix probe.
-        pending.resolution ??= this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
-        return await pending.resolution;
-      });
+      return await resolution;
     } finally {
-      // Retain the result only until all queued callers have received it. Later calls
-      // must observe npmrc edits, new npm versions, and recovery after failures.
-      if (!this._windowsNpmCliLock.isBusy(key)) {
-        this._pendingWindowsNpmCli.delete(key);
-      }
+      // Share concurrent work only: later calls must observe npmrc edits,
+      // new npm versions, and recovery after failures.
+      this._pendingWindowsNpmCli.delete(key);
     }
   }
 

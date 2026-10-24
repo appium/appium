@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
+import {errors} from '../../../lib/protocol/errors.js';
 import {validators} from '../../../lib/protocol/validators.js';
 
 describe('validators', function () {
@@ -13,18 +14,23 @@ describe('validators', function () {
     });
 
     it('should reject an empty or unparseable string', function () {
-      assert.throws(() => validators.setUrl(''), /'' must be a valid URL/);
-      assert.throws(() => validators.setUrl('example.com'), /'example\.com' must be a valid URL/);
+      assert.throws(() => validators.setUrl(''), {
+        constructor: errors.InvalidArgumentError,
+        message: "'' must be a valid URL",
+      });
+      assert.throws(() => validators.setUrl('example.com'), {
+        constructor: errors.InvalidArgumentError,
+        message: "'example.com' must be a valid URL",
+      });
     });
 
     it('should reject a non-string url without throwing TypeError', function () {
-      for (const url of [123, true, {}, [], null, undefined]) {
+      for (const url of [123, true, {}, [], null, undefined, {toString: null}]) {
         assert.throws(
           () => validators.setUrl(url),
           (err: Error) => {
-            assert.equal(err.name, 'Error');
-            assert.match(err.message, /must be a valid URL/);
-            assert.match(err.message, new RegExp(String(url as any).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+            assert.ok(err instanceof errors.InvalidArgumentError);
+            assert.equal(err.message, 'The url parameter must be a valid URL');
             return true;
           },
         );

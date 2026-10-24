@@ -25,6 +25,8 @@ const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
 // Limit traversal to stop symlink cycles.
 const MAX_SYMLINK_TRAVERSALS = 40;
+// Upper bound of the remembered folders, they are simply verified again if it is exceeded.
+const MAX_VERIFIED_DIRS = 100_000;
 
 export interface ExtractAllOptions {
   /**
@@ -98,6 +100,13 @@ interface ZipExtractorOptions {
 
 type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
+/** A folder inside of the root that was checked, with the identity it had at that moment */
+interface VerifiedDir {
+  realPath: string;
+  /** Null for the root, which is never replaced */
+  identity: {ino: number; dev: number} | null;
+}
+
 interface SymlinkTarget {
   linkTarget: string;
   linkParentDir: string;
@@ -114,8 +123,8 @@ class ZipExtractor {
   private canceled = false;
   // Normalized missing-path keys -> links to recheck when those paths become symlinks.
   private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
-  // Directories already validated within the root -> their real paths.
-  private readonly verifiedDirs = new Map<string, string>();
+  // Directories already validated within the root.
+  private readonly verifiedDirs = new Map<string, VerifiedDir>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
@@ -181,15 +190,18 @@ class ZipExtractor {
     const procMode = this.getExtractedMode(mode, isDir) & 0o777;
     // always ensure folders are created
     const destDir = isDir ? dest : path.dirname(dest);
-    const realDestDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
+    const verifiedDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
     if (isDir) {
       return;
     }
 
+    const {realPath: realDestDir} = verifiedDir;
     if (isSymlink) {
       const linkTarget = await text(await this.openReadStream(entry));
+      await this.assertDirUnchanged(destDir, verifiedDir);
       await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
+      await this.assertDirUnchanged(destDir, verifiedDir);
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
       const flags =
         fs.constants.O_WRONLY |
@@ -211,7 +223,12 @@ class ZipExtractor {
     }
   }
 
-  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
+  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<VerifiedDir> {
+    const cached = this.verifiedDirs.get(dirPath);
+    if (cached) {
+      return cached;
+    }
+
     const {dir} = this.opts;
     if (!isSubPath(dirPath, dir)) {
       throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
@@ -219,47 +236,72 @@ class ZipExtractor {
 
     const relativePath = path.relative(dir, dirPath);
     if (!relativePath) {
-      return dir;
+      return {realPath: dir, identity: null};
     }
 
-    const cachedRealPath = this.verifiedDirs.get(dirPath);
-    if (cachedRealPath) {
-      return cachedRealPath;
+    if (this.verifiedDirs.size > MAX_VERIFIED_DIRS) {
+      this.verifiedDirs.clear();
     }
-
+    let current: VerifiedDir | undefined;
     let currentPath = dir;
     for (const segment of relativePath.split(path.sep)) {
-      const parentRealPath = this.verifiedDirs.get(currentPath) ?? dir;
       currentPath = path.join(currentPath, segment);
-      if (this.verifiedDirs.has(currentPath)) {
+      current = this.verifiedDirs.get(currentPath);
+      if (current) {
         continue;
       }
-      let currentRealPath: string;
-      try {
-        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
-        if (!isSubPath(realPath, dir)) {
-          throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
-        }
-        if (!stats.isDirectory() && !stats.isSymbolicLink()) {
-          throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
-        }
-        currentRealPath = realPath;
-      } catch (err: any) {
-        if (err.code !== 'ENOENT') {
-          throw err;
-        }
+      current = await this.inspectDir(currentPath, fileName);
+      if (!current) {
+        // The result of mkdir is not trusted: whatever is there now is checked like an existing folder
         await fs.mkdir(currentPath, {mode});
-        currentRealPath = path.join(parentRealPath, segment);
+        current = await this.inspectDir(currentPath, fileName);
       }
-      this.verifiedDirs.set(currentPath, currentRealPath);
+      if (!current) {
+        throw new Error(`Cannot create the directory "${currentPath}" while processing file ${fileName}`);
+      }
+      this.verifiedDirs.set(currentPath, current);
     }
+    return current as VerifiedDir;
+  }
 
-    const realPath = await fs.realpath(dirPath);
-    if (!isSubPath(realPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+  /**
+   * Resolves an existing folder (or a link to a folder) and checks it is within the root.
+   *
+   * @returns Undefined if the path does not exist
+   */
+  private async inspectDir(dirPath: string, fileName: string): Promise<VerifiedDir | undefined> {
+    const {dir} = this.opts;
+    try {
+      const [stats, realPath] = await Promise.all([fs.lstat(dirPath), fs.realpath(dirPath)]);
+      if (!isSubPath(realPath, dir)) {
+        throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+      }
+      if (!stats.isDirectory() && !stats.isSymbolicLink()) {
+        throw new Error(`Cannot create a directory over existing file "${dirPath}"`);
+      }
+      return {realPath, identity: {ino: stats.ino, dev: stats.dev}};
+    } catch (err: any) {
+      if (err.code === 'ENOENT') {
+        return undefined;
+      }
+      throw err;
     }
-    this.verifiedDirs.set(dirPath, realPath);
-    return realPath;
+  }
+
+  /**
+   * Remembered folders are not checked again when they are reused, so make sure that neither
+   * the folder nor any of its parents was replaced (e.g. with a link) since it was verified.
+   */
+  private async assertDirUnchanged(dirPath: string, verified: VerifiedDir): Promise<void> {
+    const {identity} = verified;
+    if (!identity) {
+      return;
+    }
+    // Looking up the folder passes through its parents, so replacing any of them changes the result
+    const stats = await fs.lstat(dirPath);
+    if (stats.ino !== identity.ino || stats.dev !== identity.dev) {
+      throw new Error(`Out of bound path "${dirPath}": the folder was replaced during the extraction`);
+    }
   }
 
   private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {

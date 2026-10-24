@@ -6,8 +6,7 @@ import type Stream from 'node:stream';
 import {fs, net, timing, util} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
 import {errors} from 'appium/driver.js';
-import AsyncLock from 'async-lock';
-import {asyncmap} from 'asyncbox';
+import {AsyncLock, asyncmap} from 'asyncbox';
 import type WebSocket from 'ws';
 
 import type {ItemOptions, StorageItem} from './types.js';

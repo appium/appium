@@ -16,7 +16,6 @@ import {
   type StringRecord,
   type W3CDriverCaps,
 } from '@appium/types';
-import type AsyncLock from 'async-lock';
 
 import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
 import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
@@ -160,10 +159,7 @@ export class BaseDriver<
     const isQueueExempt = this.queueExemptCommands.has(cmd);
 
     const synchronizationKey = BaseDriver.name;
-    const commandsQueueGuard = this.commandsQueueGuard as AsyncLock & {
-      queues?: Record<string, unknown[]>;
-    };
-    const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
+    const commandsQueueLen = this.commandsQueueGuard.getQueueLength(synchronizationKey);
     if (this.isCommandsQueueEnabled && !isQueueExempt && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +

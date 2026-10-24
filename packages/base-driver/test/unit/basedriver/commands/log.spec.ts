@@ -58,6 +58,13 @@ describe('log commands -', function () {
       assert.strictEqual(one.called, false);
       assert.strictEqual(two.called, false);
     });
+    it('should throw error if the log type is toString', async function () {
+      await assert.rejects(driver.getLog('toString'), (err: Error) => {
+        assert.ok(err instanceof errors.InvalidArgumentError);
+        assert.strictEqual(err.message, `Unsupported log type 'toString'. Supported types: {}`);
+        return true;
+      });
+    });
     it('should throw an error with available log types if log type not supported', async function () {
       driver.supportedLogTypes = SUPPORTED_LOG_TYPES as any;
       await assert.rejects(driver.getLog('three'), (err: Error) => {

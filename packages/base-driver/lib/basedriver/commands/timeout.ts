@@ -1,24 +1,16 @@
-import {inspect} from 'node:util';
-
 import {util} from '@appium/support';
-import type {Constraints, ITimeoutCommands, Timeouts, TimeoutValue} from '@appium/types';
+import type {Constraints, ITimeoutCommands, TimeoutValue} from '@appium/types';
 import {waitForCondition} from 'asyncbox';
 
 import {errors} from '../../protocol/index.js';
 import type {BaseDriver} from '../driver.js';
+import {validateTimeoutValue, W3C_TIMEOUTS} from '../helpers/timeouts.js';
 
 declare module '../driver.js' {
   interface BaseDriver<C extends Constraints> extends ITimeoutCommands {}
 }
 
 const MIN_TIMEOUT = 0;
-
-// Standard timeout names and their local state fields and command setters.
-export const W3C_TIMEOUTS = [
-  {name: 'script', property: 'scriptTimeoutMs', setter: 'setScriptTimeout'},
-  {name: 'pageLoad', property: 'pageLoadTimeoutMs', setter: 'setPageLoadTimeout'},
-  {name: 'implicit', property: 'implicitWaitMs', setter: 'setImplicitWait'},
-] as const;
 
 /**
  * Set the various timeouts associated with a session
@@ -86,15 +78,6 @@ export async function timeouts<C extends Constraints>(
   }
   if (parsedCommand !== undefined) {
     this.setNewCommandTimeout(parsedCommand);
-  }
-}
-
-/** Validate a standard timeout value shared by New Session and Set Timeouts. */
-export function validateTimeoutValue(value: unknown, name: keyof Timeouts): asserts value is TimeoutValue {
-  if (value !== null && (typeof value !== 'number' || !Number.isSafeInteger(value) || value < MIN_TIMEOUT)) {
-    throw new errors.InvalidArgumentError(
-      `Invalid ${name} timeout value ${inspect(value)}: expected null or a non-negative safe integer`,
-    );
   }
 }
 

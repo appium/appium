@@ -12,6 +12,7 @@ import type {
 import {log} from '../helpers/logger.js';
 import {errors} from '../protocol/errors.js';
 import {omit, omitKeys, pickBy} from '../utils.js';
+import {deserializeTimeouts} from './helpers/timeouts.js';
 import {validator} from './validation.js';
 
 export const APPIUM_VENDOR_PREFIX = 'appium:';
@@ -77,6 +78,8 @@ export function validateCaps<C extends Constraints>(
   }
 
   const normalizedCaps = omitNullCapabilities(caps);
+  // Timeout objects in every candidate must be valid before capability matching.
+  deserializeTimeouts(normalizedCaps.timeouts);
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = Object.fromEntries(

@@ -3,6 +3,7 @@ export {handleIdempotency} from '@appium/base-driver';
 export {allowCrossDomain} from './allow-cross-domain.js';
 export {catch404Handler} from './catch-404.js';
 export {catchAllHandler} from './catch-all.js';
+export {rejectInvalidJsonOnExtensionRoutes} from './extension-routes.js';
 export {defaultToJSONContentType} from './json-content-type.js';
 export {handleLogContext} from './log-context.js';
 export {handleUpgrade, tryHandleWebSocketUpgrade} from './websocket-upgrade.js';

@@ -452,16 +452,20 @@ describe('server configuration', function () {
     }
   });
 
-  it('should leave an extension route to its own handler when the JSON body cannot be parsed', async function () {
+  it('should reject invalid JSON for an extension route before its handler runs', async function () {
+    let extensionCalls = 0;
+    let frontCalls = 0;
     const _server = await server({
       routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
       port,
       serverUpdaters: [
         async (app, httpServer) => {
           app.post('/extension', (_req: any, res: any) => {
+            extensionCalls += 1;
             res.send('ok');
           });
           httpServer.frontRouter.post('/front', (_req: any, res: any) => {
+            frontCalls += 1;
             res.send('front');
           });
         },
@@ -473,16 +477,27 @@ describe('server configuration', function () {
         headers: {'content-type': 'application/json', connection: 'close'},
         body: '{"url": not json}',
       });
-      assert.strictEqual(badExtension.status, 200);
-      assert.strictEqual(await badExtension.text(), 'ok');
+      assert.strictEqual(badExtension.status, 400);
+      assert.strictEqual(((await badExtension.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(extensionCalls, 0);
 
       const badFront = await fetch(`http://127.0.0.1:${port}/front`, {
         method: 'POST',
         headers: {'content-type': 'application/json', connection: 'close'},
         body: '{',
       });
-      assert.strictEqual(badFront.status, 200);
-      assert.strictEqual(await badFront.text(), 'front');
+      assert.strictEqual(badFront.status, 400);
+      assert.strictEqual(((await badFront.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(frontCalls, 0);
+
+      const extension = await fetch(`http://127.0.0.1:${port}/extension`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(extension.status, 200);
+      assert.strictEqual(await extension.text(), 'ok');
+      assert.strictEqual(extensionCalls, 1);
 
       const unknown = await fetch(`http://127.0.0.1:${port}/no-such`, {
         method: 'POST',
@@ -491,6 +506,43 @@ describe('server configuration', function () {
       });
       assert.strictEqual(unknown.status, 404);
       assert.strictEqual(((await unknown.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject invalid JSON for an extension route registered with app.all', async function () {
+    let pluginCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.all('/plugin', (_req: any, res: any) => {
+            pluginCalls += 1;
+            res.send('plugin');
+          });
+        },
+      ],
+    });
+    try {
+      const badPlugin = await fetch(`http://127.0.0.1:${port}/plugin`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badPlugin.status, 400);
+      assert.strictEqual(((await badPlugin.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(pluginCalls, 0);
+
+      const plugin = await fetch(`http://127.0.0.1:${port}/plugin`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(plugin.status, 200);
+      assert.strictEqual(await plugin.text(), 'plugin');
+      assert.strictEqual(pluginCalls, 1);
     } finally {
       await _server.close();
     }
@@ -518,6 +570,134 @@ describe('server configuration', function () {
       });
       assert.strictEqual(res.status, 404);
       assert.strictEqual(((await res.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject invalid JSON for a matching route on a mounted router before its handler runs', async function () {
+    let itemCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          const router = express.Router();
+          router.post('/item', (_req, res) => {
+            itemCalls += 1;
+            res.send('item');
+          });
+          app.use('/mounted', router);
+        },
+      ],
+    });
+    try {
+      const badItem = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badItem.status, 400);
+      assert.strictEqual(((await badItem.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(itemCalls, 0);
+
+      const item = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(item.status, 200);
+      assert.strictEqual(await item.text(), 'item');
+      assert.strictEqual(itemCalls, 1);
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should not run extension middleware when the JSON body cannot be parsed', async function () {
+    let routerUseCalls = 0;
+    let frontUseCalls = 0;
+    let soloCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app, httpServer) => {
+          httpServer.frontRouter.use((_req: any, _res: any, next: any) => {
+            frontUseCalls += 1;
+            next();
+          });
+          app.use('/solo', (_req: any, res: any) => {
+            soloCalls += 1;
+            res.send('solo');
+          });
+          const router = express.Router();
+          router.use((_req, res) => {
+            routerUseCalls += 1;
+            res.send('from-use');
+          });
+          router.post('/item', (_req, res) => {
+            res.send('item');
+          });
+          app.use('/mounted', router);
+        },
+      ],
+    });
+    try {
+      const badItem = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badItem.status, 400);
+      assert.strictEqual(((await badItem.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(routerUseCalls, 0);
+
+      const missing = await fetch(`http://127.0.0.1:${port}/mounted/missing`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(missing.status, 404);
+      assert.strictEqual(((await missing.json()) as any).value.error, 'unknown command');
+      assert.strictEqual(routerUseCalls, 0);
+
+      const badSolo = await fetch(`http://127.0.0.1:${port}/solo`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badSolo.status, 400);
+      assert.strictEqual(((await badSolo.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(soloCalls, 0);
+
+      const unknown = await fetch(`http://127.0.0.1:${port}/no-such`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(unknown.status, 404);
+      assert.strictEqual(((await unknown.json()) as any).value.error, 'unknown command');
+      assert.strictEqual(frontUseCalls, 0);
+
+      const solo = await fetch(`http://127.0.0.1:${port}/solo`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(solo.status, 200);
+      assert.strictEqual(await solo.text(), 'solo');
+      assert.strictEqual(soloCalls, 1);
+      assert.strictEqual(frontUseCalls, 1);
+
+      const item = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(item.status, 200);
+      assert.strictEqual(await item.text(), 'from-use');
+      assert.strictEqual(routerUseCalls, 1);
     } finally {
       await _server.close();
     }

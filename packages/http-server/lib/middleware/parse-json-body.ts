@@ -7,7 +7,8 @@ const jsonBodyParser = bodyParser.json({limit: '1gb'});
 
 /**
  * Parses a JSON body. A parse failure is remembered and the request continues, so an unknown
- * route or a missing session can be reported before `invalid argument`.
+ * route or a missing session can be reported before `invalid argument`. A matching extension
+ * route is still `invalid argument`, before that route's own handler runs.
  */
 export function parseJsonBody(req: Request, res: Response, next: NextFunction): void {
   jsonBodyParser(req, res, (err?: unknown) => {

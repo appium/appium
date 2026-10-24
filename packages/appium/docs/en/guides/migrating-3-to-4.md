@@ -213,6 +213,23 @@ A request with no body, or a body that is a JSON array such as `[]`, returns HTT
     Send `{}` instead of an empty body. Clients that already send a JSON object, including the
     Appium clients, need no change
 
+### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
+
+When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
+server, Appium no longer validates required payload fields or command arguments before calling
+the plugin. This matches direct proxying, where the downstream remote end already owns those
+checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
+Appium to validate these arguments can now receive missing or invalid values.
+
+!!! info "Actions Needed"
+
+    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
+    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
+    The downstream driver's validation responsibility is unchanged.
+
+Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
+JSON-object request-body checks also remain in place before the plugin is called.
+
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 
 Unlike HTTP endpoints, WebDriver BiDi commands have no URL-derived session/element id, so a stray

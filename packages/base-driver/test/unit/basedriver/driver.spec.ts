@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {AsyncLocalStorage} from 'node:async_hooks';
 import {execFile} from 'node:child_process';
 import {describe, it} from 'node:test';
 import {promisify} from 'node:util';
@@ -88,6 +89,30 @@ describe('BaseDriver', function () {
   });
 
   describe('executeCommand', function () {
+    it('should run a queued command in its own async context', async function () {
+      const storage = new AsyncLocalStorage<{isSensitive: boolean}>();
+      const seen: Record<string, boolean | undefined> = {};
+      const driver = Object.assign(new BaseDriver(), {
+        async slowCommand() {
+          seen.slowCommand = storage.getStore()?.isSensitive;
+          await new Promise((resolve) => setTimeout(resolve, 50));
+        },
+        async sensitiveCommand() {
+          seen.sensitiveCommand = storage.getStore()?.isSensitive;
+        },
+      });
+      // mimic two concurrent requests, each with its own async context
+      const request = (cmd: string, isSensitive: boolean) =>
+        storage.run({isSensitive}, () => driver.executeCommand(cmd));
+
+      const slow = request('slowCommand', false);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      await Promise.all([slow, request('sensitiveCommand', true)]);
+
+      assert.equal(seen.slowCommand, false);
+      assert.equal(seen.sensitiveCommand, true);
+    });
+
     for (const outcome of ['success', 'reject', 'throw', 'shutdown', 'shutdown-throw']) {
       it(`should clean up shutdown monitoring after ${outcome}`, async function () {
         const error = new Error(outcome);

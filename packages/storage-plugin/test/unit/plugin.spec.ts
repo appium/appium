@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {AsyncLocalStorage} from 'node:async_hooks';
 import {createHash} from 'node:crypto';
 import {EventEmitter, once} from 'node:events';
 import {createServer} from 'node:http';
@@ -81,6 +82,28 @@ describe('StoragePlugin routes', function () {
       assert.equal(server.registrations, 0);
     });
   }
+  it('should prepare a queued upload request in its own async context', async function () {
+    const server = makeServer();
+    const als = new AsyncLocalStorage<string>();
+    const seen: string[] = [];
+    const getHandlers = server.getWebSocketHandlers.bind(server);
+    server.getWebSocketHandlers = async (path: string) => {
+      seen.push(als.getStore() as string);
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      return await getHandlers(path);
+    };
+    const callRoute = await routeCaller('/appium/storage/add', '', server);
+    const opts = {name: 'test.apk', sha1: 'a'.repeat(40)};
+    try {
+      const first = als.run('first', () => callRoute(opts));
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      await Promise.all([first, als.run('second', () => callRoute(opts))]);
+      assert.deepEqual(seen, ['first', 'second']);
+    } finally {
+      await closeSockets(server);
+    }
+  });
+
   for (const concurrent of [false, true]) {
     it(`should reuse sockets for ${concurrent ? 'concurrent' : 'retried'} upload requests`, async function () {
       const server = makeServer();

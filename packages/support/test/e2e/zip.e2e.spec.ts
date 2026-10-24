@@ -6,6 +6,7 @@ import {fs, tempDir} from '../../lib/index.js';
 import {isWindows} from '../../lib/system.js';
 import * as zip from '../../lib/zip.js';
 import {MockReadWriteStream} from '../helpers.js';
+import {type BuildEntry, buildZip} from '../zip-builder.js';
 
 describe('#zip', function () {
   const optionMap = new Map<string, Record<string, boolean | undefined>>([
@@ -420,7 +421,7 @@ describe('#zip', function () {
               }
               return handle;
             });
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath, {concurrency: 1}), /Out of bound path/);
             assert.deepStrictEqual(await fs.readdir(outsidePath), []);
           });
 
@@ -445,7 +446,7 @@ describe('#zip', function () {
               }
               return handle;
             });
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath, {concurrency: 1}), /Out of bound path/);
             assert.deepStrictEqual(await fs.readdir(movedPath), ['1.txt']);
           });
 
@@ -457,20 +458,28 @@ describe('#zip', function () {
               {name: 'a/1.txt', contents: '1', mode: 0o100644},
               {name: 'a/new/2.txt', contents: '2', mode: 0o100644},
             ]);
-            const openFile = fs.openFile;
-            let swapped = false;
-            t.mock.method(fs, 'openFile', async (target: any, flags: any, mode: any) => {
-              const handle = await openFile(target, flags, mode);
-              if (!swapped) {
-                // The folder keeps its identity, but now lives outside of the root behind a link
-                swapped = true;
-                const dirPath = path.resolve(await fs.realpath(outputPath), 'a');
-                await fs.rename(dirPath, movedPath);
-                await fs.symlink(movedPath, dirPath);
+            let swap: Promise<void> | undefined;
+            const swapOnce = async () => {
+              const dirPath = path.resolve(await fs.realpath(outputPath), 'a');
+              // Files are written in the background, the first one must be in place
+              while (!(await fs.exists(path.join(dirPath, '1.txt')))) {
+                await new Promise((resolve) => setTimeout(resolve, 1));
               }
-              return handle;
-            });
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+              // The folder keeps its identity, but now lives outside of the root behind a link
+              await fs.rename(dirPath, movedPath);
+              await fs.symlink(movedPath, dirPath);
+            };
+            // Both lookups of the new folder wait for the swap, whichever fails first
+            for (const method of ['stat', 'realpath'] as const) {
+              const original: any = fs[method];
+              t.mock.method(fs, method, async (target: any, ...rest: any[]) => {
+                if (String(target).endsWith(path.join('a', 'new'))) {
+                  await (swap ??= swapOnce());
+                }
+                return await original(target, ...rest);
+              });
+            }
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath, {concurrency: 1}), /Out of bound path/);
             assert.deepStrictEqual(await fs.readdir(movedPath), ['1.txt']);
           });
 
@@ -498,7 +507,7 @@ describe('#zip', function () {
               }
               return handle;
             });
-            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath, {concurrency: 1}), /Out of bound path/);
             assert.deepStrictEqual(await fs.readdir(outsidePath), []);
           });
 
@@ -625,6 +634,134 @@ describe('#zip', function () {
           await zip.extractAllTo(dstPath, outputPath, options);
           assert.strictEqual(await fs.readFile(path.resolve(outputPath, '..foo.txt'), {encoding: 'utf8'}), 'safe\n');
         });
+      });
+
+      describe('JS entry content handling', {skip: !!options.useSystemUnzip}, function () {
+        const BIG = 5 * 1024 * 1024;
+
+        async function extractEntries(entries: BuildEntry[], opts: zip.ExtractAllOptions = {}): Promise<string> {
+          const archive = path.resolve(tmpRoot, 'entries.zip');
+          const out = path.resolve(tmpRoot, 'entries-out');
+          await fs.writeFile(archive, buildZip(entries));
+          await zip.extractAllTo(archive, out, opts);
+          return out;
+        }
+
+        for (const [title, size] of [
+          ['small', 1000],
+          ['big', BIG],
+        ] as const) {
+          for (const method of [0, 8]) {
+            const label = `${title} ${method ? 'deflated' : 'stored'}`;
+            // Not compressible data would make the small deflated entry bigger than the stored one
+            const data = Buffer.from('lorem ipsum '.repeat(Math.ceil(size / 12))).subarray(0, size);
+
+            it(`should extract a ${label} entry`, async function () {
+              const out = await extractEntries([
+                {name: 'a/f.bin', data, method},
+                {name: 'empty', data: ''},
+              ]);
+              assert.ok(data.equals(await fs.readFile(path.resolve(out, 'a/f.bin'))));
+              assert.strictEqual((await fs.stat(path.resolve(out, 'empty'))).size, 0);
+            });
+
+            it(`should reject a ${label} entry with a wrong CRC32`, async function () {
+              await assert.rejects(extractEntries([{name: 'f.bin', data, method, crc: 1}]), /CRC32 mismatch/);
+              assert.strictEqual(await fs.exists(path.resolve(tmpRoot, 'entries-out/f.bin')), false);
+            });
+
+            // yauzl itself refuses stored entries with different sizes
+            it(`should reject a ${label} entry larger than declared`, {skip: !method}, async function () {
+              await assert.rejects(
+                extractEntries([{name: 'f.bin', data, method, size: size - 1}]),
+                /larger than the declared size/,
+              );
+            });
+
+            it(`should reject a ${label} entry smaller than declared`, {skip: !method}, async function () {
+              await assert.rejects(
+                extractEntries([{name: 'f.bin', data, method, size: size + 1}]),
+                /bytes were expected|CRC32 mismatch/,
+              );
+            });
+
+            it(`should keep a file when a ${label} entry replacing it is corrupted`, async function () {
+              const out = path.resolve(tmpRoot, 'entries-out');
+              await fs.mkdir(out);
+              await fs.writeFile(path.resolve(out, 'f.bin'), 'old');
+              await assert.rejects(extractEntries([{name: 'f.bin', data, method, crc: 1}]), /CRC32 mismatch/);
+              assert.strictEqual(await fs.readFile(path.resolve(out, 'f.bin'), 'utf8'), 'old');
+            });
+          }
+        }
+
+        it('should reject a truncated entry', async function () {
+          const archive = path.resolve(tmpRoot, 'truncated.zip');
+          await fs.writeFile(archive, buildZip([{name: 'f.bin', data: Buffer.alloc(100, 'a'), method: 0}]));
+          const bytes = await fs.readFile(archive);
+          // The central directory still claims the whole entry
+          const cut = bytes.indexOf(Buffer.from('PK\u0001\u0002'));
+          await fs.writeFile(archive, Buffer.concat([bytes.subarray(0, 60), bytes.subarray(cut)]));
+          await assert.rejects(zip.extractAllTo(archive, path.resolve(tmpRoot, 'out')));
+        });
+
+        it('should name an unsupported compression method', async function () {
+          await assert.rejects(
+            extractEntries([{name: 'f.bin', data: 'abc', method: 12}]),
+            /'f.bin' uses the unsupported compression method bzip2 \(12\)/,
+          );
+        });
+
+        it('should reject an encrypted entry', async function () {
+          await assert.rejects(extractEntries([{name: 'f.bin', data: 'abc', flags: 1}]), /'f.bin' is encrypted/);
+        });
+
+        it('should let the last of the entries with the same name win', async function () {
+          const entries = Array.from({length: 50}, (_, i): BuildEntry => ({name: 'same.txt', data: `v${i}`}));
+          const out = await extractEntries(entries);
+          assert.strictEqual(await fs.readFile(path.resolve(out, 'same.txt'), 'utf8'), 'v49');
+        });
+
+        it('should extract many files concurrently', async function () {
+          const entries = Array.from({length: 300}, (_, i): BuildEntry => ({
+            name: `d${i % 7}/f${i}.txt`,
+            data: `#${i}`,
+          }));
+          for (const concurrency of [1, 4, 16]) {
+            await fs.rimraf(path.resolve(tmpRoot, 'entries-out'));
+            const out = await extractEntries(entries, {concurrency});
+            for (const i of [0, 150, 299]) {
+              assert.strictEqual(await fs.readFile(path.resolve(out, `d${i % 7}/f${i}.txt`), 'utf8'), `#${i}`);
+            }
+          }
+        });
+
+        it('should stop writing after the first failure', async function () {
+          const entries = Array.from({length: 200}, (_, i): BuildEntry => ({name: `f${i}.txt`, data: `#${i}`}));
+          entries[20] = {...entries[20], crc: 1};
+          await assert.rejects(extractEntries(entries), /CRC32 mismatch/);
+          const out = path.resolve(tmpRoot, 'entries-out');
+          const written = await fs.readdir(out);
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          assert.deepStrictEqual(await fs.readdir(out), written);
+          assert.ok(written.length < 200);
+        });
+
+        it(
+          'should not write through a link created earlier by the same archive',
+          {skip: isWindows()},
+          async function () {
+            const outside = path.resolve(tmpRoot, 'outside');
+            await fs.mkdir(outside);
+            const entries: BuildEntry[] = [
+              {name: 'warmup.txt', data: 'w'},
+              {name: 'link', data: outside, mode: 0o120777},
+              {name: 'link/pwn.txt', data: 'x'},
+            ];
+            await assert.rejects(extractEntries(entries), /Out of bound|Cannot|EEXIST/);
+            assert.deepStrictEqual(await fs.readdir(outside), []);
+          },
+        );
       });
 
       describe('assertValidZip', function () {

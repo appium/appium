@@ -112,6 +112,19 @@ describe('zip.extractStreamTo()', function () {
       );
     });
 
+    it('should skip nameless entries', async function () {
+      const {tree} = await extractBuffer(
+        buildZip([
+          {name: '', data: '', hideFromCentralDirectory: true},
+          {name: 'f', data: 'y'},
+        ]),
+      );
+      assert.deepStrictEqual(
+        tree.map((line) => line.split(' ')[1]),
+        ['f'],
+      );
+    });
+
     it('should verify ignored entries too', async function () {
       const data = buildZip([{name: '__MACOSX/._f', data: 'x', crc: 1}]);
       await assert.rejects(extractBuffer(data), /CRC32 mismatch/);

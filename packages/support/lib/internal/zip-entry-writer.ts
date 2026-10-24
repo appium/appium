@@ -656,7 +656,7 @@ export class ZipEntryWriter {
   }
 }
 
-/** Whether the entry is never extracted (macOS resource forks) */
+/** Whether the entry is never extracted (macOS resource forks, nameless padding entries) */
 export function isIgnoredEntry(fileName: string): boolean {
-  return fileName.startsWith('__MACOSX/');
+  return fileName === '' || fileName.startsWith('__MACOSX/');
 }

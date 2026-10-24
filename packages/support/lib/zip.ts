@@ -403,7 +403,6 @@ class ZipExtractor {
     // Reject an escaping target before creating the link on disk.
     await this.validateSymlinkTarget(linkTarget, linkParentDir, fileName);
     await fs.symlink(linkTarget, dest);
-    this.verifiedDirs.delete(dest);
     try {
       const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
       // Recheck for cycles and redirected forward references after creating the link.

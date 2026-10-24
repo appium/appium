@@ -304,12 +304,50 @@ describe('#zip', function () {
             }
           });
 
+          it(
+            'should extract nested entries under an in-root symlinked directory',
+            {skip: isWindows()},
+            async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'symlinked-parent.zip');
+              await createStoredZip(dstPath, [
+                {name: 'real/a.txt', contents: 'a', mode: 0o100644},
+                {name: 'link', contents: 'real', mode: 0o120777},
+                {name: 'link/sub/b.txt', contents: 'b', mode: 0o100644},
+                {name: 'link/sub/c.txt', contents: 'c', mode: 0o100644},
+              ]);
+              await zip.extractAllTo(dstPath, outputPath);
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'real/sub/b.txt'), 'utf8'), 'b');
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'real/sub/c.txt'), 'utf8'), 'c');
+            },
+          );
+
+          it(
+            'should reject an escaping symlinked directory below a cached one',
+            {skip: isWindows()},
+            async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const outsidePath = path.resolve(tmpRoot, 'outside');
+              const dstPath = path.resolve(tmpRoot, 'cached-parent.zip');
+              await fs.mkdir(path.resolve(outputPath, 'a'), {recursive: true});
+              await fs.mkdir(outsidePath);
+              await fs.symlink(outsidePath, path.resolve(outputPath, 'a', 'b'));
+              await createStoredZip(dstPath, [
+                {name: 'a/1.txt', contents: '1', mode: 0o100644},
+                {name: 'a/b/2.txt', contents: '2', mode: 0o100644},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound/);
+              assert.deepStrictEqual(await fs.readdir(outsidePath), []);
+            },
+          );
+
           it('should not follow a destination symlink introduced after validation', async function (t) {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'race.zip');
             const outsidePath = path.resolve(tmpRoot, 'outside');
-            const dest = path.resolve(outputPath, 'f');
             await fs.mkdir(outputPath);
+            // The extractor passes real paths (e.g. /private/var on macOS) to realpath
+            const dest = path.resolve(await fs.realpath(outputPath), 'f');
             await fs.writeFile(dest, 'inside');
             await fs.writeFile(outsidePath, 'original');
             await createStoredZip(dstPath, [{name: 'f', contents: 'replacement', mode: 0o100644}]);

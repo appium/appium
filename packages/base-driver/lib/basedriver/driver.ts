@@ -14,7 +14,6 @@ import {
   type ServerArgs,
   type SessionCapabilities,
   type StringRecord,
-  type Timeouts,
   type W3CDriverCaps,
 } from '@appium/types';
 import type AsyncLock from 'async-lock';
@@ -50,8 +49,6 @@ import {
   setPageLoadTimeout,
   setScriptTimeout,
   timeouts,
-  validateTimeoutValue,
-  W3C_TIMEOUTS,
 } from './commands/timeout.js';
 // oxlint-enable import/no-duplicates
 // Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
@@ -66,6 +63,7 @@ import './commands/log.js';
 import './commands/timeout.js';
 import {DriverCore} from './core.js';
 import * as helpers from './helpers/index.js';
+import {deserializeTimeouts, W3C_TIMEOUTS} from './helpers/timeouts.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 
@@ -318,7 +316,7 @@ export class BaseDriver<
     );
 
     const caps = this.processSessionCapabilities(originalCaps);
-    const initialTimeouts = this.validateInitialTimeouts(caps.timeouts);
+    const initialTimeouts = deserializeTimeouts(caps.timeouts);
     const opts = this.configureSessionOptions(caps);
 
     // Initialize local state before the concrete driver starts its backend.
@@ -501,24 +499,6 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
     return caps;
-  }
-
-  /** Validate all initial timeouts before applying any session state. */
-  private validateInitialTimeouts(requestedTimeouts: DriverCaps<C>['timeouts']): Partial<Timeouts> {
-    const initialTimeouts: Partial<Timeouts> = {};
-    if (requestedTimeouts !== undefined) {
-      if (!util.isPlainObject(requestedTimeouts)) {
-        throw new errors.InvalidArgumentError('The timeouts capability must be a JSON object');
-      }
-      for (const {name} of W3C_TIMEOUTS) {
-        const value = requestedTimeouts[name];
-        if (value !== undefined) {
-          validateTimeoutValue(value, name);
-          initialTimeouts[name] = value;
-        }
-      }
-    }
-    return initialTimeouts;
   }
 
   /** Merge and normalize session options without changing driver state. */

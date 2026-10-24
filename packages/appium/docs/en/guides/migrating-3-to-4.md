@@ -194,6 +194,12 @@ startup, using the same value checks as Set Timeouts. Partial objects are accept
 fields keep their defaults; backend handling remains driver-specific
 ([#22983](https://github.com/appium/appium/pull/22983)).
 
+Timeout capability validation also runs on `alwaysMatch` and every `firstMatch` candidate before
+driver selection. A malformed timeout object or invalid standard timeout value rejects the request
+with HTTP `400` / `invalid argument`, even when an earlier candidate could match. Top-level
+`timeouts: null` is still omitted, nested null timeout values are preserved, and unknown timeout
+properties are ignored for validation.
+
 ### Command POST Bodies Must Be JSON Objects
 
 A command `POST` body now has to be a JSON object, as required by the W3C WebDriver standard.

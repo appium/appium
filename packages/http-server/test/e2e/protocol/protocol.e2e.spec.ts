@@ -42,7 +42,11 @@ describe('Protocol', function () {
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
+      const {
+        baseUrl: baseUrlStr,
+        setup,
+        teardown: teardownFn,
+      } = await createServer(driver, {extraMethodMap: FakeDriver.newMethodMap});
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -97,6 +101,41 @@ describe('Protocol', function () {
       });
     });
 
+    it('should reject a command POST that has no body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should reject a command POST whose body is a JSON array', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, [], {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should accept a JSON array body for a route that wraps its payload', async function () {
+      const {data} = await httpPost(`${baseUrl}/session/foo/wrapped`, [1, 2, 3]);
+      assert.deepStrictEqual(data.value, [1, 2, 3]);
+    });
+
+    it('should reject a command POST that omits a required body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/url`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
     it('should include url request parameters for methods to use - elementid', async function () {
       const {data} = await httpPost(`${baseUrl}/session/foo/element/bar/click`, {});
       assert.deepStrictEqual(data.value, ['bar', 'foo']);
@@ -130,6 +169,37 @@ describe('Protocol', function () {
 
     it('should get 404 for bad routes', async function () {
       await assert.rejects(httpGet(`${baseUrl}/blargimarg`), /404/);
+    });
+
+    it('should return unknown method when a known url is called with the wrong method', async function () {
+      const {status, data} = await httpPost(
+        `${baseUrl}/status`,
+        {},
+        {
+          throwOnError: false,
+        },
+      );
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown method when a known session url is called with the wrong method', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/session/foo`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown command when the path only shares a prefix with a known url', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/status/extra`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 404);
+      assert.strictEqual(data.value.error, 'unknown command');
     });
 
     it('4xx responses should have content-type of application/json', async function () {

@@ -275,6 +275,71 @@ describe('server configuration', function () {
     }
   });
 
+  it('should return unknown method for an extension command url called with the wrong method', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      basePath: '/wd/hub',
+      extraMethodMap: newMethodMap,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/wd/hub/session/foo/fake`, {method: 'DELETE'});
+      assert.strictEqual(res.status, 405);
+      assert.strictEqual(((await res.json()) as any).value.error, 'unknown method');
+
+      const resWithoutBasePath = await fetch(`http://127.0.0.1:${port}/session/foo/fake`, {method: 'DELETE'});
+      assert.strictEqual(resWithoutBasePath.status, 404);
+      assert.strictEqual(((await resWithoutBasePath.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should reject HEAD on a post-only command without a body', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/session`, {method: 'HEAD'});
+      assert.strictEqual(res.status, 405);
+      assert.strictEqual(res.headers.get('allow'), 'POST');
+      assert.strictEqual(res.headers.get('content-type'), 'application/json; charset=utf-8');
+      assert.strictEqual(await res.text(), '');
+    } finally {
+      await _server.close();
+    }
+  });
+
+  it('should let updateServer add a method on a known command url', async function () {
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.put('/status', (_req: any, res: any) => {
+            res.sendStatus(204);
+          });
+        },
+      ],
+    });
+    try {
+      const put = await fetch(`http://127.0.0.1:${port}/status`, {method: 'PUT'});
+      assert.strictEqual(put.status, 204);
+      assert.strictEqual(await put.text(), '');
+
+      const post = await fetch(`http://127.0.0.1:${port}/status`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(post.status, 405);
+      assert.strictEqual(((await post.json()) as any).value.error, 'unknown method');
+    } finally {
+      await _server.close();
+    }
+  });
+
   it('should respond with a W3C error when the request body is not valid JSON', async function () {
     const driver = fakeDriver();
     const _server = await server({

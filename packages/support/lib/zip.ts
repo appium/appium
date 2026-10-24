@@ -1,7 +1,6 @@
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
-import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 import {promisify} from 'node:util';
 
@@ -12,6 +11,10 @@ import * as yauzl from 'yauzl';
 
 import {fs} from './fs.js';
 import {createBase64EncodeStream} from './internal/index.js';
+import {ZipEntryWriter} from './internal/zip-entry-writer.js';
+import {extractZipStream} from './internal/zip-stream-parser.js';
+
+export {ZipStreamUnsupportedError} from './internal/zip-stream-parser.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
@@ -38,6 +41,19 @@ export interface ExtractAllOptions {
    * fallback to the JS unzip implementation.
    */
   useSystemUnzip?: boolean;
+}
+
+export interface ExtractStreamOptions {
+  /**
+   * The encoding of file names that are not flagged as UTF-8 by the archive.
+   * It is `utf8` by default, which is what ZIP archives created on MacOS usually contain.
+   */
+  fileNamesEncoding?: BufferEncoding;
+  /**
+   * The number of files written to the disk at the same time (4 by default).
+   * Folders, big entries and links are always processed one by one.
+   */
+  concurrency?: number;
 }
 
 export interface ZipEntry {
@@ -87,6 +103,42 @@ export interface ZipSourceOptions {
   ignore?: string[];
 }
 
+/**
+ * Extract a ZIP archive from a stream (for example, a HTTP response) to a directory
+ * while it is being received. Only stored and deflate entries are supported.
+ * The same safety checks as in {@linkcode extractAllTo} apply.
+ *
+ * Entries are read from the local file headers like `bsdtar` does it. Permissions and symlinks,
+ * which only exist in the central directory at the end of the archive, are applied after
+ * all entries are written. The source is consumed completely and destroyed on failure.
+ *
+ * @param source The archive bytes
+ * @param destDir The full path to the destination folder
+ * @param opts Extraction options
+ * @returns The total number of bytes read from the source
+ * @throws {ZipStreamUnsupportedError} If the archive uses encryption or other compression methods
+ * @throws {Error} If the source is not a valid or complete ZIP archive, or an entry is not safe to extract
+ */
+export async function extractStreamTo(
+  source: stream.Readable | AsyncIterable<Uint8Array>,
+  destDir: string,
+  opts: ExtractStreamOptions = {},
+): Promise<{archiveSize: number}> {
+  try {
+    if (!path.isAbsolute(destDir)) {
+      throw new Error(`Target path '${destDir}' is expected to be absolute`);
+    }
+    await fs.mkdir(destDir, {recursive: true});
+    const dir = await fs.realpath(destDir);
+    return await extractZipStream(source, new ZipEntryWriter({dir}), opts);
+  } catch (err) {
+    if (source instanceof stream.Readable) {
+      source.destroy();
+    }
+    throw err;
+  }
+}
+
 interface ZipExtractorOptions {
   dir: string;
   fileNamesEncoding?: BufferEncoding;
@@ -94,7 +146,7 @@ interface ZipExtractorOptions {
   defaultFileMode?: string;
 }
 
-type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>;
+type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
@@ -102,11 +154,13 @@ class ZipExtractor {
   private openReadStream!: OpenReadStreamFn;
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
+  private readonly writer: ZipEntryWriter;
   private canceled = false;
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
     this.opts = opts;
+    this.writer = new ZipEntryWriter(opts);
   }
 
   async extract(): Promise<void> {
@@ -119,25 +173,12 @@ class ZipExtractor {
     this.openReadStream = createOpenReadStream(this.zipfile);
     this.canceled = false;
 
-    const {dir} = this.opts;
-
     try {
       await processYauzlEntriesSequentially(this.zipfile, async (entry) => {
         if (this.canceled) {
           return false;
         }
-
-        const fileName = this.extractFileName(entry);
-        if (fileName.startsWith('__MACOSX/')) {
-          return;
-        }
-
-        const dest = path.resolve(dir, fileName);
-        if (!isSubPath(dest, dir)) {
-          throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
-        }
-
-        await this.extractEntry(entry, fileName, dest);
+        await this.extractEntry(entry);
       });
     } catch (err) {
       this.canceled = true;
@@ -149,13 +190,8 @@ class ZipExtractor {
     return toEntryFileName(entry, this.opts.fileNamesEncoding);
   }
 
-  private async extractEntry(entry: yauzl.Entry, fileName: string, dest: string): Promise<void> {
-    if (this.canceled) {
-      return;
-    }
-
-    const {dir} = this.opts;
-
+  private async extractEntry(entry: yauzl.Entry): Promise<void> {
+    const fileName = this.extractFileName(entry);
     // convert external file attr int into a fs stat mode int
     const mode = (entry.externalFileAttributes >> 16) & 0xffff;
     // check if it's a symlink or dir (using stat mode constants)
@@ -167,108 +203,7 @@ class ZipExtractor {
       // check for windows weird way of specifying a directory
       // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
       (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
-    const procMode = this.getExtractedMode(mode, isDir) & 0o777;
-    // always ensure folders are created
-    const destDir = isDir ? dest : path.dirname(dest);
-    const realDestDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
-    if (isDir) {
-      return;
-    }
-
-    const readStream = await this.openReadStream(entry);
-    if (isSymlink) {
-      const link = await text(readStream);
-      const resolvedLink = path.resolve(realDestDir, link);
-      if (!isSubPath(resolvedLink, dir)) {
-        throw new Error(`Out of bound symlink target "${link}" found while processing file ${fileName}`);
-      }
-      await fs.symlink(link, dest);
-    } else {
-      await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
-    }
-  }
-
-  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
-    const {dir} = this.opts;
-    if (!isSubPath(dirPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-    }
-
-    const relativePath = path.relative(dir, dirPath);
-    if (!relativePath) {
-      return dir;
-    }
-
-    let currentPath = dir;
-    for (const segment of relativePath.split(path.sep)) {
-      currentPath = path.join(currentPath, segment);
-      try {
-        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
-        if (!isSubPath(realPath, dir)) {
-          throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
-        }
-        if (!stats.isDirectory() && !stats.isSymbolicLink()) {
-          throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
-        }
-      } catch (err: any) {
-        if (err.code !== 'ENOENT') {
-          throw err;
-        }
-        await fs.mkdir(currentPath, {mode});
-      }
-    }
-
-    const realPath = await fs.realpath(dirPath);
-    if (!isSubPath(realPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-    }
-    return realPath;
-  }
-
-  private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
-    const {dir} = this.opts;
-    let realDest: string | null = null;
-    try {
-      realDest = await fs.realpath(dest);
-    } catch (err: any) {
-      if (err.code !== 'ENOENT') {
-        throw err;
-      }
-    }
-
-    realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
-    if (!isSubPath(realDest, dir)) {
-      throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
-    }
-  }
-
-  private getExtractedMode(entryMode: number, isDir: boolean): number {
-    const {defaultDirMode, defaultFileMode} = this.opts;
-
-    let mode = entryMode;
-    // Set defaults, if necessary
-    if (mode === 0) {
-      if (isDir) {
-        if (defaultDirMode) {
-          mode = parseInt(defaultDirMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o755;
-        }
-      } else {
-        if (defaultFileMode) {
-          mode = parseInt(defaultFileMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o644;
-        }
-      }
-    }
-
-    return mode;
+    await this.writer.write({fileName, mode, isDir, isSymlink, openBody: () => this.openReadStream(entry)});
   }
 }
 

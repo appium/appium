@@ -75,6 +75,24 @@ Library callers of `@appium/http-server`'s `server()` and `configureServer()` no
     Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
     for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
+### Unused Server Arguments Removed
+
+The following server arguments had no effect for a long time and have been removed, together with
+their `server.*` config file properties:
+
+* `--callback-address` (`-ca`) and `--callback-port` (`-cp`)
+* `--debug-log-spacing`
+* `--strict-caps`
+* `--trace-dir`
+
+Passing any of them on the command line now fails with an unrecognized argument error (unless
+[`--allow-unknown-args`](../reference/cli/server.md) is set), and config files containing them
+fail schema validation.
+
+!!! info "Actions Needed"
+
+    Remove these arguments from startup scripts and config files
+
 ### Extension Auto-Install on `npm install` Removed
 
 The `npm install -g appium --drivers=... --plugins=...` postinstall hook that automatically
@@ -175,6 +193,42 @@ Initial `capabilities.timeouts` now initializes BaseDriver's local timeout state
 startup, using the same value checks as Set Timeouts. Partial objects are accepted and omitted
 fields keep their defaults; backend handling remains driver-specific
 ([#22983](https://github.com/appium/appium/pull/22983)).
+
+Timeout capability validation also runs on `alwaysMatch` and every `firstMatch` candidate before
+driver selection. A malformed timeout object or invalid standard timeout value rejects the request
+with HTTP `400` / `invalid argument`, even when an earlier candidate could match. Top-level
+`timeouts: null` is still omitted, nested null timeout values are preserved, and unknown timeout
+properties are ignored for validation.
+
+### Command POST Bodies Must Be JSON Objects
+
+A command `POST` body now has to be a JSON object, as required by the W3C WebDriver standard.
+A request with no body, or a body that is a JSON array such as `[]`, returns HTTP `400` with
+`invalid argument` (`HTTP request body must be a JSON object`) and is not forwarded to the driver.
+`POST` with `{}` is unchanged, including commands that take no parameters. Routes that set
+`payloadParams.wrap` can still accept a bare array.
+
+!!! info "Actions Needed"
+
+    Send `{}` instead of an empty body. Clients that already send a JSON object, including the
+    Appium clients, need no change
+
+### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
+
+When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
+server, Appium no longer validates required payload fields or command arguments before calling
+the plugin. This matches direct proxying, where the downstream remote end already owns those
+checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
+Appium to validate these arguments can now receive missing or invalid values.
+
+!!! info "Actions Needed"
+
+    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
+    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
+    The downstream driver's validation responsibility is unchanged.
+
+Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
+JSON-object request-body checks also remain in place before the plugin is called.
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 

@@ -189,21 +189,11 @@ class ZipExtractor {
       await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      const flags =
-        fs.constants.O_WRONLY |
-        fs.constants.O_CREAT |
-        fs.constants.O_TRUNC |
-        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
       const readStream = await this.openReadStream(entry);
       try {
-        const file = await fs.openFile(dest, flags, procMode);
-        try {
-          await pipeline(readStream, file.createWriteStream());
-        } finally {
-          await file.close();
-        }
+        await writeEntryToFile(readStream, dest, procMode);
       } finally {
-        // Opening the output may fail before pipeline takes ownership of the input.
+        // Opening the output may fail before the writer takes ownership of the input.
         readStream.destroy();
       }
     }
@@ -471,8 +461,70 @@ export async function _extractEntryTo(
   }
   await fs.mkdirp(path.dirname(dstPath));
 
+  // Mirror the full-extractor hardening: never write through symlinks and make
+  // sure the (possibly pre-existing) parent directory resolves inside destDir.
+  const realRoot = await fs.realpath(destDir);
+  let existingStats;
+  try {
+    existingStats = await fs.lstat(dstPath);
+  } catch (err: any) {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  }
+  if (existingStats?.isSymbolicLink()) {
+    throw new Error(`Cannot write a file over existing symlink "${dstPath}"`);
+  }
+  const realDestDir = await fs.realpath(path.dirname(dstPath));
+  if (!isSubPath(realDestDir, realRoot)) {
+    throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
+  }
+
   const readStream = await openReadStream(entry);
-  await pipeline(readStream, createWriteStream(dstPath, {flags: 'w'}));
+  await writeEntryToFile(readStream, dstPath, 0o644);
+}
+
+/**
+ * Writes the contents of a zip entry stream to `dstPath`.
+ *
+ * The output is opened without following symlinks (except on Windows, where
+ * `O_NOFOLLOW` is unavailable), shared by the full extractor and the
+ * single-entry helper so both enforce the same on-disk guarantees.
+ */
+async function writeEntryToFile(readStream: stream.Readable, dstPath: string, mode: number): Promise<void> {
+  const flags =
+    fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+  const file = await fs.openFile(dstPath, flags, mode);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const out = file.createWriteStream();
+      const settle = (err?: Error | null) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        readStream.removeListener('error', onReadError);
+        out.removeListener('error', onWriteError);
+        if (typeof (readStream as {destroy?: () => void}).destroy === 'function') {
+          readStream.destroy();
+        }
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      };
+      const onReadError = (err: Error) => settle(err);
+      const onWriteError = (err: Error) => settle(err);
+      readStream.once('error', onReadError);
+      out.once('error', onWriteError);
+      out.once('close', () => settle());
+      readStream.pipe(out);
+    });
+  } finally {
+    await file.close();
+  }
 }
 
 /**

@@ -272,11 +272,12 @@ class ZipExtractor {
   private async inspectDir(dirPath: string, fileName: string): Promise<VerifiedDir | undefined> {
     const {dir} = this.opts;
     try {
-      const [stats, realPath] = await Promise.all([fs.lstat(dirPath), fs.realpath(dirPath)]);
+      // The folder itself, after following links: this is where the files end up
+      const [stats, realPath] = await Promise.all([fs.stat(dirPath), fs.realpath(dirPath)]);
       if (!isSubPath(realPath, dir)) {
         throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
       }
-      if (!stats.isDirectory() && !stats.isSymbolicLink()) {
+      if (!stats.isDirectory()) {
         throw new Error(`Cannot create a directory over existing file "${dirPath}"`);
       }
       return {realPath, identity: {ino: stats.ino, dev: stats.dev}};
@@ -297,8 +298,8 @@ class ZipExtractor {
     if (!identity) {
       return;
     }
-    // Looking up the folder passes through its parents, so replacing any of them changes the result
-    const stats = await fs.lstat(dirPath);
+    // Looking up the folder passes through its parents and links, so replacing any of them changes the result
+    const stats = await fs.stat(dirPath);
     if (stats.ino !== identity.ino || stats.dev !== identity.dev) {
       throw new Error(`Out of bound path "${dirPath}": the folder was replaced during the extraction`);
     }

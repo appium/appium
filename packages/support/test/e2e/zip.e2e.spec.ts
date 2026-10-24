@@ -423,6 +423,34 @@ describe('#zip', function () {
             assert.deepStrictEqual(await fs.readdir(outsidePath), []);
           });
 
+          it('should reject a remembered folder link whose target was replaced during the extraction', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const outsidePath = path.resolve(tmpRoot, 'outside');
+            const dstPath = path.resolve(tmpRoot, 'swapped-target.zip');
+            await fs.mkdir(path.resolve(outputPath, 'real'), {recursive: true});
+            await fs.symlink('real', path.resolve(outputPath, 'alias'));
+            await fs.mkdir(outsidePath);
+            await createStoredZip(dstPath, [
+              {name: 'alias/1.txt', contents: '1', mode: 0o100644},
+              {name: 'alias/2.txt', contents: '2', mode: 0o100644},
+            ]);
+            const openFile = fs.openFile;
+            let swapped = false;
+            t.mock.method(fs, 'openFile', async (target: any, flags: any, mode: any) => {
+              const handle = await openFile(target, flags, mode);
+              if (!swapped) {
+                // The link stays as it is, but what it points to is replaced
+                swapped = true;
+                const realPath = path.resolve(await fs.realpath(outputPath), 'real');
+                await fs.rename(realPath, `${realPath}-moved`);
+                await fs.symlink(outsidePath, realPath);
+              }
+              return handle;
+            });
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound path/);
+            assert.deepStrictEqual(await fs.readdir(outsidePath), []);
+          });
+
           it('should not trust a folder that appeared while it was being created', async function (t) {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'mkdir-race.zip');

@@ -1,7 +1,6 @@
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
-import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 import {promisify} from 'node:util';
 
@@ -12,6 +11,10 @@ import * as yauzl from 'yauzl';
 
 import {fs} from './fs.js';
 import {createBase64EncodeStream} from './internal/index.js';
+import {ZipEntryWriter} from './internal/zip-entry-writer.js';
+import {extractZipStream} from './internal/zip-stream-parser.js';
+
+export {ZipStreamUnsupportedError} from './internal/zip-stream-parser.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
@@ -23,10 +26,6 @@ const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
 const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
-// Limit traversal to stop symlink cycles.
-const MAX_SYMLINK_TRAVERSALS = 40;
-// Upper bound of the remembered folders, they are simply verified again if it is exceeded.
-const MAX_VERIFIED_DIRS = 100_000;
 
 export interface ExtractAllOptions {
   /**
@@ -42,6 +41,19 @@ export interface ExtractAllOptions {
    * fallback to the JS unzip implementation.
    */
   useSystemUnzip?: boolean;
+}
+
+export interface ExtractStreamOptions {
+  /**
+   * The encoding of file names that are not flagged as UTF-8 by the archive.
+   * It is `utf8` by default, which is what ZIP archives created on MacOS usually contain.
+   */
+  fileNamesEncoding?: BufferEncoding;
+  /**
+   * The number of files written to the disk at the same time (4 by default).
+   * Folders, big entries and links are always processed one by one.
+   */
+  concurrency?: number;
 }
 
 export interface ZipEntry {
@@ -91,6 +103,42 @@ export interface ZipSourceOptions {
   ignore?: string[];
 }
 
+/**
+ * Extract a ZIP archive from a stream (for example, a HTTP response) to a directory
+ * while it is being received. Only stored and deflate entries are supported.
+ * The same safety checks as in {@linkcode extractAllTo} apply.
+ *
+ * Entries are read from the local file headers like `bsdtar` does it. Permissions and symlinks,
+ * which only exist in the central directory at the end of the archive, are applied after
+ * all entries are written. The source is consumed completely and destroyed on failure.
+ *
+ * @param source The archive bytes
+ * @param destDir The full path to the destination folder
+ * @param opts Extraction options
+ * @returns The total number of bytes read from the source
+ * @throws {ZipStreamUnsupportedError} If the archive uses encryption or other compression methods
+ * @throws {Error} If the source is not a valid or complete ZIP archive, or an entry is not safe to extract
+ */
+export async function extractStreamTo(
+  source: stream.Readable | AsyncIterable<Uint8Array>,
+  destDir: string,
+  opts: ExtractStreamOptions = {},
+): Promise<{archiveSize: number}> {
+  try {
+    if (!path.isAbsolute(destDir)) {
+      throw new Error(`Target path '${destDir}' is expected to be absolute`);
+    }
+    await fs.mkdir(destDir, {recursive: true});
+    const dir = await fs.realpath(destDir);
+    return await extractZipStream(source, new ZipEntryWriter({dir}), opts);
+  } catch (err) {
+    if (source instanceof stream.Readable) {
+      source.destroy();
+    }
+    throw err;
+  }
+}
+
 interface ZipExtractorOptions {
   dir: string;
   fileNamesEncoding?: BufferEncoding;
@@ -100,35 +148,19 @@ interface ZipExtractorOptions {
 
 type OpenReadStreamFn = (entry: yauzl.Entry) => Promise<stream.Readable>;
 
-/** A folder inside of the root that was checked, with the identity it had at that moment */
-interface VerifiedDir {
-  realPath: string;
-  /** Null for the root, which is never replaced */
-  identity: {ino: number; dev: number} | null;
-}
-
-interface SymlinkTarget {
-  linkTarget: string;
-  linkParentDir: string;
-  fileName: string;
-  missingPaths: Set<string>;
-}
-
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
   zipfile!: yauzl.ZipFile;
   private openReadStream!: OpenReadStreamFn;
   private readonly zipPath: string;
   private readonly opts: ZipExtractorOptions;
+  private readonly writer: ZipEntryWriter;
   private canceled = false;
-  // Normalized missing-path keys -> links to recheck when those paths become symlinks.
-  private readonly symlinkDependents = new Map<string, Set<SymlinkTarget>>();
-  // Directories already validated within the root.
-  private readonly verifiedDirs = new Map<string, VerifiedDir>();
 
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
     this.opts = opts;
+    this.writer = new ZipEntryWriter(opts);
   }
 
   async extract(): Promise<void> {
@@ -141,25 +173,12 @@ class ZipExtractor {
     this.openReadStream = createOpenReadStream(this.zipfile);
     this.canceled = false;
 
-    const {dir} = this.opts;
-
     try {
       await processYauzlEntriesSequentially(this.zipfile, async (entry) => {
         if (this.canceled) {
           return false;
         }
-
-        const fileName = this.extractFileName(entry);
-        if (fileName.startsWith('__MACOSX/')) {
-          return;
-        }
-
-        const dest = path.resolve(dir, fileName);
-        if (!isSubPath(dest, dir)) {
-          throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
-        }
-
-        await this.extractEntry(entry, fileName, dest);
+        await this.extractEntry(entry);
       });
     } catch (err) {
       this.canceled = true;
@@ -171,11 +190,8 @@ class ZipExtractor {
     return toEntryFileName(entry, this.opts.fileNamesEncoding);
   }
 
-  private async extractEntry(entry: yauzl.Entry, fileName: string, dest: string): Promise<void> {
-    if (this.canceled) {
-      return;
-    }
-
+  private async extractEntry(entry: yauzl.Entry): Promise<void> {
+    const fileName = this.extractFileName(entry);
     // convert external file attr int into a fs stat mode int
     const mode = (entry.externalFileAttributes >> 16) & 0xffff;
     // check if it's a symlink or dir (using stat mode constants)
@@ -187,288 +203,7 @@ class ZipExtractor {
       // check for windows weird way of specifying a directory
       // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
       (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
-    const procMode = this.getExtractedMode(mode, isDir) & 0o777;
-    // always ensure folders are created
-    const destDir = isDir ? dest : path.dirname(dest);
-    const verifiedDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
-    if (isDir) {
-      return;
-    }
-
-    const {realPath: realDestDir} = verifiedDir;
-    if (isSymlink) {
-      const linkTarget = await text(await this.openReadStream(entry));
-      await this.assertDirUnchanged(destDir, verifiedDir);
-      await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
-    } else {
-      await this.assertDirUnchanged(destDir, verifiedDir);
-      await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      const flags =
-        fs.constants.O_WRONLY |
-        fs.constants.O_CREAT |
-        fs.constants.O_TRUNC |
-        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
-      const readStream = await this.openReadStream(entry);
-      try {
-        const file = await fs.openFile(dest, flags, procMode);
-        try {
-          await pipeline(readStream, file.createWriteStream());
-        } finally {
-          await file.close();
-        }
-      } finally {
-        // Opening the output may fail before pipeline takes ownership of the input.
-        readStream.destroy();
-      }
-    }
-  }
-
-  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<VerifiedDir> {
-    const cached = this.verifiedDirs.get(dirPath);
-    if (cached) {
-      return cached;
-    }
-
-    const {dir} = this.opts;
-    if (!isSubPath(dirPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-    }
-
-    const relativePath = path.relative(dir, dirPath);
-    if (!relativePath) {
-      return {realPath: dir, identity: null};
-    }
-
-    if (this.verifiedDirs.size > MAX_VERIFIED_DIRS) {
-      this.verifiedDirs.clear();
-    }
-    let current: VerifiedDir | undefined;
-    let currentPath = dir;
-    for (const segment of relativePath.split(path.sep)) {
-      currentPath = path.join(currentPath, segment);
-      current = this.verifiedDirs.get(currentPath);
-      if (current) {
-        continue;
-      }
-      current = await this.inspectDir(currentPath, fileName);
-      if (!current) {
-        // The result of mkdir is not trusted: whatever is there now is checked like an existing folder
-        await fs.mkdir(currentPath, {mode});
-        current = await this.inspectDir(currentPath, fileName);
-      }
-      if (!current) {
-        throw new Error(`Cannot create the directory "${currentPath}" while processing file ${fileName}`);
-      }
-      this.verifiedDirs.set(currentPath, current);
-    }
-    return current as VerifiedDir;
-  }
-
-  /**
-   * Resolves an existing folder (or a link to a folder) and checks it is within the root.
-   *
-   * @returns Undefined if the path does not exist
-   */
-  private async inspectDir(dirPath: string, fileName: string): Promise<VerifiedDir | undefined> {
-    const {dir} = this.opts;
-    try {
-      // The folder itself, after following links: this is where the files end up
-      const [stats, realPath] = await Promise.all([fs.stat(dirPath), fs.realpath(dirPath)]);
-      if (!isSubPath(realPath, dir)) {
-        throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-      }
-      if (!stats.isDirectory()) {
-        throw new Error(`Cannot create a directory over existing file "${dirPath}"`);
-      }
-      return {realPath, identity: {ino: stats.ino, dev: stats.dev}};
-    } catch (err: any) {
-      if (err.code === 'ENOENT') {
-        return undefined;
-      }
-      throw err;
-    }
-  }
-
-  /**
-   * Remembered folders are not checked again when they are reused, so make sure that neither
-   * the folder nor any of its parents was replaced (e.g. with a link) since it was verified.
-   */
-  private async assertDirUnchanged(dirPath: string, verified: VerifiedDir): Promise<void> {
-    const {identity} = verified;
-    if (!identity) {
-      return;
-    }
-    // Looking up the folder passes through its parents and links, so replacing any of them changes the result
-    const stats = await fs.stat(dirPath);
-    if (stats.ino !== identity.ino || stats.dev !== identity.dev) {
-      throw new Error(`Out of bound path "${dirPath}": the folder was replaced during the extraction`);
-    }
-  }
-
-  private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
-    const {dir} = this.opts;
-    let realDest: string | null = null;
-    try {
-      if ((await fs.lstat(dest)).isSymbolicLink()) {
-        throw new Error(`Cannot write a file over existing symlink "${dest}"`);
-      }
-      realDest = await fs.realpath(dest);
-    } catch (err: any) {
-      if (err.code !== 'ENOENT') {
-        throw err;
-      }
-    }
-
-    realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
-    if (!isSubPath(realDest, dir)) {
-      throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
-    }
-  }
-
-  private getExtractedMode(entryMode: number, isDir: boolean): number {
-    const {defaultDirMode, defaultFileMode} = this.opts;
-
-    let mode = entryMode;
-    // Set defaults, if necessary
-    if (mode === 0) {
-      if (isDir) {
-        if (defaultDirMode) {
-          mode = parseInt(defaultDirMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o755;
-        }
-      } else {
-        if (defaultFileMode) {
-          mode = parseInt(defaultFileMode, 10);
-        }
-
-        if (!mode) {
-          mode = 0o644;
-        }
-      }
-    }
-
-    return mode;
-  }
-
-  /**
-   * Reject escaping targets or excessive traversal; return missing-path keys for later rechecks.
-   */
-  private async validateSymlinkTarget(
-    linkTarget: string,
-    linkParentDir: string,
-    fileName: string,
-  ): Promise<Set<string>> {
-    // Resolve links before '..'; realpath alone cannot handle missing targets.
-    const separator = isWindows() ? /[\\/]+/ : /\/+/;
-    const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';
-    let resolvedPath = targetRoot || linkParentDir;
-    const remainingSegments = linkTarget.slice(targetRoot.length).split(separator);
-    const missingPaths = new Set<string>();
-    let followedLinks = 0;
-
-    while (remainingSegments.length) {
-      const segment = remainingSegments.shift();
-      if (!segment || segment === '.') {
-        continue;
-      }
-      if (segment === '..') {
-        resolvedPath = path.dirname(resolvedPath);
-        continue;
-      }
-
-      const candidatePath = path.join(resolvedPath, segment);
-      let nestedLinkTarget: string | null = null;
-      try {
-        const stats = await fs.lstat(candidatePath);
-        if (stats.isSymbolicLink()) {
-          nestedLinkTarget = await fs.readlink(candidatePath);
-        }
-      } catch (err: any) {
-        if (err.code !== 'ENOENT') {
-          throw err;
-        }
-        // An absent component may become a symlink in a later ZIP entry.
-        missingPaths.add(this.getSymlinkDependencyKey(candidatePath));
-      }
-
-      // Advance past ordinary or missing components.
-      if (nestedLinkTarget === null) {
-        resolvedPath = candidatePath;
-        continue;
-      }
-
-      followedLinks += 1;
-      if (followedLinks > MAX_SYMLINK_TRAVERSALS) {
-        throw new Error(`Too many symlinks while processing file ${fileName}`);
-      }
-      // Resolve relative targets from the link's parent, absolute targets from their root.
-      if (path.isAbsolute(nestedLinkTarget)) {
-        resolvedPath = path.parse(nestedLinkTarget).root;
-        nestedLinkTarget = nestedLinkTarget.slice(resolvedPath.length);
-      }
-      remainingSegments.unshift(...nestedLinkTarget.split(separator));
-    }
-
-    if (!isSubPath(resolvedPath, this.opts.dir)) {
-      throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
-    }
-    return missingPaths;
-  }
-
-  private updateSymlinkDependencies(target: SymlinkTarget, missingPaths: Set<string>): void {
-    for (const missingPath of target.missingPaths) {
-      const dependents = this.symlinkDependents.get(missingPath);
-      dependents?.delete(target);
-      if (!dependents?.size) {
-        this.symlinkDependents.delete(missingPath);
-      }
-    }
-    target.missingPaths = missingPaths;
-    for (const missingPath of missingPaths) {
-      let dependents = this.symlinkDependents.get(missingPath);
-      if (!dependents) {
-        dependents = new Set();
-        this.symlinkDependents.set(missingPath, dependents);
-      }
-      dependents.add(target);
-    }
-  }
-
-  private async createValidatedSymlink(
-    linkTarget: string,
-    dest: string,
-    linkParentDir: string,
-    fileName: string,
-  ): Promise<void> {
-    // Reject an escaping target before creating the link on disk.
-    await this.validateSymlinkTarget(linkTarget, linkParentDir, fileName);
-    await fs.symlink(linkTarget, dest);
-    try {
-      const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
-      // Recheck for cycles and redirected forward references after creating the link.
-      const key = this.getSymlinkDependencyKey(path.join(linkParentDir, path.basename(dest)));
-      const affectedTargets = [target, ...(this.symlinkDependents.get(key) ?? [])];
-      for (const affectedTarget of affectedTargets) {
-        const missingPaths = await this.validateSymlinkTarget(
-          affectedTarget.linkTarget,
-          affectedTarget.linkParentDir,
-          affectedTarget.fileName,
-        );
-        this.updateSymlinkDependencies(affectedTarget, missingPaths);
-      }
-    } catch (err) {
-      // Roll back the link that invalidated a target.
-      await fs.unlink(dest);
-      throw err;
-    }
-  }
-
-  private getSymlinkDependencyKey(absolutePath: string): string {
-    // Normalize keys, not filesystem paths. Collisions only cause extra checks.
-    return absolutePath.normalize('NFD').toLowerCase();
+    await this.writer.write({fileName, mode, isDir, isSymlink, openBody: () => this.openReadStream(entry)});
   }
 }
 

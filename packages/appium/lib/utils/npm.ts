@@ -79,7 +79,7 @@ export class NPM {
     }
     let npmCmd = 'npm';
     if (isWindows) {
-      const {node, cli} = await this._resolveWindowsNpmCli(teenProcessExecOpts);
+      const {node, cli} = await this._resolveWindowsNpmCommand(teenProcessExecOpts);
       npmCmd = node;
       argsCopy.unshift(cli);
     }
@@ -280,8 +280,8 @@ export class NPM {
     return path.join(cwd, INSTALL_LOCKFILE_RELATIVE_PATH);
   }
 
-  /** Resolves the CLI selected by the Windows npm shim on PATH. */
-  private async _resolveWindowsNpmCli(execOpts: TeenProcessExecOptions): Promise<WindowsNpmCommand> {
+  /** Resolves the Node executable and npm CLI selected by the Windows shim on PATH. */
+  private async _resolveWindowsNpmCommand(execOpts: TeenProcessExecOptions): Promise<WindowsNpmCommand> {
     // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
     // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
     const env = {...(execOpts.env ?? process.env)};
@@ -293,8 +293,9 @@ export class NPM {
     }
     npmShim = await fs.realpath(npmShim);
     // Custom process options (for example cancellation or logging) belong to each caller.
-    if (Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key))) {
-      return await this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
+    const hasCustomProcessOptions = Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key));
+    if (hasCustomProcessOptions) {
+      return await this._resolveWindowsNpmCommandFromShim(npmShim, {...execOpts, env});
     }
     // npmrc values can interpolate arbitrary environment variables, so even variables
     // unrelated to PATH or npm_config_* may change the selected global prefix.
@@ -305,7 +306,7 @@ export class NPM {
     }
     // No await between lookup and insertion: concurrent callers share this promise
     // without a lock or repeating the prefix probe.
-    const resolution = this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
+    const resolution = this._resolveWindowsNpmCommandFromShim(npmShim, {...execOpts, env});
     this._pendingWindowsNpmCli.set(key, resolution);
     try {
       return await resolution;
@@ -356,8 +357,8 @@ export class NPM {
     throw new Error(`Cannot find ${command} in the supplied search path`);
   }
 
-  /** Resolves the CLI for a discovered shim, including its configured global prefix. */
-  private async _resolveWindowsNpmCliFromShim(
+  /** Resolves the Node executable and npm CLI for a discovered shim, including its global prefix. */
+  private async _resolveWindowsNpmCommandFromShim(
     npmShim: string,
     execOpts: TeenProcessExecOptions,
   ): Promise<WindowsNpmCommand> {

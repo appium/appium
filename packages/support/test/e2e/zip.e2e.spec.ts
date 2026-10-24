@@ -290,12 +290,93 @@ describe('#zip', function () {
             await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Too many symlinks/);
           });
 
+          it('should extract many entries sharing nested parent directories', async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'nested.zip');
+            const names = ['a/b/c/1.txt', 'a/b/2.txt', 'a/b/c/d/3.txt', 'a/4.txt', 'a/b/c/5.txt', 'e/6.txt'];
+            await createStoredZip(
+              dstPath,
+              names.map((name) => ({name, contents: name, mode: 0o100644})),
+            );
+            await zip.extractAllTo(dstPath, outputPath);
+            for (const name of names) {
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, name), 'utf8'), name);
+            }
+          });
+
+          it('should validate shared parent directories a bounded number of times', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'shared-parents.zip');
+            const fileCount = 40;
+            await createStoredZip(
+              dstPath,
+              Array.from({length: fileCount}, (_, i) => ({name: `a/b/c/${i}.txt`, contents: `${i}`, mode: 0o100644})),
+            );
+            const lstat = t.mock.method(fs, 'lstat', fs.lstat);
+            const realpath = t.mock.method(fs, 'realpath', fs.realpath);
+            await zip.extractAllTo(dstPath, outputPath);
+            // One lstat per file destination plus a constant number for the parent directories
+            assert.ok(lstat.mock.callCount() <= fileCount + 10, `lstat calls: ${lstat.mock.callCount()}`);
+            assert.ok(realpath.mock.callCount() <= 10, `realpath calls: ${realpath.mock.callCount()}`);
+          });
+
+          it('should not let a symlink entry replace a cached directory', {skip: isWindows()}, async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'replace-cached.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a/first.txt', contents: 'first', mode: 0o100644},
+              {name: 'a', contents: 'elsewhere', mode: 0o120777},
+              {name: 'a/second.txt', contents: 'second', mode: 0o100644},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), {code: 'EEXIST'});
+            assert.ok((await fs.lstat(path.resolve(outputPath, 'a'))).isDirectory());
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'a/first.txt'), 'utf8'), 'first');
+          });
+
+          it(
+            'should extract nested entries under an in-root symlinked directory',
+            {skip: isWindows()},
+            async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const dstPath = path.resolve(tmpRoot, 'symlinked-parent.zip');
+              await createStoredZip(dstPath, [
+                {name: 'real/a.txt', contents: 'a', mode: 0o100644},
+                {name: 'link', contents: 'real', mode: 0o120777},
+                {name: 'link/sub/b.txt', contents: 'b', mode: 0o100644},
+                {name: 'link/sub/c.txt', contents: 'c', mode: 0o100644},
+              ]);
+              await zip.extractAllTo(dstPath, outputPath);
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'real/sub/b.txt'), 'utf8'), 'b');
+              assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'real/sub/c.txt'), 'utf8'), 'c');
+            },
+          );
+
+          it(
+            'should reject an escaping symlinked directory below a cached one',
+            {skip: isWindows()},
+            async function () {
+              const outputPath = path.resolve(tmpRoot, 'output');
+              const outsidePath = path.resolve(tmpRoot, 'outside');
+              const dstPath = path.resolve(tmpRoot, 'cached-parent.zip');
+              await fs.mkdir(path.resolve(outputPath, 'a'), {recursive: true});
+              await fs.mkdir(outsidePath);
+              await fs.symlink(outsidePath, path.resolve(outputPath, 'a', 'b'));
+              await createStoredZip(dstPath, [
+                {name: 'a/1.txt', contents: '1', mode: 0o100644},
+                {name: 'a/b/2.txt', contents: '2', mode: 0o100644},
+              ]);
+              await assert.rejects(zip.extractAllTo(dstPath, outputPath), /Out of bound/);
+              assert.deepStrictEqual(await fs.readdir(outsidePath), []);
+            },
+          );
+
           it('should not follow a destination symlink introduced after validation', async function (t) {
             const outputPath = path.resolve(tmpRoot, 'output');
             const dstPath = path.resolve(tmpRoot, 'race.zip');
             const outsidePath = path.resolve(tmpRoot, 'outside');
-            const dest = path.resolve(outputPath, 'f');
             await fs.mkdir(outputPath);
+            // The extractor passes real paths (e.g. /private/var on macOS) to realpath
+            const dest = path.resolve(await fs.realpath(outputPath), 'f');
             await fs.writeFile(dest, 'inside');
             await fs.writeFile(outsidePath, 'original');
             await createStoredZip(dstPath, [{name: 'f', contents: 'replacement', mode: 0o100644}]);

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {AsyncLocalStorage} from 'node:async_hooks';
 import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {PassThrough, Readable} from 'node:stream';
@@ -10,6 +11,31 @@ import {WebSocket, WebSocketServer} from 'ws';
 import {Storage, StorageArgumentError} from '../../lib/storage.js';
 
 describe('concurrent storage uploads', function () {
+  it('runs a queued upload in its own async context', async function (t) {
+    const root = await tempDir.openDir();
+    try {
+      const storage = new Storage(root, true, true, logger.getLogger());
+      const als = new AsyncLocalStorage<string>();
+      const seen: Record<string, string | undefined> = {};
+      let calls = 0;
+      t.mock.method(storage as any, '_addFromStream', async () => {
+        const id = ['first', 'second'][calls++];
+        seen[id] = als.getStore();
+        await new Promise((resolve) => setTimeout(resolve, 30));
+      });
+      const sha1 = 'a'.repeat(40);
+      const upload = (id: string) => als.run(id, () => storage.add({name: 'app.apk', sha1}, new PassThrough()));
+
+      const first = upload('first');
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      await Promise.all([first, upload('second')]);
+
+      assert.deepEqual(seen, {first: 'first', second: 'second'});
+    } finally {
+      await fs.rimraf(root);
+    }
+  });
+
   it('rejects a busy WebSocket upload and permits a later retry', {timeout: 4000}, async function (t) {
     const root = await tempDir.openDir();
     const storage = new Storage(root, true, true, logger.getLogger());

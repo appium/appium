@@ -238,7 +238,7 @@ describe('timeout', function () {
 
   describe('set implicit wait', function () {
     it('should keep polling without a deadline when the implicit timeout is null', async function () {
-      const clock = sandbox.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
+      const clock = sandbox.useFakeTimers({toFake: ['Date', 'performance', 'setTimeout', 'clearTimeout']});
       driver.setImplicitWait(null);
       const condition = sandbox.stub().callsFake(async () => Date.now() >= 6000);
       const result = driver.implicitWaitForCondition(condition);
@@ -257,7 +257,7 @@ describe('timeout', function () {
     });
 
     it('should stop polling at a finite implicit timeout', async function () {
-      const clock = sandbox.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
+      const clock = sandbox.useFakeTimers({toFake: ['Date', 'performance', 'setTimeout', 'clearTimeout']});
       driver.setImplicitWait(1000);
       const condition = sandbox.stub().resolves(false);
       const assertion = assert.rejects(driver.implicitWaitForCondition(condition), /Timing out/);

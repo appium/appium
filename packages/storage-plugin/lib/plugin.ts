@@ -5,7 +5,7 @@ import {fs, logger, tempDir, util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
 import {getResponseForW3CError} from 'appium/driver.js';
 import {BasePlugin} from 'appium/plugin.js';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 import {LRUCache} from 'lru-cache';
 import {WebSocketServer} from 'ws';

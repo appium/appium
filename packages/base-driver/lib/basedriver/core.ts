@@ -14,7 +14,7 @@ import type {
   StringRecord,
   TimeoutValue,
 } from '@appium/types';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 
 import {DEFAULT_BASE_PATH, NEW_COMMAND_TIMEOUT_MS, PROTOCOLS, W3C_TIMEOUTS_MS} from '../constants.js';
 import {errors, GET_STATUS_COMMAND} from '../protocol/index.js';

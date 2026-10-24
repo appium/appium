@@ -5,7 +5,7 @@ import {pipeline} from 'node:stream/promises';
 
 import {fs, tempDir, timing, util} from '@appium/support';
 import type {CachedAppInfo, ConfigureAppOptions, HTTPHeaders, PostProcessOptions} from '@appium/types';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 import axios from 'axios';
 import type {AxiosRequestConfig, AxiosResponseHeaders, RawAxiosRequestHeaders} from 'axios';
 import {LRUCache} from 'lru-cache';

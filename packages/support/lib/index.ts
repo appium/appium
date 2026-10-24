@@ -39,4 +39,11 @@ export type {
   PluralizeOptions,
   TruncateStringOptions,
 } from './util.js';
-export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip.js';
+export type {
+  ExtractAllOptions,
+  ExtractStreamOptions,
+  ZipCompressionOptions,
+  ZipEntry,
+  ZipOptions,
+  ZipSourceOptions,
+} from './zip.js';

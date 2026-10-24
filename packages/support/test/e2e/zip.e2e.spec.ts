@@ -304,6 +304,35 @@ describe('#zip', function () {
             }
           });
 
+          it('should validate shared parent directories a bounded number of times', async function (t) {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'shared-parents.zip');
+            const fileCount = 40;
+            await createStoredZip(
+              dstPath,
+              Array.from({length: fileCount}, (_, i) => ({name: `a/b/c/${i}.txt`, contents: `${i}`, mode: 0o100644})),
+            );
+            const lstat = t.mock.method(fs, 'lstat', fs.lstat);
+            const realpath = t.mock.method(fs, 'realpath', fs.realpath);
+            await zip.extractAllTo(dstPath, outputPath);
+            // One lstat per file destination plus a constant number for the parent directories
+            assert.ok(lstat.mock.callCount() <= fileCount + 10, `lstat calls: ${lstat.mock.callCount()}`);
+            assert.ok(realpath.mock.callCount() <= 10, `realpath calls: ${realpath.mock.callCount()}`);
+          });
+
+          it('should not let a symlink entry replace a cached directory', {skip: isWindows()}, async function () {
+            const outputPath = path.resolve(tmpRoot, 'output');
+            const dstPath = path.resolve(tmpRoot, 'replace-cached.zip');
+            await createStoredZip(dstPath, [
+              {name: 'a/first.txt', contents: 'first', mode: 0o100644},
+              {name: 'a', contents: 'elsewhere', mode: 0o120777},
+              {name: 'a/second.txt', contents: 'second', mode: 0o100644},
+            ]);
+            await assert.rejects(zip.extractAllTo(dstPath, outputPath), {code: 'EEXIST'});
+            assert.ok((await fs.lstat(path.resolve(outputPath, 'a'))).isDirectory());
+            assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'a/first.txt'), 'utf8'), 'first');
+          });
+
           it(
             'should extract nested entries under an in-root symlinked directory',
             {skip: isWindows()},

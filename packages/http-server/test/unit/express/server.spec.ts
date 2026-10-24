@@ -703,6 +703,74 @@ describe('server configuration', function () {
     }
   });
 
+  it('should reject invalid JSON before an extension param callback runs', async function () {
+    let appParamCalls = 0;
+    let routerParamCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.param('itemId', (_req: any, res: any) => {
+            appParamCalls += 1;
+            res.send('from-param');
+          });
+          app.post('/items/:itemId', (_req: any, res: any) => {
+            res.send('item');
+          });
+          const router = express.Router();
+          router.param('itemId', (_req, res) => {
+            routerParamCalls += 1;
+            res.send('from-param');
+          });
+          router.post('/:itemId', (_req, res) => {
+            res.send('mounted');
+          });
+          app.use('/mounted', router);
+        },
+      ],
+    });
+    try {
+      const badApp = await fetch(`http://127.0.0.1:${port}/items/1`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badApp.status, 400);
+      assert.strictEqual(((await badApp.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(appParamCalls, 0);
+
+      const badRouter = await fetch(`http://127.0.0.1:${port}/mounted/1`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badRouter.status, 400);
+      assert.strictEqual(((await badRouter.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(routerParamCalls, 0);
+
+      const appItem = await fetch(`http://127.0.0.1:${port}/items/1`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(appItem.status, 200);
+      assert.strictEqual(await appItem.text(), 'from-param');
+      assert.strictEqual(appParamCalls, 1);
+
+      const mounted = await fetch(`http://127.0.0.1:${port}/mounted/1`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(mounted.status, 200);
+      assert.strictEqual(await mounted.text(), 'from-param');
+      assert.strictEqual(routerParamCalls, 1);
+    } finally {
+      await _server.close();
+    }
+  });
+
   for (const basePath of ['', '/wd/hub']) {
     it(`should return W3C errors for unknown paths with basePath '${basePath}'`, async function () {
       const _server = await server({

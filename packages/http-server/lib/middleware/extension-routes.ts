@@ -3,9 +3,11 @@ import type {Express, NextFunction, Request, RequestHandler, Response, Router} f
 
 const ROUTE_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'] as const;
 
+type ParamCallback = (req: Request, res: Response, next: NextFunction, value: unknown, name: string) => unknown;
+
 interface RouteLayer {
   route?: ExtensionRoute;
-  handle: RequestHandler & {stack?: RouteLayer[]};
+  handle: RequestHandler & {stack?: RouteLayer[]; params?: Record<string, ParamCallback[]>};
   method?: string;
   /** `router.use(fn)` matches every path under the mount. A prefixed `app.use('/solo', fn)` does not. */
   slash?: boolean;
@@ -26,8 +28,8 @@ interface ExtensionRoute {
 /**
  * A route added by a server updater is not a WebDriver command.
  * When one of those routes matches, a JSON body that failed to parse is `invalid argument`
- * and that route's handler does not run. Middleware added with the route is not run either.
- * A URL that matches none of them is left alone.
+ * and that route's handler does not run. Middleware or a param callback added with the route
+ * is not run either. A URL that matches none of them is left alone.
  */
 export function rejectInvalidJsonOnExtensionRoutes(
   app: Express,
@@ -36,6 +38,8 @@ export function rejectInvalidJsonOnExtensionRoutes(
   frontRoutesBefore: number,
 ): void {
   const seen = new WeakSet<object>();
+  wrapParamCallbacks(app.router as RouteLayer['handle'], seen);
+  wrapParamCallbacks(frontRouter as RouteLayer['handle'], seen);
   rejectOnLayers(app.router.stack as RouteLayer[], appRoutesBefore, seen);
   rejectOnLayers(frontRouter.stack as RouteLayer[], frontRoutesBefore, seen);
 }
@@ -61,10 +65,41 @@ function rejectOnLayers(layers: RouteLayer[], fromIndex: number, seen: WeakSet<o
     }
     const nested = nestedRouterStack(layer.handle);
     if (nested) {
+      wrapParamCallbacks(layer.handle, seen);
       rejectOnLayers(nested, 0, seen);
       continue;
     }
     wrapUseLayer(layer);
+  }
+}
+
+/**
+ * `router.param` runs before the route stack. A bad JSON body skips it.
+ */
+function wrapParamCallbacks(router: RouteLayer['handle'], seen: WeakSet<object>): void {
+  if (seen.has(router) || !router.params) {
+    return;
+  }
+  seen.add(router);
+
+  for (const callbacks of Object.values(router.params)) {
+    for (let i = 0; i < callbacks.length; i++) {
+      const fn = callbacks[i];
+      callbacks[i] = function rejectExtensionParam(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+        value: unknown,
+        name: string,
+      ) {
+        const jsonParseError = jsonParseErrors.getInvalidArgument(req);
+        if (!jsonParseError) {
+          return fn(req, res, next, value, name);
+        }
+        const [status, body] = getResponseForW3CError(jsonParseError);
+        res.status(status).json(body);
+      };
+    }
   }
 }
 

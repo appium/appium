@@ -49,7 +49,7 @@
     "@appium/support": "7.2.8",
     "@appium/types": "1.7.1",
     "async-lock": "1.4.1",
-    "asyncbox": "6.4.3",
+    "asyncbox": "6.5.0",
     "axios": "1.20.0",
     "body-parser": "2.3.0",
     "express": "5.2.1",

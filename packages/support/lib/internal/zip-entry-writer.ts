@@ -266,11 +266,18 @@ export class ZipEntryWriter {
 
   /** Identifies the path of the entry on this filesystem, for telling apart entries that replace each other. */
   pathKey(fileName: string): string {
-    let key = path.resolve(this.opts.dir, fileName);
-    if (this.normalizationInsensitive) {
-      key = key.normalize('NFD');
-    }
-    return this.caseInsensitive ? key.toLowerCase() : key;
+    return this.foldKey(path.resolve(this.opts.dir, fileName));
+  }
+
+  /** Like {@link pathKey} for a prepared file, but with its folder resolved, so that folder links give the same key. */
+  preparedKey(prepared: PreparedFile): string {
+    return this.foldKey(path.join(prepared.verifiedDir.realPath, path.basename(prepared.dest)));
+  }
+
+  /** Like {@link pathKey} for a folder entry, but with the folder resolved. */
+  async folderKey(fileName: string): Promise<string> {
+    const {realPath} = await this.ensureDirWithinRoot(this.resolveWithinRoot(fileName), fileName);
+    return this.foldKey(realPath);
   }
 
   /**
@@ -461,6 +468,11 @@ export class ZipEntryWriter {
     if ((stats.isFile() || stats.isDirectory()) && (stats.mode & 0o777) !== permissions) {
       await fs.chmod(dest, permissions);
     }
+  }
+
+  private foldKey(key: string): string {
+    const normalized = this.normalizationInsensitive ? key.normalize('NFD') : key;
+    return this.caseInsensitive ? normalized.toLowerCase() : normalized;
   }
 
   private createFlags(): number {

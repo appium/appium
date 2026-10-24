@@ -458,6 +458,19 @@ describe('zip.extractStreamTo()', function () {
       assert.strictEqual((await fs.stat(path.join(out, 'd/f'))).mode & 0o777, 0);
     });
 
+    it('should let the last entry win when folder links lead to the same path', {skip: isWindows()}, async function () {
+      await fs.mkdir(path.join(out, 'real'), {recursive: true});
+      await fs.symlink('real', path.join(out, 'alias'));
+      const data = buildZip([
+        {name: 'real/x', data: 'target', mode: LINK},
+        {name: 'alias/x', data: 'plain content', mode: FILE},
+      ]);
+      await zip.extractStreamTo(chunked(data, [100]), out);
+      const stats = await fs.lstat(path.join(out, 'real', 'x'));
+      assert.strictEqual(stats.isFile(), true);
+      assert.strictEqual(await fs.readFile(path.join(out, 'real', 'x'), 'utf8'), 'plain content');
+    });
+
     it('should keep the permissions of the destination folder', {skip: isWindows()}, async function () {
       await fs.mkdir(out);
       await fs.chmod(out, 0o755);

@@ -408,7 +408,6 @@ async function extractEntry(context: EntryContext, header: LocalHeader): Promise
 
   const hasDescriptor = Boolean(flags & FLAG_DESCRIPTOR);
   const isDir = fileName.endsWith('/');
-  const entry: WrittenEntry = {fileName, rawName: header.rawName, key: writer.pathKey(fileName), isDir, created: false};
   const ignored = isIgnoredEntry(fileName);
   if (isDir && !ignored) {
     // Unix mode is only stored in the central directory
@@ -416,6 +415,14 @@ async function extractEntry(context: EntryContext, header: LocalHeader): Promise
   }
   // The content of folders and ignored entries is still read and verified
   const prepared = isDir || ignored ? null : await writer.prepareFile(fileName);
+  // Entries that reach the same path through folder links must replace each other
+  let key = writer.pathKey(fileName);
+  if (prepared) {
+    key = writer.preparedKey(prepared);
+  } else if (isDir && !ignored) {
+    key = await writer.folderKey(fileName);
+  }
+  const entry: WrittenEntry = {fileName, rawName: header.rawName, key, isDir, created: false};
   const sink = new EntrySink(context, entry, prepared, hasDescriptor ? null : header.size);
   try {
     if (!hasDescriptor) {

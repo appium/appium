@@ -23,7 +23,7 @@ export async function getLogTypes<C extends Constraints>(this: BaseDriver<C>): P
 export async function getLog<C extends Constraints>(this: Driver<C>, logType: string): Promise<any> {
   this.log.debug(`Retrieving '${String(logType)}' logs`);
 
-  if (!(logType in this.supportedLogTypes)) {
+  if (!Object.hasOwn(this.supportedLogTypes, logType)) {
     const logsTypesWithDescriptions = Object.fromEntries(
       Object.entries(this.supportedLogTypes).map(([key, value]) => [key, value.description]),
     );

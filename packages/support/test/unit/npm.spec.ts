@@ -18,6 +18,24 @@ describe('npm', function () {
     });
   });
 
+  describe('uninstallPackage()', function () {
+    it('should disable audit while retaining the install lock', async function (t) {
+      const npm = new NPM();
+      const cwd = path.resolve('appium-home');
+      const exec = t.mock.method(npm, 'exec', async () => ({stdout: '', stderr: '', code: 0}));
+
+      await npm.uninstallPackage(cwd, '@appium/fake-driver');
+
+      assert.strictEqual(exec.mock.callCount(), 1);
+      const [command, args, options] = exec.mock.calls[0].arguments;
+      assert.strictEqual(command, 'uninstall');
+      assert.deepStrictEqual(args, ['@appium/fake-driver', '--no-audit']);
+      assert.ok(options);
+      assert.strictEqual(options.cwd, cwd);
+      assert.ok(options.lockFile);
+    });
+  });
+
   describe('getLatestSafeUpgradeFromVersions()', function () {
     const versions1 = [
       '0.1.0',

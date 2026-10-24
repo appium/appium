@@ -214,6 +214,44 @@ describe('zip.extractStreamTo() safety and failures', function () {
       },
     );
 
+    for (const [title, second] of [
+      ['a file', 'a/2.txt'],
+      ['a new folder', 'a/new/2.txt'],
+    ]) {
+      it(
+        `should reject ${title} below a remembered folder moved outside of the root`,
+        {skip: isWindows()},
+        async function (t) {
+          const movedPath = path.join(tmpRoot, 'moved');
+          const data = buildZip([
+            {name: 'a/1.txt', data: '1'},
+            {name: second, data: '2'},
+          ]);
+          const secondEntryAt = data.indexOf(Buffer.from(second)) - 30;
+          const openFile = fs.openFile;
+          let swap!: () => void;
+          const swapped = new Promise<void>((resolve) => {
+            swap = resolve;
+          });
+          t.mock.method(fs, 'openFile', async (target: any, flags: any, mode: any) => {
+            const handle = await openFile(target, flags, mode);
+            // The folder keeps its identity, but now lives outside of the root behind a link
+            await fs.rename(path.join(out, 'a'), movedPath);
+            await fs.symlink(movedPath, path.join(out, 'a'));
+            swap();
+            return handle;
+          });
+          async function* source() {
+            yield data.subarray(0, secondEntryAt);
+            await swapped;
+            yield data.subarray(secondEntryAt);
+          }
+          await assert.rejects(zip.extractStreamTo(source(), out, {concurrency: 1}), /Out of bound path/);
+          assert.deepStrictEqual(await fs.readdir(movedPath), ['1.txt']);
+        },
+      );
+    }
+
     it('should not trust a folder that appeared while it was being created', {skip: isWindows()}, async function (t) {
       const mkdir = fs.mkdir;
       t.mock.method(fs, 'mkdir', async (target: any, opts: any) => {

@@ -189,21 +189,11 @@ class ZipExtractor {
       await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
       await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      const flags =
-        fs.constants.O_WRONLY |
-        fs.constants.O_CREAT |
-        fs.constants.O_TRUNC |
-        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
       const readStream = await this.openReadStream(entry);
       try {
-        const file = await fs.openFile(dest, flags, procMode);
-        try {
-          await pipeline(readStream, file.createWriteStream());
-        } finally {
-          await file.close();
-        }
+        await writeEntryToFile(readStream, dest, procMode);
       } finally {
-        // Opening the output may fail before pipeline takes ownership of the input.
+        // Opening the output may fail before the writer takes ownership of the input.
         readStream.destroy();
       }
     }
@@ -429,8 +419,17 @@ export async function extractAllTo(zipFilePath: string, destDir: string, opts: E
   const dir = await fs.realpath(destDir);
   if (opts.useSystemUnzip) {
     try {
-      await extractWithSystemUnzip(zipFilePath, dir);
-      return;
+      if (await hasSymlinkEntries(zipFilePath)) {
+        // The system unzip binary does not enforce the symlink containment that the
+        // JS extractor does, so an archive with symlink entries must not take this path.
+        log.info(
+          'The archive %s contains symlink entries; using the JS extractor to enforce symlink containment',
+          zipFilePath,
+        );
+      } else {
+        await extractWithSystemUnzip(zipFilePath, dir);
+        return;
+      }
     } catch (err: any) {
       log.warn('unzip failed; falling back to JS: %s', err.stderr || err.message);
     }
@@ -772,6 +771,71 @@ async function extractWithSystemUnzip(zipFilePath: string, destDir: string): Pro
     // -o means overwrite
     // -d is the dest dir
     await exec(executablePath, ['-q', '-o', zipFilePath, '-d', destDir]);
+  }
+}
+
+/**
+ * Writes the contents of a zip entry stream to `dstPath`.
+ *
+ * The output is opened without following symlinks (except on Windows, where
+ * `O_NOFOLLOW` is unavailable), shared by the full extractor and the
+ * single-entry helper so both enforce the same on-disk guarantees.
+ */
+async function writeEntryToFile(readStream: stream.Readable, dstPath: string, mode: number): Promise<void> {
+  const flags =
+    fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+  const file = await fs.openFile(dstPath, flags, mode);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      let settled = false;
+      const out = file.createWriteStream();
+      const settle = (err?: Error | null) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        readStream.removeListener('error', onReadError);
+        out.removeListener('error', onWriteError);
+        if (typeof (readStream as {destroy?: () => void}).destroy === 'function') {
+          readStream.destroy();
+        }
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      };
+      const onReadError = (err: Error) => settle(err);
+      const onWriteError = (err: Error) => settle(err);
+      readStream.once('error', onReadError);
+      out.once('error', onWriteError);
+      out.once('close', () => settle());
+      readStream.pipe(out);
+    });
+  } finally {
+    await file.close();
+  }
+}
+
+/**
+ * Detects whether the archive contains any symlink entries.
+ * Used to keep such archives away from the system unzip binary,
+ * which does not enforce symlink containment.
+ */
+async function hasSymlinkEntries(zipFilePath: string): Promise<boolean> {
+  const zipfile = await openZip(zipFilePath, {lazyEntries: true});
+  try {
+    let found = false;
+    await processYauzlEntriesSequentially(zipfile, async (entry) => {
+      const mode = (entry.externalFileAttributes >> 16) & 0xffff;
+      if ((mode & IFMT) === IFLNK) {
+        found = true;
+        return false;
+      }
+    });
+    return found;
+  } finally {
+    zipfile.close();
   }
 }
 

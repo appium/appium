@@ -328,21 +328,30 @@ export class NPM {
       cwd,
       ...searchPath.split(path.delimiter).map((entry) => path.resolve(cwd, entry.replace(/^"(.*)"$/, '$1'))),
     ];
-    // Promise.all preserves search order even when later PATH entries finish first.
-    const executables = await Promise.all(
-      [...new Set(directories)].map(
-        async (directory) =>
-          // Absolute candidates prevent which from adding process.cwd() or using
-          // process.env.PATH when the supplied PATH is empty.
-          await fs.which(path.resolve(directory, command), {
-            pathExt: path.extname(command).toUpperCase(),
-            nothrow: true,
-          }),
-      ),
-    );
-    const executable = executables.find((candidate) => candidate);
-    if (executable) {
-      return executable;
+    // Start all lookups together, but consume them in PATH order so a match does
+    // not wait for slower entries after it. Capture failures immediately, including
+    // those from lookups we will not await after finding a match.
+    const lookups = [...new Set(directories)].map(async (directory) => {
+      try {
+        // Absolute candidates prevent which from adding process.cwd() or using
+        // process.env.PATH when the supplied PATH is empty.
+        const executable = await fs.which(path.resolve(directory, command), {
+          pathExt: path.extname(command).toUpperCase(),
+          nothrow: true,
+        });
+        return {executable};
+      } catch (error) {
+        return {error};
+      }
+    });
+    for (const lookup of lookups) {
+      const result = await lookup;
+      if ('error' in result) {
+        throw result.error;
+      }
+      if (result.executable) {
+        return result.executable;
+      }
     }
     throw new Error(`Cannot find ${command} in the supplied search path`);
   }

@@ -73,6 +73,54 @@ describe('npm argument boundaries', function () {
 });
 
 describe('Windows npm search path', {skip: !system.isWindows()}, function () {
+  for (const rejects of [false, true]) {
+    it(
+      `does not wait for a later PATH lookup that ${rejects ? 'rejects' : 'resolves'}`,
+      {timeout: 5000},
+      async function (t) {
+        const fixture = await createPathFixture(t);
+        const slowDirectory = path.join(fixture.cwd, 'slow path');
+        const slowShim = path.join(slowDirectory, 'npm.cmd');
+        let release!: () => void;
+        const gate = new Promise<void>((resolve) => {
+          release = resolve;
+        });
+        let started = false;
+        let finished = false;
+        const which = fs.which;
+        t.mock.method(fs, 'which', async (...args: Parameters<typeof fs.which>) => {
+          if (args[0] === slowShim) {
+            started = true;
+            await gate;
+            finished = true;
+            if (rejects) {
+              throw new Error('Later PATH entry is unavailable');
+            }
+            return null;
+          }
+          return await which(...args);
+        });
+        try {
+          const result = await fixture.npm.exec(
+            'probe',
+            [],
+            {cwd: fixture.cwd, json: true},
+            {
+              env: {...fixture.env, PATH: [fixture.callerDirectory, slowDirectory].join(path.delimiter)},
+            },
+          );
+          assert.equal(result.json, 'caller');
+          assert.equal(started, true);
+          assert.equal(finished, false);
+        } finally {
+          release();
+          // Let the unused lookup settle, including rejection handling, before cleanup.
+          await new Promise<void>((resolve) => setImmediate(resolve));
+        }
+      },
+    );
+  }
+
   it('searches PATH entries concurrently while preserving their priority', {timeout: 5000}, async function (t) {
     const fixture = await createPathFixture(t);
     const firstShim = path.join(fixture.callerDirectory, 'npm.cmd');

@@ -73,6 +73,36 @@ describe('npm argument boundaries', function () {
 });
 
 describe('Windows npm search path', {skip: !system.isWindows()}, function () {
+  it('searches PATH entries concurrently while preserving their priority', {timeout: 5000}, async function (t) {
+    const fixture = await createPathFixture(t);
+    const firstShim = path.join(fixture.callerDirectory, 'npm.cmd');
+    const secondShim = path.join(process.env.PATH!, 'npm.cmd');
+    let releaseFirst!: () => void;
+    const secondFinished = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+    const which = fs.which;
+    t.mock.method(fs, 'which', async (...args: Parameters<typeof fs.which>) => {
+      if (args[0] === firstShim) {
+        await secondFinished;
+      }
+      const result = await which(...args);
+      if (args[0] === secondShim) {
+        releaseFirst();
+      }
+      return result;
+    });
+    const result = await fixture.npm.exec(
+      'probe',
+      [],
+      {cwd: fixture.cwd, json: true},
+      {
+        env: {...fixture.env, PATH: [fixture.callerDirectory, process.env.PATH].join(path.delimiter)},
+      },
+    );
+    assert.equal(result.json, 'caller');
+  });
+
   for (const key of ['PATH', 'Path']) {
     it(`uses the caller's ${key} instead of the parent PATH`, async function (t) {
       const fixture = await createPathFixture(t);

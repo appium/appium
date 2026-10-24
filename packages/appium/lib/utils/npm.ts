@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import {fs, system, util} from '@appium/support';
 import type {PackageJson, StringRecord} from '@appium/types';
+import AsyncLock from 'async-lock';
 import * as semver from 'semver';
 import {exec} from 'teen_process';
 import type {ExecError, TeenProcessExecOptions} from 'teen_process';
@@ -49,11 +50,9 @@ interface WindowsNpmCommand {
   cli: string;
 }
 
-/**
- * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
- */
 export class NPM {
-  private readonly _pendingWindowsNpmCli = new Map<string, Promise<WindowsNpmCommand>>();
+  private readonly _windowsNpmCliLock = new AsyncLock();
+  private readonly _pendingWindowsNpmCli = new Map<string, {resolution?: Promise<WindowsNpmCommand>}>();
 
   /**
    * Execute `npm` with given args.
@@ -299,19 +298,23 @@ export class NPM {
     if (Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key))) {
       return await this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
     }
+    // npmrc values can interpolate arbitrary environment variables, so even variables
+    // unrelated to PATH or npm_config_* may change the selected global prefix.
     const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
-    const pending = this._pendingWindowsNpmCli.get(key);
-    if (pending) {
-      return await pending;
-    }
-    const resolution = this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
-    this._pendingWindowsNpmCli.set(key, resolution);
+    const pending = this._pendingWindowsNpmCli.get(key) ?? {};
+    this._pendingWindowsNpmCli.set(key, pending);
     try {
-      return await resolution;
+      return await this._windowsNpmCliLock.acquire(key, async () => {
+        // Queued callers share this resolution instead of repeating the prefix probe.
+        pending.resolution ??= this._resolveWindowsNpmCliFromShim(npmShim, {...execOpts, env});
+        return await pending.resolution;
+      });
     } finally {
-      // Share concurrent work only: later calls must observe edits to npmrc files,
-      // newly installed npm versions, and recovery after a failed resolution.
-      this._pendingWindowsNpmCli.delete(key);
+      // Retain the result only until all queued callers have received it. Later calls
+      // must observe npmrc edits, new npm versions, and recovery after failures.
+      if (!this._windowsNpmCliLock.isBusy(key)) {
+        this._pendingWindowsNpmCli.delete(key);
+      }
     }
   }
 
@@ -327,16 +330,21 @@ export class NPM {
       cwd,
       ...searchPath.split(path.delimiter).map((entry) => path.resolve(cwd, entry.replace(/^"(.*)"$/, '$1'))),
     ];
-    for (const directory of new Set(directories)) {
-      // Absolute candidates prevent which from adding process.cwd() or using
-      // process.env.PATH when the supplied PATH is empty.
-      const executable = await fs.which(path.resolve(directory, command), {
-        pathExt: path.extname(command).toUpperCase(),
-        nothrow: true,
-      });
-      if (executable) {
-        return executable;
-      }
+    // Promise.all preserves search order even when later PATH entries finish first.
+    const executables = await Promise.all(
+      [...new Set(directories)].map(
+        async (directory) =>
+          // Absolute candidates prevent which from adding process.cwd() or using
+          // process.env.PATH when the supplied PATH is empty.
+          await fs.which(path.resolve(directory, command), {
+            pathExt: path.extname(command).toUpperCase(),
+            nothrow: true,
+          }),
+      ),
+    );
+    const executable = executables.find((candidate) => candidate);
+    if (executable) {
+      return executable;
     }
     throw new Error(`Cannot find ${command} in the supplied search path`);
   }

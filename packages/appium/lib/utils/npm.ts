@@ -211,8 +211,10 @@ export class NPM {
       installOpts.push('--save-exact', '--global-style', '--no-package-lock');
     }
 
-    const cmd = installType === 'local' ? 'link' : 'install';
-    const res = await this.exec(cmd, [...installOpts, installStr], {
+    if (installType === 'local') {
+      installOpts.push('--install-links=false');
+    }
+    const res = await this.exec('install', [...installOpts, installStr], {
       cwd,
       json: true,
       lockFile: this._getInstallLockfilePath(cwd),

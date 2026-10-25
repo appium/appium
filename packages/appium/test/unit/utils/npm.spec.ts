@@ -1,10 +1,62 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
+import type {TestContext} from 'node:test';
+
+import {fs, tempDir} from '@appium/support';
 
 import {NPM, resolveFrom} from '../../../lib/utils/npm.js';
 
 describe('utils/npm', function () {
+  describe('installPackage()', function () {
+    for (const hasAppiumDependency of [false, true]) {
+      it(`installs a local source directly with live links (has Appium dependency: ${hasAppiumDependency})`, async function (t) {
+        const {cwd, pkgName, pkg, installPath} = await createInstalledPackage(t);
+        const npm = new NPM();
+        const exec = t.mock.method(npm, 'exec', async () => ({stdout: '', stderr: '', code: 0}));
+        const source = path.join(cwd, 'source');
+
+        const receipt = await npm.installPackage(cwd, source, {
+          pkgName,
+          installType: 'local',
+          hasAppiumDependency,
+        });
+
+        assert.strictEqual(exec.mock.callCount(), 1);
+        const [command, args, options] = exec.mock.calls[0].arguments;
+        assert.strictEqual(command, 'install');
+        assert.ok(args);
+        assert.ok(options);
+        assert.strictEqual(args.filter((arg) => arg === '--install-links=false').length, 1);
+        assert.strictEqual(args.at(-1), source);
+        assert.ok(args.includes('--save-dev'));
+        assert.ok(args.includes('--no-audit'));
+        assert.strictEqual(args.includes('--save-exact'), !hasAppiumDependency);
+        assert.strictEqual(args.includes('--no-package-lock'), !hasAppiumDependency);
+        assert.strictEqual(options.cwd, cwd);
+        assert.strictEqual(options.json, true);
+        assert.ok(options.lockFile);
+        assert.deepStrictEqual(receipt, {installPath, pkg});
+      });
+    }
+
+    for (const installType of ['npm', 'git', undefined]) {
+      it(`does not override link configuration for ${installType ?? 'default'} installs`, async function (t) {
+        const {cwd, pkgName} = await createInstalledPackage(t);
+        const npm = new NPM();
+        const exec = t.mock.method(npm, 'exec', async () => ({stdout: '', stderr: '', code: 0}));
+        const spec = installType === 'git' ? 'https://example.com/fixture.git' : `${pkgName}@1.0.0`;
+
+        await npm.installPackage(cwd, spec, {pkgName, installType, hasAppiumDependency: true});
+
+        assert.strictEqual(exec.mock.callCount(), 1);
+        const [command, args] = exec.mock.calls[0].arguments;
+        assert.strictEqual(command, 'install');
+        assert.deepStrictEqual(args, ['--save-dev', '--no-progress', '--no-audit', spec]);
+      });
+    }
+  });
+
   describe('resolveFrom()', function () {
     const appiumRoot = path.join(import.meta.dirname, '..', '..', '..');
 
@@ -71,3 +123,16 @@ describe('utils/npm', function () {
     });
   });
 });
+
+async function createInstalledPackage(t: TestContext) {
+  const cwd = await tempDir.openDir();
+  t.after(async () => {
+    await fs.rimraf(cwd);
+  });
+  const pkgName = 'fixture-local-extension';
+  const pkg = {name: pkgName, version: '1.0.0'};
+  const installPath = path.join(cwd, 'node_modules', pkgName);
+  await fs.mkdir(installPath, {recursive: true});
+  await fs.writeFile(path.join(installPath, 'package.json'), JSON.stringify(pkg));
+  return {cwd, pkgName, pkg, installPath};
+}

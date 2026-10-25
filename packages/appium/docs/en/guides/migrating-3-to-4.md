@@ -104,6 +104,19 @@ risk and newer npm versions no longer support passing custom arguments to them.
     Use `appium driver install`/`appium plugin install`, or declare extensions in your project's
     `package.json`, instead of `--drivers`/`--plugins` install-time arguments
 
+### Local Extension Installs No Longer Create Global npm Links
+
+`appium driver install --source=local` and `appium plugin install --source=local` now install
+directly from the supplied local directory, without first creating an intermediate global npm
+link. Local installs still link to the source directory, so source changes do not require
+reinstalling the extension (rebuild the extension first if its source needs compilation).
+
+!!! info "Actions Needed"
+
+    Keep using `--source=local` with the extension's directory for local development. If other
+    tooling relied on the package being linked in npm's global prefix, manage that global link
+    separately; Appium no longer creates it as a side effect of a local extension install.
+
 ### `windows` Driver Shortcut Replaced by `wincore`
 
 The `windows` shortcut for `appium driver install` has been removed, and the new `wincore` shortcut

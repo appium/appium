@@ -548,6 +548,76 @@ describe('server configuration', function () {
     }
   });
 
+  it('should reject invalid JSON for an extension route registered with propfind', async function () {
+    let directCalls = 0;
+    let mountedCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.propfind('/direct', (_req: any, res: any) => {
+            directCalls += 1;
+            res.send('direct');
+          });
+          const router = express.Router();
+          router.propfind('/item', (_req, res) => {
+            mountedCalls += 1;
+            res.send('mounted');
+          });
+          app.use('/mounted', router);
+        },
+      ],
+    });
+    try {
+      const badDirect = await fetch(`http://127.0.0.1:${port}/direct`, {
+        method: 'PROPFIND',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badDirect.status, 400);
+      assert.strictEqual(((await badDirect.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(directCalls, 0);
+
+      const badMounted = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'PROPFIND',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badMounted.status, 400);
+      assert.strictEqual(((await badMounted.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(mountedCalls, 0);
+
+      const direct = await fetch(`http://127.0.0.1:${port}/direct`, {
+        method: 'PROPFIND',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(direct.status, 200);
+      assert.strictEqual(await direct.text(), 'direct');
+      assert.strictEqual(directCalls, 1);
+
+      const mounted = await fetch(`http://127.0.0.1:${port}/mounted/item`, {
+        method: 'PROPFIND',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(mounted.status, 200);
+      assert.strictEqual(await mounted.text(), 'mounted');
+      assert.strictEqual(mountedCalls, 1);
+
+      const unknown = await fetch(`http://127.0.0.1:${port}/direct`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(unknown.status, 404);
+      assert.strictEqual(((await unknown.json()) as any).value.error, 'unknown command');
+    } finally {
+      await _server.close();
+    }
+  });
+
   it('should report an unknown command for a bad JSON body under a mounted router', async function () {
     const _server = await server({
       routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),

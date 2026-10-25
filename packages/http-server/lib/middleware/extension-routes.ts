@@ -1,9 +1,9 @@
 import {getResponseForW3CError, jsonParseErrors} from '@appium/base-driver';
 import type {Express, NextFunction, Request, RequestHandler, Response, Router} from 'express';
 
-const ROUTE_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'] as const;
-
 type ParamCallback = (req: Request, res: Response, next: NextFunction, value: unknown, name: string) => unknown;
+
+type RouteRegistrar = (...handlers: RequestHandler[]) => unknown;
 
 interface RouteLayer {
   route?: ExtensionRoute;
@@ -15,14 +15,8 @@ interface RouteLayer {
 
 interface ExtensionRoute {
   stack: RouteLayer[];
-  all: (...handlers: RequestHandler[]) => unknown;
-  get: (...handlers: RequestHandler[]) => unknown;
-  post: (...handlers: RequestHandler[]) => unknown;
-  put: (...handlers: RequestHandler[]) => unknown;
-  patch: (...handlers: RequestHandler[]) => unknown;
-  delete: (...handlers: RequestHandler[]) => unknown;
-  head: (...handlers: RequestHandler[]) => unknown;
-  options: (...handlers: RequestHandler[]) => unknown;
+  all: RouteRegistrar;
+  [method: string]: RouteRegistrar | RouteLayer[] | undefined;
 }
 
 /**
@@ -134,16 +128,27 @@ function prependJsonRejection(route: ExtensionRoute, seen: WeakSet<object>): voi
   }
   seen.add(route);
 
-  const methods = new Set(route.stack.map((layer) => layer.method).filter((method) => method));
   const matchesAll = route.stack.some((layer) => !layer.method);
+  const methods = new Set<string>();
+  for (const layer of route.stack) {
+    if (layer.method) {
+      methods.add(layer.method);
+    }
+  }
+  const registrars: RouteRegistrar[] = [];
+  for (const method of methods) {
+    const registrar = route[method];
+    if (typeof registrar === 'function') {
+      registrars.push(registrar);
+    }
+  }
+
   const existing = route.stack.splice(0, route.stack.length);
   if (matchesAll) {
     route.all(rejectRecordedJson);
   }
-  for (const method of ROUTE_METHODS) {
-    if (methods.has(method)) {
-      route[method](rejectRecordedJson);
-    }
+  for (const registrar of registrars) {
+    registrar.call(route, rejectRecordedJson);
   }
   route.stack.push(...existing);
 }

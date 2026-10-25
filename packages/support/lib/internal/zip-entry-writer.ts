@@ -157,9 +157,13 @@ export class ZipEntryWriter {
   async openPrepared(prepared: PreparedFile): Promise<OpenedFile> {
     const {fileName, dest, dirPath, verifiedDir, mode} = prepared;
     await this.assertDirUnchanged(dirPath, verifiedDir);
+    // Windows O_EXCL can follow a dangling symlink, so validate before opening.
+    if (isWindows()) {
+      await this.assertFileDestinationWithinRoot(dest, verifiedDir.realPath, fileName);
+    }
     const create = this.createFlags();
     try {
-      // Exclusive creation never follows or replaces anything, so the checks below are not needed
+      // POSIX exclusive creation does not follow links; Windows was checked above.
       return {file: await this.fs.openFile(dest, create, mode), created: true};
     } catch (err: any) {
       if (err.code !== 'EEXIST') {
@@ -196,6 +200,10 @@ export class ZipEntryWriter {
   async openForReplacement(prepared: PreparedFile): Promise<ReplacementFile> {
     const {fileName, dest, dirPath, verifiedDir, mode} = prepared;
     await this.assertDirUnchanged(dirPath, verifiedDir);
+    // Apply the same pre-open check to the large-entry replacement path.
+    if (isWindows()) {
+      await this.assertFileDestinationWithinRoot(dest, verifiedDir.realPath, fileName);
+    }
     const create = this.createFlags();
     // The folder may have been replaced while the content was downloaded: never remove or rename through it then
     const removeQuietly = async (target: string) => {
@@ -565,6 +573,12 @@ export class ZipEntryWriter {
     linkParentDir: string,
     fileName: string,
   ): Promise<Set<string>> {
+    // Windows resolves drive-relative targets against a drive's working directory,
+    // not the link's parent. Reject them before creating a differently resolved link.
+    if (isWindows() && /^[A-Za-z]:/.test(linkTarget) && !path.win32.isAbsolute(linkTarget)) {
+      throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
+    }
+
     // Resolve links before '..'; realpath alone cannot handle missing targets.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
     const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';

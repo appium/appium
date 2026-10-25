@@ -210,7 +210,9 @@ export class ZipExtractor {
     let results: PromiseSettledResult<void>[];
     if (deflated) {
       const inflater = zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE});
-      results = await Promise.allSettled([feedInflater(raw, inflater), pipeline(inflater, consume)]);
+      // Not `pipeline`: it aborts the inflater while padding after the deflate stream is still being fed
+      const consumed = consume(inflater.iterator({destroyOnReturn: false})).finally(() => inflater.destroy());
+      results = await Promise.allSettled([feedInflater(raw, inflater), consumed]);
     } else {
       results = await Promise.allSettled([pipeline(raw, consume)]);
     }

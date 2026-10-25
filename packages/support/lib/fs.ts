@@ -20,11 +20,10 @@ import {promisify} from 'node:util';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
-import {MoveOperation, walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
+import {MoveOperation, pluralize, walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.

@@ -99,7 +99,7 @@ describe('internal modules layering', function () {
     );
   });
 
-  it('should not take part in an import cycle', function () {
+  it('should not have import cycles', function () {
     const graph = new Map<string, string[]>(files.map((file) => [file, []]));
     for (const {from, to, typeOnly} of edges) {
       if (!typeOnly) {
@@ -122,7 +122,7 @@ describe('internal modules layering', function () {
       }
       return false;
     };
-    const cyclic = files.filter((file) => (isInternal(file) || LEAF_MODULES.has(file)) && reaches(file));
+    const cyclic = files.filter((file) => reaches(file));
     assert.deepEqual(cyclic.map(rel), []);
   });
 });

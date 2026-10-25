@@ -8,6 +8,7 @@
  */
 export {createBase64EncodeStream} from './base64-encode-stream.js';
 export {MoveOperation} from './move-operation.js';
+export {pluralize, type PluralizeOptions} from './pluralize.js';
 export {isSubPath} from './sub-path.js';
 export {GiB, KiB, MiB} from './units.js';
 export {walk, Walker, type WalkItem, type WalkOptions} from './walker.js';

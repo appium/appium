@@ -97,7 +97,7 @@ export class ZipEntryWriter {
   }
 
   /**
-   * Writes a single entry. Resource-fork entries (`__MACOSX/`) are skipped.
+   * Writes a single entry. Resource-fork (`__MACOSX/`) and nameless entries are skipped.
    *
    * @throws {Error} If the entry would end up outside of the root
    */
@@ -219,6 +219,19 @@ export class ZipEntryWriter {
     // A short name in the same folder: the destination name may already be as long as a name can be
     const temp = path.join(path.dirname(dest), `.zip-${crypto.randomBytes(6).toString('hex')}.tmp`);
     const file = await this.fs.openFile(temp, create, mode);
+    try {
+      // Like truncating in place: the replaced file keeps its permissions
+      const existing = await this.fs.lstat(dest);
+      if (!isWindows() && existing.isFile()) {
+        await file.chmod(existing.mode & 0o777);
+      }
+    } catch (err: any) {
+      if (err.code !== 'ENOENT') {
+        await file.close();
+        await removeQuietly(temp);
+        throw err;
+      }
+    }
     return {
       file,
       commit: async () => {

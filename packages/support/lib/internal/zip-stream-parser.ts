@@ -7,16 +7,17 @@ import {
   assertContent,
   assertSupportedEntry,
   BUFFERED_ENTRY_LIMIT,
-  DEFAULT_CONCURRENCY,
   EntrySink,
   INFLATE_CHUNK_SIZE,
+  LOCAL_HEADER_SIZE,
   MAX_PENDING_BYTES,
   METHOD_DEFLATE,
   METHOD_STORED,
+  normalizeConcurrency,
+  SIG_LOCAL,
 } from './zip-entry-sink.js';
 import {isIgnoredEntry, type ZipEntryWriter} from './zip-entry-writer.js';
 
-const SIG_LOCAL = 0x04034b50;
 const SIG_CENTRAL = 0x02014b50;
 const SIG_EOCD = 0x06054b50;
 const SIG_EOCD64 = 0x06064b50;
@@ -84,7 +85,7 @@ export async function extractZipStream(
   writer: ZipEntryWriter,
   opts: ZipStreamOptions,
 ): Promise<ZipStreamResult> {
-  const queue = new WriteQueue(opts.concurrency ?? DEFAULT_CONCURRENCY, MAX_PENDING_BYTES);
+  const queue = new WriteQueue(normalizeConcurrency(opts.concurrency), MAX_PENDING_BYTES);
   // A failed write does not wait for the next bytes to arrive
   const reader = new ByteReader(source, queue.failed);
   try {
@@ -346,12 +347,12 @@ async function assertZipSignature(reader: ByteReader): Promise<void> {
 }
 
 async function readLocalHeader(reader: ByteReader, opts: ZipStreamOptions): Promise<LocalHeader> {
-  await reader.ensure(30);
+  await reader.ensure(LOCAL_HEADER_SIZE);
   const nameLength = reader.view.readUInt16LE(26);
   const extraLength = reader.view.readUInt16LE(28);
-  await reader.ensure(30 + nameLength + extraLength);
+  await reader.ensure(LOCAL_HEADER_SIZE + nameLength + extraLength);
   const offset = reader.offset;
-  const fixed = reader.consume(30);
+  const fixed = reader.consume(LOCAL_HEADER_SIZE);
   const flags = fixed.readUInt16LE(6);
   const method = fixed.readUInt16LE(8);
   const crc = fixed.readUInt32LE(14);

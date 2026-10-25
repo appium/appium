@@ -1,4 +1,3 @@
-import type {FileHandle} from 'node:fs/promises';
 import {promisify} from 'node:util';
 import zlib from 'node:zlib';
 
@@ -8,6 +7,8 @@ import type {PreparedFile, ReplacementFile, ZipEntryWriter} from './zip-entry-wr
 
 export const METHOD_STORED = 0;
 export const METHOD_DEFLATE = 8;
+export const SIG_LOCAL = 0x04034b50;
+export const LOCAL_HEADER_SIZE = 30;
 export const FLAG_ENCRYPTED = 0x1;
 export const FLAG_STRONG_ENCRYPTION = 0x40;
 // Entries up to this size are held in memory and written concurrently, bigger ones are streamed
@@ -15,6 +16,7 @@ export const BUFFERED_ENTRY_LIMIT = 4 * MiB;
 // The maximum total size of the entries waiting for their turn to be written
 export const MAX_PENDING_BYTES = 32 * MiB;
 export const DEFAULT_CONCURRENCY = 4;
+const MAX_CONCURRENCY = 64;
 export const INFLATE_CHUNK_SIZE = 64 * 1024;
 
 const METHOD_NAMES: Readonly<Record<number, string>> = {
@@ -87,6 +89,14 @@ export function assertContent(fileName: string, actual: ExpectedContent, expecte
   }
 }
 
+/** The number of files to write at the same time: the default one for missing and invalid values, a sane count otherwise */
+export function normalizeConcurrency(value?: number): number {
+  if (value === undefined || !Number.isFinite(value)) {
+    return value === Infinity ? MAX_CONCURRENCY : DEFAULT_CONCURRENCY;
+  }
+  return Math.min(Math.max(Math.floor(value), 1), MAX_CONCURRENCY);
+}
+
 /**
  * Collects the content of an entry. Small entries are written by the queue after they are complete (and
  * verified); big or still growing ones are streamed to the file.
@@ -132,7 +142,7 @@ export class EntrySink {
       return;
     }
     if (this.target) {
-      await writeFully(this.target.file, chunk);
+      await this.target.file.writeFile(chunk);
       return;
     }
     this.chunks.push(chunk);
@@ -168,15 +178,24 @@ export class EntrySink {
   /**
    * Completes an entry whose whole compressed content is at hand. Inflating, verifying and writing
    * is left to the queue, so it overlaps with reading the next entries.
+   *
+   * @param allowTrailingData Accept bytes after the end of the deflate stream (the caller knows where the entry ends)
    */
-  async finishCompressed(fileName: string, method: number, data: Buffer, expected: ExpectedContent): Promise<void> {
+  async finishCompressed(
+    fileName: string,
+    method: number,
+    data: Buffer,
+    expected: ExpectedContent,
+    allowTrailingData = false,
+  ): Promise<void> {
     const {prepared} = this;
     if (!prepared) {
       return;
     }
     const bytes = Math.max(data.length, expected.size);
     await this.context.queue.submit(this.key, bytes, async () => {
-      const content = method === METHOD_DEFLATE ? await inflateExactly(fileName, data, expected.size) : data;
+      const content =
+        method === METHOD_DEFLATE ? await inflateRawEntry(fileName, data, expected.size, allowTrailingData) : data;
       assertContent(fileName, {size: content.length, crc: zlib.crc32(content)}, expected);
       await this.writeBuffered(prepared, content);
     });
@@ -199,7 +218,7 @@ export class EntrySink {
     const {file, created} = await this.context.writer.openPrepared(prepared);
     this.entry.created = created;
     try {
-      await writeFully(file, data);
+      await file.writeFile(data);
     } finally {
       await file.close();
     }
@@ -216,13 +235,18 @@ export class EntrySink {
     this.chunks = [];
     this.buffered = 0;
     for (const chunk of chunks) {
-      await writeFully(target.file, chunk);
+      await target.file.writeFile(chunk);
     }
   }
 }
 
-/** Inflates a complete deflate stream, which must end exactly with the data and not exceed the declared size */
-async function inflateExactly(fileName: string, data: Buffer, size: number): Promise<Buffer> {
+/** Inflates a complete deflate stream, which must not exceed the declared size (or have data after its end) */
+async function inflateRawEntry(
+  fileName: string,
+  data: Buffer,
+  size: number,
+  allowTrailingData: boolean,
+): Promise<Buffer> {
   let result;
   try {
     result = await inflateRaw(data, {info: true, maxOutputLength: Math.max(size, 1)});
@@ -232,16 +256,9 @@ async function inflateExactly(fileName: string, data: Buffer, size: number): Pro
     }
     throw err;
   }
-  if (result.engine.bytesWritten < data.length) {
+  if (!allowTrailingData && result.engine.bytesWritten < data.length) {
     // What follows may be the next entry, which would be skipped
     throw new Error(`The ZIP entry '${fileName}' is corrupted: its compressed size is larger than its data`);
   }
   return result.buffer;
-}
-
-export async function writeFully(file: FileHandle, data: Buffer): Promise<void> {
-  for (let offset = 0; offset < data.length;) {
-    const {bytesWritten} = await file.write(data, offset, data.length - offset);
-    offset += bytesWritten;
-  }
 }

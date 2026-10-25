@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+import zlib from 'node:zlib';
 
 import {fs, tempDir} from '../../lib/index.js';
 import {isWindows} from '../../lib/system.js';
@@ -745,6 +746,63 @@ describe('#zip', function () {
           await new Promise((resolve) => setTimeout(resolve, 50));
           assert.deepStrictEqual(await fs.readdir(out), written);
           assert.ok(written.length < 200);
+        });
+
+        it('should not start big entries after a file has failed', async function () {
+          const data = Buffer.alloc(BIG, 'a');
+          const entries: BuildEntry[] = [
+            {name: 'bad.txt', data: 'x', crc: 1},
+            ...[1, 2, 3].map((i): BuildEntry => ({name: `big${i}.bin`, data, method: 0})),
+          ];
+          await assert.rejects(extractEntries(entries), /CRC32 mismatch/);
+          assert.strictEqual(await fs.exists(path.resolve(tmpRoot, 'entries-out/big3.bin')), false);
+        });
+
+        it('should accept data after the end of a deflate stream within the compressed size', async function () {
+          const data = Buffer.from('lorem ipsum '.repeat(100));
+          const compressedSize = zlib.deflateRawSync(data).length + 4;
+          const out = await extractEntries([
+            {name: 'padded.txt', data, compressedSize, junkAfter: Buffer.from('JUNK')},
+            {name: 'next.txt', data: 'next'},
+          ]);
+          assert.ok(data.equals(await fs.readFile(path.resolve(out, 'padded.txt'))));
+          assert.strictEqual(await fs.readFile(path.resolve(out, 'next.txt'), 'utf8'), 'next');
+        });
+
+        for (const [title, size] of [
+          ['small', 100],
+          ['big', BIG],
+        ] as const) {
+          it(
+            `should keep the permissions of a file replaced by a ${title} entry`,
+            {skip: isWindows()},
+            async function () {
+              const out = path.resolve(tmpRoot, 'entries-out');
+              await fs.mkdir(out);
+              await fs.writeFile(path.resolve(out, 'f.bin'), 'old', {mode: 0o600});
+              await fs.chmod(path.resolve(out, 'f.bin'), 0o600);
+              await extractEntries([{name: 'f.bin', data: Buffer.alloc(size, 'a'), mode: 0o100755}]);
+              assert.strictEqual((await fs.stat(path.resolve(out, 'f.bin'))).size, size);
+              assert.strictEqual((await fs.stat(path.resolve(out, 'f.bin'))).mode & 0o777, 0o600);
+            },
+          );
+        }
+
+        it('should cope with unusual concurrency values', async function () {
+          const entries = Array.from({length: 40}, (_, i): BuildEntry => ({name: `f${i}.txt`, data: `#${i}`}));
+          for (const concurrency of [NaN, Infinity, -3, 0, 2.5]) {
+            await fs.rimraf(path.resolve(tmpRoot, 'entries-out'));
+            const out = await extractEntries(entries, {concurrency});
+            assert.strictEqual(await fs.readFile(path.resolve(out, 'f39.txt'), 'utf8'), '#39');
+          }
+        });
+
+        it('should not fail because the archive could not be closed', async function (t) {
+          t.mock.method(fs, 'close', async () => {
+            throw new Error('close failed');
+          });
+          const out = await extractEntries([{name: 'f.txt', data: 'x'}]);
+          assert.strictEqual(await fs.readFile(path.resolve(out, 'f.txt'), 'utf8'), 'x');
         });
 
         it(

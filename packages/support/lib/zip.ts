@@ -16,13 +16,15 @@ import {
   assertSupportedEntry,
   BUFFERED_ENTRY_LIMIT,
   createBase64EncodeStream,
-  DEFAULT_CONCURRENCY,
   EntrySink,
   extractZipStream,
   INFLATE_CHUNK_SIZE,
   isIgnoredEntry,
+  LOCAL_HEADER_SIZE,
   MAX_PENDING_BYTES,
   METHOD_DEFLATE,
+  normalizeConcurrency,
+  SIG_LOCAL,
   type SinkContext,
   WriteQueue,
   ZipEntryWriter,
@@ -51,8 +53,9 @@ export interface ExtractAllOptions {
    */
   fileNamesEncoding?: BufferEncoding;
   /**
-   * The number of files written to the disk at the same time (4 by default).
+   * The number of files written to the disk at the same time (4 by default, at most 64).
    * Folders, big entries and links are always processed one by one.
+   * Only applicable if system unzip binary is NOT being used.
    */
   concurrency?: number;
   /**
@@ -69,7 +72,7 @@ export interface ExtractStreamOptions {
    */
   fileNamesEncoding?: BufferEncoding;
   /**
-   * The number of files written to the disk at the same time (4 by default).
+   * The number of files written to the disk at the same time (4 by default, at most 64).
    * Folders, big entries and links are always processed one by one.
    */
   concurrency?: number;
@@ -158,179 +161,18 @@ export async function extractStreamTo(
   }
 }
 
-interface ZipExtractorOptions {
-  dir: string;
-  fileNamesEncoding?: BufferEncoding;
-  concurrency?: number;
-  defaultDirMode?: string;
-  defaultFileMode?: string;
-}
-
-type OpenReadStreamFn = (entry: yauzl.Entry, options?: Partial<yauzl.ZipFileOptions>) => Promise<stream.Readable>;
-
-const LOCAL_HEADER_SIZE = 30;
-const SIG_LOCAL = 0x04034b50;
-
-// This class is based on https://github.com/maxogden/extract-zip/blob/master/index.js
-class ZipExtractor implements SinkContext {
-  zipfile!: yauzl.ZipFile;
-  readonly writer: ZipEntryWriter;
-  readonly queue: WriteQueue;
-  private openReadStream!: OpenReadStreamFn;
-  // The descriptor of the archive for reading the content of small entries
-  private archiveFd = -1;
-  private readonly zipPath: string;
-  private readonly opts: ZipExtractorOptions;
-  private canceled = false;
-
-  constructor(sourcePath: string, opts: ZipExtractorOptions) {
-    this.zipPath = sourcePath;
-    this.opts = opts;
-    this.writer = new ZipEntryWriter({...opts, fs});
-    this.queue = new WriteQueue(opts.concurrency ?? DEFAULT_CONCURRENCY, MAX_PENDING_BYTES);
-  }
-
-  async extract(): Promise<void> {
-    const {fileNamesEncoding} = this.opts;
-    this.zipfile = await openZip(this.zipPath, {
-      lazyEntries: true,
-      // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
-      decodeStrings: !fileNamesEncoding,
-    });
-    this.openReadStream = createOpenReadStream(this.zipfile);
-    this.canceled = false;
-
-    try {
-      this.archiveFd = await fs.open(this.zipPath, 'r');
-      await this.writer.detectNaming();
-      await processYauzlEntriesSequentially(this.zipfile, async (entry) => {
-        if (this.canceled) {
-          return false;
-        }
-        await this.extractEntry(entry);
-      });
-      await this.queue.drain();
-    } catch (err) {
-      this.canceled = true;
-      throw err;
-    } finally {
-      // Nothing may touch the destination after this function has returned
-      await this.queue.settle();
-      if (this.archiveFd >= 0) {
-        await fs.close(this.archiveFd);
-      }
-    }
-  }
-
-  private extractFileName(entry: yauzl.Entry): string {
-    return toEntryFileName(entry, this.opts.fileNamesEncoding);
-  }
-
-  private async extractEntry(entry: yauzl.Entry): Promise<void> {
-    const fileName = this.extractFileName(entry);
-    // convert external file attr int into a fs stat mode int
-    const mode = (entry.externalFileAttributes >> 16) & 0xffff;
-    // check if it's a symlink or dir (using stat mode constants)
-    const isSymlink = (mode & IFMT) === IFLNK;
-    const isDir =
-      (mode & IFMT) === IFDIR ||
-      // Failsafe, borrowed from jsZip
-      fileName.endsWith('/') ||
-      // check for windows weird way of specifying a directory
-      // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
-      (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
-    if (isDir || isSymlink || isIgnoredEntry(fileName)) {
-      // Links and folders must not overlap with the files being written
-      if (isSymlink) {
-        await this.queue.drain();
-      } else {
-        await this.queue.waitForKey(this.writer.pathKey(fileName));
-      }
-      await this.writer.write({fileName, mode, isDir, isSymlink, openBody: () => this.openReadStream(entry)});
-      return;
-    }
-
-    assertSupportedEntry(fileName, entry.generalPurposeBitFlag, entry.compressionMethod);
-    const prepared = await this.writer.prepareFile(fileName, mode);
-    const sink = new EntrySink(this, {created: false}, prepared, entry.uncompressedSize);
-    const expected = {crc: entry.crc32, size: entry.uncompressedSize};
-    try {
-      if (entry.uncompressedSize <= BUFFERED_ENTRY_LIMIT && entry.compressedSize <= BUFFERED_ENTRY_LIMIT) {
-        const data = await readEntryData(this.archiveFd, entry);
-        await sink.finishCompressed(fileName, entry.compressionMethod, data, expected);
-      } else {
-        await this.streamEntry(entry, sink);
-        assertContent(fileName, sink, expected);
-        await sink.finish();
-      }
-    } catch (err) {
-      await sink.abort();
-      throw err;
-    }
-  }
-
-  private async streamEntry(entry: yauzl.Entry, sink: EntrySink): Promise<void> {
-    const deflated = entry.compressionMethod === METHOD_DEFLATE;
-    // Inflating here instead of in yauzl allows bigger chunks
-    const raw = await this.openReadStream(entry, deflated ? {decompress: false} : undefined);
-    const consume = async (source: AsyncIterable<Buffer>) => {
-      for await (const chunk of source) {
-        await sink.push(chunk);
-      }
-    };
-    if (deflated) {
-      await pipeline(raw, zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE}), consume);
-    } else {
-      await pipeline(raw, consume);
-    }
-  }
-}
-
 /**
- * Reads the stored or compressed content of an entry with as few reads as possible.
+ * Extract zipfile to a directory.
  *
- * @throws {Error} If the local header does not belong to the entry or the archive is truncated
- */
-async function readEntryData(archiveFd: number, entry: yauzl.Entry): Promise<Buffer> {
-  const position = entry.relativeOffsetOfLocalHeader;
-  // The local header usually has the same name and extra field as the central one
-  let buffer = Buffer.allocUnsafe(
-    LOCAL_HEADER_SIZE + entry.fileNameLength + entry.extraFieldLength + entry.compressedSize,
-  );
-  let length = await readFully(archiveFd, buffer, position);
-  if (length < LOCAL_HEADER_SIZE || buffer.readUInt32LE(0) !== SIG_LOCAL) {
-    throw new Error(`Invalid local file header of the ZIP entry at offset ${position}`);
-  }
-  const start = LOCAL_HEADER_SIZE + buffer.readUInt16LE(26) + buffer.readUInt16LE(28);
-  const end = start + entry.compressedSize;
-  if (end > buffer.length) {
-    buffer = Buffer.allocUnsafe(end);
-    length = await readFully(archiveFd, buffer, position);
-  }
-  if (length < end) {
-    throw new Error(`Truncated ZIP archive: the data of the entry at offset ${position} is incomplete`);
-  }
-  return buffer.subarray(start, end);
-}
-
-async function readFully(fd: number, buffer: Buffer, position: number): Promise<number> {
-  let length = 0;
-  while (length < buffer.length) {
-    const {bytesRead} = await fs.read(fd, buffer, length, buffer.length - length, position + length);
-    if (!bytesRead) {
-      break;
-    }
-    length += bytesRead;
-  }
-  return length;
-}
-
-/**
- * Extract zipfile to a directory
+ * The JS implementation supports stored and deflate entries and verifies the CRC32 of every one of them.
+ * Resource-fork (`__MACOSX/`) and nameless entries are skipped. The same safety checks as in
+ * {@linkcode extractStreamTo} apply.
  *
  * @param zipFilePath The full path to the source ZIP file
  * @param destDir The full path to the destination folder
  * @param opts Extraction options
+ * @throws {ZipStreamUnsupportedError} If the JS implementation is used and an entry is encrypted or uses another compression method
+ * @throws {Error} If the archive is not valid, an entry is corrupted or not safe to extract
  */
 export async function extractAllTo(zipFilePath: string, destDir: string, opts: ExtractAllOptions = {}): Promise<void> {
   if (!path.isAbsolute(destDir)) {
@@ -574,6 +416,188 @@ export async function toArchive(
       .then(() => resolve())
       .catch(reject);
   });
+}
+
+interface ZipExtractorOptions {
+  dir: string;
+  fileNamesEncoding?: BufferEncoding;
+  concurrency?: number;
+  defaultDirMode?: string;
+  defaultFileMode?: string;
+}
+
+type OpenReadStreamFn = (entry: yauzl.Entry, options?: Partial<yauzl.ZipFileOptions>) => Promise<stream.Readable>;
+
+// This class is based on https://github.com/maxogden/extract-zip/blob/master/index.js
+class ZipExtractor {
+  zipfile!: yauzl.ZipFile;
+  private readonly writer: ZipEntryWriter;
+  private readonly queue: WriteQueue;
+  private readonly sinkContext: SinkContext;
+  private openReadStream!: OpenReadStreamFn;
+  // The descriptor of the archive for reading the content of small entries
+  private archiveFd = -1;
+  private readonly zipPath: string;
+  private readonly opts: ZipExtractorOptions;
+  private canceled = false;
+
+  constructor(sourcePath: string, opts: ZipExtractorOptions) {
+    this.zipPath = sourcePath;
+    this.opts = opts;
+    this.writer = new ZipEntryWriter({...opts, fs});
+    this.queue = new WriteQueue(normalizeConcurrency(opts.concurrency), MAX_PENDING_BYTES);
+    this.sinkContext = {writer: this.writer, queue: this.queue};
+  }
+
+  async extract(): Promise<void> {
+    const {fileNamesEncoding} = this.opts;
+    const zipfile = await openZip(this.zipPath, {
+      lazyEntries: true,
+      // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
+      decodeStrings: !fileNamesEncoding,
+    });
+    this.zipfile = zipfile;
+    this.openReadStream = createOpenReadStream(zipfile);
+    this.canceled = false;
+
+    try {
+      this.archiveFd = await fs.open(this.zipPath, 'r');
+      await this.writer.detectNaming();
+      await processYauzlEntriesSequentially(zipfile, async (entry) => {
+        if (this.canceled) {
+          return false;
+        }
+        await this.extractEntry(entry);
+      });
+      await this.queue.drain();
+    } catch (err) {
+      this.canceled = true;
+      throw err;
+    } finally {
+      // Nothing may touch the destination after this function has returned
+      await this.queue.settle();
+      zipfile.close();
+      await this.closeArchive();
+    }
+  }
+
+  private async closeArchive(): Promise<void> {
+    const fd = this.archiveFd;
+    this.archiveFd = -1;
+    if (fd < 0) {
+      return;
+    }
+    try {
+      await fs.close(fd);
+    } catch {
+      // nothing is written to the archive, so there is nothing to lose
+    }
+  }
+
+  private extractFileName(entry: yauzl.Entry): string {
+    return toEntryFileName(entry, this.opts.fileNamesEncoding);
+  }
+
+  private async extractEntry(entry: yauzl.Entry): Promise<void> {
+    // A file which could not be written makes the rest of the work pointless
+    this.queue.throwIfFailed();
+    const fileName = this.extractFileName(entry);
+    // convert external file attr int into a fs stat mode int
+    const mode = (entry.externalFileAttributes >> 16) & 0xffff;
+    // check if it's a symlink or dir (using stat mode constants)
+    const isSymlink = (mode & IFMT) === IFLNK;
+    const isDir =
+      (mode & IFMT) === IFDIR ||
+      // Failsafe, borrowed from jsZip
+      fileName.endsWith('/') ||
+      // check for windows weird way of specifying a directory
+      // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
+      (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
+    if (isDir || isSymlink || isIgnoredEntry(fileName)) {
+      // Links and folders must not overlap with the files being written
+      if (isSymlink) {
+        await this.queue.drain();
+      } else {
+        await this.queue.waitForKey(this.writer.pathKey(fileName));
+      }
+      await this.writer.write({fileName, mode, isDir, isSymlink, openBody: () => this.openReadStream(entry)});
+      return;
+    }
+
+    assertSupportedEntry(fileName, entry.generalPurposeBitFlag, entry.compressionMethod);
+    const prepared = await this.writer.prepareFile(fileName, mode);
+    const sink = new EntrySink(this.sinkContext, {created: false}, prepared, entry.uncompressedSize);
+    const expected = {crc: entry.crc32, size: entry.uncompressedSize};
+    try {
+      if (entry.uncompressedSize <= BUFFERED_ENTRY_LIMIT && entry.compressedSize <= BUFFERED_ENTRY_LIMIT) {
+        const data = await readEntryData(this.archiveFd, entry);
+        // The entry ends where the central directory says, whatever follows the deflate stream
+        await sink.finishCompressed(fileName, entry.compressionMethod, data, expected, true);
+      } else {
+        await this.streamEntry(entry, sink);
+        assertContent(fileName, sink, expected);
+        await sink.finish();
+      }
+    } catch (err) {
+      await sink.abort();
+      throw err;
+    }
+  }
+
+  private async streamEntry(entry: yauzl.Entry, sink: EntrySink): Promise<void> {
+    const deflated = entry.compressionMethod === METHOD_DEFLATE;
+    // Inflating here instead of in yauzl allows bigger chunks
+    const raw = await this.openReadStream(entry, deflated ? {decompress: false} : undefined);
+    const consume = async (source: AsyncIterable<Buffer>) => {
+      for await (const chunk of source) {
+        await sink.push(chunk);
+      }
+    };
+    if (deflated) {
+      await pipeline(raw, zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE}), consume);
+    } else {
+      await pipeline(raw, consume);
+    }
+  }
+}
+
+/**
+ * Reads the stored or compressed content of an entry with as few reads as possible.
+ *
+ * @throws {Error} If the local header does not belong to the entry or the archive is truncated
+ */
+async function readEntryData(archiveFd: number, entry: yauzl.Entry): Promise<Buffer> {
+  const position = entry.relativeOffsetOfLocalHeader;
+  // The local header usually has the same name and extra field as the central one
+  let buffer = Buffer.allocUnsafe(
+    LOCAL_HEADER_SIZE + entry.fileNameLength + entry.extraFieldLength + entry.compressedSize,
+  );
+  let length = await readFully(archiveFd, buffer, position);
+  if (length < LOCAL_HEADER_SIZE || buffer.readUInt32LE(0) !== SIG_LOCAL) {
+    throw new Error(`Invalid local file header of the ZIP entry at offset ${position}`);
+  }
+  const start = LOCAL_HEADER_SIZE + buffer.readUInt16LE(26) + buffer.readUInt16LE(28);
+  const end = start + entry.compressedSize;
+  if (end > buffer.length) {
+    buffer = Buffer.allocUnsafe(end);
+    length = await readFully(archiveFd, buffer, position);
+  }
+  if (length < end) {
+    throw new Error(`Truncated ZIP archive: the data of the entry at offset ${position} is incomplete`);
+  }
+  return buffer.subarray(start, end);
+}
+
+async function readFully(fd: number, buffer: Buffer, position: number): Promise<number> {
+  let length = 0;
+  while (length < buffer.length) {
+    const {bytesRead} = await fs.read(fd, buffer, length, buffer.length - length, position + length);
+    if (!bytesRead) {
+      break;
+    }
+    length += bytesRead;
+  }
+  return length;
 }
 
 function createOpenReadStream(zipfile: yauzl.ZipFile): OpenReadStreamFn {

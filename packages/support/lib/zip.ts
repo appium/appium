@@ -33,7 +33,7 @@ export interface ExtractAllOptions {
    * The encoding of file names that are not flagged as UTF-8 by the archive.
    * It is `utf8` by default, which is what ZIP archives created on MacOS usually contain.
    * Only needs to be set if the archive does not comply to the standards, which leads to
-   * corrupted file names after extraction.
+   * corrupted file names after extraction. Legacy `cp437` names are not supported.
    */
   fileNamesEncoding?: BufferEncoding;
   /**

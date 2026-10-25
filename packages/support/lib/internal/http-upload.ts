@@ -51,13 +51,16 @@ export function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials |
   return {username, password};
 }
 
+/** Everything {@linkcode uploadFileToHttp} needs */
+export interface HttpUploadRequest {
+  localPath: string;
+  url: URL;
+  options: HttpUploadParams;
+  log: HttpLog;
+}
+
 /** Uploads the file as a multipart form or a raw request body */
-export async function uploadFileToHttp(
-  localPath: string,
-  parsedUri: URL,
-  uploadOptions: HttpUploadParams,
-  log: HttpLog,
-): Promise<void> {
+export async function uploadFileToHttp({localPath, url, options, log}: HttpUploadRequest): Promise<void> {
   const {
     method = 'POST',
     timeout = DEFAULT_TIMEOUT_MS,
@@ -65,8 +68,8 @@ export async function uploadFileToHttp(
     auth,
     fileFieldName = DEFAULT_FILE_FIELD_NAME,
     formFields,
-  } = uploadOptions;
-  const {href} = parsedUri;
+  } = options;
+  const {href} = url;
 
   const requestOpts: RawAxiosRequestConfig = {
     url: href,

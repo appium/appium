@@ -8,6 +8,7 @@ export {
   DEFAULT_TIMEOUT_MS,
   type HttpLog,
   type HttpUploadParams,
+  type HttpUploadRequest,
   toAxiosAuth,
   uploadFileToHttp,
 } from './http-upload.js';

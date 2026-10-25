@@ -153,7 +153,7 @@ export async function uploadFile(
       'Content-Length': size,
     };
   }
-  await uploadFileToHttp(localPath, url, uploadOptions, log);
+  await uploadFileToHttp({localPath, url, options: uploadOptions, log});
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +

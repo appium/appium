@@ -603,6 +603,19 @@ The following `@appium/support` exports have been removed: `process` (`getProces
     A completed directory walk may have skipped entries; check warnings if completeness matters.
     Allow IPC consumers to finish when unsubscribed
 
+### System Unzip Removed From `@appium/support`
+
+`extractAllTo()` always uses the built-in JS extractor now, so the `useSystemUnzip` option has been
+removed. The extractor supports only stored and deflate entries, verifies the CRC32 of every entry,
+and decodes file names that are not flagged as UTF-8 by the archive as `utf8` by default
+(previously `cp437`).
+
+!!! info "Actions Needed"
+
+    Remove `useSystemUnzip` from `extractAllTo()` calls. If an archive contains non-UTF-8 file
+    names, pass `fileNamesEncoding` explicitly. Archives with encrypted entries or other
+    compression methods are rejected with `ZipStreamUnsupportedError`
+
 ### Legacy Test Pages Removed From `@appium/base-driver`
 
 The built-in test fixture routes (`/welcome`, `/test/guinea-pig*`, `/produce_error`, `/crash`),

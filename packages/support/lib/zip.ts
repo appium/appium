@@ -11,7 +11,6 @@ import {fs} from './fs.js';
 import {
   createBase64EncodeStream,
   createOpenReadStream,
-  extractWithSystemUnzip,
   extractZipStream,
   openZip,
   type OpenReadStreamFn,
@@ -31,24 +30,17 @@ const ZIP_MAGIC = 'PK';
 
 export interface ExtractAllOptions {
   /**
-   * The encoding to use for extracted file names.
-   * For ZIP archives created on MacOS it is usually expected to be `utf8`.
-   * By default it is autodetected based on the entry metadata and is only needed to be set explicitly
-   * if the particular archive does not comply to the standards, which leads to corrupted file names
-   * after extraction. Only applicable if system unzip binary is NOT being used.
+   * The encoding of file names that are not flagged as UTF-8 by the archive.
+   * It is `utf8` by default, which is what ZIP archives created on MacOS usually contain.
+   * Only needs to be set if the archive does not comply to the standards, which leads to
+   * corrupted file names after extraction.
    */
   fileNamesEncoding?: BufferEncoding;
   /**
    * The number of files written to the disk at the same time (4 by default, at most 64).
    * Folders, big entries and links are always processed one by one.
-   * Only applicable if system unzip binary is NOT being used.
    */
   concurrency?: number;
-  /**
-   * If true, attempt to use system unzip; if this fails,
-   * fallback to the JS unzip implementation.
-   */
-  useSystemUnzip?: boolean;
 }
 
 export interface ExtractStreamOptions {
@@ -150,14 +142,14 @@ export async function extractStreamTo(
 /**
  * Extract zipfile to a directory.
  *
- * The JS implementation supports stored and deflate entries and verifies the CRC32 of every one of them.
+ * Only stored and deflate entries are supported, and the CRC32 of every one of them is verified.
  * Resource-fork (`__MACOSX/`) and nameless entries are skipped. The same safety checks as in
  * {@linkcode extractStreamTo} apply.
  *
  * @param zipFilePath The full path to the source ZIP file
  * @param destDir The full path to the destination folder
  * @param opts Extraction options
- * @throws {ZipStreamUnsupportedError} If the JS implementation is used and an entry is encrypted or uses another compression method
+ * @throws {ZipStreamUnsupportedError} If an entry is encrypted or uses another compression method
  * @throws {Error} If the archive is not valid, an entry is corrupted or not safe to extract
  */
 export async function extractAllTo(zipFilePath: string, destDir: string, opts: ExtractAllOptions = {}): Promise<void> {
@@ -167,14 +159,6 @@ export async function extractAllTo(zipFilePath: string, destDir: string, opts: E
 
   await fs.mkdir(destDir, {recursive: true});
   const dir = await fs.realpath(destDir);
-  if (opts.useSystemUnzip) {
-    try {
-      await extractWithSystemUnzip(zipFilePath, dir, {which: fs.which, log});
-      return;
-    } catch (err: any) {
-      log.warn('unzip failed; falling back to JS: %s', err.stderr || err.message);
-    }
-  }
   const extractor = new ZipExtractor(
     zipFilePath,
     {...(opts as ExtractAllOptions & Partial<ZipExtractorOptions>), dir},

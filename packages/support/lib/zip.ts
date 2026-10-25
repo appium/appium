@@ -1,6 +1,6 @@
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
-import stream from 'node:stream';
+import stream, {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import {promisify} from 'node:util';
 import zlib from 'node:zlib';
@@ -16,6 +16,7 @@ import {
   assertSupportedEntry,
   BUFFERED_ENTRY_LIMIT,
   createBase64EncodeStream,
+  decodeEntry,
   EntrySink,
   extractZipStream,
   INFLATE_CHUNK_SIZE,
@@ -42,6 +43,8 @@ const ZIP_MAGIC = 'PK';
 const IFMT = 0b1111000000000000;
 const IFDIR = 0b0100000000000000;
 const IFLNK = 0b1010000000000000;
+// Longer targets cannot be links on any supported OS
+const MAX_SYMLINK_TARGET_SIZE = 64 * 1024;
 
 export interface ExtractAllOptions {
   /**
@@ -513,14 +516,14 @@ class ZipExtractor {
       // check for windows weird way of specifying a directory
       // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
       (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
-    if (isDir || isSymlink || isIgnoredEntry(fileName)) {
-      // Links and folders must not overlap with the files being written
-      if (isSymlink) {
-        await this.queue.drain();
-      } else {
-        await this.queue.waitForKey(this.writer.pathKey(fileName));
-      }
+    if (isDir || isIgnoredEntry(fileName)) {
+      // Folders must not overlap with the files being written
+      await this.queue.waitForKey(this.writer.pathKey(fileName));
       await this.writer.write({fileName, mode, isDir, isSymlink, openBody: () => this.openReadStream(entry)});
+      return;
+    }
+    if (isSymlink) {
+      await this.extractSymlink(entry, fileName, mode);
       return;
     }
 
@@ -544,19 +547,52 @@ class ZipExtractor {
     }
   }
 
+  private async extractSymlink(entry: yauzl.Entry, fileName: string, mode: number): Promise<void> {
+    assertSupportedEntry(fileName, entry.generalPurposeBitFlag, entry.compressionMethod);
+    if (entry.uncompressedSize > MAX_SYMLINK_TARGET_SIZE || entry.compressedSize > MAX_SYMLINK_TARGET_SIZE) {
+      throw new Error(`The symlink target of the ZIP entry '${fileName}' is too large`);
+    }
+    // The target is verified like the content of any other entry
+    const data = await readEntryData(this.archiveFd, entry);
+    const target = await decodeEntry(fileName, entry.compressionMethod, data, {
+      crc: entry.crc32,
+      size: entry.uncompressedSize,
+    });
+    // Links must not overlap with the files being written
+    await this.queue.drain();
+    await this.writer.write({
+      fileName,
+      mode,
+      isDir: false,
+      isSymlink: true,
+      openBody: async () => Readable.from([target]),
+    });
+  }
+
   private async streamEntry(entry: yauzl.Entry, sink: EntrySink): Promise<void> {
     const deflated = entry.compressionMethod === METHOD_DEFLATE;
     // Inflating here instead of in yauzl allows bigger chunks
     const raw = await this.openReadStream(entry, deflated ? {decompress: false} : undefined);
+    // Older Node.js versions report an abort instead of the error which made the pipeline stop
+    let sinkError: unknown;
     const consume = async (source: AsyncIterable<Buffer>) => {
       for await (const chunk of source) {
-        await sink.push(chunk);
+        try {
+          await sink.push(chunk);
+        } catch (err) {
+          sinkError = err;
+          throw err;
+        }
       }
     };
-    if (deflated) {
-      await pipeline(raw, zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE}), consume);
-    } else {
-      await pipeline(raw, consume);
+    try {
+      if (deflated) {
+        await pipeline(raw, zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE}), consume);
+      } else {
+        await pipeline(raw, consume);
+      }
+    } catch (err) {
+      throw sinkError ?? err;
     }
   }
 }

@@ -717,6 +717,31 @@ describe('#zip', function () {
           await assert.rejects(extractEntries([{name: 'f.bin', data: 'abc', flags: 1}]), /'f.bin' is encrypted/);
         });
 
+        for (const method of [0, 8]) {
+          it(
+            `should reject a ${method ? 'deflated' : 'stored'} symlink with a wrong CRC32`,
+            {skip: isWindows()},
+            async function () {
+              await assert.rejects(
+                extractEntries([
+                  {name: 'target.txt', data: 'x'},
+                  {name: 'link', data: 'target.txt', mode: 0o120777, method, crc: 1},
+                ]),
+                /CRC32 mismatch/,
+              );
+              assert.strictEqual(await fs.exists(path.resolve(tmpRoot, 'entries-out/link')), false);
+            },
+          );
+        }
+
+        it('should extract a deflated symlink', {skip: isWindows()}, async function () {
+          const out = await extractEntries([
+            {name: 'target.txt', data: 'x'},
+            {name: 'link', data: 'target.txt', mode: 0o120777, method: 8},
+          ]);
+          assert.strictEqual(await fs.readlink(path.resolve(out, 'link')), 'target.txt');
+        });
+
         it('should let the last of the entries with the same name win', async function () {
           const entries = Array.from({length: 50}, (_, i): BuildEntry => ({name: 'same.txt', data: `v${i}`}));
           const out = await extractEntries(entries);

@@ -89,6 +89,25 @@ export function assertContent(fileName: string, actual: ExpectedContent, expecte
   }
 }
 
+/**
+ * Inflates (if needed) and verifies the whole content of an entry.
+ *
+ * @param allowTrailingData Accept bytes after the end of the deflate stream (the caller knows where the entry ends)
+ * @throws {Error} If the content is corrupted or does not match what the archive declares
+ */
+export async function decodeEntry(
+  fileName: string,
+  method: number,
+  data: Buffer,
+  expected: ExpectedContent,
+  allowTrailingData = false,
+): Promise<Buffer> {
+  const content =
+    method === METHOD_DEFLATE ? await inflateRawEntry(fileName, data, expected.size, allowTrailingData) : data;
+  assertContent(fileName, {size: content.length, crc: zlib.crc32(content)}, expected);
+  return content;
+}
+
 /** The number of files to write at the same time: the default one for missing and invalid values, a sane count otherwise */
 export function normalizeConcurrency(value?: number): number {
   if (value === undefined || !Number.isFinite(value)) {
@@ -192,11 +211,10 @@ export class EntrySink {
     if (!prepared) {
       return;
     }
-    const bytes = Math.max(data.length, expected.size);
+    // A deflated job holds the compressed and the expanded content at the same time
+    const bytes = method === METHOD_DEFLATE ? data.length + expected.size : data.length;
     await this.context.queue.submit(this.key, bytes, async () => {
-      const content =
-        method === METHOD_DEFLATE ? await inflateRawEntry(fileName, data, expected.size, allowTrailingData) : data;
-      assertContent(fileName, {size: content.length, crc: zlib.crc32(content)}, expected);
+      const content = await decodeEntry(fileName, method, data, expected, allowTrailingData);
       await this.writeBuffered(prepared, content);
     });
   }

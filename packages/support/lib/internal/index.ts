@@ -15,6 +15,7 @@ export {
   assertContent,
   assertSupportedEntry,
   BUFFERED_ENTRY_LIMIT,
+  decodeEntry,
   EntrySink,
   INFLATE_CHUNK_SIZE,
   LOCAL_HEADER_SIZE,

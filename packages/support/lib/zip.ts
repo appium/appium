@@ -1,3 +1,4 @@
+import {once} from 'node:events';
 import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream, {Readable} from 'node:stream';
@@ -591,13 +592,34 @@ class ZipExtractor {
     };
     try {
       if (deflated) {
-        await pipeline(raw, zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE}), consume);
+        const inflater = zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE});
+        await Promise.all([feedInflater(raw, inflater), pipeline(inflater, consume)]);
       } else {
         await pipeline(raw, consume);
       }
     } catch (err) {
       throw sinkError ?? err;
     }
+  }
+}
+
+/** Unlike `pipeline`, reads the raw stream up to its end, so padding after the deflate stream is tolerated */
+async function feedInflater(raw: Readable, inflater: zlib.InflateRaw): Promise<void> {
+  try {
+    for await (const chunk of raw) {
+      if (inflater.destroyed) {
+        return;
+      }
+      if (!inflater.write(chunk)) {
+        await Promise.race([once(inflater, 'drain'), once(inflater, 'close')]);
+      }
+    }
+    inflater.end();
+  } catch (err) {
+    inflater.destroy(err as Error);
+    throw err;
+  } finally {
+    raw.destroy();
   }
 }
 

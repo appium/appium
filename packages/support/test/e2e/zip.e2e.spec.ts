@@ -814,6 +814,18 @@ describe('#zip', function () {
           assert.strictEqual(await fs.readFile(path.resolve(out, 'next.txt'), 'utf8'), 'next');
         });
 
+        it('should accept data after the end of a big deflate stream within the compressed size', async function () {
+          const data = Buffer.alloc(BIG, 'a');
+          const padding = 100_000;
+          const compressedSize = zlib.deflateRawSync(data).length + padding;
+          const out = await extractEntries([
+            {name: 'padded.bin', data, compressedSize, junkAfter: Buffer.alloc(padding)},
+            {name: 'next.txt', data: 'next'},
+          ]);
+          assert.ok(data.equals(await fs.readFile(path.resolve(out, 'padded.bin'))));
+          assert.strictEqual(await fs.readFile(path.resolve(out, 'next.txt'), 'utf8'), 'next');
+        });
+
         for (const [title, size] of [
           ['small', 100],
           ['big', BIG],

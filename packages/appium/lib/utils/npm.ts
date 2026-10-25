@@ -50,8 +50,6 @@ interface WindowsNpmCommand {
 }
 
 export class NPM {
-  private readonly _pendingWindowsNpmCli = new Map<string, Promise<WindowsNpmCommand>>();
-
   /**
    * Execute `npm` with given args.
    *
@@ -281,41 +279,23 @@ export class NPM {
     return path.join(cwd, INSTALL_LOCKFILE_RELATIVE_PATH);
   }
 
-  /** Resolves the Node executable and npm CLI selected by the Windows shim on PATH. */
+  /**
+   * Resolves the Node executable and npm CLI selected by the Windows shim on PATH.
+   *
+   * Resolution is intentionally uncached: npm helpers are not on a hot path,
+   * and resolving each call avoids cache invalidation and shared-state complexity.
+   */
   private async _resolveWindowsNpmCommand(execOpts: TeenProcessExecOptions): Promise<WindowsNpmCommand> {
-    // npm.cmd cannot be spawned directly, and a shell would reinterpret arguments.
-    // Resolve its adjacent CLI so the npm selected on PATH still receives each argument intact.
     const env = {...(execOpts.env ?? process.env)};
+    const cwd = execOpts.cwd?.toString() ?? process.cwd();
     let npmShim: string;
     try {
-      npmShim = await this._findWindowsExecutable('npm.cmd', execOpts.cwd?.toString() ?? process.cwd(), env);
+      npmShim = await this._findWindowsExecutable('npm.cmd', cwd, env);
     } catch (cause) {
       throw new Error('Cannot find npm.cmd on PATH. Install npm and ensure its directory is on PATH.', {cause});
     }
     npmShim = await fs.realpath(npmShim);
-    // Custom process options (for example cancellation or logging) belong to each caller.
-    const hasCustomProcessOptions = Object.keys(execOpts).some((key) => !['cwd', 'shell', 'env'].includes(key));
-    if (hasCustomProcessOptions) {
-      return await this._resolveWindowsNpmCommandFromShim(npmShim, {...execOpts, env});
-    }
-    // npmrc values can interpolate arbitrary environment variables, so even variables
-    // unrelated to PATH or npm_config_* may change the selected global prefix.
-    const key = JSON.stringify([npmShim, execOpts.cwd, Object.entries(env).sort(([a], [b]) => a.localeCompare(b))]);
-    const pending = this._pendingWindowsNpmCli.get(key);
-    if (pending) {
-      return await pending;
-    }
-    // No await between lookup and insertion: concurrent callers share this promise
-    // without a lock or repeating the prefix probe.
-    const resolution = this._resolveWindowsNpmCommandFromShim(npmShim, {...execOpts, env});
-    this._pendingWindowsNpmCli.set(key, resolution);
-    try {
-      return await resolution;
-    } finally {
-      // Share concurrent work only: later calls must observe npmrc edits,
-      // new npm versions, and recovery after failures.
-      this._pendingWindowsNpmCli.delete(key);
-    }
+    return await this._resolveWindowsNpmCommandFromShim(npmShim, {...execOpts, env});
   }
 
   /** Searches the child working directory and PATH without falling back to the parent environment. */

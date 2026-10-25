@@ -305,42 +305,19 @@ describe('Windows npm shim compatibility', {skip: !system.isWindows()}, function
   });
 });
 
-describe('Windows npm resolver reuse', {skip: !system.isWindows()}, function () {
-  for (const customOptions of [false, true]) {
-    it(`shares concurrent prefix lookups only without custom process options (${customOptions})`, async function (t) {
-      const fixture = await createResolverFixture(t);
-      let notifyStarted!: () => void;
-      let releaseLookup!: () => void;
-      const started = new Promise<void>((resolve) => {
-        notifyStarted = resolve;
-      });
-      const release = new Promise<void>((resolve) => {
-        releaseLookup = resolve;
-      });
-      const exists = fs.exists;
-      t.mock.method(fs, 'exists', async (file: Parameters<typeof fs.exists>[0]) => {
-        if (file === fixture.prefixScript) {
-          notifyStarted();
-          await release;
-        }
-        return await exists(file);
-      });
-      const opts = customOptions ? {timeout: 5000} : {};
-      const first = fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}, opts);
-      await started;
-      const second = fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}, opts);
-      // which/realpath are mocked below, so the second lookup reaches the pending
-      // resolution before the next event-loop turn, without timing a subprocess.
-      await new Promise<void>((resolve) => setImmediate(resolve));
-      releaseLookup();
-      const results = await Promise.all([first, second]);
-      assert.deepEqual(
-        results.map((result) => result.json),
-        ['first', 'first'],
-      );
-      assert.equal((await fs.readFile(fixture.counter, 'utf8')).length, customOptions ? 2 : 1);
-    });
-  }
+describe('Windows npm resolution', {skip: !system.isWindows()}, function () {
+  it('resolves the prefix independently for concurrent calls with the same context', async function (t) {
+    const fixture = await createResolverFixture(t);
+    const results = await Promise.all([
+      fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}),
+      fixture.npm.exec('probe', [], {cwd: fixture.root, json: true}),
+    ]);
+    assert.deepEqual(
+      results.map((result) => result.json),
+      ['first', 'first'],
+    );
+    assert.equal((await fs.readFile(fixture.counter, 'utf8')).length, 2);
+  });
 
   it('keeps concurrent resolutions separate for different environments and working directories', async function (t) {
     const fixture = await createResolverFixture(t);
@@ -439,10 +416,6 @@ async function createResolverFixture(t: TestContext) {
     ].join('\n'),
   );
   t.mock.method(fs, 'which', async (command: string) => (command.endsWith('npm.cmd') ? shim : process.execPath));
-  const realpath = fs.realpath;
-  t.mock.method(fs, 'realpath', async (file: Parameters<typeof fs.realpath>[0]) =>
-    file === shim ? shim : await realpath(file),
-  );
   return {root, prefixScript, counter, secondPrefix, npm: new NPM()};
 }
 

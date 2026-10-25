@@ -580,25 +580,30 @@ class ZipExtractor {
     const raw = await this.openReadStream(entry, deflated ? {decompress: false} : undefined);
     // Older Node.js versions report an abort instead of the error which made the pipeline stop
     let sinkError: unknown;
+    let pushing: Promise<void> = Promise.resolve();
     const consume = async (source: AsyncIterable<Buffer>) => {
       for await (const chunk of source) {
         try {
-          await sink.push(chunk);
+          pushing = sink.push(chunk);
+          await pushing;
         } catch (err) {
           sinkError = err;
           throw err;
         }
       }
     };
-    try {
-      if (deflated) {
-        const inflater = zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE});
-        await Promise.all([feedInflater(raw, inflater), pipeline(inflater, consume)]);
-      } else {
-        await pipeline(raw, consume);
-      }
-    } catch (err) {
-      throw sinkError ?? err;
+    let results: PromiseSettledResult<void>[];
+    if (deflated) {
+      const inflater = zlib.createInflateRaw({chunkSize: INFLATE_CHUNK_SIZE});
+      results = await Promise.allSettled([feedInflater(raw, inflater), pipeline(inflater, consume)]);
+    } else {
+      results = await Promise.allSettled([pipeline(raw, consume)]);
+    }
+    // The sink is aborted by the caller, so its last write must not be in flight anymore
+    await pushing.catch(() => {});
+    const failed = results.find((result): result is PromiseRejectedResult => result.status === 'rejected');
+    if (failed) {
+      throw sinkError ?? failed.reason;
     }
   }
 }

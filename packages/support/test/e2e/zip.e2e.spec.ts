@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import {Readable} from 'node:stream';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import zlib from 'node:zlib';
+
+import * as yauzl from 'yauzl';
 
 import {fs, tempDir} from '../../lib/index.js';
 import {isWindows} from '../../lib/system.js';
@@ -824,6 +827,45 @@ describe('#zip', function () {
           ]);
           assert.ok(data.equals(await fs.readFile(path.resolve(out, 'padded.bin'))));
           assert.strictEqual(await fs.readFile(path.resolve(out, 'next.txt'), 'utf8'), 'next');
+        });
+
+        it('should not leave a file behind when the input fails while the output is being opened', async function (t) {
+          const data = Buffer.from('lorem ipsum '.repeat(Math.ceil(BIG / 12)));
+          const archive = path.resolve(tmpRoot, 'bad.zip');
+          const out = path.resolve(tmpRoot, 'entries-out');
+          await fs.writeFile(archive, buildZip([{name: 'bad.bin', data}]));
+          // The compressed content stops after the first bytes: the input fails while the output is not open yet
+          const openReadStream = yauzl.ZipFile.prototype.openReadStream;
+          t.mock.method(yauzl.ZipFile.prototype, 'openReadStream', function (this: yauzl.ZipFile, ...args: any[]) {
+            const callback = args.pop();
+            return (openReadStream as any).call(this, ...args, async (err: Error | null, stream: Readable) => {
+              if (err) {
+                return callback(err);
+              }
+              const [first] = await stream.toArray();
+              const broken = new Readable({read() {}});
+              broken.push(first.subarray(0, 2000));
+              callback(null, broken);
+              setTimeout(() => broken.destroy(new Error('read failed')), 50);
+            });
+          });
+          const openFile = fs.openFile;
+          let open = 0;
+          t.mock.method(fs, 'openFile', async (...args: Parameters<typeof openFile>) => {
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            const handle = await openFile(...args);
+            open++;
+            const close = handle.close.bind(handle);
+            handle.close = async () => {
+              open--;
+              await close();
+            };
+            return handle;
+          });
+          await assert.rejects(zip.extractAllTo(archive, out), /read failed/);
+          await new Promise((resolve) => setTimeout(resolve, 400));
+          assert.deepStrictEqual(await fs.readdir(out), []);
+          assert.strictEqual(open, 0);
         });
 
         for (const [title, size] of [

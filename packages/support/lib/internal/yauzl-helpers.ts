@@ -1,7 +1,11 @@
 import type stream from 'node:stream';
 import {promisify} from 'node:util';
+import zlib from 'node:zlib';
 
 import * as yauzl from 'yauzl';
+
+const FLAG_UTF8_NAME = 0x800;
+const EXTRA_UNICODE_PATH = 0x7075;
 
 export const openZip = promisify(yauzl.open) as (zipPath: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>;
 
@@ -15,12 +19,24 @@ export function createOpenReadStream(zipfile: yauzl.ZipFile): OpenReadStreamFn {
   return promisify(zipfile.openReadStream.bind(zipfile)) as OpenReadStreamFn;
 }
 
-/** Decodes the entry name using the given encoding if yauzl has not decoded it */
-export function toEntryFileName(entry: yauzl.Entry, encoding?: BufferEncoding): string {
-  if (Buffer.isBuffer(entry.fileName)) {
-    return entry.fileName.toString(encoding ?? 'utf8');
+/**
+ * Decodes the entry name if yauzl has not done it: the Info-ZIP unicode path field wins,
+ * then the UTF-8 flag, then the given encoding. Backslashes become slashes like yauzl does it.
+ */
+export function toEntryFileName(entry: yauzl.Entry, encoding: BufferEncoding = 'utf8'): string {
+  const rawName = entry.fileName;
+  if (!Buffer.isBuffer(rawName)) {
+    return rawName;
   }
-  return entry.fileName;
+  // Only valid if made for this very name
+  const unicodePath = entry.extraFields?.find(
+    ({id, data}) =>
+      id === EXTRA_UNICODE_PATH && data.length > 5 && data[0] === 1 && data.readUInt32LE(1) === zlib.crc32(rawName),
+  );
+  const name = unicodePath
+    ? unicodePath.data.toString('utf8', 5)
+    : rawName.toString(entry.generalPurposeBitFlag & FLAG_UTF8_NAME ? 'utf8' : encoding);
+  return name.replaceAll('\\', '/');
 }
 
 /**

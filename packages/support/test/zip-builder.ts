@@ -24,6 +24,8 @@ export interface BuildEntry {
   flags?: number;
   /** Extra field bytes added to the local header (after the zip64 field, if any) */
   localExtra?: Buffer;
+  /** Extra field bytes added to the central directory record */
+  centralExtra?: Buffer;
   /** Raw bytes put right after this entry's data (and descriptor) */
   junkAfter?: Buffer;
   /** Overrides to produce corrupted archives */
@@ -129,9 +131,10 @@ export function buildZip(entries: BuildEntry[], opts: BuildOptions = {}): Buffer
     record.writeUInt32LE(compressedSize, 20);
     record.writeUInt32LE(size, 24);
     record.writeUInt16LE(centralName.length, 28);
+    record.writeUInt16LE(entry.centralExtra?.length ?? 0, 30);
     record.writeUInt32LE(((entry.mode ?? 0) & 0xffff) * 0x10000, 38);
     record.writeUInt32LE(localOffset, 42);
-    central.push(record, centralName);
+    central.push(Buffer.concat([record, centralName, entry.centralExtra ?? Buffer.alloc(0)]));
   }
 
   if (opts.junkBeforeCentralDirectory) {
@@ -148,8 +151,8 @@ export function buildZip(entries: BuildEntry[], opts: BuildOptions = {}): Buffer
   const comment = Buffer.from(opts.comment ?? '');
   const eocd = Buffer.alloc(22);
   eocd.writeUInt32LE(0x06054b50, 0);
-  eocd.writeUInt16LE(central.length / 2, 8);
-  eocd.writeUInt16LE(central.length / 2, 10);
+  eocd.writeUInt16LE(central.length, 8);
+  eocd.writeUInt16LE(central.length, 10);
   eocd.writeUInt32LE(centralData.length, 12);
   eocd.writeUInt32LE(offset, 16);
   eocd.writeUInt16LE(comment.length, 20);

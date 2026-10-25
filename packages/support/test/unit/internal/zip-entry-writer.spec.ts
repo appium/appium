@@ -24,7 +24,7 @@ describe('ZipEntryWriter', function () {
 
   beforeEach(async function () {
     root = await fs.realpath(await tempDir.openDir());
-    writer = new ZipEntryWriter({dir: root});
+    writer = new ZipEntryWriter({dir: root, fs});
   });
 
   afterEach(async function () {
@@ -56,7 +56,7 @@ describe('ZipEntryWriter', function () {
   });
 
   it('should fall back to default modes', {skip: isWindows()}, async function () {
-    const custom = new ZipEntryWriter({dir: root, defaultFileMode: '420'}); // 0o644 as decimal
+    const custom = new ZipEntryWriter({dir: root, fs, defaultFileMode: '420'}); // 0o644 as decimal
     await custom.write(entry('f.txt', 'x'));
     assert.strictEqual((await fs.stat(path.join(root, 'f.txt'))).mode & 0o777, 0o644);
   });

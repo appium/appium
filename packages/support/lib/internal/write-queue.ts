@@ -61,6 +61,17 @@ export class WriteQueue {
   }
 
   /**
+   * Reports a failure of any job so far, so that the caller does not carry on with the work which is not needed anymore.
+   *
+   * @throws {unknown} The first failure of any job
+   */
+  throwIfFailed(): void {
+    if (this.failure) {
+      throw this.failure.error;
+    }
+  }
+
+  /**
    * Waits for all jobs.
    *
    * @throws {unknown} The first failure of any job
@@ -89,12 +100,6 @@ export class WriteQueue {
     } finally {
       this.runningKeys.delete(key);
       this.runningBytes -= bytes;
-    }
-  }
-
-  private throwIfFailed(): void {
-    if (this.failure) {
-      throw this.failure.error;
     }
   }
 }

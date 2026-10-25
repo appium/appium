@@ -1,28 +1,29 @@
 import {randomUUID} from 'node:crypto';
-import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
 
 import {asyncmap} from 'asyncbox';
-import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
 
 import {fs} from './fs.js';
-import {createBase64EncodeStream} from './internal/index.js';
+import {
+  createBase64EncodeStream,
+  GiB,
+  isSubPath,
+  KiB,
+  MiB,
+  pluralize,
+  type PluralizeOptions,
+} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
 
+export {GiB, isSubPath, KiB, MiB, pluralize, type PluralizeOptions};
+
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
-
-/** Size of one kibibyte in bytes (1024). */
-export const KiB = 1024;
-/** Size of one mebibyte in bytes (1024 * 1024). */
-export const MiB = KiB * 1024;
-/** Size of one gibibyte in bytes (1024 * 1024 * 1024). */
-export const GiB = MiB * 1024;
 
 /** A string which is never `''`. */
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
@@ -341,29 +342,6 @@ export function toReadableSizeString(bytes: number | string): string {
 }
 
 /**
- * Checks whether the given path is a subpath of the given root folder.
- *
- * @param originalPath - The absolute file or folder path to test
- * @param root - The absolute root folder path
- * @param forcePosix - If true, interpret paths in POSIX format (e.g. on Windows)
- * @returns `true` if `originalPath` is under `root` or is equal to it
- * @throws {Error} If either path is not absolute
- */
-export function isSubPath(originalPath: string, root: string, forcePosix: boolean | null = null): boolean {
-  const pathObj = forcePosix ? path.posix : path;
-  for (const p of [originalPath, root]) {
-    if (!pathObj.isAbsolute(p)) {
-      throw new Error(`'${p}' is expected to be an absolute path`);
-    }
-  }
-  // An empty relative path means both arguments point to the same location.
-  // Comparing the strings instead would accept any sibling whose name starts
-  // with the root folder name, like '/root-backup' for the '/root' root.
-  const relativePath = pathObj.relative(root, originalPath);
-  return relativePath !== '..' && !relativePath.startsWith(`..${pathObj.sep}`) && !pathObj.isAbsolute(relativePath);
-}
-
-/**
  * Checks whether the given paths refer to the same file system entity (same inode).
  * All paths must exist.
  *
@@ -409,12 +387,6 @@ export function coerceVersion(ver: string, strict = true): string | null {
 }
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
-
-/** Options for pluralize(). */
-export interface PluralizeOptions {
-  /** If true, prefix the result with the count (e.g. "3 ducks"). */
-  inclusive?: boolean;
-}
 
 /** Options for toInMemoryBase64(). */
 export interface EncodingOptions {
@@ -476,24 +448,6 @@ export function compareVersions(ver1: string, operator: string, ver2: string): b
  */
 export function quote(args: string | string[]): string {
   return shellQuote(Array.isArray(args) ? args : [args]);
-}
-
-/**
- * Returns the plural or singular form of a word appropriate to the count (e.g. "duck" + 1 → "duck", + 2 → "ducks").
- *
- * @param word - The word to pluralize (or singularize when count is 1)
- * @param count - The count used to choose singular vs plural
- * @param options - Options object or boolean: use `inclusive: true` (or `true`) to prefix with the number (e.g. "3 ducks")
- * @returns The correctly inflected word, optionally prefixed with the count
- */
-export function pluralize(word: string, count: number, options: PluralizeOptions | boolean = {}): string {
-  let inclusive = false;
-  if (typeof options === 'boolean') {
-    inclusive = options;
-  } else if (typeof options?.inclusive === 'boolean') {
-    inclusive = options.inclusive;
-  }
-  return pluralizeLib(word, count, inclusive);
 }
 
 /**

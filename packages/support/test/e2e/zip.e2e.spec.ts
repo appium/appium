@@ -624,6 +624,49 @@ describe('#zip', function () {
       return out;
     }
 
+    describe('file names', function () {
+      function unicodePathExtra(rawName: string, unicodeName: string, crcName = rawName): Buffer {
+        const unicode = Buffer.from(unicodeName);
+        const extra = Buffer.alloc(4 + 5 + unicode.length);
+        extra.writeUInt16LE(0x7075, 0);
+        extra.writeUInt16LE(5 + unicode.length, 2);
+        extra[4] = 1;
+        extra.writeUInt32LE(zlib.crc32(Buffer.from(crcName)), 5);
+        unicode.copy(extra, 9);
+        return extra;
+      }
+
+      it('should decode names not flagged as UTF-8 as utf8 by default', async function () {
+        const out = await extractEntries([{name: 'café.txt', data: 'x', noUtf8Flag: true}]);
+        assert.strictEqual(await fs.exists(path.resolve(out, 'café.txt')), true);
+      });
+
+      it('should use the requested encoding for names not flagged as UTF-8', async function () {
+        const out = await extractEntries([{name: 'café.txt', data: 'x', noUtf8Flag: true}], {
+          fileNamesEncoding: 'latin1',
+        });
+        assert.strictEqual(await fs.exists(path.resolve(out, Buffer.from('café.txt').toString('latin1'))), true);
+      });
+
+      it('should prefer the UTF-8 flag over the requested encoding', async function () {
+        const out = await extractEntries([{name: 'café.txt', data: 'x'}], {fileNamesEncoding: 'latin1'});
+        assert.strictEqual(await fs.exists(path.resolve(out, 'café.txt')), true);
+      });
+
+      it('should use the Info-ZIP unicode path field if it matches the name', async function () {
+        const centralExtra = unicodePathExtra('fallback.txt', 'ünicöde.txt');
+        const out = await extractEntries([{name: 'fallback.txt', data: 'x', noUtf8Flag: true, centralExtra}]);
+        assert.strictEqual(await fs.exists(path.resolve(out, 'ünicöde.txt')), true);
+        assert.strictEqual(await fs.exists(path.resolve(out, 'fallback.txt')), false);
+      });
+
+      it('should ignore the Info-ZIP unicode path field made for another name', async function () {
+        const centralExtra = unicodePathExtra('fallback.txt', 'ünicöde.txt', 'other.txt');
+        const out = await extractEntries([{name: 'fallback.txt', data: 'x', noUtf8Flag: true, centralExtra}]);
+        assert.strictEqual(await fs.exists(path.resolve(out, 'fallback.txt')), true);
+      });
+    });
+
     for (const [title, size] of [
       ['small', 1000],
       ['big', BIG],

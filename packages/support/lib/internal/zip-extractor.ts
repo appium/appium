@@ -113,7 +113,7 @@ export class ZipExtractor {
   }
 
   private extractFileName(entry: yauzl.Entry): string {
-    return toEntryFileName(entry, this.opts.fileNamesEncoding ?? 'utf8');
+    return toEntryFileName(entry, this.opts.fileNamesEncoding);
   }
 
   private async extractEntry(entry: yauzl.Entry): Promise<void> {

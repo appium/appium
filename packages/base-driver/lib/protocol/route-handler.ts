@@ -7,6 +7,7 @@ import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
+import {jsonParseErrors} from './json-parse-error.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {runWithProxyReq} from './proxy-context.js';
 import {tryWdProxy} from './proxy.js';
@@ -101,6 +102,10 @@ function buildHandler(
     try {
       logDeprecationWarning(driver, method, path, spec, sessionId);
       ensureSessionExists(driver, sessionId, isSessCmd);
+      const jsonParseError = jsonParseErrors.getInvalidArgument(req);
+      if (jsonParseError) {
+        throw jsonParseError;
+      }
       assertPostBodyIsJsonObject(req, spec);
 
       const proxyOutcome = await tryWdProxy(driver, req, res, spec, isSessCmd, sessionId);

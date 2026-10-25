@@ -32,6 +32,8 @@ export {
   errors,
   getProxyReq,
   getResponseForW3CError,
+  JsonParseErrors,
+  jsonParseErrors,
   isErrorType,
   isSessionCommand,
   handleIdempotency,

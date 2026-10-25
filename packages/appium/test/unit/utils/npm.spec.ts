@@ -3,11 +3,23 @@ import path from 'node:path';
 import {describe, it} from 'node:test';
 import type {TestContext} from 'node:test';
 
-import {fs, tempDir} from '@appium/support';
+import {fs, system, tempDir} from '@appium/support';
 
 import {NPM, resolveFrom} from '../../../lib/utils/npm.js';
 
 describe('utils/npm', function () {
+  it('explains when npm.cmd cannot be found and preserves the cause', {skip: !system.isWindows()}, async function (t) {
+    const cause = new Error('not found: npm.cmd');
+    t.mock.method(fs, 'which', async () => {
+      throw cause;
+    });
+    await assert.rejects(new NPM().exec('version', [], {cwd: process.cwd()}), (error: Error) => {
+      assert.match(error.message, /Cannot find npm\.cmd on PATH/);
+      assert.equal(error.cause, cause);
+      return true;
+    });
+  });
+
   describe('installPackage()', function () {
     for (const hasAppiumDependency of [false, true]) {
       it(`installs a local source directly with live links (has Appium dependency: ${hasAppiumDependency})`, async function (t) {
@@ -125,7 +137,7 @@ describe('utils/npm', function () {
 });
 
 async function createInstalledPackage(t: TestContext) {
-  const cwd = await tempDir.openDir();
+  const cwd = await fs.realpath(await tempDir.openDir());
   t.after(async () => {
     await fs.rimraf(cwd);
   });

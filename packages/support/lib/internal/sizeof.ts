@@ -6,6 +6,11 @@ const ECMA_SIZES = Object.freeze({
 
 type SizeCalculator = (obj: unknown) => number;
 
+/** Calculates the in-depth size in memory of the given value in bytes (borrowed from https://github.com/miktam/sizeof). */
+export function sizeOf(obj: unknown): number {
+  return getCalculator(new WeakSet())(obj);
+}
+
 function extractAllProperties(obj: object): (string | symbol)[] {
   const stringProperties: (string | symbol)[] = [];
   for (const prop in obj) {
@@ -72,9 +77,4 @@ function getCalculator(seen: WeakSet<object>): SizeCalculator {
         return 0;
     }
   };
-}
-
-/** Calculates the in-depth size in memory of the given value in bytes (borrowed from https://github.com/miktam/sizeof). */
-export function sizeOf(obj: unknown): number {
-  return getCalculator(new WeakSet())(obj);
 }

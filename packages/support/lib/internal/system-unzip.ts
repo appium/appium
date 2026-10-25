@@ -10,20 +10,6 @@ export interface SystemUnzipDeps {
 
 const executablePaths = new Map<string, Promise<string>>();
 
-/** Finds and memoizes the full path to the given executable. Rejects if it is not found. */
-function getExecutablePath(binaryName: string, {which, log}: SystemUnzipDeps): Promise<string> {
-  let result = executablePaths.get(binaryName);
-  if (!result) {
-    result = (async () => {
-      const fullPath = await which(binaryName);
-      log.debug(`Found '${binaryName}' at '${fullPath}'`);
-      return fullPath;
-    })();
-    executablePaths.set(binaryName, result);
-  }
-  return result;
-}
-
 /**
  * Executes system unzip (e.g., `/usr/bin/unzip`). If available, it is
  * significantly faster than the JS implementation.
@@ -63,4 +49,18 @@ export async function extractWithSystemUnzip(
     // -d is the dest dir
     await exec(executablePath, ['-q', '-o', zipFilePath, '-d', destDir]);
   }
+}
+
+/** Finds and memoizes the full path to the given executable. Rejects if it is not found. */
+function getExecutablePath(binaryName: string, {which, log}: SystemUnzipDeps): Promise<string> {
+  let result = executablePaths.get(binaryName);
+  if (!result) {
+    result = (async () => {
+      const fullPath = await which(binaryName);
+      log.debug(`Found '${binaryName}' at '${fullPath}'`);
+      return fullPath;
+    })();
+    executablePaths.set(binaryName, result);
+  }
+  return result;
 }

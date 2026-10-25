@@ -44,9 +44,9 @@ export interface ZipExtractorOptions {
   defaultFileMode?: string;
 }
 
-// This class is based on https://github.com/maxogden/extract-zip/blob/master/index.js
+/** Extracts a ZIP file from disk. Based on https://github.com/maxogden/extract-zip/blob/master/index.js */
 export class ZipExtractor {
-  zipfile!: yauzl.ZipFile;
+  private zipfile!: yauzl.ZipFile;
   private readonly writer: ZipEntryWriter;
   private readonly queue: WriteQueue;
   private readonly sinkContext: SinkContext;
@@ -67,6 +67,7 @@ export class ZipExtractor {
     this.sinkContext = {writer: this.writer, queue: this.queue};
   }
 
+  /** Extracts all entries into the destination folder. Nothing touches it after the returned promise settles. */
   async extract(): Promise<void> {
     const {fileNamesEncoding} = this.opts;
     const zipfile = await openZip(this.zipPath, {

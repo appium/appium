@@ -10,10 +10,12 @@ export type OpenReadStreamFn = (
   options?: Partial<yauzl.ZipFileOptions>,
 ) => Promise<stream.Readable>;
 
+/** Creates a promisified `openReadStream` bound to the given archive */
 export function createOpenReadStream(zipfile: yauzl.ZipFile): OpenReadStreamFn {
   return promisify(zipfile.openReadStream.bind(zipfile)) as OpenReadStreamFn;
 }
 
+/** Decodes the entry name using the given encoding if yauzl has not decoded it */
 export function toEntryFileName(entry: yauzl.Entry, encoding?: BufferEncoding): string {
   if (Buffer.isBuffer(entry.fileName)) {
     return entry.fileName.toString(encoding ?? 'utf8');

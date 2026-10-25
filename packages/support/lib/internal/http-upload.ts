@@ -28,6 +28,7 @@ export interface HttpLog {
   info: (...args: any[]) => void;
 }
 
+/** Destroys the stream and waits until it is closed */
 export async function closeStream(stream: WriteStream): Promise<void> {
   if (stream.closed) {
     return;
@@ -38,6 +39,7 @@ export async function closeStream(stream: WriteStream): Promise<void> {
   });
 }
 
+/** Converts `user`/`pass` or `username`/`password` credentials to the axios format, or null if they are incomplete */
 export function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
   if (!auth || !isPlainObject(auth)) {
     return null;

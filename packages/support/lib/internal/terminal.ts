@@ -11,6 +11,7 @@ export function stripAnsi(text: string): string {
   return text.replace(ANSI_OSC_RE, '').replace(ANSI_CSI_RE, '');
 }
 
+/** Returns whether the terminal is expected to render unicode symbols. */
 export function isUnicodeSupported(): boolean {
   if (process.env.TERM === 'dumb') {
     return false;

@@ -734,6 +734,26 @@ describe('#zip', function () {
           );
         }
 
+        it(
+          'should extract a deflated symlink with data after the end of the deflate stream',
+          {skip: isWindows()},
+          async function () {
+            const compressedSize = zlib.deflateRawSync('target.txt').length + 4;
+            const out = await extractEntries([
+              {name: 'target.txt', data: 'x'},
+              {
+                name: 'link',
+                data: 'target.txt',
+                mode: 0o120777,
+                method: 8,
+                compressedSize,
+                junkAfter: Buffer.from('JUNK'),
+              },
+            ]);
+            assert.strictEqual(await fs.readlink(path.resolve(out, 'link')), 'target.txt');
+          },
+        );
+
         it('should extract a deflated symlink', {skip: isWindows()}, async function () {
           const out = await extractEntries([
             {name: 'target.txt', data: 'x'},

@@ -554,10 +554,14 @@ class ZipExtractor {
     }
     // The target is verified like the content of any other entry
     const data = await readEntryData(this.archiveFd, entry);
-    const target = await decodeEntry(fileName, entry.compressionMethod, data, {
-      crc: entry.crc32,
-      size: entry.uncompressedSize,
-    });
+    // The entry ends where the central directory says, whatever follows the deflate stream
+    const target = await decodeEntry(
+      fileName,
+      entry.compressionMethod,
+      data,
+      {crc: entry.crc32, size: entry.uncompressedSize},
+      true,
+    );
     // Links must not overlap with the files being written
     await this.queue.drain();
     await this.writer.write({

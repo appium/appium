@@ -61,13 +61,17 @@ jobs:
     uses: appium/appium-workflows/.github/workflows/node-lts-matrix.yml@main
 
   prepare_e2e_packages:
+    needs:
+      - prepare_matrix
     runs-on: ubuntu-latest
     outputs:
-      targets: ${{ steps.discover-packages.outputs.targets }}
+      matrix: ${{ steps.discover-packages.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Discover packages with e2e tests
         id: discover-packages
+        env:
+          NODE_VERSIONS: ${{ needs.prepare_matrix.outputs.versions }}
         run: |
           targets='[]'
           for package_dir in packages/*/; do
@@ -100,9 +104,15 @@ jobs:
               fi
             fi
           done
-          echo "targets=$targets" >> $GITHUB_OUTPUT
           echo "Found e2e targets:"
           echo "$targets" | jq -r '.[].name' | sed 's/^/  - /'
+          # All LTS versions of Node.js on Linux, the newest one on Windows
+          matrix=$(jq -c --argjson versions "$NODE_VERSIONS" '
+            [.[] as $target
+              | ($versions[] | {os: "ubuntu-latest", "node-version": ., target: $target}),
+                {os: "windows-latest", "node-version": ($versions | map(tostring | tonumber) | max), target: $target}]
+          ' <<< "$targets")
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   test-smoke:
     needs:
@@ -163,16 +173,13 @@ jobs:
 
   test-e2e:
     needs:
-      - prepare_matrix
       - prepare_e2e_packages
     name: E2E Tests - ${{ matrix.target.name }} (Node ${{ matrix.node-version }}, ${{ matrix.os }})
     if: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
-        target: ${{ fromJSON(needs.prepare_e2e_packages.outputs.targets) }}
+        include: ${{ fromJSON(needs.prepare_e2e_packages.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     defaults:

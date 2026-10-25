@@ -74,7 +74,8 @@ function rejectOnLayers(layers: RouteLayer[], fromIndex: number, seen: WeakSet<o
 }
 
 /**
- * `router.param` runs before the route stack. A bad JSON body skips it.
+ * `router.param` runs before the route is known. A bad JSON body skips the
+ * callback and continues routing. The matched route rejects the body.
  */
 function wrapParamCallbacks(router: RouteLayer['handle'], seen: WeakSet<object>): void {
   if (seen.has(router) || !router.params) {
@@ -92,12 +93,11 @@ function wrapParamCallbacks(router: RouteLayer['handle'], seen: WeakSet<object>)
         value: unknown,
         name: string,
       ) {
-        const jsonParseError = jsonParseErrors.getInvalidArgument(req);
-        if (!jsonParseError) {
-          return fn(req, res, next, value, name);
+        if (jsonParseErrors.getInvalidArgument(req)) {
+          next();
+          return;
         }
-        const [status, body] = getResponseForW3CError(jsonParseError);
-        res.status(status).json(body);
+        return fn(req, res, next, value, name);
       };
     }
   }

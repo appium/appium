@@ -771,6 +771,57 @@ describe('server configuration', function () {
     }
   });
 
+  it('should report an unknown command for a bad JSON body under a param mount', async function () {
+    let paramCalls = 0;
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(fakeDriver() as any),
+      port,
+      serverUpdaters: [
+        async (app) => {
+          app.param('id', (_req: any, res: any) => {
+            paramCalls += 1;
+            res.send('from-param');
+          });
+          const router = express.Router();
+          router.post('/ok', (_req, res) => {
+            res.send('ok');
+          });
+          app.use('/custom/:id', router);
+        },
+      ],
+    });
+    try {
+      const missing = await fetch(`http://127.0.0.1:${port}/custom/123/missing`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(missing.status, 404);
+      assert.strictEqual(((await missing.json()) as any).value.error, 'unknown command');
+      assert.strictEqual(paramCalls, 0);
+
+      const badOk = await fetch(`http://127.0.0.1:${port}/custom/123/ok`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{',
+      });
+      assert.strictEqual(badOk.status, 400);
+      assert.strictEqual(((await badOk.json()) as any).value.error, 'invalid argument');
+      assert.strictEqual(paramCalls, 0);
+
+      const ok = await fetch(`http://127.0.0.1:${port}/custom/123/ok`, {
+        method: 'POST',
+        headers: {'content-type': 'application/json', connection: 'close'},
+        body: '{}',
+      });
+      assert.strictEqual(ok.status, 200);
+      assert.strictEqual(await ok.text(), 'from-param');
+      assert.strictEqual(paramCalls, 1);
+    } finally {
+      await _server.close();
+    }
+  });
+
   for (const basePath of ['', '/wd/hub']) {
     it(`should return W3C errors for unknown paths with basePath '${basePath}'`, async function () {
       const _server = await server({

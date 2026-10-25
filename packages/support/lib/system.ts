@@ -2,12 +2,9 @@ import os from 'node:os';
 
 import {exec} from 'teen_process';
 
-/**
- * Whether the current OS is Windows.
- */
-export function isWindows(): boolean {
-  return os.type() === 'Windows_NT';
-}
+import {isWindows} from './internal/index.js';
+
+export {isWindows};
 
 /**
  * Whether the current OS is macOS (Darwin).

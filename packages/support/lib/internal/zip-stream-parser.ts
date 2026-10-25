@@ -1,13 +1,23 @@
-import type {FileHandle} from 'node:fs/promises';
 import {Readable, type Writable} from 'node:stream';
 import zlib from 'node:zlib';
 
-import log from '../logger.js';
-import {MiB} from '../util.js';
+import {MiB} from './units.js';
 import {WriteQueue} from './write-queue.js';
-import {isIgnoredEntry, type PreparedFile, type ReplacementFile, type ZipEntryWriter} from './zip-entry-writer.js';
+import {
+  assertContent,
+  assertSupportedEntry,
+  BUFFERED_ENTRY_LIMIT,
+  EntrySink,
+  INFLATE_CHUNK_SIZE,
+  LOCAL_HEADER_SIZE,
+  MAX_PENDING_BYTES,
+  METHOD_DEFLATE,
+  METHOD_STORED,
+  normalizeConcurrency,
+  SIG_LOCAL,
+} from './zip-entry-sink.js';
+import {isIgnoredEntry, type ZipEntryWriter} from './zip-entry-writer.js';
 
-const SIG_LOCAL = 0x04034b50;
 const SIG_CENTRAL = 0x02014b50;
 const SIG_EOCD = 0x06054b50;
 const SIG_EOCD64 = 0x06064b50;
@@ -18,24 +28,8 @@ const APK_SIGNING_BLOCK_MAGIC = 'APK Sig Block 42';
 const EOCD_SIGNATURE = Buffer.from([0x50, 0x4b, 0x05, 0x06]);
 const EOCD_MIN_SIZE = 22;
 
-const FLAG_ENCRYPTED = 0x1;
 const FLAG_DESCRIPTOR = 0x8;
 const FLAG_UTF8_NAME = 0x800;
-const FLAG_STRONG_ENCRYPTION = 0x40;
-
-const METHOD_STORED = 0;
-const METHOD_DEFLATE = 8;
-const METHOD_NAMES: Readonly<Record<number, string>> = {
-  1: 'shrink',
-  6: 'implode',
-  9: 'deflate64',
-  12: 'bzip2',
-  14: 'lzma',
-  93: 'zstd',
-  95: 'xz',
-  98: 'ppmd',
-  99: 'aes-encrypted',
-};
 
 const EXTRA_ZIP64 = 0x0001;
 const EXTRA_UNICODE_PATH = 0x7075;
@@ -43,12 +37,6 @@ const EXTRA_UNICODE_PATH = 0x7075;
 const HOST_UNIX = 3;
 const HOST_OSX = 19;
 
-// Entries up to this size are held in memory and written concurrently, bigger ones are streamed
-const BUFFERED_ENTRY_LIMIT = 4 * MiB;
-// The maximum total size of the entries waiting for their turn to be written
-const MAX_PENDING_BYTES = 32 * MiB;
-const DEFAULT_CONCURRENCY = 4;
-const INFLATE_CHUNK_SIZE = 64 * 1024;
 // A data descriptor with a signature and 64-bit sizes
 const STORED_DESCRIPTOR_LOOKAHEAD = 24;
 const MAX_CENTRAL_DIRECTORY_SIZE = 64 * MiB;
@@ -65,20 +53,19 @@ export interface ZipStreamOptions {
    * The number of files written to the disk at the same time (4 by default).
    */
   concurrency?: number;
+  /** Receives the problems which do not stop the extraction */
+  log: ZipStreamLog;
+}
+
+/** The part of a logger used by the parser */
+export interface ZipStreamLog {
+  warn(message: string): void;
+  debug(message: string): void;
 }
 
 export interface ZipStreamResult {
   /** The total number of bytes consumed from the source */
   archiveSize: number;
-}
-
-/** Thrown for valid archives using features the stream extractor does not implement. */
-export class ZipStreamUnsupportedError extends Error {
-  /** @param message What is not supported */
-  constructor(message: string) {
-    super(message);
-    this.name = 'ZipStreamUnsupportedError';
-  }
 }
 
 /**
@@ -96,9 +83,9 @@ export class ZipStreamUnsupportedError extends Error {
 export async function extractZipStream(
   source: AsyncIterable<Uint8Array>,
   writer: ZipEntryWriter,
-  opts: ZipStreamOptions = {},
+  opts: ZipStreamOptions,
 ): Promise<ZipStreamResult> {
-  const queue = new WriteQueue(opts.concurrency ?? DEFAULT_CONCURRENCY, MAX_PENDING_BYTES);
+  const queue = new WriteQueue(normalizeConcurrency(opts.concurrency), MAX_PENDING_BYTES);
   // A failed write does not wait for the next bytes to arrive
   const reader = new ByteReader(source, queue.failed);
   try {
@@ -128,7 +115,7 @@ export async function extractZipStream(
     }
     const centralDirectory = await reader.readToEnd(MAX_CENTRAL_DIRECTORY_SIZE);
     await queue.drain();
-    await applyCentralDirectory(centralDirectory, written, latest, writer);
+    await applyCentralDirectory(centralDirectory, written, latest, writer, opts.log);
     return {archiveSize: reader.bytesRead};
   } finally {
     // Nothing may touch the destination after this function has returned
@@ -217,6 +204,18 @@ class ByteReader {
     const chunk = this.buffer.subarray(this.position, this.position + count);
     this.position += count;
     return chunk;
+  }
+
+  /** Copies the next `count` bytes, which may span several chunks of the source */
+  async take(count: number): Promise<Buffer> {
+    const parts: Buffer[] = [];
+    for (let left = count; left > 0;) {
+      await this.ensure(1);
+      const part = this.consume(Math.min(left, this.available));
+      left -= part.length;
+      parts.push(part);
+    }
+    return Buffer.concat(parts, count);
   }
 
   /** Returns unread bytes to the buffer (they must have been consumed from the current buffer) */
@@ -348,12 +347,12 @@ async function assertZipSignature(reader: ByteReader): Promise<void> {
 }
 
 async function readLocalHeader(reader: ByteReader, opts: ZipStreamOptions): Promise<LocalHeader> {
-  await reader.ensure(30);
+  await reader.ensure(LOCAL_HEADER_SIZE);
   const nameLength = reader.view.readUInt16LE(26);
   const extraLength = reader.view.readUInt16LE(28);
-  await reader.ensure(30 + nameLength + extraLength);
+  await reader.ensure(LOCAL_HEADER_SIZE + nameLength + extraLength);
   const offset = reader.offset;
-  const fixed = reader.consume(30);
+  const fixed = reader.consume(LOCAL_HEADER_SIZE);
   const flags = fixed.readUInt16LE(6);
   const method = fixed.readUInt16LE(8);
   const crc = fixed.readUInt32LE(14);
@@ -395,16 +394,7 @@ async function readLocalHeader(reader: ByteReader, opts: ZipStreamOptions): Prom
 async function extractEntry(context: EntryContext, header: LocalHeader): Promise<WrittenEntry> {
   const {reader, writer} = context;
   const {fileName, flags, method} = header;
-  if (flags & (FLAG_ENCRYPTED | FLAG_STRONG_ENCRYPTION)) {
-    throw new ZipStreamUnsupportedError(`The ZIP entry '${fileName}' is encrypted`);
-  }
-  if (method !== METHOD_STORED && method !== METHOD_DEFLATE) {
-    const methodName = METHOD_NAMES[method] ? `${METHOD_NAMES[method]} (${method})` : String(method);
-    throw new ZipStreamUnsupportedError(
-      `The ZIP entry '${fileName}' uses the unsupported compression method ${methodName}. ` +
-        `Only stored and deflate are supported`,
-    );
-  }
+  assertSupportedEntry(fileName, flags, method);
 
   const hasDescriptor = Boolean(flags & FLAG_DESCRIPTOR);
   const isDir = fileName.endsWith('/');
@@ -426,12 +416,17 @@ async function extractEntry(context: EntryContext, header: LocalHeader): Promise
   const sink = new EntrySink(context, entry, prepared, hasDescriptor ? null : header.size);
   try {
     if (!hasDescriptor) {
+      if (prepared && header.size <= BUFFERED_ENTRY_LIMIT && header.compressedSize <= BUFFERED_ENTRY_LIMIT) {
+        // Inflating is left to the queue, so the next entries are read meanwhile
+        await sink.finishCompressed(fileName, method, await reader.take(header.compressedSize), header);
+        return entry;
+      }
       if (method === METHOD_STORED) {
         await pumpStored(reader, sink, header.compressedSize);
       } else {
         await pumpDeflate(reader, sink, fileName, header.compressedSize);
       }
-      verify(fileName, sink, header.crc, header.size);
+      assertContent(fileName, sink, header);
     } else if (method === METHOD_DEFLATE) {
       const compressedSize = await pumpDeflate(reader, sink, fileName, null);
       await readDescriptor(reader, header, compressedSize, sink);
@@ -449,138 +444,6 @@ async function extractEntry(context: EntryContext, header: LocalHeader): Promise
 
 function noContent(): never {
   throw new Error('Folders have no content');
-}
-
-function verify(fileName: string, sink: EntrySink, crc: number, size: number): void {
-  if (sink.size !== size) {
-    throw new Error(`The ZIP entry '${fileName}' has ${sink.size} bytes, but ${size} bytes were expected`);
-  }
-  if (sink.crc !== crc) {
-    throw new Error(`The ZIP entry '${fileName}' is corrupted: CRC32 mismatch`);
-  }
-}
-
-/**
- * Collects the content of an entry. Small entries are written by the queue after they are complete (and
- * verified); big or still growing ones are streamed to the file.
- */
-class EntrySink {
-  crc = 0;
-  size = 0;
-  private readonly context: EntryContext;
-  private readonly entry: WrittenEntry;
-  private readonly prepared: PreparedFile | null;
-  private readonly knownSize: number | null;
-  private readonly key: string;
-  private chunks: Buffer[] = [];
-  private buffered = 0;
-  private target: ReplacementFile | null = null;
-
-  /**
-   * @param context The archive being extracted
-   * @param entry The entry to update after the file is created
-   * @param prepared The file to write, or null if the content is only verified
-   * @param knownSize The declared size of the content, if the local header has one
-   */
-  constructor(context: EntryContext, entry: WrittenEntry, prepared: PreparedFile | null, knownSize: number | null) {
-    this.context = context;
-    this.entry = entry;
-    this.prepared = prepared;
-    this.knownSize = knownSize;
-    this.key = prepared ? context.writer.fileKey(prepared) : '';
-  }
-
-  /**
-   * Takes the next piece of the content, which is verified and either kept in memory or streamed to the file.
-   *
-   * @throws {Error} If the content is bigger than the declared size
-   */
-  async push(chunk: Buffer): Promise<void> {
-    this.size += chunk.length;
-    if (this.knownSize !== null && this.size > this.knownSize) {
-      throw new Error(`The entry is larger than the declared size of ${this.knownSize} bytes`);
-    }
-    this.crc = zlib.crc32(chunk, this.crc);
-    if (!this.prepared) {
-      return;
-    }
-    if (this.target) {
-      await writeFully(this.target.file, chunk);
-      return;
-    }
-    this.chunks.push(chunk);
-    this.buffered += chunk.length;
-    if (this.buffered > BUFFERED_ENTRY_LIMIT || (this.knownSize ?? 0) > BUFFERED_ENTRY_LIMIT) {
-      await this.spill(this.prepared);
-    }
-  }
-
-  /** Completes an entry whose content is verified: the file is written or replaced */
-  async finish(): Promise<void> {
-    const {prepared} = this;
-    if (!prepared) {
-      return;
-    }
-    if (this.target) {
-      const target = this.target;
-      this.target = null;
-      try {
-        await target.file.close();
-        await target.commit();
-      } catch (err) {
-        await target.discard();
-        throw err;
-      }
-      return;
-    }
-    const data = this.chunks.length === 1 ? this.chunks[0] : Buffer.concat(this.chunks);
-    this.chunks = [];
-    const {writer, queue} = this.context;
-    await queue.submit(this.key, data.length, async () => {
-      const {file, created} = await writer.openPrepared(prepared);
-      this.entry.created = created;
-      try {
-        await writeFully(file, data);
-      } finally {
-        await file.close();
-      }
-    });
-  }
-
-  /** Releases what an entry that failed has written */
-  async abort(): Promise<void> {
-    const {target} = this;
-    this.target = null;
-    this.chunks = [];
-    try {
-      await target?.file.close();
-      await target?.discard();
-    } catch {
-      // the original failure is more useful
-    }
-  }
-
-  private async spill(prepared: PreparedFile): Promise<void> {
-    const {writer, queue} = this.context;
-    await queue.waitForKey(this.key);
-    // Not verified yet, so it must not replace an existing file before the whole entry has been read
-    const target = await writer.openForReplacement(prepared);
-    this.target = target;
-    this.entry.created = true;
-    const chunks = this.chunks;
-    this.chunks = [];
-    this.buffered = 0;
-    for (const chunk of chunks) {
-      await writeFully(target.file, chunk);
-    }
-  }
-}
-
-async function writeFully(file: FileHandle, data: Buffer): Promise<void> {
-  for (let offset = 0; offset < data.length;) {
-    const {bytesWritten} = await file.write(data, offset, data.length - offset);
-    offset += bytesWritten;
-  }
 }
 
 /** Writes a chunk and waits until it is processed. Unlike the callback alone, it settles if the stream is destroyed meanwhile. */
@@ -821,6 +684,7 @@ async function applyCentralDirectory(
   written: Map<number, WrittenEntry>,
   latest: Map<string, number>,
   writer: ZipEntryWriter,
+  log: ZipStreamLog,
 ): Promise<void> {
   const symlinks: string[] = [];
   const modes: Array<{fileName: string; mode: number; isDir: boolean}> = [];

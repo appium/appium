@@ -51,7 +51,7 @@
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "async-lock": "^1.4.1",
+    "asyncbox": "^6.5.0",
     "teen_process": "^4.2.1"
   },
   "devDependencies": {

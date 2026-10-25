@@ -75,6 +75,24 @@ Library callers of `@appium/http-server`'s `server()` and `configureServer()` no
     Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
     for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
 
+### Unused Server Arguments Removed
+
+The following server arguments had no effect for a long time and have been removed, together with
+their `server.*` config file properties:
+
+* `--callback-address` (`-ca`) and `--callback-port` (`-cp`)
+* `--debug-log-spacing`
+* `--strict-caps`
+* `--trace-dir`
+
+Passing any of them on the command line now fails with an unrecognized argument error (unless
+[`--allow-unknown-args`](../reference/cli/server.md) is set), and config files containing them
+fail schema validation.
+
+!!! info "Actions Needed"
+
+    Remove these arguments from startup scripts and config files
+
 ### Extension Auto-Install on `npm install` Removed
 
 The `npm install -g appium --drivers=... --plugins=...` postinstall hook that automatically
@@ -85,6 +103,19 @@ risk and newer npm versions no longer support passing custom arguments to them.
 
     Use `appium driver install`/`appium plugin install`, or declare extensions in your project's
     `package.json`, instead of `--drivers`/`--plugins` install-time arguments
+
+### Local Extension Installs No Longer Create Global npm Links
+
+`appium driver install --source=local` and `appium plugin install --source=local` now install
+directly from the supplied local directory, without first creating an intermediate global npm
+link. Local installs still link to the source directory, so source changes do not require
+reinstalling the extension (rebuild the extension first if its source needs compilation).
+
+!!! info "Actions Needed"
+
+    Keep using `--source=local` with the extension's directory for local development. If other
+    tooling relied on the package being linked in npm's global prefix, manage that global link
+    separately; Appium no longer creates it as a side effect of a local extension install.
 
 ### `windows` Driver Shortcut Replaced by `wincore`
 
@@ -176,6 +207,12 @@ startup, using the same value checks as Set Timeouts. Partial objects are accept
 fields keep their defaults; backend handling remains driver-specific
 ([#22983](https://github.com/appium/appium/pull/22983)).
 
+Timeout capability validation also runs on `alwaysMatch` and every `firstMatch` candidate before
+driver selection. A malformed timeout object or invalid standard timeout value rejects the request
+with HTTP `400` / `invalid argument`, even when an earlier candidate could match. Top-level
+`timeouts: null` is still omitted, nested null timeout values are preserved, and unknown timeout
+properties are ignored for validation.
+
 ### Command POST Bodies Must Be JSON Objects
 
 A command `POST` body now has to be a JSON object, as required by the W3C WebDriver standard.
@@ -188,6 +225,23 @@ A request with no body, or a body that is a JSON array such as `[]`, returns HTT
 
     Send `{}` instead of an empty body. Clients that already send a JSON object, including the
     Appium clients, need no change
+
+### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
+
+When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
+server, Appium no longer validates required payload fields or command arguments before calling
+the plugin. This matches direct proxying, where the downstream remote end already owns those
+checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
+Appium to validate these arguments can now receive missing or invalid values.
+
+!!! info "Actions Needed"
+
+    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
+    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
+    The downstream driver's validation responsibility is unchanged.
+
+Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
+JSON-object request-body checks also remain in place before the plugin is called.
 
 ### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
 

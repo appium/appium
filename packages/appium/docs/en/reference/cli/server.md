@@ -31,10 +31,7 @@ appium
 |`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
 |`--app-url-rules`|Rules that remote application URLs (e.g. in the `appium:app` capability) must satisfy before the server downloads them. See the [Restricting Remote App URLs](../../guides/security.md#restricting-remote-app-urls) guide for details. Can be a path to a JSON file or raw JSON.|object||
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
-|`--callback-address`, `-ca`|Callback IP address|string|`0.0.0.0`|
-|`--callback-port`, `-cp`|Callback port|integer|`4723`|
 |`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
-|`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`|
 |`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
@@ -60,7 +57,6 @@ appium
 |`--shutdown-timeout`|Timeout (in milliseconds) for waiting on all active connections to close, when shutting down the server|number|`5000`|
 |`--ssl-cert-path`|Absolute path to the `.cert` file if TLS is used. Must be provided together with `--ssl-key-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
 |`--ssl-key-path`|Absolute path to the `.key` file if TLS is used. Must be provided together with `--ssl-cert-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
-|`--strict-caps`|Prevent creation of new client sessions that use unsupported capabilities|boolean|`false`|
 |`--tmp`|Absolute path to the directory used for temporary files|string|[`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir)|
 |`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|

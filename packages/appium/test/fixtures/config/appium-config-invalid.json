@@ -4,11 +4,8 @@
     "port": 31337,
     "allow-insecure": [],
     "base-path": "/",
-    "callback-address": "0.0.0.0",
-    "callback-port": 31337,
     "log-level": "info",
     "log-timestamp": false,
-    "debug-log-spacing": false,
     "default-capabilities": {},
     "deny-insecure": [],
     "drivers": [],
@@ -21,9 +18,7 @@
     "plugins": "all",
     "relaxed-security": false,
     "session-override": false,
-    "strict-caps": false,
     "tmp": '/tmp',
-    "trace-dir": "/tmp/appium-instruments",
     "webhook": "http://0.0.0.0/hook"
   }
 }

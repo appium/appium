@@ -34,6 +34,22 @@ export interface AppiumRunErrorProps {
 
 export type AppiumRunError = Error & AppiumRunErrorProps & ExecError & {stdout: string; stderr: string};
 
+/**
+ * Writes a project manifest depending on `appium` into `appiumHome`.
+ * The dependency is an empty local package, as installing the published one takes minutes on Windows.
+ */
+export async function writeAppiumDependentPackageJson(appiumHome: string): Promise<string> {
+  const stubDir = path.join(appiumHome, 'appium-stub');
+  await fs.mkdirp(stubDir);
+  await fs.writeFile(path.join(stubDir, 'package.json'), JSON.stringify({name: 'appium', version: APPIUM_VER}));
+  const pkgPath = path.join(appiumHome, 'package.json');
+  await fs.writeFile(
+    pkgPath,
+    JSON.stringify({name: 'my-project', devDependencies: {appium: `file:${stubDir.replaceAll('\\', '/')}`}}),
+  );
+  return pkgPath;
+}
+
 function curry2<A, B, R>(
   fn: (a: A, b: B) => R,
 ): {
@@ -171,20 +187,4 @@ export async function readAppiumArgErrorFixture(name: string): Promise<string> {
 
 export function formatAppiumArgErrorOutput(stderr: string): string {
   return stderr.replace(/^[\s\S]+\n\n([\s\S]+)/, '$1').trim() + '\n';
-}
-
-/**
- * Writes a project manifest depending on `appium` into `appiumHome`.
- * The dependency is an empty local package, as installing the published one takes minutes on Windows.
- */
-export async function writeAppiumDependentPackageJson(appiumHome: string): Promise<string> {
-  const stubDir = path.join(appiumHome, 'appium-stub');
-  await fs.mkdirp(stubDir);
-  await fs.writeFile(path.join(stubDir, 'package.json'), JSON.stringify({name: 'appium', version: APPIUM_VER}));
-  const pkgPath = path.join(appiumHome, 'package.json');
-  await fs.writeFile(
-    pkgPath,
-    JSON.stringify({name: 'my-project', devDependencies: {appium: `file:${stubDir.replaceAll('\\', '/')}`}}),
-  );
-  return pkgPath;
 }

@@ -161,7 +161,7 @@ appium driver install --source=npm @itsmeaj/appium-linux-driver
     [Windows driver](#windows)
 
 * Target: Windows applications
-* Mode: Native
+* Mode: Native, Hybrid
 * Supported by: Community / Automate The Planet
 
 ```sh title="Install This Driver"

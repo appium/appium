@@ -84,16 +84,15 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
  *
  * @param obj - object to convert and sanitize
  * @return safely converted object
+ * @internal
  */
 export function coerceScriptResult(obj: any): any {
   // first ensure obj is of a type that can be JSON encoded safely. This will
   // get rid of custom objects, functions, etc... and turn them into POJOs
   try {
     obj = JSON.parse(JSON.stringify(obj));
-  } catch (err: any) {
-    log.warn(
-      `Could not convert executeDriverScript to safe response! ${err.message.split('\n')[0]}. Will make it null`,
-    );
+  } catch {
+    log.warn(`Could not convert executeDriverScript to safe response! ${scriptResultText(obj)}. Will make it null`);
     return null;
   }
 
@@ -136,6 +135,14 @@ export function coerceScriptResult(obj: any): any {
 
   // base case, if it's not an object or array, return straightaway
   return obj;
+}
+
+function scriptResultText(value: any): string {
+  try {
+    return `Result was: ${JSON.stringify(value)}`;
+  } catch (err: any) {
+    return err.message.split('\n')[0];
+  }
 }
 
 /**

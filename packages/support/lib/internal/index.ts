@@ -25,7 +25,6 @@ export {isUnicodeSupported, NullWritable, streamSupportsColor, stripAnsi} from '
 export {GiB, KiB, MiB} from './units.js';
 export {walk, Walker, type WalkItem, type WalkOptions} from './walker.js';
 export {WriteQueue} from './write-queue.js';
-export {extractWithSystemUnzip, type SystemUnzipDeps} from './system-unzip.js';
 export {
   createOpenReadStream,
   openZip,

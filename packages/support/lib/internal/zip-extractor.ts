@@ -69,11 +69,10 @@ export class ZipExtractor {
 
   /** Extracts all entries into the destination folder. Nothing touches it after the returned promise settles. */
   async extract(): Promise<void> {
-    const {fileNamesEncoding} = this.opts;
     const zipfile = await openZip(this.zipPath, {
       lazyEntries: true,
-      // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
-      decodeStrings: !fileNamesEncoding,
+      // Names are decoded by us, so that `fileNamesEncoding` applies to all of them
+      decodeStrings: false,
     });
     this.zipfile = zipfile;
     this.openReadStream = createOpenReadStream(zipfile);

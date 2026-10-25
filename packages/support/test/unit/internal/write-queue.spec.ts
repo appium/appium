@@ -86,4 +86,14 @@ describe('WriteQueue', function () {
     });
     await queue.settle();
   });
+
+  it('should report a failure to the caller on demand', async function () {
+    const queue = new WriteQueue(2, 1_000);
+    queue.throwIfFailed();
+    await queue.submit('a', 1, async () => {
+      throw new Error('boom');
+    });
+    await queue.settle();
+    assert.throws(() => queue.throwIfFailed(), /boom/);
+  });
 });

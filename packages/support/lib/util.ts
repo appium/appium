@@ -11,6 +11,7 @@ import {
   createBase64EncodeStream,
   GiB,
   isSubPath,
+  isPlainObject,
   KiB,
   MiB,
   pluralize,
@@ -20,7 +21,7 @@ export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
 
-export {GiB, isSubPath, KiB, MiB, pluralize, type PluralizeOptions};
+export {GiB, isPlainObject, isSubPath, KiB, MiB, pluralize, type PluralizeOptions};
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
@@ -82,20 +83,6 @@ export function memoize<Fn extends (...args: any[]) => any>(
   } as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
   memoizedFn.cache = new Map<unknown, ReturnType<Fn>>();
   return memoizedFn;
-}
-
-/**
- * Returns true if the value is a plain object (Object prototype or null prototype).
- *
- * @param value - Value to check
- * @returns `true` if the value is a plain object
- */
-export function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (value === null || typeof value !== 'object') {
-    return false;
-  }
-  const prototype = Object.getPrototypeOf(value);
-  return prototype === null || prototype === Object.prototype;
 }
 
 /**

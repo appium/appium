@@ -1,6 +1,7 @@
 import {build as plistBuild, buildBinary, parse as plistParse, parseBinary, type PlistValue} from 'plist';
 
 import {fs} from './fs.js';
+import {toBufferDeep, toBufferIfBinaryLike} from './internal/index.js';
 import log from './logger.js';
 import {truncateString} from './util.js';
 
@@ -139,57 +140,10 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
   throw new Error(`Unknown type of plist, data: ${truncateString(String(data as unknown), {length: 200})}`);
 }
 
-function toBufferIfBinaryLike(data: unknown): Buffer | null {
-  if (Buffer.isBuffer(data)) {
-    return data;
-  }
-  if (data instanceof Uint8Array) {
-    return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-  }
-  if (data instanceof ArrayBuffer) {
-    return Buffer.from(data);
-  }
-  return null;
-}
-
 function parseBinaryPlistRoot(data: Buffer): object {
   const parsed = parseBinaryPlist(data);
   if (!parsed.length) {
     throw new Error(`Binary plist appears to be empty`);
   }
   return parsed[0];
-}
-
-/**
- * plist@5 returns embedded `<data>`/binary payloads as plain Uint8Array instances,
- * whereas the previous xml/bplist parsers returned Node Buffers. Recursively upgrade
- * them back to Buffer so Buffer-only APIs (e.g. `.toString('utf8')`) keep working.
- */
-function toBufferDeep(value: unknown): unknown {
-  if (Buffer.isBuffer(value) || value instanceof Date) {
-    return value;
-  }
-  if (value instanceof Uint8Array) {
-    return Buffer.from(value.buffer, value.byteOffset, value.byteLength);
-  }
-  if (Array.isArray(value)) {
-    let changed = false;
-    const result = value.map((v) => {
-      const converted = toBufferDeep(v);
-      changed ||= converted !== v;
-      return converted;
-    });
-    return changed ? result : value;
-  }
-  if (value !== null && typeof value === 'object') {
-    let changed = false;
-    const result: Record<string, unknown> = {};
-    for (const [key, v] of Object.entries(value)) {
-      const converted = toBufferDeep(v);
-      changed ||= converted !== v;
-      result[key] = converted;
-    }
-    return changed ? result : value;
-  }
-  return value;
 }

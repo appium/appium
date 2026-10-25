@@ -2,11 +2,10 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after, beforeEach, type TestContext} from 'node:test';
 
-import {fs, system, tempDir, util} from '@appium/support';
+import {fs, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
 import type {ExtRecord} from 'appium/types/index.js';
 import * as semver from 'semver';
-import {exec} from 'teen_process';
 
 import {
   DRIVER_TYPE,
@@ -18,7 +17,7 @@ import {
   KNOWN_DRIVERS,
 } from '../../lib/constants.js';
 import {APPIUM_VER} from '../../lib/helpers/build.js';
-import {omitKeys, resolveFrom} from '../../lib/utils/index.js';
+import {npm, omitKeys, resolveFrom} from '../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
 import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers.js';
 
@@ -145,15 +144,13 @@ describe('Driver CLI', {timeout: 90000}, function () {
     });
 
     it('should show updates for installed drivers with --updates', async function (ctx: TestContext) {
-      if (system.isWindows()) {
-        return ctx.skip();
-      }
+      const cwd = process.cwd();
       const [versions, distTags] = await Promise.all([
-        exec('npm', ['view', '@appium/fake-driver', 'versions', '--json'], {encoding: 'utf-8'}).then(
-          ({stdout}) => JSON.parse(stdout) as string[],
+        npm.exec('view', ['@appium/fake-driver', 'versions'], {cwd, json: true}).then(
+          ({json}) => json as string[],
         ),
-        exec('npm', ['view', '@appium/fake-driver', 'dist-tags', '--json'], {encoding: 'utf-8'}).then(
-          ({stdout}) => JSON.parse(stdout) as Record<string, string>,
+        npm.exec('view', ['@appium/fake-driver', 'dist-tags'], {cwd, json: true}).then(
+          ({json}) => json as Record<string, string>,
         ),
       ]);
 

@@ -166,14 +166,19 @@ jobs:
     needs:
       - prepare_matrix
       - prepare_e2e_packages
-    name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }})
+    name: E2E Tests - ${{ matrix.package_dir }} (Node ${{ matrix.node-version }}, ${{ matrix.os }})
     if: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
         package_dir: ${{ fromJSON(needs.prepare_e2e_packages.outputs.packages) }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Setup, install and build
@@ -182,6 +187,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-command: npm ci --foreground-scripts
           run-build: 'true'
+          socket-firewall: 'false'
       - name: Run E2E tests for ${{ matrix.package_dir }}
         run: |
           set -o pipefail

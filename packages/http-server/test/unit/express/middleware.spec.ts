@@ -5,7 +5,7 @@ import {match} from 'path-to-regexp';
 import sinon from 'sinon';
 
 import {log} from '../../../lib/logger.js';
-import {handleLogContext, rejectBrowserOrigin, tryHandleWebSocketUpgrade} from '../../../lib/middleware.js';
+import {handleLogContext, rejectBrowserOrigin, tryHandleWebSocketUpgrade} from '../../../lib/middleware/index.js';
 
 describe('middleware', function () {
   describe('WebSocket upgrades', function () {

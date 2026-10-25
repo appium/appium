@@ -29,9 +29,11 @@ import {
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  parseJsonBody,
   rejectBrowserOrigin,
+  rejectInvalidJsonOnExtensionRoutes,
   tryHandleWebSocketUpgrade,
-} from './middleware.js';
+} from './middleware/index.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
 import {
   addWebSocketHandler,
@@ -137,9 +139,14 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           frontRouter: appiumServer.frontRouter,
         });
         // allow extensions to update the app and http server objects
+        const appRoutesBefore = app.router.stack.length;
+        const frontRoutesBefore = appiumServer.frontRouter.stack.length;
         for (const updater of serverUpdaters) {
           await updater(app, appiumServer, cliArgs);
         }
+        // A route added above is not a WebDriver command. A bad JSON body is invalid argument
+        // when it matches, before that route's handler runs.
+        rejectInvalidJsonOnExtensionRoutes(app, appiumServer.frontRouter, appRoutesBefore, frontRoutesBefore);
 
         // After extension routes, so a method added on a known URL still matches.
         // Express matches the path once. Anything left on that path is unknown method.
@@ -208,8 +215,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(methodOverride());
 
-  // make sure appium never fails because of a file size upload limit
-  app.use(bodyParser.json({limit: '1gb'}));
+  app.use(parseJsonBody);
 
   // set up start logging (which depends on bodyParser doing its thing)
   app.use(startLogFormatter);

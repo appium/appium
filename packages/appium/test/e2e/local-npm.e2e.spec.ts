@@ -14,7 +14,7 @@ import {
 } from '../../lib/constants.js';
 import {MANIFEST_RELATIVE_PATH, npm, resolveFrom} from '../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
-import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
+import {installLocalExtension, runAppiumJson, writeAppiumDependentPackageJson} from './e2e-helpers.js';
 const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
 describe('when Appium is a dependency of the current project', function () {
@@ -45,7 +45,7 @@ describe('when Appium is a dependency of the current project', function () {
       appiumHomePkgPath = path.join(appiumHome, 'package.json');
       runJson = runAppiumJson(appiumHome);
 
-      await fs.copyFile(resolveFixture('cli/appium-dependency.package.json'), appiumHomePkgPath);
+      await writeAppiumDependentPackageJson(appiumHome);
     });
 
     describe('when a driver is installed via npm', function () {

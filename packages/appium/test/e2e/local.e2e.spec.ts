@@ -7,7 +7,7 @@ import {fs, tempDir} from '@appium/support';
 import {DRIVER_TYPE, EXT_SUBCOMMAND_LIST as LIST} from '../../lib/constants.js';
 import {resolveFrom} from '../../lib/utils/index.js';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers.js';
-import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
+import {installLocalExtension, runAppiumJson, writeAppiumDependentPackageJson} from './e2e-helpers.js';
 
 describe('when Appium is a dependency of the current project', function () {
   let appiumHomePkgPath: string;
@@ -43,7 +43,7 @@ describe('when Appium is a dependency of the current project', function () {
       appiumHomePkgPath = path.join(appiumHome, 'package.json');
       runJson = runAppiumJson(appiumHome);
 
-      await fs.copyFile(resolveFixture('cli/appium-dependency.package.json'), appiumHomePkgPath);
+      await writeAppiumDependentPackageJson(appiumHome);
     });
 
     describe('without drivers installed', function () {

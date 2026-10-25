@@ -1,9 +1,7 @@
 {
   "driver-install-npm": ["cli-driver-install-npm"],
   "driver-install-npm-extra": ["cli-driver-install-npm-extra"],
-  "driver-install-other": ["cli-driver-install-other"],
-  "driver-lifecycle": ["cli-driver-lifecycle"],
-  "local": ["local"],
+  "driver-local": ["cli-driver-install-other", "cli-driver-lifecycle", "local"],
   "misc-cli": [
     "args",
     "bin-symlink",

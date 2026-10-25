@@ -9,6 +9,7 @@ import type {CliExtensionSubcommand, ExtRecord} from 'appium/types/index.js';
 import {exec} from 'teen_process';
 import type {ExecError} from 'teen_process';
 
+import {APPIUM_VER} from '../../lib/helpers/build.js';
 import {APPIUM_ROOT, resolveFixture} from '../helpers.js';
 
 export const EXECUTABLE = path.join(APPIUM_ROOT, 'build', 'lib', 'main.js');
@@ -170,4 +171,20 @@ export async function readAppiumArgErrorFixture(name: string): Promise<string> {
 
 export function formatAppiumArgErrorOutput(stderr: string): string {
   return stderr.replace(/^[\s\S]+\n\n([\s\S]+)/, '$1').trim() + '\n';
+}
+
+/**
+ * Writes a project manifest depending on `appium` into `appiumHome`.
+ * The dependency is an empty local package, as installing the published one takes minutes on Windows.
+ */
+export async function writeAppiumDependentPackageJson(appiumHome: string): Promise<string> {
+  const stubDir = path.join(appiumHome, 'appium-stub');
+  await fs.mkdirp(stubDir);
+  await fs.writeFile(path.join(stubDir, 'package.json'), JSON.stringify({name: 'appium', version: APPIUM_VER}));
+  const pkgPath = path.join(appiumHome, 'package.json');
+  await fs.writeFile(
+    pkgPath,
+    JSON.stringify({name: 'my-project', devDependencies: {appium: `file:${stubDir.replaceAll('\\', '/')}`}}),
+  );
+  return pkgPath;
 }

@@ -21,7 +21,7 @@ export function createOpenReadStream(zipfile: yauzl.ZipFile): OpenReadStreamFn {
 
 /**
  * Decodes the entry name if yauzl has not done it: the Info-ZIP unicode path field wins,
- * then the UTF-8 flag, then the given encoding.
+ * then the UTF-8 flag, then the given encoding. Backslashes become slashes like yauzl does it.
  */
 export function toEntryFileName(entry: yauzl.Entry, encoding: BufferEncoding = 'utf8'): string {
   const rawName = entry.fileName;
@@ -33,10 +33,10 @@ export function toEntryFileName(entry: yauzl.Entry, encoding: BufferEncoding = '
     ({id, data}) =>
       id === EXTRA_UNICODE_PATH && data.length > 5 && data[0] === 1 && data.readUInt32LE(1) === zlib.crc32(rawName),
   );
-  if (unicodePath) {
-    return unicodePath.data.toString('utf8', 5);
-  }
-  return rawName.toString(entry.generalPurposeBitFlag & FLAG_UTF8_NAME ? 'utf8' : encoding);
+  const name = unicodePath
+    ? unicodePath.data.toString('utf8', 5)
+    : rawName.toString(entry.generalPurposeBitFlag & FLAG_UTF8_NAME ? 'utf8' : encoding);
+  return name.replaceAll('\\', '/');
 }
 
 /**

@@ -660,6 +660,17 @@ describe('#zip', function () {
         assert.strictEqual(await fs.exists(path.resolve(out, 'fallback.txt')), false);
       });
 
+      it('should convert backslashes in names to slashes', async function () {
+        const out = await extractEntries([{name: 'folder\\file.txt', data: 'x'}]);
+        assert.strictEqual(await fs.readFile(path.resolve(out, 'folder', 'file.txt'), 'utf8'), 'x');
+      });
+
+      it('should convert backslashes in the Info-ZIP unicode path field to slashes', async function () {
+        const centralExtra = unicodePathExtra('fallback.txt', 'ünï\\cödé.txt');
+        const out = await extractEntries([{name: 'fallback.txt', data: 'x', noUtf8Flag: true, centralExtra}]);
+        assert.strictEqual(await fs.exists(path.resolve(out, 'ünï', 'cödé.txt')), true);
+      });
+
       it('should ignore the Info-ZIP unicode path field made for another name', async function () {
         const centralExtra = unicodePathExtra('fallback.txt', 'ünicöde.txt', 'other.txt');
         const out = await extractEntries([{name: 'fallback.txt', data: 'x', noUtf8Flag: true, centralExtra}]);

@@ -9,8 +9,6 @@ import ts from 'typescript';
 const LIB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../lib');
 const INTERNAL = path.join(LIB, 'internal');
 const BARREL = path.join(INTERNAL, 'index.ts');
-// Top-level modules which do not import the barrel, so that the internal code may build upon them
-const LEAF_MODULES = new Set(['system.ts', 'logger.ts', 'logging.ts'].map((name) => path.join(LIB, name)));
 
 interface Edge {
   from: string;
@@ -81,10 +79,8 @@ describe('internal modules layering', function () {
     );
   });
 
-  it('should not depend on the modules which import the barrel', function () {
-    const upward = edges.filter(
-      ({from, to, typeOnly}) => isInternal(from) && !isInternal(to) && !typeOnly && !LEAF_MODULES.has(to),
-    );
+  it('should not import anything from outside of itself', function () {
+    const upward = edges.filter(({from, to}) => isInternal(from) && !isInternal(to));
     assert.deepEqual(
       upward.map(({from, to}) => `${rel(from)} -> ${rel(to)}`),
       [],

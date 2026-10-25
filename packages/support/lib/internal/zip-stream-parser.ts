@@ -1,7 +1,6 @@
 import {Readable, type Writable} from 'node:stream';
 import zlib from 'node:zlib';
 
-import log from '../logger.js';
 import {MiB} from './units.js';
 import {WriteQueue} from './write-queue.js';
 import {
@@ -53,6 +52,14 @@ export interface ZipStreamOptions {
    * The number of files written to the disk at the same time (4 by default).
    */
   concurrency?: number;
+  /** Receives the problems which do not stop the extraction */
+  log: ZipStreamLog;
+}
+
+/** The part of a logger used by the parser */
+export interface ZipStreamLog {
+  warn(message: string): void;
+  debug(message: string): void;
 }
 
 export interface ZipStreamResult {
@@ -75,7 +82,7 @@ export interface ZipStreamResult {
 export async function extractZipStream(
   source: AsyncIterable<Uint8Array>,
   writer: ZipEntryWriter,
-  opts: ZipStreamOptions = {},
+  opts: ZipStreamOptions,
 ): Promise<ZipStreamResult> {
   const queue = new WriteQueue(opts.concurrency ?? DEFAULT_CONCURRENCY, MAX_PENDING_BYTES);
   // A failed write does not wait for the next bytes to arrive
@@ -107,7 +114,7 @@ export async function extractZipStream(
     }
     const centralDirectory = await reader.readToEnd(MAX_CENTRAL_DIRECTORY_SIZE);
     await queue.drain();
-    await applyCentralDirectory(centralDirectory, written, latest, writer);
+    await applyCentralDirectory(centralDirectory, written, latest, writer, opts.log);
     return {archiveSize: reader.bytesRead};
   } finally {
     // Nothing may touch the destination after this function has returned
@@ -676,6 +683,7 @@ async function applyCentralDirectory(
   written: Map<number, WrittenEntry>,
   latest: Map<string, number>,
   writer: ZipEntryWriter,
+  log: ZipStreamLog,
 ): Promise<void> {
   const symlinks: string[] = [];
   const modes: Array<{fileName: string; mode: number; isDir: boolean}> = [];

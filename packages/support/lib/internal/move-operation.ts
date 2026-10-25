@@ -1,12 +1,17 @@
 import {type BigIntStats, type PathLike, promises as fsPromises, type Stats} from 'node:fs';
 import path from 'node:path';
 
-import type {fs as supportFs, MvOptions} from '../fs.js';
-import {isWindows} from '../system.js';
+import type {MoveFs} from './fs-like.js';
+import {isWindows} from './platform.js';
 import {isSubPath} from './sub-path.js';
 
-/** The part of the `fs` helpers used here, passed in to keep this module below `fs.ts` */
-type MoveFs = Pick<typeof supportFs, 'exists' | 'rimraf'>;
+/** Options for {@linkcode fs.mv} */
+export interface MvOptions {
+  /** Whether to automatically create the destination folder structure */
+  mkdirp?: boolean;
+  /** Set to false to throw if the destination file already exists */
+  clobber?: boolean;
+}
 
 /** Encapsulates a move and its options, including recursive directory transfers. */
 export class MoveOperation {

@@ -5,8 +5,8 @@ import type {Readable} from 'node:stream';
 import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 
-import type {fs as supportFs} from '../fs.js';
-import {isWindows} from '../system.js';
+import type {EntryFs} from './fs-like.js';
+import {isWindows} from './platform.js';
 import {isSubPath} from './sub-path.js';
 
 // Limit traversal to stop symlink cycles.
@@ -19,8 +19,8 @@ const MAX_SYMLINK_TARGET_SIZE = 64 * 1024;
 export interface ZipEntryWriterOptions {
   /** Real path of the extraction root */
   dir: string;
-  /** The filesystem helpers, passed in to keep this module below `fs.ts` */
-  fs: typeof supportFs;
+  /** The filesystem helpers */
+  fs: EntryFs;
   defaultDirMode?: string;
   defaultFileMode?: string;
 }
@@ -80,7 +80,7 @@ interface SymlinkTarget {
  */
 export class ZipEntryWriter {
   private readonly opts: ZipEntryWriterOptions;
-  private readonly fs: typeof supportFs;
+  private readonly fs: EntryFs;
   private caseInsensitive = true;
   private normalizationInsensitive = true;
   // Normalized missing-path keys -> links to recheck when those paths become symlinks.

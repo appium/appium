@@ -2,12 +2,13 @@
  * Package-internal code. Not exported from `@appium/support`.
  *
  * This barrel is the only way for the rest of the package to reach it. To keep the module graph acyclic,
- * the modules here must not import the top-level modules that import this barrel (`fs.ts`, `util.ts`,
- * `zip.ts`): they may only use Node, third-party packages, each other and the leaf modules `system.ts`
- * and `logger.ts`. Whatever they need from `fs.ts` is passed in. See `test/unit/internal/layering.spec.ts`.
+ * the modules here import nothing from outside of this folder, not even types; whatever they need from the
+ * rest of the package (like the `fs` helpers or a logger) is passed in. See `test/unit/internal/layering.spec.ts`.
  */
 export {createBase64EncodeStream} from './base64-encode-stream.js';
-export {MoveOperation} from './move-operation.js';
+export type {EntryFs, MoveFs} from './fs-like.js';
+export {MoveOperation, type MvOptions} from './move-operation.js';
+export {isWindows} from './platform.js';
 export {pluralize, type PluralizeOptions} from './pluralize.js';
 export {isSubPath} from './sub-path.js';
 export {GiB, KiB, MiB} from './units.js';
@@ -32,4 +33,4 @@ export {
   type ZipEntryWriterOptions,
   ZipEntryWriter,
 } from './zip-entry-writer.js';
-export {extractZipStream, type ZipStreamOptions, type ZipStreamResult} from './zip-stream-parser.js';
+export {extractZipStream, type ZipStreamLog, type ZipStreamOptions, type ZipStreamResult} from './zip-stream-parser.js';

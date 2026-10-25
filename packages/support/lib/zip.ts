@@ -149,7 +149,7 @@ export async function extractStreamTo(
     }
     await fs.mkdir(destDir, {recursive: true});
     const dir = await fs.realpath(destDir);
-    return await extractZipStream(source, new ZipEntryWriter({dir, fs}), opts);
+    return await extractZipStream(source, new ZipEntryWriter({dir, fs}), {...opts, log});
   } catch (err) {
     if (source instanceof stream.Readable) {
       source.destroy();

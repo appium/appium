@@ -84,7 +84,7 @@ async function runScript(eventParams: DriverScriptMessageEvent): Promise<RunScri
  *
  * @param obj - object to convert and sanitize
  * @return safely converted object
- * @internal
+ * @internal Exposed for unit tests
  */
 export function coerceScriptResult(obj: any): any {
   // first ensure obj is of a type that can be JSON encoded safely. This will
@@ -92,7 +92,7 @@ export function coerceScriptResult(obj: any): any {
   try {
     obj = JSON.parse(JSON.stringify(obj));
   } catch {
-    log.warn(`Could not convert executeDriverScript to safe response! ${scriptResultText(obj)}. Will make it null`);
+    log.warn(`Could not convert executeDriverScript to safe response. ${formatScriptResult(obj)}. Will make it null`);
     return null;
   }
 
@@ -137,7 +137,7 @@ export function coerceScriptResult(obj: any): any {
   return obj;
 }
 
-function scriptResultText(value: any): string {
+function formatScriptResult(value: any): string {
   try {
     return `Result was: ${JSON.stringify(value)}`;
   } catch (err: any) {

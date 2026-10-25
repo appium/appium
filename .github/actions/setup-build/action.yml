@@ -84,6 +84,7 @@ runs:
           exit 1
         fi
     - name: Build packages
-      if: ${{ inputs.run-build == 'true' }}
+      # `npm ci` already builds through the root `prepare` script
+      if: ${{ inputs.run-build == 'true' && !startsWith(inputs.install-command, 'npm ci') }}
       shell: bash
       run: npm run build

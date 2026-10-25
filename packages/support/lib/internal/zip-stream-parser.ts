@@ -2,7 +2,7 @@ import {Readable, type Writable} from 'node:stream';
 import zlib from 'node:zlib';
 
 import log from '../logger.js';
-import {MiB} from '../util.js';
+import {MiB} from './units.js';
 import {WriteQueue} from './write-queue.js';
 import {
   assertContent,
@@ -16,8 +16,6 @@ import {
   METHOD_STORED,
 } from './zip-entry-sink.js';
 import {isIgnoredEntry, type ZipEntryWriter} from './zip-entry-writer.js';
-
-export {ZipStreamUnsupportedError} from './zip-entry-sink.js';
 
 const SIG_LOCAL = 0x04034b50;
 const SIG_CENTRAL = 0x02014b50;

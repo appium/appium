@@ -2,7 +2,7 @@ import type {FileHandle} from 'node:fs/promises';
 import {promisify} from 'node:util';
 import zlib from 'node:zlib';
 
-import {MiB} from '../util.js';
+import {MiB} from './units.js';
 import type {WriteQueue} from './write-queue.js';
 import type {PreparedFile, ReplacementFile, ZipEntryWriter} from './zip-entry-writer.js';
 

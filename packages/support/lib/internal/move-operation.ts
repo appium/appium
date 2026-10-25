@@ -1,9 +1,12 @@
 import {type BigIntStats, type PathLike, promises as fsPromises, type Stats} from 'node:fs';
 import path from 'node:path';
 
-import {fs, type MvOptions} from '../fs.js';
+import type {fs as supportFs, MvOptions} from '../fs.js';
 import {isWindows} from '../system.js';
-import {isSubPath} from '../util.js';
+import {isSubPath} from './sub-path.js';
+
+/** The part of the `fs` helpers used here, passed in to keep this module below `fs.ts` */
+type MoveFs = Pick<typeof supportFs, 'exists' | 'rimraf'>;
 
 /** Encapsulates a move and its options, including recursive directory transfers. */
 export class MoveOperation {
@@ -11,6 +14,7 @@ export class MoveOperation {
     private readonly from: string,
     private readonly to: string,
     private readonly opts: MvOptions,
+    private readonly fs: MoveFs,
   ) {}
 
   /** Move the source entry and clean it up after a successful transfer. */
@@ -35,7 +39,7 @@ export class MoveOperation {
       return;
     }
 
-    await fs.rimraf(from);
+    await this.fs.rimraf(from);
   }
 
   private async getSourceStats(): Promise<BigIntStats> {
@@ -101,7 +105,7 @@ export class MoveOperation {
       if (item.isDirectory()) {
         // the recursive call requires an existing destination, even without mkdirp
         await fsPromises.mkdir(destPath, {recursive: true});
-        await new MoveOperation(srcPath, destPath, opts).move();
+        await new MoveOperation(srcPath, destPath, opts, this.fs).move();
       } else if (item.isFile() || item.isSymbolicLink()) {
         await this.renameFile(srcPath, destPath, dstRootWasCreated);
       }
@@ -127,7 +131,7 @@ export class MoveOperation {
   }
 
   private async ensureDestination(p: PathLike): Promise<boolean> {
-    if (this.opts?.mkdirp && !(await fs.exists(p))) {
+    if (this.opts?.mkdirp && !(await this.fs.exists(p))) {
       await fsPromises.mkdir(p, {recursive: true});
       return true;
     }
@@ -135,13 +139,13 @@ export class MoveOperation {
   }
 
   private async renameFile(src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> {
-    if (!skipExistenceCheck && (await fs.exists(dst))) {
+    if (!skipExistenceCheck && (await this.fs.exists(dst))) {
       if (this.opts?.clobber === false) {
         const err = new Error(`The destination path '${dst?.toString()}' already exists`) as NodeJS.ErrnoException;
         err.code = 'EEXIST';
         throw err;
       }
-      await fs.rimraf(dst);
+      await this.fs.rimraf(dst);
     }
     try {
       await fsPromises.rename(src, dst);
@@ -149,7 +153,7 @@ export class MoveOperation {
       if (isErrnoException(err) && err.code === 'EXDEV') {
         // Preserve relative and dangling links when rename crosses filesystems.
         await fsPromises.cp(String(src), String(dst), {verbatimSymlinks: true});
-        await fs.rimraf(src);
+        await this.fs.rimraf(src);
       } else {
         throw err;
       }

@@ -1,5 +1,4 @@
 import {randomUUID} from 'node:crypto';
-import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
 
@@ -9,20 +8,15 @@ import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
 
 import {fs} from './fs.js';
-import {createBase64EncodeStream} from './internal/index.js';
+import {createBase64EncodeStream, GiB, isSubPath, KiB, MiB} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
 
+export {GiB, isSubPath, KiB, MiB};
+
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
-
-/** Size of one kibibyte in bytes (1024). */
-export const KiB = 1024;
-/** Size of one mebibyte in bytes (1024 * 1024). */
-export const MiB = KiB * 1024;
-/** Size of one gibibyte in bytes (1024 * 1024 * 1024). */
-export const GiB = MiB * 1024;
 
 /** A string which is never `''`. */
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
@@ -338,29 +332,6 @@ export function toReadableSizeString(bytes: number | string): string {
     return `${(intBytes / (KiB * 1.0)).toFixed(2)} KB`;
   }
   return `${intBytes} B`;
-}
-
-/**
- * Checks whether the given path is a subpath of the given root folder.
- *
- * @param originalPath - The absolute file or folder path to test
- * @param root - The absolute root folder path
- * @param forcePosix - If true, interpret paths in POSIX format (e.g. on Windows)
- * @returns `true` if `originalPath` is under `root` or is equal to it
- * @throws {Error} If either path is not absolute
- */
-export function isSubPath(originalPath: string, root: string, forcePosix: boolean | null = null): boolean {
-  const pathObj = forcePosix ? path.posix : path;
-  for (const p of [originalPath, root]) {
-    if (!pathObj.isAbsolute(p)) {
-      throw new Error(`'${p}' is expected to be an absolute path`);
-    }
-  }
-  // An empty relative path means both arguments point to the same location.
-  // Comparing the strings instead would accept any sibling whose name starts
-  // with the root folder name, like '/root-backup' for the '/root' root.
-  const relativePath = pathObj.relative(root, originalPath);
-  return relativePath !== '..' && !relativePath.startsWith(`..${pathObj.sep}`) && !pathObj.isAbsolute(relativePath);
 }
 
 /**

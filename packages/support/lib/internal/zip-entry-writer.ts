@@ -5,9 +5,9 @@ import type {Readable} from 'node:stream';
 import {text} from 'node:stream/consumers';
 import {pipeline} from 'node:stream/promises';
 
-import {fs} from '../fs.js';
+import type {fs as supportFs} from '../fs.js';
 import {isWindows} from '../system.js';
-import {isSubPath} from '../util.js';
+import {isSubPath} from './sub-path.js';
 
 // Limit traversal to stop symlink cycles.
 const MAX_SYMLINK_TRAVERSALS = 40;
@@ -19,6 +19,8 @@ const MAX_SYMLINK_TARGET_SIZE = 64 * 1024;
 export interface ZipEntryWriterOptions {
   /** Real path of the extraction root */
   dir: string;
+  /** The filesystem helpers, passed in to keep this module below `fs.ts` */
+  fs: typeof supportFs;
   defaultDirMode?: string;
   defaultFileMode?: string;
 }
@@ -78,6 +80,7 @@ interface SymlinkTarget {
  */
 export class ZipEntryWriter {
   private readonly opts: ZipEntryWriterOptions;
+  private readonly fs: typeof supportFs;
   private caseInsensitive = true;
   private normalizationInsensitive = true;
   // Normalized missing-path keys -> links to recheck when those paths become symlinks.
@@ -90,6 +93,7 @@ export class ZipEntryWriter {
    */
   constructor(opts: ZipEntryWriterOptions) {
     this.opts = opts;
+    this.fs = opts.fs;
   }
 
   /**
@@ -156,7 +160,7 @@ export class ZipEntryWriter {
     const create = this.createFlags();
     try {
       // Exclusive creation never follows or replaces anything, so the checks below are not needed
-      return {file: await fs.openFile(dest, create, mode), created: true};
+      return {file: await this.fs.openFile(dest, create, mode), created: true};
     } catch (err: any) {
       if (err.code !== 'EEXIST') {
         throw err;
@@ -166,7 +170,7 @@ export class ZipEntryWriter {
     await this.assertFileDestinationWithinRoot(dest, verifiedDir.realPath, fileName);
     try {
       return {
-        file: await fs.openFile(dest, (create & ~fs.constants.O_EXCL) | fs.constants.O_TRUNC, mode),
+        file: await this.fs.openFile(dest, (create & ~this.fs.constants.O_EXCL) | this.fs.constants.O_TRUNC, mode),
         created: false,
       };
     } catch (err: any) {
@@ -175,11 +179,11 @@ export class ZipEntryWriter {
       }
       // A read-only file: replace it like `unzip -o` and `bsdtar` do
       try {
-        await fs.unlink(dest);
+        await this.fs.unlink(dest);
       } catch {
         throw err;
       }
-      return {file: await fs.openFile(dest, create, mode), created: true};
+      return {file: await this.fs.openFile(dest, create, mode), created: true};
     }
   }
 
@@ -197,13 +201,13 @@ export class ZipEntryWriter {
     const removeQuietly = async (target: string) => {
       try {
         await this.assertDirUnchanged(dirPath, verifiedDir);
-        await fs.unlink(target);
+        await this.fs.unlink(target);
       } catch {
         // already gone, or not ours to remove anymore
       }
     };
     try {
-      const file = await fs.openFile(dest, create, mode);
+      const file = await this.fs.openFile(dest, create, mode);
       return {file, commit: async () => {}, discard: async () => await removeQuietly(dest)};
     } catch (err: any) {
       if (err.code !== 'EEXIST') {
@@ -214,12 +218,12 @@ export class ZipEntryWriter {
     await this.assertFileDestinationWithinRoot(dest, verifiedDir.realPath, fileName);
     // A short name in the same folder: the destination name may already be as long as a name can be
     const temp = path.join(path.dirname(dest), `.zip-${crypto.randomBytes(6).toString('hex')}.tmp`);
-    const file = await fs.openFile(temp, create, mode);
+    const file = await this.fs.openFile(temp, create, mode);
     return {
       file,
       commit: async () => {
         await this.assertDirUnchanged(dirPath, verifiedDir);
-        await fs.rename(temp, dest);
+        await this.fs.rename(temp, dest);
       },
       discard: async () => await removeQuietly(temp),
     };
@@ -243,15 +247,15 @@ export class ZipEntryWriter {
     const probe = async (created: string, alias: string): Promise<boolean> => {
       const createdPath = path.join(dir, `.zip-probe-${id}-${created}`);
       try {
-        await fs.writeFile(createdPath, '');
+        await this.fs.writeFile(createdPath, '');
         try {
-          await fs.lstat(path.join(dir, `.zip-probe-${id}-${alias}`));
+          await this.fs.lstat(path.join(dir, `.zip-probe-${id}-${alias}`));
           return true;
         } catch {
           return false;
         }
       } finally {
-        await fs.rimraf(createdPath);
+        await this.fs.rimraf(createdPath);
       }
     };
     try {
@@ -296,12 +300,12 @@ export class ZipEntryWriter {
       }
       const dest = this.resolveWithinRoot(fileName);
       await this.assertParentUnchanged(dest, fileName);
-      const stats = await fs.lstat(dest);
+      const stats = await this.fs.lstat(dest);
       if (!stats.isFile() || stats.size > MAX_SYMLINK_TARGET_SIZE) {
         throw new Error(`Cannot convert "${dest}" to a symlink while processing file ${fileName}`);
       }
-      links.push({fileName, dest, linkTarget: await fs.readFile(dest, 'utf8')});
-      await fs.unlink(dest);
+      links.push({fileName, dest, linkTarget: await this.fs.readFile(dest, 'utf8')});
+      await this.fs.unlink(dest);
     }
     for (const {fileName, dest, linkTarget} of links) {
       const dirPath = path.dirname(dest);
@@ -331,7 +335,10 @@ export class ZipEntryWriter {
     const effective = permissions & ~process.umask();
     let handle;
     try {
-      handle = await fs.openFile(dest, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW | fs.constants.O_NONBLOCK);
+      handle = await this.fs.openFile(
+        dest,
+        this.fs.constants.O_RDONLY | this.fs.constants.O_NOFOLLOW | this.fs.constants.O_NONBLOCK,
+      );
     } catch (err: any) {
       if (err.code === 'ENOENT' || err.code === 'ELOOP') {
         return;
@@ -394,7 +401,7 @@ export class ZipEntryWriter {
         // The remembered parent is not looked up again by mkdir, so make sure it is still the verified one
         await this.assertDirUnchanged(path.dirname(currentPath), parent);
         // The result of mkdir is not trusted: whatever is there now is checked like an existing folder
-        await fs.mkdir(currentPath, {mode});
+        await this.fs.mkdir(currentPath, {mode});
         current = await this.inspectDir(currentPath, fileName);
       }
       if (!current) {
@@ -414,7 +421,7 @@ export class ZipEntryWriter {
     const {dir} = this.opts;
     try {
       // The folder itself, after following links: this is where the files end up
-      const [stats, realPath] = await Promise.all([fs.stat(dirPath), fs.realpath(dirPath)]);
+      const [stats, realPath] = await Promise.all([this.fs.stat(dirPath), this.fs.realpath(dirPath)]);
       if (!isSubPath(realPath, dir)) {
         throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
       }
@@ -439,7 +446,7 @@ export class ZipEntryWriter {
       return;
     }
     // The resolved path passes through the parents and links, so replacing or relocating any of them changes it
-    if ((await fs.realpath(dirPath)) !== verified.realPath) {
+    if ((await this.fs.realpath(dirPath)) !== verified.realPath) {
       throw new Error(`Out of bound path "${dirPath}": the folder was replaced during the extraction`);
     }
   }
@@ -458,7 +465,7 @@ export class ZipEntryWriter {
   private async chmodIfPlain(dest: string, permissions: number): Promise<void> {
     let stats;
     try {
-      stats = await fs.lstat(dest);
+      stats = await this.fs.lstat(dest);
     } catch (err: any) {
       if (err.code === 'ENOENT') {
         return;
@@ -466,7 +473,7 @@ export class ZipEntryWriter {
       throw err;
     }
     if ((stats.isFile() || stats.isDirectory()) && (stats.mode & 0o777) !== permissions) {
-      await fs.chmod(dest, permissions);
+      await this.fs.chmod(dest, permissions);
     }
   }
 
@@ -476,8 +483,8 @@ export class ZipEntryWriter {
   }
 
   private createFlags(): number {
-    const noFollow = isWindows() ? 0 : fs.constants.O_NOFOLLOW;
-    return fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL | noFollow;
+    const noFollow = isWindows() ? 0 : this.fs.constants.O_NOFOLLOW;
+    return this.fs.constants.O_WRONLY | this.fs.constants.O_CREAT | this.fs.constants.O_EXCL | noFollow;
   }
 
   private resolveWithinRoot(fileName: string): string {
@@ -493,10 +500,10 @@ export class ZipEntryWriter {
     const {dir} = this.opts;
     let realDest: string | null = null;
     try {
-      if ((await fs.lstat(dest)).isSymbolicLink()) {
+      if ((await this.fs.lstat(dest)).isSymbolicLink()) {
         throw new Error(`Cannot write a file over existing symlink "${dest}"`);
       }
-      realDest = await fs.realpath(dest);
+      realDest = await this.fs.realpath(dest);
     } catch (err: any) {
       if (err.code !== 'ENOENT') {
         throw err;
@@ -566,9 +573,9 @@ export class ZipEntryWriter {
       const candidatePath = path.join(resolvedPath, segment);
       let nestedLinkTarget: string | null = null;
       try {
-        const stats = await fs.lstat(candidatePath);
+        const stats = await this.fs.lstat(candidatePath);
         if (stats.isSymbolicLink()) {
-          nestedLinkTarget = await fs.readlink(candidatePath);
+          nestedLinkTarget = await this.fs.readlink(candidatePath);
         }
       } catch (err: any) {
         if (err.code !== 'ENOENT') {
@@ -629,7 +636,7 @@ export class ZipEntryWriter {
   ): Promise<void> {
     // Reject an escaping target before creating the link on disk.
     await this.validateSymlinkTarget(linkTarget, linkParentDir, fileName);
-    await fs.symlink(linkTarget, dest);
+    await this.fs.symlink(linkTarget, dest);
     try {
       const target: SymlinkTarget = {linkTarget, linkParentDir, fileName, missingPaths: new Set()};
       // Recheck for cycles and redirected forward references after creating the link.
@@ -645,7 +652,7 @@ export class ZipEntryWriter {
       }
     } catch (err) {
       // Roll back the link that invalidated a target.
-      await fs.unlink(dest);
+      await this.fs.unlink(dest);
       throw err;
     }
   }

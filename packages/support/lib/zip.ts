@@ -11,23 +11,24 @@ import {exec} from 'teen_process';
 import * as yauzl from 'yauzl';
 
 import {fs} from './fs.js';
-import {createBase64EncodeStream} from './internal/index.js';
-import {WriteQueue} from './internal/write-queue.js';
 import {
   assertContent,
   assertSupportedEntry,
   BUFFERED_ENTRY_LIMIT,
+  createBase64EncodeStream,
   DEFAULT_CONCURRENCY,
   EntrySink,
+  extractZipStream,
   INFLATE_CHUNK_SIZE,
+  isIgnoredEntry,
   MAX_PENDING_BYTES,
   METHOD_DEFLATE,
   type SinkContext,
-} from './internal/zip-entry-sink.js';
-import {isIgnoredEntry, ZipEntryWriter} from './internal/zip-entry-writer.js';
-import {extractZipStream} from './internal/zip-stream-parser.js';
+  WriteQueue,
+  ZipEntryWriter,
+} from './internal/index.js';
 
-export {ZipStreamUnsupportedError} from './internal/zip-stream-parser.js';
+export {ZipStreamUnsupportedError} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
@@ -148,7 +149,7 @@ export async function extractStreamTo(
     }
     await fs.mkdir(destDir, {recursive: true});
     const dir = await fs.realpath(destDir);
-    return await extractZipStream(source, new ZipEntryWriter({dir}), opts);
+    return await extractZipStream(source, new ZipEntryWriter({dir, fs}), opts);
   } catch (err) {
     if (source instanceof stream.Readable) {
       source.destroy();
@@ -185,7 +186,7 @@ class ZipExtractor implements SinkContext {
   constructor(sourcePath: string, opts: ZipExtractorOptions) {
     this.zipPath = sourcePath;
     this.opts = opts;
-    this.writer = new ZipEntryWriter(opts);
+    this.writer = new ZipEntryWriter({...opts, fs});
     this.queue = new WriteQueue(opts.concurrency ?? DEFAULT_CONCURRENCY, MAX_PENDING_BYTES);
   }
 

@@ -605,13 +605,15 @@ class ZipExtractor {
 
 /** Unlike `pipeline`, reads the raw stream up to its end, so padding after the deflate stream is tolerated */
 async function feedInflater(raw: Readable, inflater: zlib.InflateRaw): Promise<void> {
+  // A single listener for all waits
+  const closed = once(inflater, 'close').catch(() => {});
   try {
     for await (const chunk of raw) {
       if (inflater.destroyed) {
         return;
       }
       if (!inflater.write(chunk)) {
-        await Promise.race([once(inflater, 'drain'), once(inflater, 'close')]);
+        await Promise.race([once(inflater, 'drain'), closed]);
       }
     }
     inflater.end();

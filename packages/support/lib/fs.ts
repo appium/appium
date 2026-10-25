@@ -20,12 +20,18 @@ import {promisify} from 'node:util';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
-import {walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
-import {MoveOperation} from './internal/move-operation.js';
+import {
+  MoveOperation,
+  type MvOptions,
+  pluralize,
+  walk,
+  type Walker,
+  type WalkItem,
+  type WalkOptions,
+} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -48,13 +54,7 @@ export interface CopyFileOptions {
   dereference?: boolean;
 }
 
-/** Options for {@linkcode fs.mv} */
-export interface MvOptions {
-  /** Whether to automatically create the destination folder structure */
-  mkdirp?: boolean;
-  /** Set to false to throw if the destination file already exists */
-  clobber?: boolean;
-}
+export type {MvOptions};
 
 /**
  * Callback used during directory walking in {@linkcode fs.walkDir}.
@@ -208,7 +208,7 @@ export const fs = {
    * Move a file or a folder.
    */
   async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
-    await new MoveOperation(from, to, opts).move();
+    await new MoveOperation(from, to, opts, fs).move();
   },
 
   /** Find path to an executable in system `PATH`. @see https://github.com/npm/node-which */

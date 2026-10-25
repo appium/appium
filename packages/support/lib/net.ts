@@ -1,14 +1,19 @@
-import {openAsBlob, type WriteStream} from 'node:fs';
+import type {WriteStream} from 'node:fs';
 import {isIPv6} from 'node:net';
-import path from 'node:path';
 import type {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 
 import type {HTTPHeaders} from '@appium/types';
-import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
-import mimeTypes from 'mime-types';
+import axios, {type Method, type RawAxiosRequestConfig} from 'axios';
 
 import {fs} from './fs.js';
+import {
+  closeStream,
+  DEFAULT_FILE_FIELD_NAME,
+  DEFAULT_TIMEOUT_MS,
+  toAxiosAuth,
+  uploadFileToHttp,
+} from './internal/index.js';
 import log from './logger.js';
 import {Timer} from './timing.js';
 import {isPlainObject, toReadableSizeString} from './util.js';
@@ -40,9 +45,6 @@ export const WebSocketCloseCode = {
 // RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
 export const MIN_APPLICATION_CLOSE_CODE = 3000;
 export const MAX_APPLICATION_CLOSE_CODE = 4999;
-
-const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
-const DEFAULT_FILE_FIELD_NAME = 'file';
 
 /** Common options for {@linkcode uploadFile} and {@linkcode downloadFile}. */
 export interface NetOptions {
@@ -91,8 +93,6 @@ export interface HttpUploadOptions extends NetOptions {
    */
   formFields?: Record<string, unknown> | [string, unknown][];
 }
-
-type AuthLike = AuthCredentials | AxiosBasicCredentials;
 
 type HttpRemoteUri = `http://${string}` | `https://${string}`;
 
@@ -153,7 +153,7 @@ export async function uploadFile(
       'Content-Length': size,
     };
   }
-  await uploadFileToHttp(localPath, url, uploadOptions);
+  await uploadFileToHttp(localPath, url, uploadOptions, log);
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
@@ -230,119 +230,3 @@ export async function downloadFile(
     }
   }
 }
-
-// #region Private helpers
-
-async function closeStream(stream: WriteStream): Promise<void> {
-  if (stream.closed) {
-    return;
-  }
-  await new Promise<void>((resolve) => {
-    stream.once('close', () => resolve());
-    stream.destroy();
-  });
-}
-
-function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
-  if (!auth || !isPlainObject(auth)) {
-    return null;
-  }
-
-  const username = 'username' in auth ? auth.username : auth.user;
-  const password = 'password' in auth ? auth.password : auth.pass;
-  if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
-    return null;
-  }
-  return {username, password};
-}
-
-async function uploadFileToHttp(
-  localPath: string,
-  parsedUri: URL,
-  uploadOptions: HttpUploadOptions = {},
-): Promise<void> {
-  const {
-    method = 'POST',
-    timeout = DEFAULT_TIMEOUT_MS,
-    headers,
-    auth,
-    fileFieldName = DEFAULT_FILE_FIELD_NAME,
-    formFields,
-  } = uploadOptions;
-  const {href} = parsedUri;
-
-  const requestOpts: RawAxiosRequestConfig = {
-    url: href,
-    method,
-    timeout,
-    maxContentLength: Infinity,
-    maxBodyLength: Infinity,
-  };
-  const axiosAuth = toAxiosAuth(auth);
-  if (axiosAuth) {
-    requestOpts.auth = axiosAuth;
-  }
-  if (fileFieldName) {
-    // Native FormData/Blob; axios' Node adapter builds the multipart stream itself for any
-    // spec-compliant FormData, so the `form-data` package is not needed.
-    const form = new FormData();
-    if (formFields) {
-      let pairs: [string, unknown][] = [];
-      if (Array.isArray(formFields)) {
-        pairs = formFields as [string, unknown][];
-      } else if (isPlainObject(formFields)) {
-        pairs = Object.entries(formFields);
-      }
-      for (const [key, value] of pairs) {
-        if (key.toLowerCase() === fileFieldName?.toLowerCase()) {
-          continue;
-        }
-        if (typeof value === 'string' || value instanceof Blob) {
-          form.append(key, value);
-        } else if (Buffer.isBuffer(value)) {
-          // Per the WHATWG FormData spec, appending a Blob always produces a *file* part
-          // (`filename="blob"`) - unlike the old `form-data` package, which sent a Buffer as
-          // a plain field. There is no native FormData API to send raw bytes as a non-file
-          // field, so fail loud instead of silently changing the multipart classification.
-          throw new TypeError(
-            `formFields.${key}: Buffer values are not supported, because native FormData always sends ` +
-              `them as file attachments rather than plain fields. Pass a string, or a Blob if a file ` +
-              `attachment is actually intended.`,
-          );
-        } else {
-          form.append(key, String(value));
-        }
-      }
-    }
-    // AWS S3 POST upload requires this to be the last field; do not move before formFields.
-    const fileName = path.basename(localPath);
-    const fileType = mimeTypes.lookup(fileName) || undefined;
-    form.append(fileFieldName, await openAsBlob(localPath, {type: fileType}), fileName);
-    if (isPlainObject(headers)) {
-      requestOpts.headers = headers as RawAxiosRequestConfig['headers'];
-    }
-    requestOpts.data = form;
-  } else {
-    if (isPlainObject(headers)) {
-      requestOpts.headers = headers;
-    }
-    // A plain stream, not a Blob: axios force-overwrites a Blob body's `Content-Type` to
-    // `data.type || 'application/octet-stream'`, clobbering any caller-supplied header.
-    requestOpts.data = fs.createReadStream(localPath);
-  }
-  log.debug(
-    `Performing ${method} to ${href} with options (excluding data): ` +
-      JSON.stringify(
-        (() => {
-          const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
-          delete requestOptsWithoutData.data;
-          return requestOptsWithoutData;
-        })(),
-      ),
-  );
-
-  const {status, statusText} = await axios(requestOpts);
-  log.info(`Server response: ${status} ${statusText}`);
-}
-
-// #endregion

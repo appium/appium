@@ -314,6 +314,11 @@ export class BaseDriver<
     const caps = this.processSessionCapabilities(originalCaps);
     const initialTimeouts = deserializeTimeouts(caps.timeouts);
     const opts = this.configureSessionOptions(caps);
+    // Node runs a negative timer delay immediately, which ends the session.
+    const newCommandTimeout = caps.newCommandTimeout;
+    if (typeof newCommandTimeout === 'number' && Number.isFinite(newCommandTimeout) && newCommandTimeout < 0) {
+      throw new errors.InvalidArgumentError(`Invalid newCommandTimeout value '${newCommandTimeout}'`);
+    }
 
     // Initialize local state before the concrete driver starts its backend.
     // Timeout command/setter overrides may require an already running backend.
@@ -329,7 +334,6 @@ export class BaseDriver<
     this.opts = opts;
 
     // null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout
-    const newCommandTimeout = this.caps.newCommandTimeout;
     if (typeof newCommandTimeout === 'number' && Number.isFinite(newCommandTimeout)) {
       this.newCommandTimeoutMs = newCommandTimeout * 1000;
     }

@@ -69,7 +69,7 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<string> {
     void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
-    if (!this.translationEnabled || !driver.getCurrentContext || (await driver.getCurrentContext()) !== 'NATIVE_APP') {
+    if (!this.translationEnabled || typeof driver.getCurrentContext !== 'function' || (await driver.getCurrentContext()) !== 'NATIVE_APP') {
       return source;
     }
     const metadata: TransformMetadata = {};

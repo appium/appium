@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.5](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.4...@appium/base-driver@11.0.0-beta.5) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** preserve proxied command validation ordering (#23060)
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **base-driver:** validate every timeout capability candidate (#23062)
+* **base-driver:** POST body has to be a JSON object, otherwise the server returns invalid argument error.
+
+### Bug Fixes
+
+* **base-driver:** preserve proxied command validation ordering ([#23060](https://github.com/appium/appium/issues/23060)) ([6cc4095](https://github.com/appium/appium/commit/6cc4095c59bc7ce23b47ce768707aae978794824))
+* **base-driver:** reject an inherited name as a log type ([#23082](https://github.com/appium/appium/issues/23082)) ([c62ffb7](https://github.com/appium/appium/commit/c62ffb7ddffc9d0fc1da90501c622df24eeca6c8))
+* **base-driver:** reject command POST bodies that are not JSON objects ([#23007](https://github.com/appium/appium/issues/23007)) ([39e9512](https://github.com/appium/appium/commit/39e9512b4a4c936edae0d7a56bdd4bd613075322))
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+* **base-driver:** validate every timeout capability candidate ([#23062](https://github.com/appium/appium/issues/23062)) ([531f482](https://github.com/appium/appium/commit/531f482d8759e7c621276b212489b764a994766a))
+* **http-server:** reject invalid JSON only after the route is known ([#23057](https://github.com/appium/appium/issues/23057)) ([9ea7718](https://github.com/appium/appium/commit/9ea7718f0a0291966071873b61783e5be480cde9))
+
+
 ## [11.0.0-beta.4](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.3...@appium/base-driver@11.0.0-beta.4) (2026-10-18)
 
 ### ⚠ BREAKING CHANGES

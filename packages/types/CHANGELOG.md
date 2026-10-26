@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.5](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.4...@appium/types@2.0.0-beta.5) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** removed the --callback-address (-ca) server argument and the server.callback-address config property
+* **appium:** removed the --callback-port (-cp) server argument and the server.callback-port config property
+* **appium:** removed the --debug-log-spacing server argument and the server.debug-log-spacing config property
+* **appium:** removed the --strict-caps server argument and the server.strict-caps config property
+* **appium:** removed the --trace-dir server argument and the server.trace-dir config property
+
+### Bug Fixes
+
+* **appium:** remove unused server arguments ([#23063](https://github.com/appium/appium/issues/23063)) ([16c84ea](https://github.com/appium/appium/commit/16c84ea20314f605b93070de283818a78c0ed4bb))
+
+
 ## [2.0.0-beta.4](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.3...@appium/types@2.0.0-beta.4) (2026-10-18)
 
 ### ⚠ BREAKING CHANGES

@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.6](https://github.com/appium/appium/compare/appium@4.0.0-beta.5...appium@4.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** ExtractAllOptions.useSystemUnzip is removed.
+* **support:** Non-UTF-8-flagged file names now default to utf8 instead of cp437, and cp437 decoding is no longer supported (modern archives use UTF-8). Such archives must be recreated or converted; fileNamesEncoding only accepts Node.js BufferEncodings.
+* **appium:** install local extensions without global npm links (#23086)
+* **base-driver:** preserve proxied command validation ordering (#23060)
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **base-driver:** validate every timeout capability candidate (#23062)
+* **appium:** removed the --callback-address (-ca) server argument and the server.callback-address config property
+* **appium:** removed the --callback-port (-cp) server argument and the server.callback-port config property
+* **appium:** removed the --debug-log-spacing server argument and the server.debug-log-spacing config property
+* **appium:** removed the --strict-caps server argument and the server.strict-caps config property
+* **appium:** removed the --trace-dir server argument and the server.trace-dir config property
+* **base-driver:** POST body has to be a JSON object, otherwise the server returns invalid argument error.
+
+### Features
+
+* **support:** Remove system unzip from extractAllTo ([#23091](https://github.com/appium/appium/issues/23091)) ([0f1a761](https://github.com/appium/appium/commit/0f1a76184b78ee3d60652b9a610c808213196f7c))
+
+### Bug Fixes
+
+* **appium:** install local extensions without global npm links ([#23086](https://github.com/appium/appium/issues/23086)) ([3615d6d](https://github.com/appium/appium/commit/3615d6df4c5a785524092f8c28dc338385a4468a))
+* **appium:** preserve npm arguments on Windows ([#22957](https://github.com/appium/appium/issues/22957)) ([dd71f66](https://github.com/appium/appium/commit/dd71f66e4ac343bc48e78f5b661ca02b351553c1))
+* **appium:** remove unused server arguments ([#23063](https://github.com/appium/appium/issues/23063)) ([16c84ea](https://github.com/appium/appium/commit/16c84ea20314f605b93070de283818a78c0ed4bb))
+* **appium:** send log webhooks to ipv6 hosts ([#23061](https://github.com/appium/appium/issues/23061)) ([819905b](https://github.com/appium/appium/commit/819905beb265431446ec56776373ec15f13a0a8f))
+* **base-driver:** preserve proxied command validation ordering ([#23060](https://github.com/appium/appium/issues/23060)) ([6cc4095](https://github.com/appium/appium/commit/6cc4095c59bc7ce23b47ce768707aae978794824))
+* **base-driver:** reject command POST bodies that are not JSON objects ([#23007](https://github.com/appium/appium/issues/23007)) ([39e9512](https://github.com/appium/appium/commit/39e9512b4a4c936edae0d7a56bdd4bd613075322))
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+* **base-driver:** validate every timeout capability candidate ([#23062](https://github.com/appium/appium/issues/23062)) ([531f482](https://github.com/appium/appium/commit/531f482d8759e7c621276b212489b764a994766a))
+* **docs:** correct stale instructions in .NET quickstart ([#23049](https://github.com/appium/appium/issues/23049)) ([2dd05e1](https://github.com/appium/appium/commit/2dd05e12d3e5911203856977120813ce56b69552))
+* **docs:** X-Appium-Is-Sensitive also accepts the value &#x27;yes&#x27; ([#23051](https://github.com/appium/appium/issues/23051)) ([2cf7f4e](https://github.com/appium/appium/commit/2cf7f4e6b21fdf36f85986187d5361d980f7cb42))
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([8e42cbc](https://github.com/appium/appium/commit/8e42cbc82d95da690b73399782f750043464352d))
+
+
 ## [4.0.0-beta.5](https://github.com/appium/appium/compare/appium@4.0.0-beta.4...appium@4.0.0-beta.5) (2026-10-18)
 
 ### ⚠ BREAKING CHANGES

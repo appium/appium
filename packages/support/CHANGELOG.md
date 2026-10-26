@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.5](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.4...@appium/support@8.0.0-beta.5) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** ExtractAllOptions.useSystemUnzip is removed.
+* **support:** Non-UTF-8-flagged file names now default to utf8 instead of cp437, and cp437 decoding is no longer supported (modern archives use UTF-8). Such archives must be recreated or converted; fileNamesEncoding only accepts Node.js BufferEncodings.
+
+### Features
+
+* **support:** Add zip streaming support ([#23083](https://github.com/appium/appium/issues/23083)) ([52c92d6](https://github.com/appium/appium/commit/52c92d6acd72d93ee9fc428b0ff473ae60bc52f4))
+* **support:** Remove system unzip from extractAllTo ([#23091](https://github.com/appium/appium/issues/23091)) ([0f1a761](https://github.com/appium/appium/commit/0f1a76184b78ee3d60652b9a610c808213196f7c))
+
+### Bug Fixes
+
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([8e42cbc](https://github.com/appium/appium/commit/8e42cbc82d95da690b73399782f750043464352d))
+
+### Performance Improvements
+
+* **support:** Further optimize zip extraction ([#23087](https://github.com/appium/appium/issues/23087)) ([c7e3b46](https://github.com/appium/appium/commit/c7e3b46f1a735a48ef1c57193946e007eb4caca1))
+* **support:** Speed up zip extraction ([#23078](https://github.com/appium/appium/issues/23078)) ([34e368e](https://github.com/appium/appium/commit/34e368e666f1a3b0fb85ab7c12bea7df3ce1124a))
+
+
 ## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.3...@appium/support@8.0.0-beta.4) (2026-10-18)
 
 ### Bug Fixes

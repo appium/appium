@@ -38,7 +38,7 @@
   "dependencies": {
     "oxfmt": "0.74.0",
     "oxlint": "1.89.0",
-    "oxlint-tsgolint": "7.0.2004"
+    "oxlint-tsgolint": "7.0.2005"
   },
   "engines": {
     "node": "^20.19.0 || ^22.12.0 || >=24.0.0",

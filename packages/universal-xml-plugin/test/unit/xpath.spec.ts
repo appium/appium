@@ -59,6 +59,23 @@ describe('xpath functions', function () {
       assert.equal(branches[0], '/*[1]');
       assert.equal(branches.length, runQuery('//*', xml).length - 1);
     });
+    it('should resolve positions and sibling axes in the android device order', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_ANDROID_SIBLINGS), 'android', {
+        addIndexPath: true,
+      });
+      // the children are Cancel, Title, Share and OK, so Share is the second button and comes
+      // right after Title
+      assert.equal(transformQuery('//Button[2]', xml, false), '/*[1]/*[1]/*[3]');
+      assert.equal(transformQuery('//Button[last()]', xml, false), '/*[1]/*[1]/*[4]');
+      assert.equal(transformQuery('//Text[@text="Title"]/following-sibling::*[1]', xml, false), '/*[1]/*[1]/*[3]');
+    });
+    it('should resolve sibling axes in the ios device order', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS_SIBLINGS), 'ios', {
+        addIndexPath: true,
+      });
+      assert.equal(transformQuery('//Text[@text="Title"]/following-sibling::*[1]', xml, false), '/*[1]/*[1]/*[3]');
+      assert.equal(transformQuery('//Text[@text="Title"]/preceding-sibling::*[1]', xml, false), '/*[1]/*[1]/*[1]');
+    });
     it('should return null for queries that dont find anything', async function () {
       const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS), 'ios', {
         addIndexPath: true,

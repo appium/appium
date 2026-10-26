@@ -35,50 +35,55 @@ describe('source functions', function () {
       assert.deepEqual(nodes, ['SomeRandoElement']);
       assert.deepEqual(attrs, ['oddAttribute']);
     });
+    it('should keep android siblings in the order they have on the device', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_ANDROID_SIBLINGS), 'android');
+      assert.equal(xml, await readFixture(FIXTURES.XML_ANDROID_SIBLINGS_TRANSFORMED));
+    });
+    it('should keep ios siblings in the order they have on the device', async function () {
+      const {xml} = await transformSourceXml(await readFixture(FIXTURES.XML_IOS_SIBLINGS), 'ios');
+      assert.equal(xml, await readFixture(FIXTURES.XML_IOS_SIBLINGS_TRANSFORMED));
+    });
   });
   describe('transformChildNodes', function () {
-    it('should loop through child nodes of an object and transform them based on platform', function () {
-      const node = {
-        XCUIElementTypeIcon: [{}],
-        XCUIElementTypeKey: [{}],
-        XCUIElementTypeTab: [{}],
-      };
+    it('should loop through child nodes and transform them based on platform', function () {
+      const childNodes = [
+        {XCUIElementTypeKey: [], ':@': {'@_type': 'XCUIElementTypeKey', '@_name': 'q'}},
+        {XCUIElementTypeIcon: []},
+        {XCUIElementTypeTab: []},
+      ];
       const metadata = {};
-      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
+      assert.deepEqual(transformChildNodes(childNodes, 'ios', metadata), {
         nodes: [],
         attrs: [],
       });
-      assert.deepEqual(node, {Button: [{}, {}], Icon: [{}]});
+      assert.deepEqual(childNodes, [{Button: [], ':@': {'@_axId': 'q'}}, {Icon: []}, {Button: []}]);
     });
     it('should leave unknown nodes intact and add them to unknowns list', function () {
-      const node = {
-        XCUIElementTypeIcon: [{}],
-        UnknownThingo: [{}],
-        XCUIElementTypeTab: [{}],
-      };
+      const childNodes = [{XCUIElementTypeIcon: []}, {UnknownThingo: []}, {XCUIElementTypeTab: []}];
       const metadata = {};
-      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
+      assert.deepEqual(transformChildNodes(childNodes, 'ios', metadata), {
         nodes: ['UnknownThingo'],
         attrs: [],
       });
-      assert.deepEqual(node, {Button: [{}], UnknownThingo: [{}], Icon: [{}]});
+      assert.deepEqual(childNodes, [{Icon: []}, {UnknownThingo: []}, {Button: []}]);
     });
     it('should leave nodes for other platforms intact and add them to unknowns list', function () {
-      const node = {
-        XCUIElementTypeIcon: [{}],
-        'android.widget.EditText': [{}],
-        XCUIElementTypeTab: [{}],
-      };
+      const childNodes = [{XCUIElementTypeIcon: []}, {'android.widget.EditText': []}, {XCUIElementTypeTab: []}];
       const metadata = {};
-      assert.deepEqual(transformChildNodes(node, Object.keys(node), 'ios', metadata), {
+      assert.deepEqual(transformChildNodes(childNodes, 'ios', metadata), {
         nodes: ['android.widget.EditText'],
         attrs: [],
       });
-      assert.deepEqual(node, {
-        Button: [{}],
-        'android.widget.EditText': [{}],
-        Icon: [{}],
+      assert.deepEqual(childNodes, [{Icon: []}, {'android.widget.EditText': []}, {Button: []}]);
+    });
+    it('should leave text content intact', function () {
+      const childNodes = [{'#text': 'hello'}, {XCUIElementTypeTab: []}];
+      const metadata = {};
+      assert.deepEqual(transformChildNodes(childNodes, 'ios', metadata), {
+        nodes: [],
+        attrs: [],
       });
+      assert.deepEqual(childNodes, [{'#text': 'hello'}, {Button: []}]);
     });
   });
   describe('transformAttrs', function () {

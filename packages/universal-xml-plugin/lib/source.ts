@@ -16,8 +16,10 @@ export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
-const isAttr = (k: string): boolean => k.startsWith(ATTR_PREFIX);
-const isNode = (k: string): boolean => !isAttr(k);
+// the parser runs with preserveOrder, so every node is an object like {[nodeName]: childNodes,
+// ':@': attrs} inside its parent's list of children, and text content is {'#text': value}
+const ATTRS_KEY = ':@';
+const TEXT_NODE_NAME = '#text';
 
 /**
  * Transforms source XML to universal format
@@ -39,7 +41,7 @@ export async function transformSourceXml(
   // the node below it. the android <hierarchy> root does carry an index attribute and is part of
   // the queried hierarchy, so it keeps its index path
   const xmlObj = singletonXmlParser().parse(xmlStr);
-  const unknowns = transformNode(xmlObj, platform, {
+  const unknowns = transformChildNodes(xmlObj, platform, {
     metadata,
     addIndexPath,
     parentPath: '',
@@ -72,9 +74,9 @@ export function getUniversalAttrName(attrName: string, platform: string): string
 }
 
 /**
- * Transforms a node object recursively
+ * Transforms a node object and its subtree in place
  *
- * @param nodeObj - The node object to transform
+ * @param nodeObj - The node object to transform, in the ordered form the parser produces
  * @param platform - The platform name
  * @param opts - Transformation options
  * @returns Object containing unknown nodes and attributes
@@ -86,43 +88,53 @@ export function transformNode(
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
-  if (util.isPlainObject(nodeObj)) {
-    const keys = Object.keys(nodeObj);
-    const childNodeNames = keys.filter(isNode);
-    const attrs = keys.filter(isAttr);
-    let thisIndexPath = parentPath || '';
+  const nodeName = Object.keys(nodeObj).find((key) => key !== ATTRS_KEY);
+  // text content has no name or attributes to translate
+  if (!nodeName || nodeName === TEXT_NODE_NAME) {
+    return {nodes: unknownNodes, attrs: unknownAttrs};
+  }
 
-    if (attrs.length && addIndexPath) {
-      if (!attrs.includes(IDX_PREFIX)) {
-        throw new Error(`Index path is required but node found with no 'index' attribute`);
-      }
+  // the parser leaves the attributes entry out for nodes that have none
+  const attrsObj = nodeObj[ATTRS_KEY] ?? {};
+  const attrs = Object.keys(attrsObj);
+  let thisIndexPath = parentPath || '';
 
-      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX] as string}`;
-      nodeObj[IDX_PATH_PREFIX] = thisIndexPath;
+  if (attrs.length && addIndexPath) {
+    if (!attrs.includes(IDX_PREFIX)) {
+      throw new Error(`Index path is required but node found with no 'index' attribute`);
     }
 
-    const transformFn = TRANSFORMS[platform as keyof typeof TRANSFORMS];
-    if (transformFn) {
-      transformFn(nodeObj, metadata || ({} as TransformMetadata));
-    }
-    unknownAttrs.push(...transformAttrs(nodeObj, attrs, platform));
-    const unknowns = transformChildNodes(nodeObj, childNodeNames, platform, {
-      metadata,
-      addIndexPath,
-      parentPath: thisIndexPath,
-    });
-    unknownAttrs.push(...unknowns.attrs);
-    unknownNodes.push(...unknowns.nodes);
-  } else if (Array.isArray(nodeObj)) {
-    for (const childObj of nodeObj) {
-      const {nodes, attrs} = transformNode(childObj, platform, {
-        metadata,
-        addIndexPath,
-        parentPath: parentPath || '',
-      });
-      unknownNodes.push(...nodes);
-      unknownAttrs.push(...attrs);
-    }
+    thisIndexPath = `${parentPath || ''}/${attrsObj[IDX_PREFIX] as string}`;
+    attrsObj[IDX_PATH_PREFIX] = thisIndexPath;
+  }
+
+  const transformFn = TRANSFORMS[platform as keyof typeof TRANSFORMS];
+  if (transformFn) {
+    transformFn(attrsObj, metadata || ({} as TransformMetadata));
+  }
+  unknownAttrs.push(...transformAttrs(attrsObj, attrs, platform));
+  if (!nodeObj[ATTRS_KEY] && Object.keys(attrsObj).length) {
+    // keep anything the transformer added to a node that had no attributes
+    nodeObj[ATTRS_KEY] = attrsObj;
+  }
+
+  // before modifying the name of this node, recurse down and modify the subtree
+  const unknowns = transformChildNodes(nodeObj[nodeName], platform, {
+    metadata,
+    addIndexPath,
+    parentPath: thisIndexPath,
+  });
+  unknownAttrs.push(...unknowns.attrs);
+  unknownNodes.push(...unknowns.nodes);
+
+  // now translate the node name. the node object keeps its place in the parent's list of children,
+  // so siblings stay in document order even when several of them get the same universal name
+  const universalName = getUniversalNodeName(nodeName, platform);
+  if (universalName === null) {
+    unknownNodes.push(nodeName);
+  } else {
+    nodeObj[universalName] = nodeObj[nodeName];
+    delete nodeObj[nodeName];
   }
   return {
     nodes: util.uniq(unknownNodes),
@@ -131,66 +143,33 @@ export function transformNode(
 }
 
 /**
- * Transforms child nodes of a node object
+ * Transforms a list of child nodes in place, keeping their order
  *
- * @param nodeObj - The node object containing child nodes
- * @param childNodeNames - Array of child node names
+ * @param childNodes - The child nodes, in the ordered form the parser produces
  * @param platform - The platform name
  * @param opts - Transformation options
  * @returns Object containing unknown nodes and attributes
  */
 export function transformChildNodes(
-  nodeObj: any,
-  childNodeNames: string[],
+  childNodes: any[],
   platform: string,
   {metadata, addIndexPath, parentPath}: TransformNodeOptions,
 ): NodesAndAttributes {
   const unknownNodes: string[] = [];
   const unknownAttrs: string[] = [];
-  for (const nodeName of childNodeNames) {
-    // before modifying the name of this child node, recurse down and modify the subtree
-    const {nodes, attrs} = transformNode(nodeObj[nodeName], platform, {
+  for (const childObj of childNodes) {
+    const {nodes, attrs} = transformNode(childObj, platform, {
       metadata,
       addIndexPath,
       parentPath: parentPath || '',
     });
     unknownNodes.push(...nodes);
     unknownAttrs.push(...attrs);
-
-    // now translate the node name and replace the subtree with this node
-    const universalName = getUniversalNodeName(nodeName, platform);
-    if (universalName === null) {
-      unknownNodes.push(nodeName);
-      continue;
-    }
-
-    // since multiple child node names could map to the same new transformed node name, we can't
-    // simply assign nodeObj[universalName] = nodeObj[nodeName]; we need to be sensitive to the
-    // situation where the end result is an array of children having the same node name
-    if (nodeObj[universalName]) {
-      // if we already have a node with the universal name, that means we are mapping a second
-      // original node name to the same universal node name, so we just push all its children into
-      // the list
-      if (Array.isArray(nodeObj[universalName])) {
-        if (Array.isArray(nodeObj[nodeName])) {
-          nodeObj[universalName].push(...nodeObj[nodeName]);
-        } else {
-          nodeObj[universalName].push(nodeObj[nodeName]);
-        }
-      } else {
-        nodeObj[universalName] = [nodeObj[universalName]];
-        if (Array.isArray(nodeObj[nodeName])) {
-          nodeObj[universalName].push(...nodeObj[nodeName]);
-        } else {
-          nodeObj[universalName].push(nodeObj[nodeName]);
-        }
-      }
-    } else {
-      nodeObj[universalName] = nodeObj[nodeName];
-    }
-    delete nodeObj[nodeName];
   }
-  return {nodes: unknownNodes, attrs: unknownAttrs};
+  return {
+    nodes: util.uniq(unknownNodes),
+    attrs: util.uniq(unknownAttrs),
+  };
 }
 
 /**
@@ -254,6 +233,7 @@ const singletonXmlBuilder = util.memoize(function makeXmlBuilder() {
     attributeNamePrefix: ATTR_PREFIX,
     suppressBooleanAttributes: false,
     format: true,
+    preserveOrder: true,
   });
 });
 
@@ -262,6 +242,6 @@ const singletonXmlParser = util.memoize(function makeXmlParser() {
     ignoreAttributes: false,
     ignoreDeclaration: true,
     attributeNamePrefix: ATTR_PREFIX,
-    isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
+    preserveOrder: true,
   });
 });

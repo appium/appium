@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/schema@2.0.0-beta.2...@appium/schema@2.0.0-beta.3) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** removed the --callback-address (-ca) server argument and the server.callback-address config property
+* **appium:** removed the --callback-port (-cp) server argument and the server.callback-port config property
+* **appium:** removed the --debug-log-spacing server argument and the server.debug-log-spacing config property
+* **appium:** removed the --strict-caps server argument and the server.strict-caps config property
+* **appium:** removed the --trace-dir server argument and the server.trace-dir config property
+
+### Bug Fixes
+
+* **appium:** remove unused server arguments ([#23063](https://github.com/appium/appium/issues/23063)) ([16c84ea](https://github.com/appium/appium/commit/16c84ea20314f605b93070de283818a78c0ed4bb))
+* **schema:** correct tmp dir default description to match os.tmpdir() ([#23046](https://github.com/appium/appium/issues/23046)) ([7bff30b](https://github.com/appium/appium/commit/7bff30ba65d572be9e6eabfaaceeade0c2157f90))
+
+
 ## [2.0.0-beta.2](https://github.com/appium/appium/compare/@appium/schema@2.0.0-beta.1...@appium/schema@2.0.0-beta.2) (2026-10-09)
 
 **Note:** Version bump only for package @appium/schema

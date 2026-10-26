@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0-beta.6](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.5...@appium/images-plugin@6.0.0-beta.6) (2026-10-26)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
 ## [6.0.0-beta.5](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.4...@appium/images-plugin@6.0.0-beta.5) (2026-10-18)
 
 ### Bug Fixes

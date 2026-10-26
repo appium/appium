@@ -16,6 +16,11 @@ inputs:
     required: false
     default: 'true'
 
+  socket-firewall:
+    description: Whether to install dependencies through Socket Firewall
+    required: false
+    default: 'true'
+
 runs:
   using: composite
   steps:
@@ -25,6 +30,7 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: npm
     - name: SocketDev Security Check
+      if: ${{ inputs.socket-firewall == 'true' }}
       uses: SocketDev/action@v1.3.2
       with:
         mode: firewall-free
@@ -33,6 +39,12 @@ runs:
       run: |
         # Replace npm with sfw npm in the install command
         install_cmd="${{ inputs.install-command }}"
+
+        if [ "${{ inputs.socket-firewall }}" != "true" ]; then
+          $install_cmd
+          exit $?
+        fi
+
         sfw_install_cmd="${install_cmd//npm /sfw npm }"
 
         # Socket Firewall can fail to reach its own backend (a transient
@@ -72,6 +84,7 @@ runs:
           exit 1
         fi
     - name: Build packages
-      if: ${{ inputs.run-build == 'true' }}
+      # `npm ci` already builds through the root `prepare` script
+      if: ${{ inputs.run-build == 'true' && !startsWith(inputs.install-command, 'npm ci') }}
       shell: bash
       run: npm run build

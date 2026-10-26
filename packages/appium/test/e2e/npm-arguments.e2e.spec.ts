@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {realpath, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 import type {TestContext} from 'node:test';
@@ -433,9 +434,11 @@ async function createNpmFixture(
 }
 
 async function createSelectionFixture(t: TestContext, shimName = 'npm installation') {
-  const root = await tempDir.openDir();
+  // Expand 8.3 short names so that paths match `process.execPath` of child processes
+  const root = await realpath(await tempDir.openDir());
   t.after(async () => {
-    await fs.rimraf(root);
+    // A killed child may still hold its node.exe for a moment
+    await rm(root, {recursive: true, force: true, maxRetries: 10});
   });
   const shimDir = path.join(root, shimName);
   const marker = path.join(root, 'selected-cli');

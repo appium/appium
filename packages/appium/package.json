@@ -58,7 +58,8 @@
     "install-docs-deps": "appium-docs init --no-mkdocs",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
-    "test:e2e": "node --test --experimental-test-module-mocks --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=200000 \"./build/test/e2e/**/*.spec.js\"",
+    "test:e2e": "node ./scripts/ci/run-e2e.mjs",
+    "test:e2e:shards": "node ./scripts/ci/run-e2e.mjs --list",
     "test:smoke": "cross-env APPIUM_HOME=./local_appium_home node ./scripts/ci/smoke-install-known-driver.mjs uiautomator2 && cross-env APPIUM_HOME=./local_appium_home node ./index.js driver list",
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },

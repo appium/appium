@@ -685,6 +685,39 @@ describe('#zip readEntries() extractEntryTo()', function () {
   });
 });
 
+describe('#zip Windows symlink targets', {skip: !isWindows()}, function () {
+  let root: string;
+  let outside: string;
+
+  beforeEach(async function () {
+    root = await tempDir.openDir();
+    outside = path.resolve(`${path.basename(root)}-escaped.txt`);
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(root);
+    await fs.rimraf(outside);
+  });
+
+  for (const lowercase of [false, true]) {
+    it(`should reject a ${lowercase ? 'lowercase' : 'uppercase'} drive-relative target`, async function () {
+      const drive = path.parse(outside).root.slice(0, 2);
+      const target = `${lowercase ? drive.toLowerCase() : drive.toUpperCase()}${path.basename(outside)}`;
+      const source = path.join(root, 'archive.zip');
+      const output = path.join(root, 'output');
+      await createStoredZip(source, [
+        {name: 'link', contents: target, mode: 0o120777},
+        {name: 'link', contents: 'regression marker', mode: 0o100644},
+      ]);
+
+      await assert.rejects(zip.extractAllTo(source, output), /Out of bound symlink target/);
+      // lstat also detects dangling links, unlike exists/stat
+      await assert.rejects(fs.lstat(path.join(output, 'link')), {code: 'ENOENT'});
+      assert.strictEqual(await fs.exists(outside), false);
+    });
+  }
+});
+
 interface StoredZipEntry {
   name: string;
   contents: string;

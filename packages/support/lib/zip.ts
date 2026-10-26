@@ -235,6 +235,11 @@ class ZipExtractor {
     linkParentDir: string,
     fileName: string,
   ): Promise<Set<string>> {
+    // Windows resolves drive-relative targets (`C:foo`) against the drive's CWD, not the link's parent
+    if (isWindows() && /^[A-Za-z]:/.test(linkTarget) && !path.win32.isAbsolute(linkTarget)) {
+      throw new Error(`Out of bound symlink target "${linkTarget}" found while processing file ${fileName}`);
+    }
+
     // Resolve links before '..'; realpath alone cannot handle missing targets.
     const separator = isWindows() ? /[\\/]+/ : /\/+/;
     const targetRoot = path.isAbsolute(linkTarget) ? path.parse(linkTarget).root : '';

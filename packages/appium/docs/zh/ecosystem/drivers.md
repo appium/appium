@@ -169,7 +169,7 @@ This driver is recommended as a drop-in replacement for the partially unmaintain
 ```
 
 - Target: Windows applications
-- Mode: Native
+- Mode: Native, Hybrid
 - Supported by: Community / Automate The Planet
 
 ```sh title="Install This Driver"

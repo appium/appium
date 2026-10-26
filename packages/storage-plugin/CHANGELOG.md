@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.6](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.5...@appium/storage-plugin@3.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+
+### Bug Fixes
+
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+
+
 ## [3.0.0-beta.5](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.4...@appium/storage-plugin@3.0.0-beta.5) (2026-10-18)
 
 ### Bug Fixes

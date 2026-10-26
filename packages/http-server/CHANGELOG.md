@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.0-beta.5](https://github.com/appium/appium/compare/@appium/http-server@1.0.0-beta.4...@appium/http-server@1.0.0-beta.5) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** POST body has to be a JSON object, otherwise the server returns invalid argument error.
+
+### Bug Fixes
+
+* **base-driver:** reject command POST bodies that are not JSON objects ([#23007](https://github.com/appium/appium/issues/23007)) ([39e9512](https://github.com/appium/appium/commit/39e9512b4a4c936edae0d7a56bdd4bd613075322))
+* **http-server:** reject invalid JSON only after the route is known ([#23057](https://github.com/appium/appium/issues/23057)) ([9ea7718](https://github.com/appium/appium/commit/9ea7718f0a0291966071873b61783e5be480cde9))
+* **http-server:** return unknown method for a known command url ([#22991](https://github.com/appium/appium/issues/22991)) ([8f30c8a](https://github.com/appium/appium/commit/8f30c8abc72b65c3c58d83f4264cc62fb966fbb3))
+
+
 ## [1.0.0-beta.4](https://github.com/appium/appium/compare/@appium/http-server@1.0.0-beta.3...@appium/http-server@1.0.0-beta.4) (2026-10-18)
 
 ### ⚠ BREAKING CHANGES

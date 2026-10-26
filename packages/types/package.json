@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0-beta.5",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Various type declarations used across Appium",
   "keywords": [
@@ -49,7 +49,7 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/schema": "~2.0.0-beta.2",
+    "@appium/schema": "~2.0.0-beta.3",
     "@types/express": "^5.0.6",
     "@types/ws": "^8.18.1"
   },

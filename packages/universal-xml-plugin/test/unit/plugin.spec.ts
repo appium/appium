@@ -27,6 +27,12 @@ describe('UniversalXMLPlugin', function () {
       (driver as any).opts = {appPackage: 'io.cloudgrey.the_app'};
       assert.equal(await p.getPageSource(next, driver as any), await readFixture(FIXTURES.XML_ANDROID_TRANSFORMED));
     });
+    it('should not transform page source when context is not NATIVE_APP', async function () {
+      (driver as any).getCurrentContext = () => 'WEB_VIEW';
+      next = (driver as any).getPageSource = () => readFixture(FIXTURES.XML_WEBVIEW);
+      (driver as any).caps = {platformName: 'Android'};
+      assert.equal(await p.getPageSource(next, driver as any), await readFixture(FIXTURES.XML_WEBVIEW));
+    });
   });
 
   describe('findElement(s)', function () {

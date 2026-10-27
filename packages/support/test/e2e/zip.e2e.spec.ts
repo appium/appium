@@ -621,6 +621,70 @@ describe('#zip', function () {
   });
 });
 
+describe('#zip readEntries() extractEntryTo()', function () {
+  let tmpRoot: string;
+
+  beforeEach(async function () {
+    tmpRoot = await tempDir.openDir();
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(tmpRoot);
+  });
+
+  async function extractAll(entries: StoredZipEntry[], outputPath: string): Promise<void> {
+    const dstPath = path.resolve(tmpRoot, 'entries.zip');
+    await createStoredZip(dstPath, entries);
+    await zip.readEntries(dstPath, async ({extractEntryTo}) => {
+      await extractEntryTo(outputPath);
+    });
+  }
+
+  it('should extract files and folders', async function () {
+    const outputPath = path.resolve(tmpRoot, 'output');
+    await extractAll(
+      [
+        {name: 'dir/', contents: '', mode: 0o040755},
+        {name: 'dir/sub/f.txt', contents: 'HELLO', mode: 0o100644},
+      ],
+      outputPath,
+    );
+    assert.strictEqual(await fs.readFile(path.resolve(outputPath, 'dir', 'sub', 'f.txt'), 'utf8'), 'HELLO');
+  });
+
+  describe('symlink containment', {skip: isWindows()}, function () {
+    let outputPath: string;
+    let escapePath: string;
+
+    beforeEach(async function () {
+      outputPath = path.resolve(tmpRoot, 'output');
+      escapePath = path.resolve(tmpRoot, 'escape');
+      await fs.mkdir(outputPath);
+      await fs.mkdir(escapePath);
+    });
+
+    it('should not write through a symlinked folder pointing outside the destination', async function () {
+      await fs.symlink(escapePath, path.resolve(outputPath, 'pwn'));
+      await assert.rejects(
+        extractAll([{name: 'pwn/sub/owned.txt', contents: 'PWNED', mode: 0o100644}], outputPath),
+        /Out of bound/,
+      );
+      assert.deepStrictEqual(await fs.readdir(escapePath), []);
+    });
+
+    it('should not write over an existing symlink', async function () {
+      const victim = path.resolve(escapePath, 'victim.txt');
+      await fs.writeFile(victim, 'original');
+      await fs.symlink(victim, path.resolve(outputPath, 'f.txt'));
+      await assert.rejects(
+        extractAll([{name: 'f.txt', contents: 'PWNED', mode: 0o100644}], outputPath),
+        /existing symlink/,
+      );
+      assert.strictEqual(await fs.readFile(victim, 'utf8'), 'original');
+    });
+  });
+});
+
 describe('#zip Windows symlink targets', {skip: !isWindows()}, function () {
   let root: string;
   let outside: string;

@@ -1,4 +1,3 @@
-import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
 import {text} from 'node:stream/consumers';
@@ -179,7 +178,8 @@ class ZipExtractor {
     const procMode = this.getExtractedMode(mode, isDir) & 0o777;
     // always ensure folders are created
     const destDir = isDir ? dest : path.dirname(dest);
-    const realDestDir = await this.ensureDirWithinRoot(destDir, fileName, isDir ? procMode : undefined);
+    const {dir} = this.opts;
+    const realDestDir = await ensureDirWithinRoot(dir, destDir, fileName, isDir ? procMode : undefined);
     if (isDir) {
       return;
     }
@@ -188,81 +188,14 @@ class ZipExtractor {
       const linkTarget = await text(await this.openReadStream(entry));
       await this.createValidatedSymlink(linkTarget, dest, realDestDir, fileName);
     } else {
-      await this.assertFileDestinationWithinRoot(dest, realDestDir, fileName);
-      const flags =
-        fs.constants.O_WRONLY |
-        fs.constants.O_CREAT |
-        fs.constants.O_TRUNC |
-        (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+      await assertFileDestinationWithinRoot(dir, dest, realDestDir, fileName);
       const readStream = await this.openReadStream(entry);
       try {
-        const file = await fs.openFile(dest, flags, procMode);
-        try {
-          await pipeline(readStream, file.createWriteStream());
-        } finally {
-          await file.close();
-        }
+        await writeFileNoFollow(readStream, dest, procMode);
       } finally {
         // Opening the output may fail before pipeline takes ownership of the input.
         readStream.destroy();
       }
-    }
-  }
-
-  private async ensureDirWithinRoot(dirPath: string, fileName: string, mode?: number): Promise<string> {
-    const {dir} = this.opts;
-    if (!isContainedPath(dirPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-    }
-
-    const relativePath = path.relative(dir, dirPath);
-    if (!relativePath) {
-      return dir;
-    }
-
-    let currentPath = dir;
-    for (const segment of relativePath.split(path.sep)) {
-      currentPath = path.join(currentPath, segment);
-      try {
-        const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
-        if (!isContainedPath(realPath, dir)) {
-          throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
-        }
-        if (!stats.isDirectory() && !stats.isSymbolicLink()) {
-          throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
-        }
-      } catch (err: any) {
-        if (err.code !== 'ENOENT') {
-          throw err;
-        }
-        await fs.mkdir(currentPath, {mode});
-      }
-    }
-
-    const realPath = await fs.realpath(dirPath);
-    if (!isContainedPath(realPath, dir)) {
-      throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
-    }
-    return realPath;
-  }
-
-  private async assertFileDestinationWithinRoot(dest: string, realDestDir: string, fileName: string): Promise<void> {
-    const {dir} = this.opts;
-    let realDest: string | null = null;
-    try {
-      if ((await fs.lstat(dest)).isSymbolicLink()) {
-        throw new Error(`Cannot write a file over existing symlink "${dest}"`);
-      }
-      realDest = await fs.realpath(dest);
-    } catch (err: any) {
-      if (err.code !== 'ENOENT') {
-        throw err;
-      }
-    }
-
-    realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
-    if (!isContainedPath(realDest, dir)) {
-      throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
     }
   }
 
@@ -418,6 +351,84 @@ class ZipExtractor {
   }
 }
 
+async function ensureDirWithinRoot(dir: string, dirPath: string, fileName: string, mode?: number): Promise<string> {
+  if (!isContainedPath(dirPath, dir)) {
+    throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+  }
+
+  const relativePath = path.relative(dir, dirPath);
+  if (!relativePath) {
+    return dir;
+  }
+
+  let currentPath = dir;
+  for (const segment of relativePath.split(path.sep)) {
+    currentPath = path.join(currentPath, segment);
+    try {
+      const [stats, realPath] = await Promise.all([fs.lstat(currentPath), fs.realpath(currentPath)]);
+      if (!isContainedPath(realPath, dir)) {
+        throw new Error(`Out of bound path "${currentPath}" found while processing file ${fileName}`);
+      }
+      if (!stats.isDirectory() && !stats.isSymbolicLink()) {
+        throw new Error(`Cannot create a directory over existing file "${currentPath}"`);
+      }
+    } catch (err: any) {
+      if (err.code !== 'ENOENT') {
+        throw err;
+      }
+      await fs.mkdir(currentPath, {mode});
+    }
+  }
+
+  const realPath = await fs.realpath(dirPath);
+  if (!isContainedPath(realPath, dir)) {
+    throw new Error(`Out of bound path "${dirPath}" found while processing file ${fileName}`);
+  }
+  return realPath;
+}
+
+async function assertFileDestinationWithinRoot(
+  dir: string,
+  dest: string,
+  realDestDir: string,
+  fileName: string,
+): Promise<void> {
+  let realDest: string | null = null;
+  try {
+    if ((await fs.lstat(dest)).isSymbolicLink()) {
+      throw new Error(`Cannot write a file over existing symlink "${dest}"`);
+    }
+    realDest = await fs.realpath(dest);
+  } catch (err: any) {
+    if (err.code !== 'ENOENT') {
+      throw err;
+    }
+  }
+
+  realDest = realDest ?? path.resolve(realDestDir, path.basename(dest));
+  if (!isContainedPath(realDest, dir)) {
+    throw new Error(`Out of bound path "${dest}" found while processing file ${fileName}`);
+  }
+}
+
+async function writeFileNoFollow(readStream: stream.Readable, dest: string, mode: number): Promise<void> {
+  const flags =
+    fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | (isWindows() ? 0 : fs.constants.O_NOFOLLOW);
+  let file;
+  try {
+    file = await fs.openFile(dest, flags, mode);
+  } catch (err) {
+    // pipeline has not taken ownership of the input yet
+    readStream.destroy();
+    throw err;
+  }
+  try {
+    await pipeline(readStream, file.createWriteStream());
+  } finally {
+    await file.close();
+  }
+}
+
 /**
  * Extract zipfile to a directory
  *
@@ -468,16 +479,19 @@ export async function _extractEntryTo(
     throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
   }
 
+  // Same symlink-safe directory/file handling as in ZipExtractor
+  await fs.mkdirp(destDir);
+  const dir = await fs.realpath(destDir);
+  const dest = path.resolve(dir, path.relative(destDir, dstPath));
   if (fileName.endsWith('/')) {
-    if (!(await fs.exists(dstPath))) {
-      await fs.mkdirp(dstPath);
-    }
+    await ensureDirWithinRoot(dir, dest, fileName);
     return;
   }
-  await fs.mkdirp(path.dirname(dstPath));
+  const realDestDir = await ensureDirWithinRoot(dir, path.dirname(dest), fileName);
+  await assertFileDestinationWithinRoot(dir, dest, realDestDir, fileName);
 
   const readStream = await openReadStream(entry);
-  await pipeline(readStream, createWriteStream(dstPath, {flags: 'w'}));
+  await writeFileNoFollow(readStream, dest, 0o666);
 }
 
 /**

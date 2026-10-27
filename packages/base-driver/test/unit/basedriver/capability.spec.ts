@@ -384,6 +384,19 @@ describe('Desired Capabilities', function () {
       assert.strictEqual(d.newCommandTimeoutMs, 0);
     });
 
+    it('should reject a negative newCommandTimeout', async function () {
+      const defaultMs = d.newCommandTimeoutMs;
+      await assert.rejects(
+        d.createSession({
+          alwaysMatch: {platformName: 'iOS', 'appium:newCommandTimeout': -1},
+          firstMatch: [{}],
+        } as unknown as TestW3CCaps),
+        {name: 'InvalidArgumentError', message: /Invalid newCommandTimeout value '-1'/},
+      );
+      assert.strictEqual(d.sessionId, null);
+      assert.strictEqual(d.newCommandTimeoutMs, defaultMs);
+    });
+
     it('should allow a string "1" in string capabilities', async function () {
       await d.createSession({
         alwaysMatch: {platformName: 'iOS', 'appium:platformVersion': '1'},

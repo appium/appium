@@ -88,6 +88,7 @@ export interface ConfigureServerInternalOpts extends ConfigureServerOpts {
 export interface ConfigureHttpOpts {
   httpServer: HttpServer;
   reject: (error?: unknown) => void;
+  allowCors?: boolean;
   keepAliveTimeout: number;
   gracefulShutdownTimeout?: number;
 }
@@ -131,6 +132,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
         const appiumServer = configureHttp({
           httpServer,
           reject,
+          allowCors,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
         });
@@ -207,7 +209,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
   // When shouldUpgradeCallback is available, upgrades are handled directly on the HTTP server
   // to avoid Express middleware timeout issues with long-lived connections
   if (useLegacyUpgradeHandler) {
-    app.use(handleUpgrade(webSocketsMapping));
+    app.use(handleUpgrade(webSocketsMapping, allowCors));
   }
   if (allowCors) {
     app.use(allowCrossDomain);
@@ -309,6 +311,7 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
 function configureHttp({
   httpServer,
   reject,
+  allowCors,
   keepAliveTimeout,
   gracefulShutdownTimeout,
 }: ConfigureHttpOpts): AppiumServer {
@@ -332,7 +335,9 @@ function configureHttp({
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     appiumServer.on('upgrade', (req, socket, head) => {
-      if (!tryHandleWebSocketUpgrade(req, socket, head, appiumServer.webSocketsMapping)) {
+      if (
+        !tryHandleWebSocketUpgrade({req, socket, head, webSocketsMapping: appiumServer.webSocketsMapping, allowCors})
+      ) {
         socket.destroy();
       }
     });

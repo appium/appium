@@ -91,23 +91,42 @@ export function defaultToJSONContentType(req: Request, _res: Response, next: Nex
   next();
 }
 
+/** Options for {@linkcode tryHandleWebSocketUpgrade} */
+export interface WebSocketUpgradeOpts {
+  /** Incoming HTTP request */
+  req: IncomingMessage;
+  /** Network socket */
+  socket: Duplex;
+  /** First packet of the upgraded stream */
+  head: Buffer;
+  /** Path-to-WebSocket-server mapping */
+  webSocketsMapping: StringRecord<WSServer>;
+  /** Whether upgrades carrying an `Origin` header are accepted */
+  allowCors?: boolean;
+}
+
 /**
  * Attempts to handle a WebSocket upgrade by matching the request path against registered handlers.
  *
- * @param req - Incoming HTTP request
- * @param socket - Network socket
- * @param head - First packet of the upgraded stream
- * @param webSocketsMapping - Path-to-WebSocket-server mapping
+ * @param opts - Upgrade options
  * @returns `true` if the upgrade was handled; `false` otherwise
  */
-export function tryHandleWebSocketUpgrade(
-  req: IncomingMessage,
-  socket: Duplex,
-  head: Buffer,
-  webSocketsMapping: StringRecord<WSServer>,
-): boolean {
+export function tryHandleWebSocketUpgrade({
+  req,
+  socket,
+  head,
+  webSocketsMapping,
+  allowCors = false,
+}: WebSocketUpgradeOpts): boolean {
   if (String(req.headers?.upgrade ?? '').toLowerCase() !== 'websocket') {
     return false;
+  }
+
+  // WebSocket handshakes are not subject to the Same-Origin Policy; browsers always send Origin
+  if (!allowCors && req.headers.origin !== undefined) {
+    log.warn(`Rejecting the WebSocket upgrade from the browser origin '${req.headers.origin}'`);
+    socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');
+    return true;
   }
 
   let currentPathname: string;
@@ -133,11 +152,12 @@ export function tryHandleWebSocketUpgrade(
  * Delegates WebSocket upgrades to the mapping and falls through to `next()` otherwise.
  *
  * @param webSocketsMapping - Path-to-WebSocket-server mapping
+ * @param allowCors - Whether upgrades carrying an `Origin` header are accepted
  * @returns Express request handler
  */
-export function handleUpgrade(webSocketsMapping: StringRecord<WSServer>): RequestHandler {
+export function handleUpgrade(webSocketsMapping: StringRecord<WSServer>, allowCors = false): RequestHandler {
   function handleUpgradeMiddleware(req: Request, res: Response, next: NextFunction): void {
-    if (tryHandleWebSocketUpgrade(req, req.socket, Buffer.from(''), webSocketsMapping)) {
+    if (tryHandleWebSocketUpgrade({req, socket: req.socket, head: Buffer.from(''), webSocketsMapping, allowCors})) {
       return;
     }
     next();

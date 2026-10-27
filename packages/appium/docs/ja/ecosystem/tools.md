@@ -140,3 +140,17 @@ Supported by: `@domovou69`
 ```sh title="Install This Tool"
 npm install -g xpath-to-class-chain
 ```
+
+### [XPath to UiSelector](https://github.com/domovou69/xpath-to-uiselector)
+
+XPath to UiSelector is a command-line tool for migrating Android XPath locators in test code to
+`-android uiautomator` selectors. It converts the XPaths that have an exact `UiSelector`
+equivalent, converts with a warning those that only have a close one (such as `//A//B`), and skips
+the rest with a reason. The strategy call is rewritten together with the string, for example
+`AppiumBy.xpath` becomes `AppiumBy.androidUIAutomator`.
+
+Supported by: `@domovou69`
+
+```sh title="Install This Tool"
+npm install -g xpath-to-uiselector
+```

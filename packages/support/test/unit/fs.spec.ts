@@ -118,17 +118,19 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
         await remove(root);
       });
 
-      it('allows force to be overridden', async function () {
+      it('keeps force enabled even if a JavaScript caller passes false', async function () {
         const missing = path.join(await tempDir.openDir(), 'missing');
-        await assert.rejects(async () => remove(missing, {force: false}), {code: 'ENOENT'});
+        // @ts-expect-error JavaScript callers can still supply excluded options.
+        await remove(missing, {force: false});
       });
 
-      it('allows recursive to be overridden', async function () {
+      it('keeps recursive enabled even if a JavaScript caller passes false', async function () {
         const root = await tempDir.openDir();
         try {
           await writeFile(path.join(root, 'file.txt'), 'content');
-          await assert.rejects(async () => remove(root, {recursive: false}));
-          assert.strictEqual(await fs.readFile(path.join(root, 'file.txt'), 'utf8'), 'content');
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(root, {recursive: false});
+          assert.strictEqual(await fs.exists(root), false);
         } finally {
           await fs.rimraf(root);
         }

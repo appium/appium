@@ -11,6 +11,7 @@ import {
   type PathLike,
   promises as fsPromises,
   read,
+  type RmOptions,
   rmSync,
   write,
 } from 'node:fs';
@@ -161,18 +162,20 @@ export const fs = {
 
   /**
    * Remove a directory and all its contents, recursively.
+   * Options are forwarded to Node.js, overriding the defaults `recursive: true` and `force: true`.
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
-  async rimraf(filepath: PathLike): Promise<void> {
-    return await fsPromises.rm(filepath, {recursive: true, force: true});
+  async rimraf(filepath: PathLike, opts: RmOptions = {}): Promise<void> {
+    return await fsPromises.rm(filepath, {recursive: true, force: true, ...opts});
   },
 
   /**
    * Remove a directory and all its contents, recursively (sync).
+   * Options are forwarded to Node.js, overriding the defaults `recursive: true` and `force: true`.
    * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
-  rimrafSync(filepath: PathLike): void {
-    return rmSync(filepath, {recursive: true, force: true});
+  rimrafSync(filepath: PathLike, opts: RmOptions = {}): void {
+    return rmSync(filepath, {recursive: true, force: true, ...opts});
   },
 
   /**

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {promises as fsPromises} from 'node:fs';
 import {mkdir, symlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
@@ -94,6 +95,46 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
     await fs.rimraf(newPath);
     assert.strictEqual(await fs.exists(newPath), false);
   });
+
+  it('rimraf() forwards retry options while retaining removal defaults', async function () {
+    const rmStub = sandbox.stub(fsPromises, 'rm').resolves();
+    await fs.rimraf('locked-directory', {maxRetries: 3, retryDelay: 100});
+    sandbox.assert.calledOnceWithExactly(rmStub, 'locked-directory', {
+      recursive: true,
+      force: true,
+      maxRetries: 3,
+      retryDelay: 100,
+    });
+  });
+
+  for (const remove of [fs.rimraf, fs.rimrafSync]) {
+    describe(remove.name, function () {
+      it('preserves recursive and force defaults when options are omitted', async function () {
+        const root = await tempDir.openDir();
+        await mkdir(path.join(root, 'nested'));
+        await writeFile(path.join(root, 'nested', 'file.txt'), 'content');
+        await remove(root);
+        assert.strictEqual(await fs.exists(root), false);
+        await remove(root);
+      });
+
+      it('allows force to be overridden', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.rejects(async () => remove(missing, {force: false}), {code: 'ENOENT'});
+      });
+
+      it('allows recursive to be overridden', async function () {
+        const root = await tempDir.openDir();
+        try {
+          await writeFile(path.join(root, 'file.txt'), 'content');
+          await assert.rejects(async () => remove(root, {recursive: false}));
+          assert.strictEqual(await fs.readFile(path.join(root, 'file.txt'), 'utf8'), 'content');
+        } finally {
+          await fs.rimraf(root);
+        }
+      });
+    });
+  }
 
   it('sanitizeName()', function () {
     assert.strictEqual(

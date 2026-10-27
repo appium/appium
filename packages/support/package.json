@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "7.2.8",
+  "version": "7.2.9",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@appium/logger": "2.0.12",
-    "@appium/types": "1.7.1",
+    "@appium/types": "1.7.2",
     "archiver": "8.0.0",
     "asyncbox": "6.5.0",
     "axios": "1.20.0",

@@ -133,7 +133,7 @@ appium plugin uninstall <plugin-name>
 ## Server Command Line Interface
 
 In order to start sending commands to the Appium server, it must be running on the URL and port
-where your client library expects it to listen. [Appium's command-line interface](https://appium.io/docs/en/latest/reference/cli/server/)
+where your client library expects it to listen. [Appium's command-line interface](https://appium.io/docs/en/latest/reference/cli/)
 is used to launch and configure the server:
 
 ```bash
@@ -178,9 +178,9 @@ documentation on [How Does Appium Work?](https://appium.io/docs/en/latest/intro/
 
 ## Sponsors
 
-Appium has a [Sponsorship Program](../../GOVERNANCE.md#sponsorship)! If you or your company uses Appium
+Appium has a [Sponsorship Program](GOVERNANCE.md#sponsorship)! If you or your company uses Appium
 and wants to give back financially to the project, we use these funds to [encourage development and
-contributions](../../GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
+contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
 rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
 
 ### Development and Strategic Partners
@@ -214,8 +214,8 @@ A full list of sponsors is available at our [Sponsors page](https://appium.io/do
 
 ## License
 
-[Apache-2.0](../../LICENSE)
+[Apache-2.0](./LICENSE)
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_large)
 
-`@appium/logger` package is under [ISC](../logger/LICENSE) License.
+`@appium/logger` package is under [ISC](./packages/logger/LICENSE) License.

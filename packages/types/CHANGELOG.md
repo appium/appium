@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.2](https://github.com/appium/appium/compare/@appium/types@1.7.1...@appium/types@1.7.2) (2026-10-27)
+
+### Bug Fixes
+
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22895](https://github.com/appium/appium/issues/22895)) ([6241300](https://github.com/appium/appium/commit/62413002a83e70b14eb0a3979cd7a054757a0d80))
+
+
 ## [1.7.1](https://github.com/appium/appium/compare/@appium/types@1.7.0...@appium/types@1.7.1) (2026-09-24)
 
 **Note:** Version bump only for package @appium/types

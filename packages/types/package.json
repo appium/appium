@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Various type declarations used across Appium",
   "keywords": [

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.9.0](https://github.com/appium/appium/compare/appium@3.8.0...appium@3.9.0) (2026-10-27)
+
+### Features
+
+* **appium:** fallback to latest compatible extension version for CLI &#x60;install&#x60; ([#23013](https://github.com/appium/appium/issues/23013)) ([3c20d79](https://github.com/appium/appium/commit/3c20d7923806bcc2333670e6cef5c24c6da60d62))
+
+### Bug Fixes
+
+* **appium:** backport bidi close code validation ([#22942](https://github.com/appium/appium/issues/22942)) ([14110e5](https://github.com/appium/appium/commit/14110e50b0bf3414c778e039acb7058a3c649e2e))
+* **appium:** prevent recursion when logging the first BiDi event of a method ([#22891](https://github.com/appium/appium/issues/22891)) ([77945dd](https://github.com/appium/appium/commit/77945ddaf10665f9457f6bdc94f9103a631f5ca4))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22895](https://github.com/appium/appium/issues/22895)) ([6241300](https://github.com/appium/appium/commit/62413002a83e70b14eb0a3979cd7a054757a0d80))
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([#23069](https://github.com/appium/appium/issues/23069)) ([4c753a1](https://github.com/appium/appium/commit/4c753a134d8e172cfec4caec9033fe2a3d884e27))
+
+
 ## [3.8.0](https://github.com/appium/appium/compare/appium@3.7.0...appium@3.8.0) (2026-09-24)
 
 ### Features

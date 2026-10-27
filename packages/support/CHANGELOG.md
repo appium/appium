@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.2.9](https://github.com/appium/appium/compare/@appium/support@7.2.8...@appium/support@7.2.9) (2026-10-27)
+
+### Bug Fixes
+
+* **support:** keep _extractEntryTo from writing through symlinks ([#23101](https://github.com/appium/appium/issues/23101)) ([60acd1d](https://github.com/appium/appium/commit/60acd1d3d89c80e73177e0b2ac2227fd2701f820))
+* **support:** preserve exclamation marks with apostrophes ([#22816](https://github.com/appium/appium/issues/22816)) ([359ef4b](https://github.com/appium/appium/commit/359ef4ba89117b73788cdb0d2b3f7ffb1eadc20c))
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([#23069](https://github.com/appium/appium/issues/23069)) ([4c753a1](https://github.com/appium/appium/commit/4c753a134d8e172cfec4caec9033fe2a3d884e27))
+* **support:** reject Windows drive-relative symlink targets in zip extraction ([#23100](https://github.com/appium/appium/issues/23100)) ([dddd2c3](https://github.com/appium/appium/commit/dddd2c3051f9ea9518873d1f8a8cefd787d4610c))
+
+
 ## [7.2.8](https://github.com/appium/appium/compare/@appium/support@7.2.7...@appium/support@7.2.8) (2026-09-24)
 
 ### Bug Fixes

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.2](https://github.com/appium/appium/compare/@appium/base-driver@10.8.1...@appium/base-driver@10.8.2) (2026-10-27)
+
+### Bug Fixes
+
+* **base-driver:** reject browser-origin WebSocket upgrades unless CORS is enabled ([#23102](https://github.com/appium/appium/issues/23102)) ([e967b60](https://github.com/appium/appium/commit/e967b607d7b7036adc5d58129afb3aefa83c136a))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22895](https://github.com/appium/appium/issues/22895)) ([6241300](https://github.com/appium/appium/commit/62413002a83e70b14eb0a3979cd7a054757a0d80))
+
+
 ## [10.8.1](https://github.com/appium/appium/compare/@appium/base-driver@10.8.0...@appium/base-driver@10.8.1) (2026-09-24)
 
 ### Bug Fixes

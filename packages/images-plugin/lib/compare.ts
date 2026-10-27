@@ -48,8 +48,10 @@ export async function compareImages(
     case MATCH_FEATURES_MODE.toLowerCase():
       try {
         result = await getImagesMatches(img1, img2, options as MatchingOptions);
-      } catch {
-        // might throw if no matches
+      } catch (err: any) {
+        if (!/Could not find any matches between images/.test(err.message)) {
+          throw err;
+        }
         result = {count: 0} as MatchingResult;
       }
       break;

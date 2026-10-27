@@ -11,6 +11,10 @@ describe('xpath functions', function () {
       assert.equal(runQuery('//*', await readFixture(FIXTURES.XML_IOS)).length, 31);
       assert.equal(runQuery('//XCUIElementTypeTextField', await readFixture(FIXTURES.XML_IOS)).length, 1);
     });
+    it('should throw an invalid selector error for a malformed query', async function () {
+      const xml = await readFixture(FIXTURES.XML_IOS);
+      assert.throws(() => runQuery('//XCUIElementTypeTextField[', xml), {name: 'InvalidSelectorError'});
+    });
   });
   describe('transformQuery', function () {
     it('should transform a query into a single new query', async function () {

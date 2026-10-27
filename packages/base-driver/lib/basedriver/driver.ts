@@ -314,6 +314,7 @@ export class BaseDriver<
     const caps = this.processSessionCapabilities(originalCaps);
     const initialTimeouts = deserializeTimeouts(caps.timeouts);
     const opts = this.configureSessionOptions(caps);
+    this.applyNewCommandTimeout(caps);
 
     // Initialize local state before the concrete driver starts its backend.
     // Timeout command/setter overrides may require an already running backend.
@@ -327,12 +328,6 @@ export class BaseDriver<
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
     this.opts = opts;
-
-    // null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout
-    const newCommandTimeout = this.caps.newCommandTimeout;
-    if (typeof newCommandTimeout === 'number' && Number.isFinite(newCommandTimeout)) {
-      this.newCommandTimeoutMs = newCommandTimeout * 1000;
-    }
 
     this.log.prefix = helpers.generateDriverLogPrefix(this);
 
@@ -495,6 +490,22 @@ export class BaseDriver<
 
     this.validateDesiredCaps(caps);
     return caps;
+  }
+
+  /**
+   * Store `newCommandTimeout` as milliseconds.
+   * Null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout.
+   * Node runs a negative timer delay immediately, which ends the session.
+   */
+  private applyNewCommandTimeout(caps: DriverCaps<C>): void {
+    const newCommandTimeout = caps.newCommandTimeout;
+    if (typeof newCommandTimeout !== 'number' || !Number.isFinite(newCommandTimeout)) {
+      return;
+    }
+    if (newCommandTimeout < 0) {
+      throw new errors.InvalidArgumentError(`Invalid newCommandTimeout value '${newCommandTimeout}'`);
+    }
+    this.newCommandTimeoutMs = newCommandTimeout * 1000;
   }
 
   /** Merge and normalize session options without changing driver state. */

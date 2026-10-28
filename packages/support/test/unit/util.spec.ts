@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
+import {link} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {promisify} from 'node:util';
@@ -361,6 +362,34 @@ describe('util', function () {
     });
     it('should not match paths to different files', async function () {
       assert.strictEqual(await util.isSameDestination(path1, path2), false);
+    });
+    it('should not match equal inode numbers on different devices', async function () {
+      const firstStat = await fs.stat(path1, {bigint: true});
+      const secondStat = await fs.stat(path2, {bigint: true});
+      sandbox
+        .stub(fs, 'stat')
+        .callThrough()
+        .withArgs(path2, {bigint: true})
+        .resolves(Object.assign(secondStat, {ino: firstStat.ino, dev: firstStat.dev + 1n}));
+
+      assert.strictEqual(await util.isSameDestination(path1, path2), false);
+    });
+    it('should match hard links to the same file', async function () {
+      const linkPath = path.join(tmpDir, 'hard-link.txt');
+      await link(path1, linkPath);
+
+      assert.strictEqual(await util.isSameDestination(path1, linkPath, path1), true);
+    });
+    it('should compare the device of every path', async function () {
+      const firstStat = await fs.stat(path1, {bigint: true});
+      const secondStat = await fs.stat(path2, {bigint: true});
+      sandbox
+        .stub(fs, 'stat')
+        .callThrough()
+        .withArgs(path2, {bigint: true})
+        .resolves(Object.assign(secondStat, {ino: firstStat.ino, dev: firstStat.dev + 1n}));
+
+      assert.strictEqual(await util.isSameDestination(path1, path1, path2), false);
     });
   });
 

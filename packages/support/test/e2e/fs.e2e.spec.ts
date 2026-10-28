@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
+import {promises as fsPromises} from 'node:fs';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {createSandbox} from 'sinon';
 
 import {fs} from '../../lib/fs.js';
 import {isWindows} from '../../lib/system.js';
@@ -183,26 +186,25 @@ describe('fs', function () {
     });
 
     it('should handle cross-device move by falling back to copy-and-delete', async function () {
+      const sandbox = createSandbox();
+      const copy = sandbox.spy(fsPromises, 'cp');
       const srcPath = path.join(srcRoot!, 'src.file');
       await fs.writeFile(srcPath, Buffer.from('bar'));
       const dstPath = path.join(dstRoot!, path.basename(srcPath));
 
-      // Mock fs.rename to simulate EXDEV (cross-device) error so mv falls back to copy-and-delete.
-      const originalRename = fs.rename;
-      (fs as {rename: typeof fs.rename}).rename = async () => {
-        const err = new Error('cross-device link not permitted') as NodeJS.ErrnoException;
-        err.code = 'EXDEV';
-        throw err;
-      };
+      // Mock the rename implementation used by mv so it takes the cross-device fallback.
+      sandbox
+        .stub(fsPromises, 'rename')
+        .rejects(Object.assign(new Error('cross-device link not permitted'), {code: 'EXDEV'}));
 
       try {
         await fs.mv(srcPath, dstPath);
+        assert.strictEqual(copy.calledOnceWithExactly(srcPath, dstPath, {verbatimSymlinks: true}), true);
         assert.strictEqual(await fs.exists(dstPath), true);
         assert.strictEqual(await fs.exists(srcPath), false);
         assert.strictEqual((await fs.readFile(dstPath)).toString(), 'bar');
       } finally {
-        // Restore original function.
-        (fs as {rename: typeof fs.rename}).rename = originalRename;
+        sandbox.restore();
       }
     });
   });

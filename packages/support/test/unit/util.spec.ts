@@ -373,6 +373,7 @@ describe('util', function () {
         .resolves(Object.assign(secondStat, {ino: firstStat.ino, dev: firstStat.dev + 1n}));
 
       assert.strictEqual(await util.isSameDestination(path1, path2), false);
+      assert.strictEqual(await util.isSameDestination(path1, path1, path2), false);
     });
     it('should match hard links to the same file', async function () {
       const linkPath = path.join(tmpDir, 'hard-link.txt');
@@ -380,16 +381,12 @@ describe('util', function () {
 
       assert.strictEqual(await util.isSameDestination(path1, linkPath, path1), true);
     });
-    it('should compare the device of every path', async function () {
-      const firstStat = await fs.stat(path1, {bigint: true});
-      const secondStat = await fs.stat(path2, {bigint: true});
-      sandbox
-        .stub(fs, 'stat')
-        .callThrough()
-        .withArgs(path2, {bigint: true})
-        .resolves(Object.assign(secondStat, {ino: firstStat.ino, dev: firstStat.dev + 1n}));
+    it('should not match different paths with unknown inode numbers', async function () {
+      const stat = await fs.stat(path1, {bigint: true});
+      sandbox.stub(fs, 'stat').resolves(Object.assign(stat, {ino: 0n}));
 
-      assert.strictEqual(await util.isSameDestination(path1, path1, path2), false);
+      assert.strictEqual(await util.isSameDestination(path1, path2), false);
+      assert.strictEqual(await util.isSameDestination(path1, path1), true);
     });
   });
 

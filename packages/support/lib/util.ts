@@ -332,7 +332,7 @@ export function toReadableSizeString(bytes: number | string): string {
 }
 
 /**
- * Checks whether the given paths refer to the same file system entity (same inode).
+ * Checks whether the given paths refer to the same file system entity (same device and inode).
  * All paths must exist.
  *
  * @param path1 - First path
@@ -352,7 +352,7 @@ export async function isSameDestination(path1: string, path2: string, ...pathN: 
   }
 
   const stats = await asyncmap(allPaths, (p) => fs.stat(p, {bigint: true}));
-  return stats.every(({dev, ino}) => dev === stats[0].dev && ino === stats[0].ino);
+  return stats[0].ino !== 0n && stats.every(({dev, ino}) => dev === stats[0].dev && ino === stats[0].ino);
 }
 
 /**

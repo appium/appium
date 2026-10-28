@@ -32,7 +32,7 @@ function _getSizeOfObject(seen: WeakSet<object>, object: object): number {
   const calc = getCalculator(seen);
   for (const key of properties) {
     const val = (object as Record<string | symbol, unknown>)[key];
-    if (typeof val === 'object' && val != null) {
+    if (typeof val === 'object' && val != null && !Array.isArray(val)) {
       if (seen.has(val as object)) {
         continue;
       }
@@ -70,9 +70,14 @@ function getCalculator(seen: WeakSet<object>): SizeCalculator {
           ? (Symbol.keyFor(obj) as string).length * ECMA_SIZES.STRING
           : (obj.toString().length - 8) * ECMA_SIZES.STRING;
       case 'object':
-        return Array.isArray(obj)
-          ? obj.map(getCalculator(seen)).reduce((acc, curr) => acc + curr, 0)
-          : _getSizeOfObject(seen, obj as object);
+        if (Array.isArray(obj)) {
+          if (seen.has(obj)) {
+            return 0;
+          }
+          seen.add(obj);
+          return obj.map(getCalculator(seen)).reduce((acc, curr) => acc + curr, 0);
+        }
+        return _getSizeOfObject(seen, obj as object);
       default:
         return 0;
     }

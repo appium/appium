@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import type {IpcMessage} from '@appium/types';
+import type {IpcData, IpcMessage} from '@appium/types';
 import {sleep} from 'asyncbox';
 
 import {AppiumIpc, EVT_MESSAGE, EVT_UNSUBSCRIBED} from '../../../lib/basedriver/ipc.js';
@@ -153,6 +153,23 @@ describe('AppiumIpc', function () {
   });
 
   describe('publish', function () {
+    it('should publish a circular array as an isolated copy', async function () {
+      const ipc = new AppiumIpc();
+      const payload: IpcData[] = [1];
+      payload.push(payload);
+      let received: IpcData[] | undefined;
+      ipc.subscribe<IpcData[]>('foo', 'bar').on(EVT_MESSAGE, ({data}) => {
+        received = data;
+      });
+
+      await ipc.publish('foo', 'baz', payload);
+
+      assert.ok(received);
+      assert.notStrictEqual(received, payload);
+      assert.strictEqual(received[0], 1);
+      assert.strictEqual(received[1], received);
+    });
+
     it('should publish messages to all subscribers', async function () {
       const ipc = new AppiumIpc();
       const payload = {some: {cool: 'obj'}};

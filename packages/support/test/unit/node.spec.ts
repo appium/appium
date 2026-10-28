@@ -24,6 +24,18 @@ describe('node utilities', function () {
         32,
       );
     });
+
+    it('should size arrays with circular references', function () {
+      const self: unknown[] = [1];
+      self.push(self);
+      assert.strictEqual(node.getObjectSize(self), 8);
+
+      const first: unknown[] = [1];
+      const second: unknown[] = [2, first];
+      first.push(second);
+      assert.strictEqual(node.getObjectSize(first), 16);
+      assert.strictEqual(node.getObjectSize({items: [1, 2]}), 26);
+    });
   });
 
   describe('getModuleRootSync', function () {

@@ -956,7 +956,7 @@ POST /session/:sessionId/actions
 
 > WebDriver documentation: [Perform Actions](https://w3c.github.io/webdriver/#perform-actions)
 
-Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions).
+Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions). See the [Automating Gestures](../../guides/gestures.md) guide for multi-language examples.
 
 #### Parameters
 

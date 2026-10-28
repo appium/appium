@@ -373,6 +373,25 @@ describe('util', function () {
       assert.strictEqual(util.compareVersions('11.1', '!=', '11.10'), true);
       assert.strictEqual(util.compareVersions('12.0', '<', 10 as any), false);
     });
+    for (const [left, operator, right, expected] of [
+      ['2.0.0-beta.1', '>', '1.9.9', true],
+      ['2.0.0-beta.1', '>=', '1.9.9', true],
+      ['2.0.0-beta.1', '<', '2.0.0', true],
+      ['2.0.0-beta.1', '<=', '2.0.0', true],
+      ['2.0.0-beta.1', '>', '1.9.9-beta.1', true],
+      ['2.0.0-beta.1', '>', '2.0.0', false],
+      ['2.0.0-beta.1', '<', '1.9.9', false],
+      ['2.0.0-beta.10', '>', '2.0.0-beta.2', true],
+      ['2.0.0-alpha.1', '<', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '=', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '==', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '!=', '2.0.0-beta.1', false],
+      ['2.0.0-beta.1', '!=', '2.0.0', true],
+    ] as const) {
+      it(`should evaluate ${left} ${operator} ${right} as ${expected}`, function () {
+        assert.strictEqual(util.compareVersions(left, operator, right), expected);
+      });
+    }
     it('should throw if any of version arguments is invalid', function () {
       assert.throws(() => util.compareVersions(undefined as any, '<', '11.0'));
       assert.throws(() => util.compareVersions('11.0', '==', null as any));

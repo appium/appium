@@ -100,7 +100,7 @@
     "@types/semver": "7.8.0",
     "@types/serve-favicon": "2.5.7",
     "@types/shell-quote": "1.7.5",
-    "@types/sinon": "22.0.0",
+    "@types/sinon": "22.0.2",
     "@types/which": "3.0.4",
     "@types/ws": "8.18.2",
     "@types/yargs": "17.0.35",

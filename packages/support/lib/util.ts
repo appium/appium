@@ -209,8 +209,11 @@ export function escapeSpecialChars(str: unknown, quoteEscape?: string | false): 
  * @returns Parsed object or original value
  */
 export function safeJsonParse<T>(obj: unknown): T {
+  if (typeof obj !== 'string') {
+    return obj as T;
+  }
   try {
-    return JSON.parse(obj as string) as T;
+    return JSON.parse(obj) as T;
   } catch {
     return obj as T;
   }

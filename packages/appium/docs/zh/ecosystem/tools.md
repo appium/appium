@@ -113,3 +113,44 @@ Supported by: `@AppiumTestDistribution`
 ```sh title="Install This Tool"
 npm install -g appium-installer
 ```
+
+### [Optics](https://github.com/mozarkai/optics-framework)
+
+Optics is an open-source test automation framework that uses Appium to drive Android, iOS,
+Android TV, Samsung Tizen and LG webOS apps (and Selenium or Playwright for web). Tests are written
+as CSV or YAML keyword steps, and the same keywords are available as a Python library, a Robot
+Framework library, an HTTP API and an MCP server. Element lookup falls back from XPath to visible
+text, OCR and image matching.
+
+Supported by: `@chinmayajha`
+
+```sh title="Install This Tool"
+pip install "optics-framework[mobile]"
+```
+
+### [XPath to Class Chain](https://github.com/domovou69/xpath-to-class-chain)
+
+XPath to Class Chain is a command-line tool for migrating iOS XPath locators in test code to
+`-ios class chain` selectors. It converts the XPaths that have an exact class chain equivalent,
+converts with a warning those that only have a close one (such as grouped positions `(//X)[n]`),
+and skips the rest with a reason (for example, sibling or parent axes).
+
+Supported by: `@domovou69`
+
+```sh title="Install This Tool"
+npm install -g xpath-to-class-chain
+```
+
+### [XPath to UiSelector](https://github.com/domovou69/xpath-to-uiselector)
+
+XPath to UiSelector is a command-line tool for migrating Android XPath locators in test code to
+`-android uiautomator` selectors. It converts the XPaths that have an exact `UiSelector`
+equivalent, converts with a warning those that only have a close one (such as `//A//B`), and skips
+the rest with a reason. The strategy call is rewritten together with the string, for example
+`AppiumBy.xpath` becomes `AppiumBy.androidUIAutomator`.
+
+Supported by: `@domovou69`
+
+```sh title="Install This Tool"
+npm install -g xpath-to-uiselector
+```

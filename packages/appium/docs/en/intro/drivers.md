@@ -49,8 +49,8 @@ async setUrl(url) {
 
 [^1]: You might notice that `setUrl` doesn't look anything like `Navigate To`, so how did we know
   to use it rather than some other random string? Well, Appium's WebDriver-protocol-to-method-name
-  mapping is defined in a special file within the `@appium/base-driver` package called
-  [routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
+  mappings are defined in special files within the `@appium/base-driver` package's
+  [routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes) directory.
   So if you're writing a driver, this is where you would go to figure out what method names to use
   and what parameters to expect. Or you could look at the source for any of the main Appium
   drivers!
@@ -81,7 +81,7 @@ from there is up to you, the driver author!
 ## Automation mapping
 
 But *typically* what driver authors want to do is to provide automation behaviours for a given
-platform(s) that are semantically very similar to the the WebDriver spec implementations for
+platform(s) that are semantically very similar to the WebDriver spec implementations for
 browsers. When you want to find an element, you should get a reference to a UI element. When you
 want to click or tap that element, the resulting behaviour should be the same as if a person were
 to click or tap on the element. And so on.
@@ -175,7 +175,7 @@ be passed back directly to the client, without any XCUITest driver code seeing i
 This architectural pattern provides a nice bonus for driver authors who choose to deal with the
 WebDriver protocol everywhere, rather than constructing bespoke protocols. It also means that
 Appium can create wrapper drivers for any other existing WebDriver implementation very easily. If
-you look at the [Appium Safari driver](https://github.com/appium/appium-safari-driver) code, for
+you look at the [Appium Safari driver](https://appium.github.io/appium-safari-driver/) code, for
 example, you'll see that it implements basically no standard commands, because all of these are
 proxied directly to an underlying SafariDriver process.
 

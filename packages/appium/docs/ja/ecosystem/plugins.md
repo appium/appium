@@ -14,7 +14,7 @@ If you maintain an Appium plugin that you would like to be listed here, feel fre
 
 ## Official Plugins
 
-These plugins are are currently maintained by the Appium team:
+These plugins are currently maintained by the Appium team:
 
 ### [Execute Driver](https://github.com/appium/appium/tree/master/packages/execute-driver-plugin)
 

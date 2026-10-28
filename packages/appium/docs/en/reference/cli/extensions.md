@@ -81,7 +81,7 @@ appium {driver|plugin} install <install-spec>
 |--|--|
 |None|The short name of an official extension, with optional modifiers as supported by `npm install` (e.g. version or tag)|
 |`git`|The Git URL of the extension|
-|`github`|The GitHub repository URL of the extension|
+|`github`|The GitHub repository slug of the extension, in the form `<org>/<repo>`|
 |`local`|The local path to the extension containing its `package.json` file|
 |`npm`|The name of the `npm` package, with optional modifiers as supported by `npm install` (e.g. version or tag)|
 
@@ -114,7 +114,7 @@ appium {driver|plugin} install <install-spec>
 - Install the XCUITest driver from GitHub:
 
     ```
-    appium driver install https://github.com/appium/appium-xcuitest-driver --source=github --package=appium-xcuitest-driver
+    appium driver install appium/appium-xcuitest-driver --source=github --package=appium-xcuitest-driver
     ```
 
 - Install the XCUITest driver using a Git URL:

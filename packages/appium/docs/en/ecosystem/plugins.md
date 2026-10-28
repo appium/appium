@@ -12,7 +12,7 @@ for more specialised automation workflows.
 
 ## Official Plugins
 
-These plugins are are currently maintained by the Appium team:
+These plugins are currently maintained by the Appium team:
 
 ### [Execute Driver](https://github.com/appium/appium/tree/master/packages/execute-driver-plugin)
 

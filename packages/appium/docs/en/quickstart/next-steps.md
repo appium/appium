@@ -14,7 +14,7 @@ reference materials especially for beginners:
 - [Capabilities](../guides/caps.md)
 - [Settings](../guides/settings.md)
 
-You'll also find that the [Appium Inspector](https://github.com/appium/appium-inspector) is an
+You'll also find that the [Appium Inspector](https://appium.github.io/appium-inspector/) is an
 indispensable tool for writing Appium tests, as it enables visual inspection of apps and
 helps you to discover element locators for use in your test scripts.
 

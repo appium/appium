@@ -12,7 +12,9 @@ Android自動化用のシステムの設定と簡単なテストの実行が完�
 - [Capabilities](../guides/caps.md)
 - [Settings](../guides/settings.md)
 
-また、[Appium Inspector](https://github.com/appium/appium-inspector) は、アプリの視覚的な検査を可能にし、テストスクリプトで使用する要素ロケーターを見つけるのに役立つ、Appium テストの作成に不可欠なツールです。
+You'll also find that the [Appium Inspector](https://appium.github.io/appium-inspector/) is an
+indispensable tool for writing Appium tests, as it enables visual inspection of apps and
+helps you to discover element locators for use in your test scripts.
 
 また、多くのオンライン Appium コースもご活用いただけます。
 

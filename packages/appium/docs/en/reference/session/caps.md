@@ -33,7 +33,7 @@ default value.
 |--|--|--|--|
 | `webSocketUrl` | Toggle support of the WebDriver BiDi protocol | `boolean` ||
 | `appium:newCommandTimeout` | Number of seconds the Appium server should wait for clients to send commands before stopping the session. A value of `0` disables the timeout. | `number` | `60` |
-| `appium:printPageSourceOnFindFailure` | Toggle retrieval of the the page source and its printing to the Appium log, whenever a request to find an element fails | `boolean` ||
+| `appium:printPageSourceOnFindFailure` | Toggle retrieval of the page source and its printing to the Appium log, whenever a request to find an element fails | `boolean` ||
 
 ### Validated Capabilities
 

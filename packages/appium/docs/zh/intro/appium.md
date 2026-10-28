@@ -49,7 +49,10 @@ Appium 的最初目标是为移动应用（iOS 和 Android）开发自动化标�
 
 下一个问题是，Appium 如何将此协议映射到广泛平台的自动化行为？ 严格来说，Appium 没有！ 它将此责任留给一种称为 Appium _驱动程序_ 的软件模块。 您可以阅读整个[驱动程序](./drivers.md)的介绍，所以我们现在不会深入细节。
 
-目前重要的是要理解驱动程序有点像 Appium 的可插拔模块，它赋予 Appium 自动化特定平台（或平台集，取决于驱动程序的目标）的能力。 最终，驱动程序的责任只是实现代表 WebDriver 协议的 Appium 内部接口。 它如何实现此接口完全取决于驱动程序，基于其在特定平台上实现自动化的策略。 通常，在细节上具有更多复杂性和难度，驱动程序通过依赖特定于平台的自动化技术来实现这一点。 例如，Apple 维护一种称为 [XCUITest](https://developer.apple.com/documentation/xctest/user_interface_tests) 的 iOS 自动化技术。 支持 iOS 应用自动化的 Appium 驱动程序称为 [XCUITest 驱动程序](https://github.com/appium/appium-xcuitest-driver)，因为它最终所做的是将 WebDriver 协议转换为 XCUITest 库调用。
+目前重要的是要理解驱动程序有点像 Appium 的可插拔模块，它赋予 Appium 自动化特定平台（或平台集，取决于驱动程序的目标）的能力。最终，驱动程序的责任只是实现代表 WebDriver 协议的 Appium 内部接口。它如何实现此接口完全取决于驱动程序，基于其在特定平台上实现自动化的策略。通常，在细节上具有更多复杂性和难度，驱动程序通过依赖特定于平台的自动化技术来实现这一点。例如，Apple 维护一种称为 [XCUITest](https://developer.apple.com/documentation/xctest/user_interface_tests) 的 iOS 自动化技术。 The Appium
+driver that supports iOS app automation is called the XCUITest
+Driver because ultimately what it does is
+convert the WebDriver protocol to XCUITest library calls.
 
 驱动程序是独立、可插拔模块的原因之一是它们彼此完全不同。 构建和使用不同平台的驱动程序的工具和要求完全不同。 因此，Appium 让您只使用您自动化任务所需的驱动程序。 选择驱动程序并安装它们以便与您的 Appium 实例一起使用非常重要，以至于 Appium 有自己的 [CLI 来管理驱动程序](../reference/cli/extensions.md)。
 

@@ -46,6 +46,33 @@ npx appium-docs init
 
 请参考 [MkDocs 文档](https://www.mkdocs.org/user-guide/writing-your-docs/) 来了解如何组织与构建你的文档结构。
 
+### 帮助LLMs 使用您的文档
+
+The [`/llms.txt` convention](https://llmstxt.org/) is a Markdown file at the root of a
+documentation site, listing its most useful pages so that large language models can navigate the
+site without crawling it. Appium's own documentation provides one at
+[appium.io/docs/en/latest/llms.txt](https://appium.io/docs/en/latest/llms.txt), and you may want to
+do the same for your extension.
+
+MkDocs copies any non-Markdown file in your `docs` directory to the built site as-is, so all you
+need to do is write an `llms.txt` and place it alongside your Markdown files. No plugin or build
+configuration is required.
+
+The value of this file lies in the parts a crawler could not have worked out on its own, so it is
+worth writing by hand rather than generating it from your navigation:
+
+- A short description of what your extension automates, and which platforms it targets
+- The handful of things models reliably get wrong about your extension - removed capabilities,
+  renamed commands, patterns from an older major version that no longer apply
+- Links to the pages that matter, with a description of each
+
+Because links in `llms.txt` are read out of context, they must be absolute URLs. If you use Mike
+for versioning, point them at your version alias (for example `latest`) rather than at a pinned
+version, so that the file does not go stale. Note that a hand-written file can drift as pages are
+renamed; Appium validates its own with a
+[script](https://github.com/appium/appium/blob/master/packages/appium/docs/scripts/check-llmstxt.js)
+that runs in CI, which you are welcome to adapt.
+
 ### 构建文档
 
 在这个阶段，你可以使用 `appium-docs` CLI 工具。 运行这个工具时不传任何参数，可以看到完整的帮助信息，以及所有可用的子命令与参数。 下面是几个常见用法示例：

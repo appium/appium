@@ -15,34 +15,34 @@ To learn more about drivers, check out the [Driver Intro](../intro/drivers.md).
 
 These drivers are currently maintained by the Appium team:
 
-### [Chromium](https://github.com/appium/appium-chromium-driver)
+### [Chromium](https://appium.github.io/appium-chromium-driver)
 
-* Target: Desktop and mobile Chromium browsers (Chrome, Microsoft Edge, etc.)
+* Target: Desktop Chromium-based browsers (Chrome, Microsoft Edge, etc.)
 * Mode: Web
 
 ```sh title="Install This Driver"
 appium driver install chromium
 ```
 
-### [Espresso](https://github.com/appium/appium-espresso-driver)
+### [Espresso](https://appium.github.io/appium-espresso-driver)
 
-* Target: Android applications
-* Mode: Native
+* Target: Android applications (mobile, TV, Wear, XR, Automotive)
+* Mode: Native, Hybrid, Web
 
 ```sh title="Install This Driver"
 appium driver install espresso
 ```
 
-### [Gecko](https://github.com/appium/appium-geckodriver)
+### [Gecko](https://appium.github.io/appium-geckodriver)
 
-* Target: Desktop and mobile Gecko browsers (Firefox)
+* Target: Desktop and mobile Gecko-based browsers (Firefox, etc.)
 * Mode: Web
 
 ```sh title="Install This Driver"
 appium driver install gecko
 ```
 
-### [Mac2](https://github.com/appium/appium-mac2-driver)
+### [Mac2](https://appium.github.io/appium-mac2-driver)
 
 * Target: macOS applications
 * Mode: Native
@@ -51,7 +51,7 @@ appium driver install gecko
 appium driver install mac2
 ```
 
-### [Safari](https://github.com/appium/appium-safari-driver)
+### [Safari](https://appium.github.io/appium-safari-driver)
 
 * Target: Desktop and mobile Safari browsers
 * Mode: Web
@@ -60,16 +60,16 @@ appium driver install mac2
 appium driver install safari
 ```
 
-### [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)
+### [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver)
 
-* Target: Android, Android TV, Android Wear applications
+* Target: Android applications (mobile, TV, Wear, XR, Automotive)
 * Modes: Native, Hybrid, Web
 
 ```sh title="Install This Driver"
 appium driver install uiautomator2
 ```
 
-### [WinCore](https://github.com/appium/appium-wincore-driver)
+### [WinCore](https://appium.github.io/appium-wincore-driver)
 
 * Target: Windows applications
 * Mode: Native
@@ -80,7 +80,7 @@ appium driver install wincore
 
 ### [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
 
-* Target: iOS, iPadOS, tvOS applications
+* Target: iOS, iPadOS, tvOS, watchOS applications
 * Modes: Native, Hybrid, Web
 
 ```sh title="Install This Driver"
@@ -151,7 +151,7 @@ appium driver install --source=npm @itsmeaj/appium-linux-driver
 ### [NovaWindows](https://github.com/AutomateThePlanet/appium-novawindows-driver)
 
 * Target: Windows applications
-* Mode: Native
+* Mode: Native, Hybrid
 * Supported by: Community / Automate The Planet
 
 ```sh title="Install This Driver"

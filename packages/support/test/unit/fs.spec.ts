@@ -109,19 +109,25 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
 
   for (const remove of [fs.rimraf, fs.rimrafSync]) {
     describe(remove.name, function () {
-      it('preserves recursive and force defaults when options are omitted', async function () {
+      it('removes nested contents when options are omitted', async function () {
         const root = await tempDir.openDir();
         await mkdir(path.join(root, 'nested'));
         await writeFile(path.join(root, 'nested', 'file.txt'), 'content');
         await remove(root);
         assert.strictEqual(await fs.exists(root), false);
-        await remove(root);
+      });
+
+      it('does not throw for a missing path when options are omitted', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.doesNotReject(async () => remove(missing));
       });
 
       it('keeps force enabled even if a JavaScript caller passes false', async function () {
         const missing = path.join(await tempDir.openDir(), 'missing');
-        // @ts-expect-error JavaScript callers can still supply excluded options.
-        await remove(missing, {force: false});
+        await assert.doesNotReject(async () => {
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(missing, {force: false});
+        });
       });
 
       it('keeps recursive enabled even if a JavaScript caller passes false', async function () {

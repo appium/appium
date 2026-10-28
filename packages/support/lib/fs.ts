@@ -57,6 +57,9 @@ export interface CopyFileOptions {
 
 export type {MvOptions};
 
+/** Options for {@linkcode fs.rimraf} and {@linkcode fs.rimrafSync}; recursive and force removal are always enabled. */
+export type RimrafOptions = Omit<RmOptions, 'recursive' | 'force'>;
+
 /**
  * Callback used during directory walking in {@linkcode fs.walkDir}.
  * Return true to stop walking.
@@ -165,7 +168,7 @@ export const fs = {
    * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
-  async rimraf(filepath: PathLike, opts: Omit<RmOptions, 'recursive' | 'force'> = {}): Promise<void> {
+  async rimraf(filepath: PathLike, opts: RimrafOptions = {}): Promise<void> {
     return await fsPromises.rm(filepath, {...opts, recursive: true, force: true});
   },
 
@@ -174,7 +177,7 @@ export const fs = {
    * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
    * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
-  rimrafSync(filepath: PathLike, opts: Omit<RmOptions, 'recursive' | 'force'> = {}): void {
+  rimrafSync(filepath: PathLike, opts: RimrafOptions = {}): void {
     return rmSync(filepath, {...opts, recursive: true, force: true});
   },
 

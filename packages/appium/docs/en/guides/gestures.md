@@ -5,7 +5,7 @@ title: Automating Gestures
 Appium supports automating complex pointer, touch, key, and wheel interactions through the
 W3C WebDriver [Perform Actions](../reference/api/webdriver.md#performactions) API
 ([W3C Specification](https://w3c.github.io/webdriver/#actions)). Alternatively, many drivers provide
-platform-native gesture [Execute Methods](./execute-methods.md) for common mobile interactions.
+platform-native gesture [Execute Methods](./execute-methods.md) for common interactions.
 
 In the W3C Actions API, interactions are defined by creating one or more virtual input sources
 (such as `pointer` with `pointerType: "touch"`, `key`, `wheel`, or `none`) and queuing a sequence
@@ -77,7 +77,7 @@ Performs two quick touch taps at `(x, y)` with a short pause between them:
 
 === "C#"
 
-    ```dotnet
+    ```csharp
     var finger = new PointerInputDevice(PointerKind.Touch, "finger");
     var doubleTap = new ActionSequence(finger, 0);
     doubleTap.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, 200, 300, TimeSpan.Zero));
@@ -142,7 +142,7 @@ Presses and holds a touch pointer at `(x, y)` for 1000ms before releasing:
 
 === "C#"
 
-    ```dotnet
+    ```csharp
     var finger = new PointerInputDevice(PointerKind.Touch, "finger");
     var longPress = new ActionSequence(finger, 0);
     longPress.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, 200, 300, TimeSpan.Zero));
@@ -209,7 +209,7 @@ Moves a touch pointer from `(200, 600)` to `(200, 200)` over 600ms:
 
 === "C#"
 
-    ```dotnet
+    ```csharp
     var finger = new PointerInputDevice(PointerKind.Touch, "finger");
     var dragAndDrop = new ActionSequence(finger, 0);
     dragAndDrop.AddAction(finger.CreatePointerMove(CoordinateOrigin.Viewport, 200, 600, TimeSpan.Zero));
@@ -321,7 +321,7 @@ Uses two concurrent `touch` pointer sequences (`finger1` and `finger2`) moving a
 
 === "C#"
 
-    ```dotnet
+    ```csharp
     var finger1 = new PointerInputDevice(PointerKind.Touch, "finger1");
     var seq1 = new ActionSequence(finger1, 0);
     seq1.AddAction(finger1.CreatePointerMove(CoordinateOrigin.Viewport, 200, 400, TimeSpan.Zero));

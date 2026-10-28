@@ -62,8 +62,7 @@ generate various kinds of reports from event timings output:
 !!! note
 
     In the past, when the `appium:eventTimings` capability was set to `true`, the event history
-    was also returned as an `events` property of the (now deprecated) `GET /session/:id`
-    response
+    was also returned as an `events` property of the `GET /session/:id` response
 
 ## Add a custom event
 

@@ -445,8 +445,8 @@ longer accepts, as well as the parameters it continues to accept in Appium 3.
   - :octicons-x-24: `format`
   - :octicons-check-24: None
 - `POST /session/:sessionId/element/:elementId/value`
-  - :octicons-x-24: `value`
-  - :octicons-check-24: `text`
+    - :octicons-x-24: `value`
+    - :octicons-check-24: `text`
 - `POST /session/:sessionId/window`
   - :octicons-x-24: `name`
   - :octicons-check-24: `handle`

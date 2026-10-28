@@ -74,6 +74,7 @@ nav:
           - guides/caps.md
           - guides/settings.md
           - guides/execute-methods.md
+          - guides/gestures.md
           - guides/context.md
           - guides/event-timing.md
   - More Resources:

@@ -138,6 +138,16 @@ describe('util', function () {
       const arr = ['a', 'b'];
       assert.deepStrictEqual(util.safeJsonParse(arr), arr);
     });
+    for (const arr of [[1], [true], ['null'], ['{}']]) {
+      it(`should preserve the array ${JSON.stringify(arr)}`, function () {
+        assert.strictEqual(util.safeJsonParse(arr), arr);
+      });
+    }
+    it('should not coerce objects to strings', function () {
+      const obj = {toString: sandbox.stub().returns('1')};
+      assert.strictEqual(util.safeJsonParse(obj), obj);
+      sandbox.assert.notCalled(obj.toString);
+    });
     it('should correctly parse json array', function () {
       const arr = ['a', 'b'];
       assert.deepStrictEqual(util.safeJsonParse(JSON.stringify(arr)), arr);

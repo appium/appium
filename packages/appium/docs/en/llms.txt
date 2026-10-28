@@ -79,6 +79,7 @@ documentation is the authoritative source for its capabilities and commands.
 - [Capabilities](https://appium.io/docs/en/latest/reference/session/caps/): the full list of capabilities recognized by the Appium server and base driver, and therefore supported by every driver.
 - [Session Settings](https://appium.io/docs/en/latest/guides/settings/): parameters that, unlike capabilities, can be adjusted while a session is running.
 - [Execute Methods](https://appium.io/docs/en/latest/guides/execute-methods/): the `mobile:` command convention that drivers use to expose commands beyond the WebDriver spec, with examples in every official client language.
+- [Automating Gestures](https://appium.io/docs/en/latest/guides/gestures/): approaches for automating gestures, including several examples for various touch gestures using the W3C Actions API.
 - [Managing Contexts](https://appium.io/docs/en/latest/guides/context/): switching between native and webview modes with the Get Contexts, Get Current Context and Set Context commands.
 - [Caching of Application Bundles](https://appium.io/docs/en/latest/guides/caching/): how the base driver caches application builds, and how to use it for faster suite execution.
 - [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): startup and command timing information, retrieved from the `POST /session/:sessionId/appium/events` endpoint. The `appium:eventTimings` capability described on that page is not required for the endpoint to work, and is being removed in Appium 4.
@@ -113,6 +114,7 @@ documentation is the authoritative source for its capabilities and commands.
 
 ## Migrating between major versions
 
+- [Migrating to Appium 4](https://appium.io/docs/en/latest/guides/migrating-3-to-4/): breaking changes from Appium 3 to 4 - the Node 22 minimum, ESM-only requirement, removed endpoints, the Windows driver replacement, and more.
 - [Migrating to Appium 3](https://appium.io/docs/en/latest/guides/migrating-2-to-3/): every breaking change from Appium 2 to 3 - the Node 20 minimum, removed and modified endpoints, the mandatory `--allow-insecure` scope prefix, and the move from `GET /sessions` to `GET /appium/sessions`.
 - [Migrating to Appium 2](https://appium.io/docs/en/latest/guides/migrating-1-to-2/): the Appium 1 to 2 changes, including drivers becoming separately installed extensions and the default base path changing from `/wd/hub` to `/`.
 

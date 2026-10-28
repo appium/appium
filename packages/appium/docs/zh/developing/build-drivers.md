@@ -52,10 +52,16 @@ Appium 并不会凭空赋予你自动化任何平台的能力。它所做的只�
 
 必需的子字段如下：
 
-- `driverName`：你的驱动的简短名称。
-- `automationName`：用户在 `appium:automationName` 能力中填写的字符串，用于让 Appium 使&#x7528;_&#x4F60;&#x7684;_&#x9A71;动。
-- `platformNames`：一个数组，包含你的驱动认为合法的一个或多个平台名称。当用户发起会话并传入  `platformName` 能力时，该值必须在此列表中，你的驱动才会处理该会话。这些名称通常应包含你的驱动所面向的操作系统——例如，面向 iOS 的驱动应包含 `iOS`，而面向 Windows 上 Chrome 浏览器的驱动应包含 `Windows`。
-- `mainClass`：从 `main` 字段具名导出（CommonJS 风格）的类。它必须是继承自 Appium 的 `BaseDriver` 的类（见下文）。
+- `driverName`: this should be a short name for your driver.
+- `automationName`: this should be the string users will use for their `appium:automationName`
+  capability to tell Appium to use _your_ driver.
+- `platformNames`: this is an array of one or more platform names considered valid for your driver.
+  When a user sends in the `platformName` capability to start a session, it must be included in
+  this list for your driver to handle the session. These names should generally include the
+  operating systems your driver is targeting - for example, a driver targeting iOS would include
+  `iOS`, while a driver targeting the Chrome browser on Windows would include `Windows`.
+- `mainClass`: this is a named export (in CommonJS style) from your `main` field. It must be a
+  class which extends Appium's `BaseDriver` (see below).
 
 ### 继承 Appium 的 `BaseDriver` 类
 
@@ -203,7 +209,13 @@ async deleteSession() {
 
 ### 实现 WebDriver classic 命令
 
-你通过在驱动类中实现函数来处理 WebDriver 命令。 WebDriver 协议的每一个成员，以及 Appium 的各种扩展，都对应一个函数——如果你想支持该命令，就实现它。要了解 Appium 支持哪些命令、每个命令需要实现哪个方法，最好的办法是查看 Appium 的 [routes/](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js)。该文件中的每个路由对象都会告诉你命令名称以及该命令预期接收的参数。
+You handle WebDriver commands by implementing functions in your driver class. Each member of the
+WebDriver Protocol, plus the various Appium extensions, has a corresponding function that you
+implement if you want to support that command in your driver. The best way to see which commands
+Appium supports and which method you need to implement for each command is to look at Appium's
+[routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes).
+Each route object in this directory's files tells you the command name as well as the parameters you'd expect to
+receive for that command.
 
 比如下面这段：
 
@@ -232,7 +244,14 @@ async setUrl(url) {
 
 ### 实现 WebDriver BiDi 命令
 
-[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) 是 WebDriver 规范的新版本，基于 Websocket 而非 HTTP 实现。作为 Appium 驱动作者，你可以直接利用 Appium 的 BiDi 支持，而无需了解 BiDi 协议或 Websocket 的任何细节。实现 BiDi 命令的处理方法与实现 WebDriver 经典命令的处理方法完全一样（见上一节）。你只需在驱动上定义名称对应的方法，当客户端请求该 BiDi 命令时它就会被调用。要查看 BiDi 命令应使用的具体名称，请参考 [bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)。
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) is a newer version of the WebDriver spec
+which is implemented over Websockets instead of HTTP. As an Appium driver author you can take
+advantage of Appium's BiDi support without having to know anything about the BiDi protocol or
+Websockets. Implementing handlers for BiDi commands works just the same as implementing handlers
+for WebDriver classic commands (described in the previous section). You simply define a method on
+your driver of the appropriate name, and it will be called when the BiDi command is requested by
+the client. To see which specific names you should use for BiDi commands, have a look at
+[bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)
 
 你不必局限于官方 BiDi 规范中已定义的命令。如果你想定义新命令，也完全可以——只需要把这些新命令告知 Appium！详情请见下文 [用新的命令扩展现有协议](#用新的命令扩展现有协议)。
 

@@ -3,6 +3,9 @@ import {DOMParser, MIME_TYPE} from '@xmldom/xmldom';
 import {errors} from 'appium/driver.js';
 import {select as xpathQuery} from 'xpath';
 
+// the message the xpath library uses for any syntax error, without saying what is wrong
+const GENERIC_XPATH_PARSE_ERROR = 'XPath parse error';
+
 /**
  * Runs an XPath query against an XML string.
  * @param query XPath query.
@@ -16,8 +19,11 @@ export function runQuery(query: string, xmlStr: string): Element[] {
     // https://github.com/xmldom/xmldom/issues/724
     nodes = xpathQuery(query, dom);
   } catch (err) {
-    // report a malformed query the same way drivers do instead of as an unknown server error
-    throw new errors.InvalidSelectorError(`Invalid XPath selector '${query}'`, err as Error);
+    // report a malformed query the same way drivers do instead of as an unknown server error.
+    // messages such as 'Unknown function foo' tell the user what to fix, the generic one does not
+    const reason = (err as Error).message;
+    const details = reason && reason !== GENERIC_XPATH_PARSE_ERROR ? ` (${reason})` : '';
+    throw new errors.InvalidSelectorError(`Invalid XPath selector: ${query}${details}`, err as Error);
   }
   // the xpath typings describe lib.dom nodes rather than xmldom ones, so this is the one place
   // where the two type worlds have to be bridged

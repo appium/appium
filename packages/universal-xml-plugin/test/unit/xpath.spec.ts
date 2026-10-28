@@ -13,7 +13,17 @@ describe('xpath functions', function () {
     });
     it('should throw an invalid selector error for a malformed query', async function () {
       const xml = await readFixture(FIXTURES.XML_IOS);
-      assert.throws(() => runQuery('//XCUIElementTypeTextField[', xml), {name: 'InvalidSelectorError'});
+      assert.throws(() => runQuery('//XCUIElementTypeTextField[', xml), {
+        name: 'InvalidSelectorError',
+        message: /Invalid XPath selector: \/\/XCUIElementTypeTextField\[$/,
+      });
+    });
+    it('should include the reason in the error when the xpath library gives one', async function () {
+      const xml = await readFixture(FIXTURES.XML_IOS);
+      assert.throws(() => runQuery('//*[foo()]', xml), {
+        name: 'InvalidSelectorError',
+        message: /Invalid XPath selector: \/\/\*\[foo\(\)\] \(Unknown function foo\)$/,
+      });
     });
   });
   describe('transformQuery', function () {

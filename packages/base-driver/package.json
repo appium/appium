@@ -58,7 +58,7 @@
     "lru-cache": "11.5.3",
     "method-override": "3.0.0",
     "morgan": "1.12.1",
-    "path-to-regexp": "8.4.2",
+    "path-to-regexp": "9.0.0",
     "serve-favicon": "2.5.1",
     "type-fest": "5.10.0"
   },

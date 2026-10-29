@@ -121,6 +121,18 @@ describe('DriverCommand', function () {
       npmMock.verify();
     });
 
+    it('should ignore a server range that cannot be evaluated', async function () {
+      setupDriverUpdate('1.0.0', '2.0.0', null);
+      reqs = {'2.0.0': 'github:appium/appium'};
+      assert.deepStrictEqual(await (dc as any).checkForExtensionUpdate('fake'), {
+        current: '1.0.0',
+        safeUpdate: null,
+        unsafeUpdate: '2.0.0',
+        incompatibleUpdate: null,
+      });
+      npmMock.verify();
+    });
+
     it('should report the incompatible update if no compatible update exists', async function () {
       setupDriverUpdate('1.0.0', '2.0.0', null);
       stableVersions = ['2.0.0', '1.0.0'];
@@ -131,19 +143,6 @@ describe('DriverCommand', function () {
         unsafeUpdate: null,
         incompatibleUpdate: {version: '2.0.0', serverRange: '^999.0.0'},
       });
-      npmMock.verify();
-    });
-
-    it('should drop the safe update if it requires a newer server', async function () {
-      setupDriverUpdate('1.0.0', '1.1.0', '1.1.0');
-      reqs = {'1.1.0': '^999.0.0'};
-      assert.deepStrictEqual(await (dc as any).checkForExtensionUpdate('fake'), {
-        current: '1.0.0',
-        safeUpdate: null,
-        unsafeUpdate: null,
-        incompatibleUpdate: {version: '1.1.0', serverRange: '^999.0.0'},
-      });
-      sinon.assert.neverCalledWith(infoStub, pkgName, ['versions']);
       npmMock.verify();
     });
   });

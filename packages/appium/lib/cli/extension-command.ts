@@ -512,7 +512,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
             if (!(update.safeUpdate || update.unsafeUpdate)) {
               throw update.incompatibleUpdate
                 ? new NoCompatibleUpdateError(
-                    `already at the latest version compatible with the installed server (${update.current}). ` +
+                    `is already at the latest version compatible with the installed server (${update.current}). ` +
                       this._formatIncompatibleUpdateMsg(e, update.incompatibleUpdate),
                   )
                 : new NoUpdatesAvailableError();
@@ -565,9 +565,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
           console.styleText('yellow', `  - '${e}' was not installed via npm, so we could not check for updates`),
         );
       } else if (err instanceof NoUpdatesAvailableError) {
-        this.log.info(console.styleText('yellow', `  - '${e}' had no updates available`));
+        this.log.info(console.styleText('yellow', `  - ${this.type} '${e}' had no updates available`));
       } else if (err instanceof NoCompatibleUpdateError) {
-        this.log.warn(console.styleText('yellow', `  - '${e}' ${err.message}`));
+        this.log.warn(console.styleText('yellow', `  - ${this.type} '${e}' ${err.message}`));
       } else {
         // otherwise, make it pop with red!
         this.log.error(console.styleText('red', `  - '${e}' failed to update: ${err}`));
@@ -590,8 +590,8 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
     const {version, pkgName} = this.config.installedExtensions[ext];
     const serverVersion = npmPackage.version;
     const {appiumHome} = this.config;
-    let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
-    let safeUpdate = await npm.getLatestSafeUpgradeVersion(this.config.appiumHome, pkgName, version);
+    let unsafeUpdate = await npm.getLatestVersion(appiumHome, pkgName);
+    let safeUpdate = await npm.getLatestSafeUpgradeVersion(appiumHome, pkgName, version);
     let incompatibleUpdate: PossibleUpdates['incompatibleUpdate'] = null;
     if (unsafeUpdate !== null && !util.compareVersions(unsafeUpdate, '>', version)) {
       // the latest version is not greater than the current version, so there's no possible update
@@ -609,7 +609,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
     if (unsafeUpdate) {
       const serverRange = await getRemoteExtensionVersionReq(pkgName, unsafeUpdate, appiumHome);
-      if (serverRange && !areVersionsCompatible(serverVersion, serverRange)) {
+      if (isServerRangeViolated(serverVersion, serverRange)) {
         incompatibleUpdate = {version: unsafeUpdate, serverRange};
         // fall back to the newest older major that the installed server can run
         const currentMajor = semver.coerce(version)?.major ?? 0;
@@ -621,20 +621,12 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
           }
           if (
             v !== incompatibleUpdate.version &&
-            areVersionsCompatible(serverVersion, await getRemoteExtensionVersionReq(pkgName, v, appiumHome))
+            !isServerRangeViolated(serverVersion, await getRemoteExtensionVersionReq(pkgName, v, appiumHome))
           ) {
             unsafeUpdate = v;
             break;
           }
         }
-      }
-    }
-    if (safeUpdate) {
-      // extensions only raise the server requirement in major releases, so one check is enough
-      const serverRange = await getRemoteExtensionVersionReq(pkgName, safeUpdate, appiumHome);
-      if (serverRange && !areVersionsCompatible(serverVersion, serverRange)) {
-        incompatibleUpdate ??= {version: safeUpdate, serverRange};
-        safeUpdate = null;
       }
     }
     return {current: version, safeUpdate, unsafeUpdate, incompatibleUpdate};
@@ -857,7 +849,7 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
   private _warnIfServerIncompatible(installSpec: string, pkg: PackageJson): void {
     const serverRange = pkg.peerDependencies?.appium ?? pkg.dependencies?.appium;
     // non-semver values (e.g. git urls or tags) cannot be evaluated
-    if (!serverRange || !semver.validRange(serverRange) || areVersionsCompatible(npmPackage.version, serverRange)) {
+    if (!isServerRangeViolated(npmPackage.version, serverRange)) {
       return;
     }
     this.log.warn(
@@ -1464,13 +1456,10 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string, cw
 
 /**
  * @param serverVersion exact installed server version
- * @param serverRange server range declared by an extension that the server does not satisfy
+ * @param serverRange valid server range declared by an extension that the server does not satisfy
  * @returns a sentence telling what to do depending on whether the server is too old or too new
  */
 function describeServerFix(serverVersion: string, serverRange: string): string {
-  if (!semver.validRange(serverRange)) {
-    return `Use a server version matching '${serverRange}'.`;
-  }
   if (semver.ltr(serverVersion, serverRange, {includePrerelease: true})) {
     const minServer = semver.minVersion(serverRange)?.version;
     return minServer
@@ -1485,6 +1474,20 @@ function describeServerFix(serverVersion: string, serverRange: string): string {
   }
   // the server falls into a gap of the range
   return `Use a server version matching '${serverRange}'.`;
+}
+
+/**
+ * Checks whether the server range declared by an extension is valid and not satisfied by the server.
+ * Ranges that cannot be evaluated (e.g. git urls or tags) are never considered violated.
+ *
+ * @param serverVersion exact server version
+ * @param serverRange server range declared by an extension. Can be null or undefined
+ */
+function isServerRangeViolated(serverVersion: string, serverRange: string | null | undefined): serverRange is string {
+  if (!serverRange || !semver.validRange(serverRange)) {
+    return false;
+  }
+  return !areVersionsCompatible(serverVersion, serverRange);
 }
 
 /**

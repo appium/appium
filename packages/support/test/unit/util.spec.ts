@@ -351,6 +351,23 @@ describe('util', function () {
     after(async function () {
       await fs.rimraf(tmpDir);
     });
+
+    /**
+     * Make `fs.stat` report the given identity fields instead of the real ones.
+     *
+     * @param targetPath - Path whose stat result is altered, or `undefined` to alter every one.
+     * @param overrides - Values replacing `ino` and/or `dev` of the real stat result.
+     */
+    async function stubStatsOf(targetPath: string | undefined, overrides: {ino?: bigint; dev?: bigint}) {
+      const stat = await fs.stat(targetPath ?? path1, {bigint: true});
+      const stub = sandbox.stub(fs, 'stat');
+      if (targetPath) {
+        stub.callThrough().withArgs(targetPath, {bigint: true}).resolves(Object.assign(stat, overrides));
+      } else {
+        stub.resolves(Object.assign(stat, overrides));
+      }
+    }
+
     it('should match paths to the same file/folder', async function () {
       assert.strictEqual(
         await util.isSameDestination(path1, path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))),
@@ -365,12 +382,7 @@ describe('util', function () {
     });
     it('should not match equal inode numbers on different devices', async function () {
       const firstStat = await fs.stat(path1, {bigint: true});
-      const secondStat = await fs.stat(path2, {bigint: true});
-      sandbox
-        .stub(fs, 'stat')
-        .callThrough()
-        .withArgs(path2, {bigint: true})
-        .resolves(Object.assign(secondStat, {ino: firstStat.ino, dev: firstStat.dev + 1n}));
+      await stubStatsOf(path2, {ino: firstStat.ino, dev: firstStat.dev + 1n});
 
       assert.strictEqual(await util.isSameDestination(path1, path2), false);
       assert.strictEqual(await util.isSameDestination(path1, path1, path2), false);
@@ -382,8 +394,7 @@ describe('util', function () {
       assert.strictEqual(await util.isSameDestination(path1, linkPath, path1), true);
     });
     it('should not match different paths with unknown inode numbers', async function () {
-      const stat = await fs.stat(path1, {bigint: true});
-      sandbox.stub(fs, 'stat').resolves(Object.assign(stat, {ino: 0n}));
+      await stubStatsOf(undefined, {ino: 0n});
 
       assert.strictEqual(await util.isSameDestination(path1, path2), false);
       assert.strictEqual(await util.isSameDestination(path1, path1), true);

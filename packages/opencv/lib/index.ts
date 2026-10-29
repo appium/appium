@@ -23,6 +23,10 @@ let cv: OpenCVBindings | undefined;
 export const DEFAULT_MATCH_THRESHOLD = 0.5;
 export const MATCH_NEIGHBOUR_THRESHOLD = 10;
 
+export class NoImageMatchesError extends Error {
+  readonly code = 'APPIUMERR_NO_IMAGE_MATCHES';
+}
+
 export const AVAILABLE_DETECTORS = {
   AKAZE: 'AKAZE',
   AGAST: 'AgastFeatureDetector',
@@ -92,7 +96,8 @@ export async function initOpenCv(): Promise<void> {
  * @param img2Data - The data of the second image packed into a NodeJS buffer
  * @param options - Set of matching options (see {@link MatchingOptions})
  * @returns Matching result containing count, totalCount, points, rects, and optionally visualization
- * @throws {Error} If `detectorName` or `matchFunc` value is unknown, or if no matches can be found between images
+ * @throws {Error} If `detectorName` or `matchFunc` value is unknown
+ * @throws {NoImageMatchesError} If no matches can be found between images
  *
  * @example
  * ```ts
@@ -148,7 +153,7 @@ export async function getImagesMatches(
     matcher.match(result1.descriptor, result2.descriptor, matchesVec);
     const totalCount = matchesVec.size();
     if (totalCount < 1) {
-      throw new Error(
+      throw new NoImageMatchesError(
         `Could not find any matches between images. Double-check orientation, ` +
           `resolution, or use another detector or matching function.`,
       );

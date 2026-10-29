@@ -2,6 +2,7 @@ import {
   getImageOccurrence,
   getImagesMatches,
   getImagesSimilarity,
+  NoImageMatchesError,
   type MatchingOptions,
   type MatchingResult,
   type OccurrenceOptions,
@@ -48,8 +49,10 @@ export async function compareImages(
     case MATCH_FEATURES_MODE.toLowerCase():
       try {
         result = await getImagesMatches(img1, img2, options as MatchingOptions);
-      } catch {
-        // might throw if no matches
+      } catch (err) {
+        if (!(err instanceof NoImageMatchesError)) {
+          throw err;
+        }
         result = {count: 0} as MatchingResult;
       }
       break;

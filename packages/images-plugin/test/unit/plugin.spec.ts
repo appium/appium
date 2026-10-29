@@ -71,6 +71,17 @@ describe('ImageElementPlugin#handle', function () {
         ),
       );
     });
+    it('should throw an error if match features image is broken', async function () {
+      await assert.rejects(
+        p.compareImages(
+          next,
+          driver as any,
+          MATCH_FEATURES_MODE,
+          Buffer.from('d1423423424'),
+          Buffer.from('d1423423424'),
+        ),
+      );
+    });
     it('should throw an error if image template is empty', async function () {
       await assert.rejects(p.compareImages(next, driver as any, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from('')));
     });

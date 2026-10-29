@@ -96,6 +96,10 @@ export interface SimilarityOptions {
 }
 
 export interface SimilarityResult {
+  /**
+   * Score from the selected method. `TM_SQDIFF_NORMED` is inverted so that `1` means an exact
+   * match. Other methods return their native score, which may fall outside `[0, 1]`.
+   */
   score: number;
   visualization?: Buffer | null;
 }
@@ -108,12 +112,15 @@ export interface OccurrenceOptions {
    */
   visualize?: boolean;
   /**
-   * At what normalized threshold to reject a match. Defaults to `0.5`.
+   * Threshold on the score scale used by `method`. Defaults to `0.5`.
+   * `TM_SQDIFF_NORMED` scores are `1` minus the normalized squared difference, so scores at or
+   * above the threshold pass. Raw `TM_SQDIFF` scores are the squared difference sum, so scores at
+   * or below the threshold pass. Other methods accept scores at or above the threshold.
    */
   threshold?: number;
   /**
-   * Whether to find multiple matches in the image. If `true` or a number, returns all matches above
-   * the threshold. Defaults to `false`.
+   * Whether to find multiple matches in the image. If `true` or a number, returns all matches that
+   * pass `threshold`. Defaults to `false`.
    */
   multiple?: boolean | number;
   /**

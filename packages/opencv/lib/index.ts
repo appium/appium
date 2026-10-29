@@ -230,7 +230,9 @@ export async function getImagesMatches(
  * @param img1Data - The data of the first image packed into a NodeJS buffer
  * @param img2Data - The data of the second image packed into a NodeJS buffer
  * @param options - Set of similarity calculation options (see {@link SimilarityOptions})
- * @returns Similarity result containing score (float in range [0.0, 1.0], where 1.0 means images are totally equal) and optionally visualization
+ * @returns Similarity result containing the selected method's score and optionally visualization.
+ * `TM_SQDIFF_NORMED` is inverted so that `1.0` means images are equal; other methods return their
+ * native score.
  * @throws {Error} If the given images have different resolution
  *
  * @example
@@ -275,7 +277,7 @@ export async function getImagesSimilarity(
     cv.matchTemplate(reference, template, matched, toMatchingMethod(method));
     const minMax = cv.minMaxLoc(matched);
     const result: SimilarityResult = {
-      score: minMax.maxVal,
+      score: toMatchScore(method, minMax.maxVal),
     };
 
     if (visualize) {
@@ -322,7 +324,9 @@ export async function getImagesSimilarity(
  * @param fullImgData - The data of the full image packed into a NodeJS buffer
  * @param partialImgData - The data of the partial image packed into a NodeJS buffer
  * @param options - Set of occurrence calculation options (see {@link OccurrenceOptions})
- * @returns Occurrence result containing rect (region of the partial image occurrence on the full image), score (similarity score as float in range [0.0, 1.0]), optionally visualization, and optionally multiple (array of matching results when multiple option is enabled)
+ * @returns Occurrence result containing the match rect, the selected method's score, optionally
+ * visualization, and optionally multiple results. `TM_SQDIFF_NORMED` is inverted so that `1.0`
+ * means an exact match; raw `TM_SQDIFF` returns the squared-difference sum.
  * @throws {Error} If no occurrences of the partial image can be found in the full image
  *
  * @example
@@ -368,13 +372,17 @@ export async function getImageOccurrence(
     try {
       cv.matchTemplate(fullImg, partialImg, matched, toMatchingMethod(method));
       const minMax = cv.minMaxLoc(matched);
+      const isSqDiff = method.includes('SQDIFF');
+      const bestScore = toMatchScore(method, isSqDiff ? minMax.minVal : minMax.maxVal);
+      // Raw TM_SQDIFF is an unbounded sum, so lower stays better on its native scale
+      const passes = (score: number) => (method === 'TM_SQDIFF' ? score <= threshold : score >= threshold);
 
       if (multiple) {
         const matches: Match[] = [];
         for (let row = 0; row < matched.rows; row++) {
           for (let col = 0; col < matched.cols; col++) {
-            const score = matched.floatAt(row, col);
-            if (score >= threshold) {
+            const score = toMatchScore(method, matched.floatAt(row, col));
+            if (passes(score)) {
               matches.push({score, x: col, y: row});
             }
           }
@@ -393,10 +401,10 @@ export async function getImageOccurrence(
             },
           });
         }
-      } else if (minMax.maxVal >= threshold) {
-        const {x, y} = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
+      } else if (passes(bestScore)) {
+        const {x, y} = isSqDiff ? minMax.minLoc : minMax.maxLoc;
         results.push({
-          score: minMax.maxVal,
+          score: bestScore,
           rect: {
             x,
             y,
@@ -408,7 +416,7 @@ export async function getImageOccurrence(
 
       if (results.length === 0) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
-        throw new Error(`Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`);
+        throw new Error(`Match threshold: ${threshold}. Best match value found was ${bestScore}`);
       }
     } catch (e: any) {
       // Below error message, `Cannot find any occurrences` is referenced in find by image
@@ -463,6 +471,11 @@ function toMatchingMethod(name: string): number {
     throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
   }
   return cv[name];
+}
+
+function toMatchScore(method: string, value: number): number {
+  // TM_SQDIFF_NORMED measures the difference in [0, 1], so it is flipped to keep 1 as an exact match
+  return method === 'TM_SQDIFF_NORMED' ? 1 - value : value;
 }
 
 function detectAndCompute(img: any, detector: any): MatchComputationResult {

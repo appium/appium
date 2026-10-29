@@ -76,6 +76,11 @@ describe('OpenCV helpers', {timeout: 120000}, () => {
       assert.ok(score > 0);
     });
 
+    it('should score equal images as 1 with TM_SQDIFF_NORMED', async function () {
+      const {score} = await getImagesSimilarity(imgFixture!, imgFixture!, {method: 'TM_SQDIFF_NORMED'});
+      assert.ok(score > 0.99);
+    });
+
     it('should visualize the similarity between two images', async function () {
       const {visualization} = await getImagesSimilarity(originalImage!, changedImage!, {
         visualize: true,
@@ -101,6 +106,26 @@ describe('OpenCV helpers', {timeout: 120000}, () => {
         }),
         /threshold/,
       );
+    });
+
+    it('should score TM_SQDIFF_NORMED matches by the smallest difference', async function () {
+      const expected = await getImageOccurrence(fullImage!, partialImage!);
+      const {rect, score} = await getImageOccurrence(fullImage!, partialImage!, {
+        method: 'TM_SQDIFF_NORMED',
+        threshold: 0.95,
+      });
+      assert.deepStrictEqual(rect, expected.rect);
+      assert.ok(score > 0.99);
+    });
+
+    it('should accept raw TM_SQDIFF matches at or below the threshold', async function () {
+      const expected = await getImageOccurrence(fullImage!, partialImage!);
+      const {rect, score} = await getImageOccurrence(fullImage!, partialImage!, {
+        method: 'TM_SQDIFF',
+        threshold: 200000,
+      });
+      assert.deepStrictEqual(rect, expected.rect);
+      assert.ok(score >= 0 && score <= 200000);
     });
 
     it('should visualize the partial image position in the full image', async function () {

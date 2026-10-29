@@ -1462,18 +1462,13 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string, cw
 function describeServerFix(serverVersion: string, serverRange: string): string {
   if (semver.ltr(serverVersion, serverRange, {includePrerelease: true})) {
     const minServer = semver.minVersion(serverRange)?.version;
-    return minServer
-      ? `Upgrade the server to at least ${minServer}.`
-      : `Use a server version matching '${serverRange}'.`;
+    return minServer ? `Upgrade the server to at least ${minServer}.` : `Use a server version matching ${serverRange}.`;
   }
   if (semver.gtr(serverVersion, serverRange, {includePrerelease: true})) {
-    return (
-      `The ${serverVersion} server is newer than what the extension supports. Use a server version matching ` +
-      `'${serverRange}' or wait for an extension release that supports ${serverVersion}.`
-    );
+    return `Use a server version matching ${serverRange} or wait for an extension release that supports ${serverVersion}.`;
   }
   // the server falls into a gap of the range
-  return `Use a server version matching '${serverRange}'.`;
+  return `Use a server version matching ${serverRange}.`;
 }
 
 /**

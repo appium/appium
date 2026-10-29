@@ -428,16 +428,18 @@ describe('ExtensionCommand', function () {
       it('should not suggest a server upgrade if the server is newer than the supported range', function () {
         warn({peerDependencies: {appium: '^1.0.0'}});
         sinon.assert.calledOnce(warnStub);
-        assert.match(warnStub.args[0][0], /newer than what the extension supports/);
-        assert.match(warnStub.args[0][0], /matching '\^1\.0\.0'/);
+        assert.match(
+          warnStub.args[0][0],
+          /Use a server version matching \^1\.0\.0 or wait for an extension release that supports /,
+        );
         assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server/);
       });
 
       it('should give a neutral advice if the server falls into a gap of the supported range', function () {
         warn({peerDependencies: {appium: '^1.0.0 || ^999.0.0'}});
         sinon.assert.calledOnce(warnStub);
-        assert.match(warnStub.args[0][0], /Use a server version matching '\^1\.0\.0 \|\| \^999\.0\.0'/);
-        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server|newer than what the extension supports/);
+        assert.match(warnStub.args[0][0], /Use a server version matching \^1\.0\.0 \|\| \^999\.0\.0\.$/);
+        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server|wait for an extension release/);
       });
 
       it('should also consider the regular dependency', function () {

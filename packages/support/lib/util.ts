@@ -426,7 +426,7 @@ export function compareVersions(ver1: string, operator: string, ver2: string): b
   const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
   const v1 = coerceVersion(ver1, true);
   const v2 = coerceVersion(ver2, true);
-  const result = semver.satisfies(v1, `${semverOperator}${v2}`);
+  const result = semver.satisfies(v1, `${semverOperator}${v2}`, {includePrerelease: true});
   return operator === '!=' ? !result : result;
 }
 

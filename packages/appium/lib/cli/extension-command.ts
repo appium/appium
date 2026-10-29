@@ -142,7 +142,13 @@ type InstallViaNpmArgs = {
 /**
  * Object returned by {@linkcode ExtensionCliCommand.checkForExtensionUpdate}
  */
-type PossibleUpdates = {current: string; safeUpdate: string | null; unsafeUpdate: string | null};
+type PossibleUpdates = {
+  current: string;
+  safeUpdate: string | null;
+  unsafeUpdate: string | null;
+  /** The newest version that requires a server range not satisfied by the installed server */
+  incompatibleUpdate: {version: string; serverRange: string} | null;
+};
 
 /**
  * Options for {@linkcode ExtensionCliCommand._install}
@@ -166,6 +172,8 @@ type InfoSink = {info(message?: string, ...args: any[]): void};
 class NotUpdatableError extends Error {}
 
 class NoUpdatesAvailableError extends Error {}
+
+class NoCompatibleUpdateError extends Error {}
 
 export abstract class ExtensionCliCommand<ExtType extends ExtensionType = ExtensionType> {
   /**
@@ -502,7 +510,12 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
           async () => {
             const update = await this.checkForExtensionUpdate(e);
             if (!(update.safeUpdate || update.unsafeUpdate)) {
-              throw new NoUpdatesAvailableError();
+              throw update.incompatibleUpdate
+                ? new NoCompatibleUpdateError(
+                    `already at the latest version compatible with the installed server (${update.current}). ` +
+                      this._formatIncompatibleUpdateMsg(e, update.incompatibleUpdate),
+                  )
+                : new NoUpdatesAvailableError();
             }
             return update;
           },
@@ -531,6 +544,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
             `If you want to apply this update, re-run with --unsafe`;
           this.log.info(console.styleText('yellow', newMajorUpdateMsg));
         }
+        if (update.incompatibleUpdate) {
+          this.log.warn(console.styleText('yellow', this._formatIncompatibleUpdateMsg(e, update.incompatibleUpdate)));
+        }
         updates[e] = {from: update.current, to: updateVer};
       } catch (err) {
         errors[e] = err instanceof Error ? err : new Error(String(err));
@@ -550,6 +566,8 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
         );
       } else if (err instanceof NoUpdatesAvailableError) {
         this.log.info(console.styleText('yellow', `  - '${e}' had no updates available`));
+      } else if (err instanceof NoCompatibleUpdateError) {
+        this.log.warn(console.styleText('yellow', `  - '${e}' ${err.message}`));
       } else {
         // otherwise, make it pop with red!
         this.log.error(console.styleText('red', `  - '${e}' failed to update: ${err}`));
@@ -560,7 +578,8 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
 
   /**
    * Given an extension name, figure out what its highest possible version upgrade is, and also the
-   * highest possible safe upgrade.
+   * highest possible safe upgrade. Only versions compatible with the installed server are returned;
+   * the newest incompatible one, if any, is reported as `incompatibleUpdate`.
    *
    * @param ext - name of extension
    */
@@ -569,8 +588,10 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
     const {version, pkgName} = this.config.installedExtensions[ext];
+    const serverVersion = npmPackage.version;
     let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
     let safeUpdate = await npm.getLatestSafeUpgradeVersion(this.config.appiumHome, pkgName, version);
+    let incompatibleUpdate: PossibleUpdates['incompatibleUpdate'] = null;
     if (unsafeUpdate !== null && !util.compareVersions(unsafeUpdate, '>', version)) {
       // the latest version is not greater than the current version, so there's no possible update
       unsafeUpdate = null;
@@ -584,7 +605,69 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       // even the safe update is not later than the current, so it is not actually an update
       safeUpdate = null;
     }
-    return {current: version, safeUpdate, unsafeUpdate};
+
+    if (unsafeUpdate) {
+      const serverRange = await getRemoteExtensionVersionReq(pkgName, unsafeUpdate);
+      if (serverRange && !areVersionsCompatible(serverVersion, serverRange)) {
+        incompatibleUpdate = {version: unsafeUpdate, serverRange};
+        // fall back to the newest older major that the installed server can run
+        const currentMajor = semver.coerce(version)?.major ?? 0;
+        const latestOfMajors = await getRemoteExtensionLatestStableMajors(pkgName);
+        unsafeUpdate = null;
+        for (const v of latestOfMajors) {
+          if (semver.major(v) <= currentMajor) {
+            break;
+          }
+          if (
+            v !== incompatibleUpdate.version &&
+            areVersionsCompatible(serverVersion, await getRemoteExtensionVersionReq(pkgName, v))
+          ) {
+            unsafeUpdate = v;
+            break;
+          }
+        }
+      }
+    }
+    if (safeUpdate) {
+      // extensions only raise the server requirement in major releases, so one check is enough
+      const serverRange = await getRemoteExtensionVersionReq(pkgName, safeUpdate);
+      if (serverRange && !areVersionsCompatible(serverVersion, serverRange)) {
+        incompatibleUpdate ??= {version: safeUpdate, serverRange};
+        safeUpdate = null;
+      }
+    }
+    return {current: version, safeUpdate, unsafeUpdate, incompatibleUpdate};
+  }
+
+  private _formatIncompatibleUpdateMsg(
+    ext: string,
+    {version, serverRange}: {version: string; serverRange: string},
+  ): string {
+    return (
+      `A newer version ${version} of the ${this.type} '${ext}' is available, but it requires the Appium server ` +
+      `${serverRange}, while ${npmPackage.version} is installed. ` +
+      describeServerFix(npmPackage.version, serverRange)
+    );
+  }
+
+  /**
+   * Warns (never throws) if the installed server does not satisfy the range declared by the extension.
+   * Used for sources that cannot be checked before installation (local, git, github).
+   */
+  private _warnIfServerIncompatible(installSpec: string, pkg: PackageJson): void {
+    const serverRange = pkg.peerDependencies?.appium ?? pkg.dependencies?.appium;
+    // non-semver values (e.g. git urls or tags) cannot be evaluated
+    if (!serverRange || !semver.validRange(serverRange) || areVersionsCompatible(npmPackage.version, serverRange)) {
+      return;
+    }
+    this.log.warn(
+      console.styleText(
+        'yellow',
+        `The ${this.type} '${installSpec}' requires the Appium server ${serverRange}, while ` +
+          `${npmPackage.version} is installed. It was installed anyway, but might not work properly. ` +
+          describeServerFix(npmPackage.version, serverRange),
+      ),
+    );
   }
 
   /**
@@ -838,6 +921,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
       const validatedPkg = await spinWith(this.isJsonOutput, validateMsg, async () =>
         this.validatePackageJson(pkg, installSpec),
       );
+      if (installType !== INSTALL_TYPE_NPM) {
+        this._warnIfServerIncompatible(installSpec, pkg);
+      }
 
       return this.getInstallationReceipt({
         pkg: validatedPkg,
@@ -1371,6 +1457,27 @@ async function getRemoteExtensionVersionReq(pkgName: string, pkgVer?: string): P
     .flatMap((dep) => Object.entries(dep ?? {}))
     .find(([name]) => name === 'appium');
   return requiredVersionPair ? (requiredVersionPair[1] as string | null) : null;
+}
+
+/**
+ * @param serverVersion exact installed server version
+ * @param serverRange server range declared by an extension that the server does not satisfy
+ * @returns a sentence telling what to do depending on whether the server is too old or too new
+ */
+function describeServerFix(serverVersion: string, serverRange: string): string {
+  if (!semver.validRange(serverRange)) {
+    return `Use a server version matching '${serverRange}'.`;
+  }
+  if (semver.ltr(serverVersion, serverRange, {includePrerelease: true})) {
+    const minServer = semver.minVersion(serverRange)?.version;
+    return minServer
+      ? `Upgrade the server to at least ${minServer}.`
+      : `Use a server version matching '${serverRange}'.`;
+  }
+  return (
+    `The ${serverVersion} server is newer than what the extension supports. Use a server version matching ` +
+    `'${serverRange}' or wait for an extension release that supports ${serverVersion}.`
+  );
 }
 
 /**

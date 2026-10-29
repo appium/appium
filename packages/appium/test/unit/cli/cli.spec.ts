@@ -115,6 +115,9 @@ describe('DriverCommand', function () {
         unsafeUpdate: '2.1.0',
         incompatibleUpdate: {version: '4.0.0', serverRange: '^999.0.0'},
       });
+      // registry lookups must use the same cwd (and thus `.npmrc`) as the version lookups
+      assert.ok(infoStub.args.length > 0);
+      assert.ok(infoStub.args.every((args: unknown[]) => args[2] === appiumHome));
       npmMock.verify();
     });
 
@@ -142,6 +145,32 @@ describe('DriverCommand', function () {
       });
       sinon.assert.neverCalledWith(infoStub, pkgName, ['versions']);
       npmMock.verify();
+    });
+  });
+
+  describe('#_update', function () {
+    it('should report the excluded incompatible version even if a major update is not applied', async function () {
+      const warn = sandbox.stub();
+      (dc as any).log = {
+        info: sandbox.stub(),
+        ok: sandbox.stub(),
+        error: sandbox.stub(),
+        warn,
+        decorate: (m: string) => m,
+      };
+      sandbox.stub(dc as any, 'checkForExtensionUpdate').resolves({
+        current: '1.0.0',
+        safeUpdate: null,
+        unsafeUpdate: '2.0.0',
+        incompatibleUpdate: {version: '3.0.0', serverRange: '^999.0.0'},
+      });
+      const updateStub = sandbox.stub(dc as any, 'updateExtension').resolves();
+      const {updates, errors} = await (dc as any)._update({installSpec: driver, unsafe: false});
+      assert.deepStrictEqual(updates, {});
+      assert.match(errors[driver].message, /has a major revision update/);
+      sinon.assert.notCalled(updateStub);
+      sinon.assert.calledOnce(warn);
+      assert.match(warn.args[0][0], /version 3\.0\.0 .*requires the Appium server \^999\.0\.0/);
     });
   });
 });

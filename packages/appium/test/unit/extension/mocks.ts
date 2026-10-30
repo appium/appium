@@ -38,10 +38,11 @@ export interface MockAppiumSupportSystem {
   isWindows: SinonStub;
 }
 
-/** Stubs for `npm.getLatestVersion`/`getLatestSafeUpgradeVersion`, mocked onto `lib/utils/index.js` (not `@appium/support` — `npm` lives in `lib/utils/npm.ts`). */
+/** Stubs for `npm.getLatestVersion`/`getLatestSafeUpgradeVersion`/`getPackageInfo`, mocked onto `lib/utils/index.js` (not `@appium/support` — `npm` lives in `lib/utils/npm.ts`). */
 export interface MockNpm {
   getLatestVersion: SinonStub;
   getLatestSafeUpgradeVersion: SinonStub;
+  getPackageInfo: SinonStub;
 }
 
 export type MockAppiumSupportUtil = typeof supportUtil & {
@@ -133,6 +134,8 @@ export function initMocks(sandbox = createSandbox()): InitMocksResult {
   const MockNpm: MockNpm = {
     getLatestVersion: sandbox.stub().resolves('2.0.0'),
     getLatestSafeUpgradeVersion: sandbox.stub().resolves('1.1.0'),
+    // no declared server range, so every extension version is compatible
+    getPackageInfo: sandbox.stub().resolves({}),
   };
 
   return {
@@ -168,6 +171,7 @@ export function resetMockDefaults(mocks: InitMocksResult): void {
   MockAppiumSupport.system.isWindows.returns(false);
   MockNpm.getLatestVersion.resolves('2.0.0');
   MockNpm.getLatestSafeUpgradeVersion.resolves('1.1.0');
+  MockNpm.getPackageInfo.resolves({});
   MockAppiumSupport.util.compareVersions.returns(true);
   MockAppiumSupport.console.CliConsole.returns(mocks.sandbox.createStubInstance(supportConsole.CliConsole));
   MockPackageChanged.isPackageChanged.callsFake(async () => ({

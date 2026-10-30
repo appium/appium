@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
-import {createSandbox} from 'sinon';
+import sinon, {createSandbox} from 'sinon';
 
 import DriverCommand from '../../../lib/cli/driver-command.js';
 import {loadExtensions} from '../../../lib/extension/index.js';
@@ -45,9 +45,22 @@ describe('DriverCommand', function () {
 
   describe('#checkForExtensionUpdate', function () {
     let npmMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
+    let infoStub: ReturnType<typeof sandbox.stub>;
+    // the `appium` requirement per extension version; missing means compatible
+    let reqs: Record<string, string>;
+    let stableVersions: string[];
 
     beforeEach(function () {
       npmMock = sandbox.mock(npm);
+      reqs = {};
+      stableVersions = [];
+      infoStub = sandbox.stub(npm, 'getPackageInfo').callsFake((async (spec: string, entries: string[]) => {
+        if (entries.includes('versions')) {
+          return stableVersions;
+        }
+        const req = reqs[spec.slice(pkgName.length + 1)];
+        return req ? {peerDependencies: {appium: req}} : {};
+      }) as any);
     });
 
     function setupDriverUpdate(curVersion: string, latestVersion: string, latestSafeVersion: string | null) {
@@ -65,6 +78,7 @@ describe('DriverCommand', function () {
         current: '1.0.0',
         safeUpdate: '1.1.0',
         unsafeUpdate: null,
+        incompatibleUpdate: null,
       });
       npmMock.verify();
     });
@@ -75,6 +89,7 @@ describe('DriverCommand', function () {
         current: '1.0.0',
         safeUpdate: null,
         unsafeUpdate: '2.0.0',
+        incompatibleUpdate: null,
       });
       npmMock.verify();
     });
@@ -85,8 +100,76 @@ describe('DriverCommand', function () {
         current: '1.0.0',
         safeUpdate: '1.5.3',
         unsafeUpdate: '2.0.0',
+        incompatibleUpdate: null,
       });
       npmMock.verify();
+    });
+
+    it('should fall back to the newest compatible major if the latest one requires a newer server', async function () {
+      setupDriverUpdate('1.0.0', '4.0.0', '1.5.3');
+      stableVersions = ['4.0.0', '3.2.0', '2.1.0', '1.5.3'];
+      reqs = {'4.0.0': '^999.0.0', '3.2.0': '^998.0.0', '2.1.0': '*'};
+      assert.deepStrictEqual(await (dc as any).checkForExtensionUpdate('fake'), {
+        current: '1.0.0',
+        safeUpdate: '1.5.3',
+        unsafeUpdate: '2.1.0',
+        incompatibleUpdate: {version: '4.0.0', serverRange: '^999.0.0'},
+      });
+      // registry lookups must use the same cwd (and thus `.npmrc`) as the version lookups
+      assert.ok(infoStub.args.length > 0);
+      assert.ok(infoStub.args.every((args: unknown[]) => args[2] === appiumHome));
+      npmMock.verify();
+    });
+
+    it('should ignore a server range that cannot be evaluated', async function () {
+      setupDriverUpdate('1.0.0', '2.0.0', null);
+      reqs = {'2.0.0': 'github:appium/appium'};
+      assert.deepStrictEqual(await (dc as any).checkForExtensionUpdate('fake'), {
+        current: '1.0.0',
+        safeUpdate: null,
+        unsafeUpdate: '2.0.0',
+        incompatibleUpdate: null,
+      });
+      npmMock.verify();
+    });
+
+    it('should report the incompatible update if no compatible update exists', async function () {
+      setupDriverUpdate('1.0.0', '2.0.0', null);
+      stableVersions = ['2.0.0', '1.0.0'];
+      reqs = {'2.0.0': '^999.0.0'};
+      assert.deepStrictEqual(await (dc as any).checkForExtensionUpdate('fake'), {
+        current: '1.0.0',
+        safeUpdate: null,
+        unsafeUpdate: null,
+        incompatibleUpdate: {version: '2.0.0', serverRange: '^999.0.0'},
+      });
+      npmMock.verify();
+    });
+  });
+
+  describe('#_update', function () {
+    it('should report the excluded incompatible version even if a major update is not applied', async function () {
+      const warn = sandbox.stub();
+      (dc as any).log = {
+        info: sandbox.stub(),
+        ok: sandbox.stub(),
+        error: sandbox.stub(),
+        warn,
+        decorate: (m: string) => m,
+      };
+      sandbox.stub(dc as any, 'checkForExtensionUpdate').resolves({
+        current: '1.0.0',
+        safeUpdate: null,
+        unsafeUpdate: '2.0.0',
+        incompatibleUpdate: {version: '3.0.0', serverRange: '^999.0.0'},
+      });
+      const updateStub = sandbox.stub(dc as any, 'updateExtension').resolves();
+      const {updates, errors} = await (dc as any)._update({installSpec: driver, unsafe: false});
+      assert.deepStrictEqual(updates, {});
+      assert.match(errors[driver].message, /has a major revision update/);
+      sinon.assert.notCalled(updateStub);
+      sinon.assert.calledOnce(warn);
+      assert.match(warn.args[0][0], /version 3\.0\.0 .*requires the Appium server \^999\.0\.0/);
     });
   });
 });

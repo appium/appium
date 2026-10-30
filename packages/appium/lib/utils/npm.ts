@@ -266,11 +266,12 @@ export class NPM {
    *
    * @param pkg - Npm package spec to query
    * @param entries - Field names to be included into the resulting output. By default all fields are included.
+   * @param cwd - Working directory for npm command, which determines the `.npmrc` that is used
    * @returns Package metadata as a record of string values
    */
-  async getPackageInfo(pkg: string, entries: string[] = []): Promise<StringRecord> {
+  async getPackageInfo(pkg: string, entries: string[] = [], cwd: string = process.cwd()): Promise<StringRecord> {
     const result = await this.exec('info', [pkg, ...entries], {
-      cwd: process.cwd(),
+      cwd,
       json: true,
     });
     return (result.json ?? {}) as StringRecord;

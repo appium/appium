@@ -394,6 +394,70 @@ describe('ExtensionCommand', function () {
         await assert.rejects(findCompatible(), /none of its versions are compatible/);
       });
     });
+
+    describe(`${type} _warnIfServerIncompatible()`, function () {
+      const pkgName = `appium-test-${type}`;
+      let ec: ExtensionCliCommand;
+      let warnStub: SinonStub;
+
+      beforeEach(function () {
+        sandbox = sinon.createSandbox();
+        const manifest = sandbox.createStubInstance(Manifest);
+        warnStub = sandbox.stub();
+        const config = type === 'driver' ? DriverConfig.create(manifest) : PluginConfig.create(manifest);
+        ec =
+          type === 'driver'
+            ? new DriverCliCommand({config: config as any, json: true})
+            : new PluginCliCommand({config: config as any, json: true});
+        (ec as any).log = {decorate: (message: string) => message, info: sandbox.stub(), warn: warnStub};
+      });
+
+      afterEach(function () {
+        sandbox.restore();
+      });
+
+      const warn = (pkg: object) => (ec as any)._warnIfServerIncompatible('/some/path', {name: pkgName, ...pkg});
+
+      it('should warn with the minimum server version if the peer range is not satisfied', function () {
+        warn({peerDependencies: {appium: '^999.1.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(warnStub.args[0][0], /requires the Appium server \^999\.1\.0/);
+        assert.match(warnStub.args[0][0], /at least 999\.1\.0/);
+      });
+
+      it('should not suggest a server upgrade if the server is newer than the supported range', function () {
+        warn({peerDependencies: {appium: '^1.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(
+          warnStub.args[0][0],
+          /Use a server version matching \^1\.0\.0 or wait for an extension release that supports /,
+        );
+        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server/);
+      });
+
+      it('should give a neutral advice if the server falls into a gap of the supported range', function () {
+        warn({peerDependencies: {appium: '^1.0.0 || ^999.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(warnStub.args[0][0], /Use a server version matching \^1\.0\.0 \|\| \^999\.0\.0\.$/);
+        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server|wait for an extension release/);
+      });
+
+      it('should also consider the regular dependency', function () {
+        warn({dependencies: {appium: '^999.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+      });
+
+      it('should not warn if the range is satisfied or not declared', function () {
+        warn({peerDependencies: {appium: '*'}});
+        warn({});
+        sinon.assert.notCalled(warnStub);
+      });
+
+      it('should not warn if the declared value is not a semver range', function () {
+        warn({peerDependencies: {appium: 'github:appium/appium'}});
+        sinon.assert.notCalled(warnStub);
+      });
+    });
   }
 
   describe('injectAppiumSymlinks', function () {

@@ -5,7 +5,7 @@ import type {Application, Express, Request, Response} from 'express';
 import type {BaseDriver} from '../basedriver/driver.js';
 import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
-import {ensureW3cResponse, formatResponseValue} from './helpers.js';
+import {ensureW3cResponse, formatResponseValue, isProtocolResponseEnvelope} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
 import {jsonParseErrors} from './json-parse-error.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
@@ -346,10 +346,12 @@ async function runDriverCommand(
   // Get the protocol after executeCommand
   currentProtocol = extractProtocol(driver, sessionId) || currentProtocol;
 
-  // If `executeCommand` was overridden and the method returns an object
-  // with a protocol and value/error property, re-assign the protocol
-  if (util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol')) {
-    currentProtocol = (driverRes as {protocol?: keyof typeof PROTOCOLS}).protocol || currentProtocol;
+  // A driver may return a protocol envelope (`{protocol, value}` or `{protocol, error}`).
+  // Any other object that happens to contain a `protocol` field is command data.
+  if (isProtocolResponseEnvelope(driverRes)) {
+    if (driverRes.protocol) {
+      currentProtocol = driverRes.protocol;
+    }
     if (driverRes.error) {
       throw driverRes.error;
     }

@@ -35,6 +35,7 @@ export {
   JsonParseErrors,
   jsonParseErrors,
   isErrorType,
+  isProtocolResponseEnvelope,
   isSessionCommand,
   handleIdempotency,
   makeArgs,

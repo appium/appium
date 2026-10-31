@@ -8,6 +8,7 @@ import {
   generateDriverLogPrefix,
   getProxyReq,
   GET_STATUS_COMMAND,
+  isProtocolResponseEnvelope,
   isSessionCommand,
   isW3cCaps,
   LIST_DRIVER_COMMANDS_COMMAND,
@@ -826,10 +827,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdErr = e;
     }
 
-    // Sadly, we don't know exactly what kind of object will be returned. It will either be a bare
-    // object, or a protocol-aware object with protocol and error/value keys. So we need to sniff
-    // it and make sure we don't double-wrap it if it's the latter kind.
-    if (util.isPlainObject(cmdRes) && 'protocol' in cmdRes) {
+    // A command result is either bare data or a protocol envelope. Data may contain its own
+    // `protocol` field, so only the envelope shape is passed through unwrapped.
+    if (isProtocolResponseEnvelope(cmdRes)) {
       Object.assign(res, cmdRes);
     } else {
       res.value = cmdRes;

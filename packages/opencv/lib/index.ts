@@ -455,6 +455,41 @@ export async function getImageOccurrence(
   }
 }
 
+/**
+ * Smallest rectangle that contains every matched point.
+ * No points yields an empty rectangle at the origin. One point yields a zero-size rectangle there.
+ *
+ * @param matchedPoints - Points from one side of a feature match
+ * @returns The bounding rectangle
+ */
+export function calculateMatchedRect(matchedPoints: Point[]): Rect {
+  if (matchedPoints.length === 0) {
+    return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+  }
+
+  let minX = matchedPoints[0].x;
+  let minY = matchedPoints[0].y;
+  let maxX = minX;
+  let maxY = minY;
+  for (const point of matchedPoints) {
+    minX = Math.min(minX, point.x);
+    minY = Math.min(minY, point.y);
+    maxX = Math.max(maxX, point.x);
+    maxY = Math.max(maxY, point.y);
+  }
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
 // Private helper functions
 
 function toMatchingMethod(name: string): number {
@@ -481,34 +516,6 @@ function detectAndCompute(img: any, detector: any): MatchComputationResult {
   return {
     keyPoints,
     descriptor,
-  };
-}
-
-function calculateMatchedRect(matchedPoints: Point[]): Rect {
-  if (matchedPoints.length < 2) {
-    return {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    };
-  }
-
-  let minX = matchedPoints[0].x;
-  let minY = matchedPoints[0].y;
-  let maxX = minX;
-  let maxY = minY;
-  for (const point of matchedPoints) {
-    minX = Math.min(minX, point.x);
-    minY = Math.min(minY, point.y);
-    maxX = Math.max(maxX, point.x);
-    maxY = Math.max(maxY, point.y);
-  }
-  return {
-    x: minX,
-    y: minY,
-    width: maxX - minX,
-    height: maxY - minY,
   };
 }
 

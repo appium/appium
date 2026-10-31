@@ -288,6 +288,16 @@ describe('Protocol', function () {
       assert.deepStrictEqual(data.value, {host: 'example.com'});
     });
 
+    it('should keep a legacy protocol name on the command result', async function () {
+      const legacy = {protocol: 'MJSONWP', value: {host: 'example.com'}};
+      sandbox.stub(driver, 'executeCommand').resolves(legacy);
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, legacy);
+    });
+
     for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
       it(`should preserve optional data in a returned driver error: ${JSON.stringify(errorData)}`, async function () {
         const value = {

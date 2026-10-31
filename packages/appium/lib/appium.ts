@@ -30,7 +30,6 @@ import type {
   Plugin,
   PluginClass,
   PluginCommand,
-  Protocol,
   RouteMatcher,
   StringRecord,
   TimestampedMultiSessionData,
@@ -477,11 +476,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
-    let protocol: Protocol | undefined;
     try {
       const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
       if (dstSession) {
-        protocol = dstSession.protocol;
         this.cleanupBidiSockets(sessionId);
       }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
@@ -491,14 +488,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       }
 
       return {
-        protocol,
+        protocol: PROTOCOLS.W3C,
         value: await dstSession.deleteSession(sessionId),
       };
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       this.log.error(`Had trouble ending session ${sessionId}: ${msg}`);
       return {
-        protocol,
+        protocol: PROTOCOLS.W3C,
         error: e instanceof Error ? e : new Error(msg),
       };
     } finally {
@@ -615,7 +612,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // sure that session actually exists on the session driver, and set the session driver itself
     let sessionId: string | null = null;
     let dstSession: ExternalDriver | null = null;
-    let protocol: string | null | undefined = null;
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let driver: this | ExternalDriver = this;
     if (isSessionCmd) {
@@ -624,8 +620,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (!dstSession) {
         throw new Error(`The session with id '${sessionId}' does not exist`);
       }
-      // now save the response protocol given that the session driver's protocol might differ
-      protocol = dstSession.protocol;
       if (!isUmbrellaCmd) {
         driver = dstSession;
       }
@@ -700,7 +694,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     });
     // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
     // re-enters executeCommand for a different command doesn't inherit and misuse this one
-    const execute = () => withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
+    const execute = () => withoutProxyReq(() => this.executeWrappedCommand(wrappedCmd));
     // Keep the timer suspended through the entire plugin chain, including work after next().
     // Plugins may handle a command themselves or continue processing after the driver returns.
     const res =
@@ -808,13 +802,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /** Runs the wrapped plugin chain and merges the result into a `SessionHandlerResult` shape. */
-  async executeWrappedCommand({
-    wrappedCmd,
-    protocol,
-  }: {
-    wrappedCmd: () => Promise<unknown>;
-    protocol: string | null | undefined;
-  }): Promise<SessionHandlerResult<unknown>> {
+  async executeWrappedCommand(wrappedCmd: () => Promise<unknown>): Promise<SessionHandlerResult<unknown>> {
     let cmdRes: unknown;
     let cmdErr: unknown;
     const res: SessionHandlerResult<unknown> = {};
@@ -827,14 +815,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdErr = e;
     }
 
-    // A command result is either bare data or a protocol envelope. Data may contain its own
+    // A command result is either bare data or a W3C envelope. Data may contain its own
     // `protocol` field, so only the envelope shape is passed through unwrapped.
     if (isProtocolResponseEnvelope(cmdRes)) {
       Object.assign(res, cmdRes);
     } else {
       res.value = cmdRes;
       res.error = cmdErr instanceof Error ? cmdErr : undefined;
-      res.protocol = protocol ?? undefined;
+      res.protocol = PROTOCOLS.W3C;
     }
     return res;
   }

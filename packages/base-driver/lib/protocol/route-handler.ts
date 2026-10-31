@@ -12,7 +12,7 @@ import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {runWithProxyReq} from './proxy-context.js';
 import {tryWdProxy} from './proxy.js';
 import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
-import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './session.js';
+import {getLogger, getSessionId, isSessionCommand} from './session.js';
 import {getCommandValidator} from './validators.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
@@ -97,7 +97,6 @@ function buildHandler(
     let httpStatus = 200;
     let newSessionId: string | undefined;
     const sessionId = getSessionId(driver, req);
-    let currentProtocol = extractProtocol(driver, sessionId);
 
     try {
       logDeprecationWarning(driver, method, path, spec, sessionId);
@@ -143,9 +142,8 @@ function buildHandler(
       );
 
       const result = didPluginOverrideProxy
-        ? await runWithProxyReq(req, () => runDriverCommand(driver, command, args, sessionId, currentProtocol))
-        : await runDriverCommand(driver, command, args, sessionId, currentProtocol);
-      currentProtocol = result.currentProtocol;
+        ? await runWithProxyReq(req, () => runDriverCommand(driver, command, args, sessionId))
+        : await runDriverCommand(driver, command, args, sessionId);
       newSessionId = result.newSessionId;
       httpResBody.value = result.driverRes;
 
@@ -156,14 +154,13 @@ function buildHandler(
           })}`,
       );
     } catch (err) {
-      currentProtocol = currentProtocol || extractProtocol(driver, sessionId || newSessionId);
       [httpStatus, httpResBody] = buildErrorResponse(err, driver, sessionId || newSessionId);
     }
 
     if (newSessionId && abandonIfDisconnected?.()) {
       await deleteAbandonedSession(driver, newSessionId);
     } else {
-      sendHandlerResponse(res, httpStatus, httpResBody, newSessionId, currentProtocol);
+      sendHandlerResponse(res, httpStatus, httpResBody, newSessionId);
     }
     return newSessionId;
   };
@@ -325,33 +322,24 @@ function buildCommandArgs({req, jsonObj, spec, command, validateCommandArguments
 
 interface DriverCommandResult {
   driverRes: any;
-  currentProtocol: keyof typeof PROTOCOLS;
   newSessionId?: string;
 }
 
 /**
- * Runs the driver command and interprets its result: resolves the protocol used for the
- * response, unpacks the createSession/deleteSession special cases, and raises W3C errors
- * embedded in the result value.
+ * Runs the driver command and interprets its result: unpacks the createSession/deleteSession
+ * special cases, and raises W3C errors embedded in the result value.
  */
 async function runDriverCommand(
   driver: Core<any>,
   command: string,
   args: any[],
   sessionId: string | undefined,
-  currentProtocol: keyof typeof PROTOCOLS,
 ): Promise<DriverCommandResult> {
   let driverRes: any = await (driver as BaseDriver<any>).executeCommand(command, ...args);
 
-  // Get the protocol after executeCommand
-  currentProtocol = extractProtocol(driver, sessionId) || currentProtocol;
-
-  // A driver may return a protocol envelope (`{protocol, value}` or `{protocol, error}`).
+  // A driver may return a W3C envelope (`{protocol, value}` or `{protocol, error}`).
   // Any other object that happens to contain a `protocol` field is command data.
   if (isProtocolResponseEnvelope(driverRes)) {
-    if (driverRes.protocol) {
-      currentProtocol = driverRes.protocol;
-    }
     if (driverRes.error) {
       throw driverRes.error;
     }
@@ -363,7 +351,7 @@ async function runDriverCommand(
   if (command === CREATE_SESSION_COMMAND) {
     newSessionId = driverRes[0];
     getLogger(driver, newSessionId).debug(
-      `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
+      `Cached the protocol value '${PROTOCOLS.W3C}' for the new session ${newSessionId}`,
     );
     driverRes = {
       capabilities: driverRes[1],
@@ -392,7 +380,7 @@ async function runDriverCommand(
     );
   }
 
-  return {driverRes, currentProtocol, newSessionId};
+  return {driverRes, newSessionId};
 }
 
 /**
@@ -442,13 +430,13 @@ function sendHandlerResponse(
   httpStatus: number,
   httpResBody: any,
   newSessionId: string | undefined,
-  currentProtocol: keyof typeof PROTOCOLS,
 ): void {
   if (typeof httpResBody === 'string') {
     res.status(httpStatus).setHeader('content-type', 'application/json; charset=utf-8').send(httpResBody);
     return;
   }
-  if (newSessionId && currentProtocol === PROTOCOLS.W3C) {
+  // Appium 4 only writes W3C responses, so the new session id is always part of the body.
+  if (newSessionId) {
     httpResBody.value.sessionId = newSessionId;
   }
   res.status(httpStatus).json(ensureW3cResponse(httpResBody));

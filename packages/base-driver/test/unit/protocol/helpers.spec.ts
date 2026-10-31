@@ -16,7 +16,6 @@ describe('isProtocolResponseEnvelope', function () {
   it('accepts a W3C value or error envelope', function () {
     assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C, value: {host: 'example.com'}}), true);
     assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C, error: new Error('failed')}), true);
-    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.MJSONWP, value: null}), true);
   });
 
   it('accepts the handler wrapper whose protocol has not been set', function () {
@@ -24,6 +23,7 @@ describe('isProtocolResponseEnvelope', function () {
   });
 
   it('rejects objects that only share part of the envelope shape', function () {
+    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.MJSONWP, value: null}), false);
     assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C}), false);
     assert.equal(isProtocolResponseEnvelope({value: {ready: true}}), false);
     assert.equal(isProtocolResponseEnvelope(null), false);

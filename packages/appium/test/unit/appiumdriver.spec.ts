@@ -606,6 +606,21 @@ describe('AppiumDriver', function () {
         }
       });
 
+      for (const scriptResult of [
+        {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'},
+        {protocol: 'https:', value: 'https://example.com/home'},
+      ]) {
+        it(`should return a script result with a protocol field: ${JSON.stringify(scriptResult)}`, async function () {
+          fakeDriver.protocol = 'W3C';
+          sandbox.stub(fakeDriver, 'execute').resolves(scriptResult);
+
+          const result = await appium.executeCommand('execute', 'return window.location', [], SESSION_ID);
+
+          assert.equal(result.protocol, 'W3C');
+          assert.deepStrictEqual(result.value, scriptResult);
+        });
+      }
+
       it('should not leak the ambient proxy request into a command a plugin re-enters via executeCommand', async function () {
         // a plugin handling the outer (proxy-deferred) command, which re-enters dispatch for an
         // unrelated command before deferring to the rest of the chain

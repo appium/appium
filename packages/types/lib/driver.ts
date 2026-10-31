@@ -43,6 +43,7 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   curValue: unknown,
 ) => Promise<void>;
 
+// TODO: Appium 5: remove `MJSONWP`. Responses are always W3C. The member stays so existing drivers can still set `driver.protocol`.
 export type Protocol = 'MJSONWP' | 'W3C';
 
 /**

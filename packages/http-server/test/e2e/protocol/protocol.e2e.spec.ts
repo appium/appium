@@ -263,6 +263,41 @@ describe('Protocol', function () {
       assert.ok(!data.sessionId);
     });
 
+    it('should return a script result that contains a protocol field', async function () {
+      const location = {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'};
+      sandbox.stub(driver, 'executeCommand').resolves(location);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return window.location',
+        args: [],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, location);
+    });
+
+    it('should still unwrap a W3C protocol response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves({
+        protocol: 'W3C',
+        value: {host: 'example.com'},
+      });
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, {host: 'example.com'});
+    });
+
+    it('should keep a legacy protocol name on the command result', async function () {
+      const legacy = {protocol: 'MJSONWP', value: {host: 'example.com'}};
+      sandbox.stub(driver, 'executeCommand').resolves(legacy);
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, legacy);
+    });
+
     for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
       it(`should preserve optional data in a returned driver error: ${JSON.stringify(errorData)}`, async function () {
         const value = {

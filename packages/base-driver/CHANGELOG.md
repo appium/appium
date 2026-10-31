@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.6](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.5...@appium/base-driver@11.0.0-beta.6) (2026-10-31)
+
+### Bug Fixes
+
+* **base-driver:** reject a negative newCommandTimeout ([#23103](https://github.com/appium/appium/issues/23103)) ([e85fe99](https://github.com/appium/appium/commit/e85fe990d59a5b6c49a0cc2c5f2ff0b355f0d96f))
+* **support:** handle circular arrays in getObjectSize ([#23111](https://github.com/appium/appium/issues/23111)) ([efb5217](https://github.com/appium/appium/commit/efb52173ddc5d87206b8366891b836b066e940f2))
+
+
 ## [11.0.0-beta.5](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.4...@appium/base-driver@11.0.0-beta.5) (2026-10-26)
 
 ### ⚠ BREAKING CHANGES

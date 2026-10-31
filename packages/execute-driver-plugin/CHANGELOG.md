@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.6...@appium/execute-driver-plugin@8.0.0-beta.7) (2026-10-31)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
 ## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.5...@appium/execute-driver-plugin@8.0.0-beta.6) (2026-10-26)
 
 ### Bug Fixes

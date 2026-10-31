@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0-beta.6](https://github.com/appium/appium/compare/@appium/opencv@6.0.0-beta.5...@appium/opencv@6.0.0-beta.6) (2026-10-31)
+
+### Bug Fixes
+
+* **images-plugin:** rethrow feature comparison errors besides a missing match ([#23107](https://github.com/appium/appium/issues/23107)) ([9bf6c13](https://github.com/appium/appium/commit/9bf6c13163d02240175c97a58bcfa31711c6b5ef))
+* **opencv:** bound every matched point in getImagesMatches rectangles ([#23120](https://github.com/appium/appium/issues/23120)) ([4a04100](https://github.com/appium/appium/commit/4a04100b3b6e262aa172e3940f794f182610946e))
+
+
 ## [6.0.0-beta.5](https://github.com/appium/appium/compare/@appium/opencv@6.0.0-beta.4...@appium/opencv@6.0.0-beta.5) (2026-10-26)
 
 **Note:** Version bump only for package @appium/opencv

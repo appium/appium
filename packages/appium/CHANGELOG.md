@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.7](https://github.com/appium/appium/compare/appium@4.0.0-beta.6...appium@4.0.0-beta.7) (2026-10-31)
+
+### Bug Fixes
+
+* **appium:** respect server compatibility in extension update and warn on non-npm install ([#23119](https://github.com/appium/appium/issues/23119)) ([80f69e3](https://github.com/appium/appium/commit/80f69e32d87172eaf838819845e8017517acbaf2))
+
+
 ## [4.0.0-beta.6](https://github.com/appium/appium/compare/appium@4.0.0-beta.5...appium@4.0.0-beta.6) (2026-10-26)
 
 ### ⚠ BREAKING CHANGES

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.5...@appium/support@8.0.0-beta.6) (2026-10-31)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** compareVersions() in @appium/support now orders prerelease versions correctly (2.0.0-beta.1 &gt; 1.9.9, 2.0.0-beta.1 &lt; 2.0.0). Before, it returned false for these.
+
+### Features
+
+* **support:** accept removal options in rimraf helpers ([#23105](https://github.com/appium/appium/issues/23105)) ([ed13ec7](https://github.com/appium/appium/commit/ed13ec7c9bfa3793f3b0f414e5f456fdf72d98bf))
+
+### Bug Fixes
+
+* **support:** compare prerelease versions by semantic precedence ([#23116](https://github.com/appium/appium/issues/23116)) ([96c275f](https://github.com/appium/appium/commit/96c275f841a925f4b3b19f7886e1b20c62aeb7f3))
+* **support:** distinguish destinations on different devices ([#23115](https://github.com/appium/appium/issues/23115)) ([e61d420](https://github.com/appium/appium/commit/e61d420d15a3c5fdcd84996ad5686a0fe63b9b58))
+* **support:** handle circular arrays in getObjectSize ([#23111](https://github.com/appium/appium/issues/23111)) ([efb5217](https://github.com/appium/appium/commit/efb52173ddc5d87206b8366891b836b066e940f2))
+* **support:** preserve non-string values in safeJsonParse ([#23110](https://github.com/appium/appium/issues/23110)) ([971fa8b](https://github.com/appium/appium/commit/971fa8b58cf8f8feb27d05f682a32dbb54ee6c00))
+
+
 ## [8.0.0-beta.5](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.4...@appium/support@8.0.0-beta.5) (2026-10-26)
 
 ### ⚠ BREAKING CHANGES

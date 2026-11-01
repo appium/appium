@@ -3,6 +3,7 @@ import type {ExternalDriver} from '@appium/types';
 
 import type {AppiumDriver} from './appium.js';
 import {log as logger} from './logger.js';
+import {kebabCase} from './utils/index.js';
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -44,13 +45,33 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * If anything in the umbrella driver's insecure feature configuration applies to this driver,
  * assign it to the driver instance
  *
- * @param driver
- * @param driverName
+ * @param driver - Driver instance receiving the security configuration.
+ * @param driverName - Installed driver name used to look up the manifest's automationName;
+ * not itself an insecure-feature scope.
  */
 export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
   // the docs tell users to scope a feature with the driver's automationName, which is also what
   // the driver itself compares against in `isFeatureEnabled`
   const automationName = this.driverConfig?.installedExtensions?.[driverName]?.automationName;
+  const knownAutomationNames = new Set(
+    Object.values(this.driverConfig?.installedExtensions ?? {})
+      .map(({automationName}) => automationName?.toLowerCase())
+      .filter(Boolean),
+  );
+  if (automationName) {
+    for (const option of ['allowInsecure', 'denyInsecure'] as const) {
+      const flag = `--${kebabCase(option)}`;
+      for (const feature of this[option]) {
+        const prefix = feature.substring(0, feature.indexOf(FEATURE_NAME_SEPARATOR)).toLowerCase();
+        if (prefix === driverName.toLowerCase() && !knownAutomationNames.has(prefix)) {
+          this.log.warn(
+            `Ignoring ${flag} entry '${feature}': '${driverName}' is an install name. ` +
+              `Use the automationName '${automationName}' as the prefix instead.`,
+          );
+        }
+      }
+    }
+  }
   if (this.relaxedSecurityEnabled) {
     this.log.info(
       `Enabling relaxed security for this session as per the server configuration. ` +
@@ -58,13 +79,13 @@ export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriv
     );
     driver.relaxedSecurityEnabled = true;
   }
-  const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, driverName, automationName);
+  const allowedDriverFeatures = filterInsecureFeatures(this.allowInsecure, automationName);
   if (!util.isEmpty(allowedDriverFeatures)) {
     this.log.info('Explicitly enabling insecure features for this session ' + 'as per the server configuration:');
     allowedDriverFeatures.forEach((a) => this.log.info(`    ${a}`));
     driver.allowInsecure = allowedDriverFeatures;
   }
-  const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, driverName, automationName);
+  const deniedDriverFeatures = filterInsecureFeatures(this.denyInsecure, automationName);
   if (util.isEmpty(deniedDriverFeatures)) {
     return;
   }
@@ -103,17 +124,16 @@ function validateFeatures(features: string[]): string[] {
  * applicable to the given driver.
  * Assumes that all feature names have already been validated
  *
- * The prefix may be the driver's install name or its automationName, which is the one the
- * security guide documents. Both are compared case-insensitively, like the prefix check
- * `isFeatureEnabled` does on the driver side.
+ * The prefix must be the driver's automationName or the wildcard, as documented in the
+ * security guide. Prefixes are compared case-insensitively, matching the driver-side
+ * `isFeatureEnabled` check.
  *
  * @param features
- * @param driverName
  * @param automationName
  */
-function filterInsecureFeatures(features: string[], driverName?: string, automationName?: string): string[] {
+function filterInsecureFeatures(features: string[], automationName?: string): string[] {
   const acceptedPrefixes = new Set(
-    [ALL_DRIVERS_MATCH, driverName, automationName]
+    [ALL_DRIVERS_MATCH, automationName]
       .filter((name): name is string => Boolean(name))
       .map((name) => name.toLowerCase()),
   );

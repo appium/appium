@@ -37,6 +37,10 @@ sessions the feature should apply. The prefix can be either the driver's `automa
 wildcard (`*`) symbol, if the feature should be applied to all drivers. The prefix and feature name
 are separated using the colon character (`:`).
 
+Use the driver's `automationName`, which may differ from its install name. An install-name-only
+prefix does not enable or disable a feature. When configuring a session, Appium warns about such
+entries for that driver unless the prefix is another installed driver's `automationName`.
+
 For example, `first:foo` refers to the `foo` feature for the `first` driver, whereas `*:bar` refers
 to the `bar` feature for all drivers.
 

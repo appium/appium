@@ -31,7 +31,7 @@ export function ensureW3cResponse(responseBody: Record<string, unknown>): Record
   return result;
 }
 
-const RESPONSE_ENVELOPE = Symbol('responseEnvelope');
+const responseEnvelopes = new WeakSet<object>();
 
 type ProtocolResponse = {
   protocol?: typeof PROTOCOLS.W3C | typeof PROTOCOLS.MJSONWP | null;
@@ -42,15 +42,19 @@ type ProtocolResponse = {
 /**
  * Marks a response Appium built. A command result such as `{protocol: 'W3C', value: 5}` is not marked.
  * Only Appium's umbrella driver calls this. A driver returns the value or throws.
+ *
+ * @param envelope - Response object Appium just built
+ * @returns The same object
  */
-export function responseEnvelope<T extends object>(envelope: T): T {
-  (envelope as Record<symbol, unknown>)[RESPONSE_ENVELOPE] = true;
+export function markResponseEnvelope<T extends object>(envelope: T): T {
+  responseEnvelopes.add(envelope);
   return envelope;
 }
 
 /**
  * Whether `value` is a driver response envelope rather than command data.
- * Marked responses qualify, as does `{protocol, error}` when `error` is an Error.
+ * Marked responses qualify, as does `{protocol, error}` when `protocol` is `W3C` or `MJSONWP`
+ * and `error` is an Error.
  * `{protocol: 'W3C', value: 5}` is command data.
  *
  * @param value - Command result or already wrapped handler result
@@ -60,12 +64,12 @@ export function isProtocolResponseEnvelope(value: unknown): value is ProtocolRes
   if (!util.isPlainObject(value)) {
     return false;
   }
-  if ((value as Record<symbol, unknown>)[RESPONSE_ENVELOPE] === true) {
+  if (responseEnvelopes.has(value)) {
     return true;
   }
   if (!(value.error instanceof Error)) {
     return false;
   }
   const protocol = value.protocol;
-  return protocol == null || protocol === PROTOCOLS.W3C || protocol === PROTOCOLS.MJSONWP;
+  return protocol === PROTOCOLS.W3C || protocol === PROTOCOLS.MJSONWP;
 }

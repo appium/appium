@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {errors, responseEnvelope, WebDriverProxy} from '@appium/base-driver';
+import {errors, markResponseEnvelope, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import type {Application, Request, Response} from 'express';
@@ -278,7 +278,7 @@ describe('Protocol', function () {
 
     it('should still unwrap a W3C protocol response envelope', async function () {
       sandbox.stub(driver, 'executeCommand').resolves(
-        responseEnvelope({
+        markResponseEnvelope({
           protocol: 'W3C',
           value: {host: 'example.com'},
         }),

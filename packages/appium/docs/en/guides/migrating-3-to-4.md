@@ -460,7 +460,8 @@ Beyond the removed endpoints above, the internal machinery that translated betwe
   module was removed)
 * A command result shaped like `{protocol, value}` is no longer unwrapped. It is sent to the
   client as the command value, so a script returning `{protocol: 'W3C', value: 5}` gets that object
-  back. A result of `{protocol, error}` whose `error` is an `Error` is still thrown
+  back. A result of `{protocol, error}` whose `protocol` is `W3C` or `MJSONWP` and whose `error`
+  is an `Error` is still thrown
 
 !!! info "Actions Needed"
 

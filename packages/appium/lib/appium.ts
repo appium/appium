@@ -9,7 +9,7 @@ import {
   getProxyReq,
   GET_STATUS_COMMAND,
   isProtocolResponseEnvelope,
-  responseEnvelope,
+  markResponseEnvelope,
   isSessionCommand,
   isW3cCaps,
   LIST_DRIVER_COMMANDS_COMMAND,
@@ -421,13 +421,13 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
         }
       }
-      return responseEnvelope({
+      return markResponseEnvelope({
         protocol,
         error: error instanceof Error ? error : new Error(String(error)),
       });
     }
 
-    return responseEnvelope({
+    return markResponseEnvelope({
       protocol,
       value: [innerSessionId, dCaps, protocol],
     });
@@ -488,14 +488,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         throw new Error('Session not found');
       }
 
-      return responseEnvelope({
+      return markResponseEnvelope({
         protocol: PROTOCOLS.W3C,
         value: await dstSession.deleteSession(sessionId),
       });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       this.log.error(`Had trouble ending session ${sessionId}: ${msg}`);
-      return responseEnvelope({
+      return markResponseEnvelope({
         protocol: PROTOCOLS.W3C,
         error: e instanceof Error ? e : new Error(msg),
       });
@@ -824,7 +824,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       res.error = cmdErr instanceof Error ? cmdErr : undefined;
       res.protocol = PROTOCOLS.W3C;
     }
-    return responseEnvelope(res);
+    return markResponseEnvelope(res);
   }
 
   /** Whether the inner session driver is actively proxying for this session id. */

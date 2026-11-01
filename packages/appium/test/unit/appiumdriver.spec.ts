@@ -1,11 +1,14 @@
 import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
 import type {AddressInfo} from 'node:net';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import {BaseDriver, getResponseForW3CError, runWithProxyReq} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
 import {FakeDriver} from '@appium/fake-driver';
-import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+import type {Capabilities, Constraints, DriverClass, NSCapabilities, W3CCapabilities} from '@appium/types';
 import {sleep} from 'asyncbox';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
 import {createSandbox, stub} from 'sinon';
@@ -13,6 +16,8 @@ import {WebSocket, WebSocketServer} from 'ws';
 
 import type * as AppiumModule from '../../lib/appium.js';
 import {CORS_FEATURE, PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
+import {DriverConfig} from '../../lib/extension/driver-config.js';
+import {Manifest} from '../../lib/extension/manifest/manifest.js';
 import * as buildInfoModule from '../../lib/helpers/build.js';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability.js';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
@@ -750,7 +755,7 @@ describe('AppiumDriver', function () {
       }
 
       for (const option of ['allowInsecure', 'denyInsecure'] as const) {
-        it(`should not assign or log install-name entries in ${option}`, async function () {
+        it(`should preserve permission decisions and warn instead of logging install-name ${option} entries as applied`, async function () {
           const logs: string[] = [];
           fakeDriver = await getDriverInstance(
             {[option]: ['my-driver:foo'], relaxedSecurityEnabled: option === 'denyInsecure'},
@@ -790,6 +795,97 @@ describe('AppiumDriver', function () {
         assert.equal(fakeDriver.isFeatureEnabled('foo'), false);
         assert.equal(fakeDriver.isFeatureEnabled('bar'), true);
         assert.equal(fakeDriver.isFeatureEnabled('baz'), false);
+      });
+    });
+    describe('insecure features with driver resolution', function () {
+      for (const {name, args, enabled, warning} of [
+        {name: 'automationName allow', args: {allowInsecure: ['MYAUTOMATION:foo']}, enabled: true, warning: false},
+        {
+          name: 'automationName deny',
+          args: {relaxedSecurityEnabled: true, denyInsecure: ['MyAutomation:foo']},
+          enabled: false,
+          warning: false,
+        },
+        {name: 'install-name allow', args: {allowInsecure: ['MY-DRIVER:foo']}, enabled: false, warning: true},
+        {
+          name: 'install-name deny',
+          args: {relaxedSecurityEnabled: true, denyInsecure: ['my-driver:foo']},
+          enabled: true,
+          warning: true,
+        },
+        {
+          name: 'wildcard deny',
+          args: {relaxedSecurityEnabled: true, denyInsecure: ['*:foo']},
+          enabled: false,
+          warning: false,
+        },
+        {name: 'unrelated scope', args: {allowInsecure: ['other:foo']}, enabled: false, warning: false},
+      ]) {
+        it(`should resolve the manifest and preserve permission decisions for ${name}`, async function () {
+          const manifest = Manifest.getInstance(join(tmpdir(), `appium-security-${randomUUID()}`));
+          manifest.setExtension('driver', 'my-driver', {
+            pkgName: 'appium-probe-driver',
+            automationName: 'MyAutomation',
+            mainClass: 'ProbeDriver',
+            platformNames: ['TestOS'],
+            version: '1.0.0',
+            installSpec: 'appium-probe-driver',
+            installType: 'npm',
+            installPath: '/unused',
+          });
+          class ProbeDriver extends BaseDriver<Constraints> {}
+          const config = DriverConfig.create(manifest);
+          // Replace package loading only; matching and session creation use their real implementations.
+          sandbox.stub(config, 'requireAsync').resolves(ProbeDriver as unknown as DriverClass);
+          const appium = new AppiumDriver(args as unknown as ConstructorParameters<typeof AppiumDriver>[0]);
+          const warn = sandbox.stub(appium.log, 'warn');
+          appium.driverConfig = config;
+          appium.configureGlobalFeatures();
+          try {
+            await appium.createSession({
+              alwaysMatch: {
+                platformName: 'TestOS',
+                'appium:automationName': 'MyAutomation',
+                'appium:newCommandTimeout': 0,
+              },
+              firstMatch: [{}],
+            });
+            const [driver] = Object.values(appium.sessions);
+            assert.ok(driver);
+            assert.equal(driver.opts.automationName, 'MyAutomation');
+            assert.equal(driver.isFeatureEnabled('foo'), enabled);
+            if (enabled) {
+              assert.doesNotThrow(() => driver.assertFeatureEnabled('foo'));
+            } else {
+              assert.throws(() => driver.assertFeatureEnabled('foo'), /foo/);
+            }
+            const scopeWarnings = warn.args.filter(([message]) => String(message).includes('is an install name'));
+            assert.equal(scopeWarnings.length, warning ? 1 : 0);
+            if (warning) {
+              assert.match(String(scopeWarnings[0][0]), /Use the automationName 'MyAutomation'/);
+            }
+          } finally {
+            await appium.deleteAllSessions();
+          }
+        });
+      }
+
+      it('should not warn when an install name is another installed driver automationName', function () {
+        const appium = new AppiumDriver({denyInsecure: ['my-driver:foo']} as ConstructorParameters<
+          typeof AppiumDriver
+        >[0]);
+        const warn = sandbox.stub(appium.log, 'warn');
+        (appium as any).driverConfig = {
+          installedExtensions: {
+            'my-driver': {automationName: 'MyAutomation'},
+            other: {automationName: 'MY-DRIVER'},
+          },
+        };
+        appium.configureGlobalFeatures();
+        const driver = new BaseDriver();
+        appium.configureDriverFeatures(driver, 'my-driver');
+        assert.equal(warn.called, false);
+        assert.deepStrictEqual(driver.denyInsecure, []);
       });
     });
     describe('getAppiumSessions', function () {

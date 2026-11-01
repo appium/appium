@@ -44,13 +44,35 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * If anything in the umbrella driver's insecure feature configuration applies to this driver,
  * assign it to the driver instance
  *
- * @param driver
- * @param driverName
+ * @param driver - Driver instance receiving the security configuration.
+ * @param driverName - Installed driver name used to look up the manifest's automationName;
+ * not itself an insecure-feature scope.
  */
 export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
   // the docs tell users to scope a feature with the driver's automationName, which is also what
   // the driver itself compares against in `isFeatureEnabled`
   const automationName = this.driverConfig?.installedExtensions?.[driverName]?.automationName;
+  const knownAutomationNames = new Set(
+    Object.values(this.driverConfig?.installedExtensions ?? {})
+      .map(({automationName}) => automationName?.toLowerCase())
+      .filter(Boolean),
+  );
+  if (automationName) {
+    for (const [option, flag] of [
+      ['allowInsecure', '--allow-insecure'],
+      ['denyInsecure', '--deny-insecure'],
+    ] as const) {
+      for (const feature of this[option]) {
+        const prefix = feature.substring(0, feature.indexOf(FEATURE_NAME_SEPARATOR)).toLowerCase();
+        if (prefix === driverName.toLowerCase() && !knownAutomationNames.has(prefix)) {
+          this.log.warn(
+            `Ignoring ${flag} entry '${feature}': '${driverName}' is an install name. ` +
+              `Use the automationName '${automationName}' as the prefix instead.`,
+          );
+        }
+      }
+    }
+  }
   if (this.relaxedSecurityEnabled) {
     this.log.info(
       `Enabling relaxed security for this session as per the server configuration. ` +

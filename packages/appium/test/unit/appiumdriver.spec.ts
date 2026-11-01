@@ -671,11 +671,16 @@ describe('AppiumDriver', function () {
 
       async function getDriverInstance(
         appiumArgs: any,
-        {driverName = 'fake', automationName = 'Fake'} = {},
+        {driverName = 'fake', automationName = 'Fake', logs = [] as string[]} = {},
       ): Promise<FakeDriver> {
         appium = new AppiumDriver(appiumArgs);
+        sandbox.stub(appium.log, 'info').callsFake((message) => {
+          logs.push(String(message));
+        });
         appium.configureGlobalFeatures();
         const fakeDriver = new FakeDriver();
+        // createSession is mocked below, so set the name used by feature checks explicitly.
+        fakeDriver.opts.automationName = automationName;
         const mockFakeDriver = sandbox.mock(fakeDriver);
         const mockedDriverReturnerClass = function Driver() {
           return fakeDriver;
@@ -721,7 +726,7 @@ describe('AppiumDriver', function () {
         assert.deepStrictEqual(fakeDriver.allowInsecure, ['*:foo']);
         assert.deepStrictEqual(fakeDriver.denyInsecure, ['*:bar']);
       });
-      it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
+      it(`should apply driver-scope insecure features only if the automationName matches`, async function () {
         fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
         assert.deepStrictEqual(fakeDriver.allowInsecure, ['fake:foo']);
       });
@@ -743,6 +748,49 @@ describe('AppiumDriver', function () {
         });
         assert.deepStrictEqual(fakeDriver.allowInsecure, ['FAKE:foo']);
         assert.deepStrictEqual(fakeDriver.denyInsecure, ['Fake:bar']);
+      });
+
+      for (const option of ['allowInsecure', 'denyInsecure'] as const) {
+        it(`should not assign or log install-name entries in ${option}`, async function () {
+          const logs: string[] = [];
+          fakeDriver = await getDriverInstance(
+            {[option]: ['my-driver:foo'], relaxedSecurityEnabled: option === 'denyInsecure'},
+            {driverName: 'my-driver', automationName: 'MyAutomation', logs},
+          );
+          assert.deepStrictEqual(fakeDriver[option], []);
+          assert.equal(
+            logs.some((message) => message.includes('my-driver:foo')),
+            false,
+          );
+          assert.equal(
+            logs.some((message) => message.includes('Explicitly')),
+            false,
+          );
+          assert.equal(fakeDriver.isFeatureEnabled('foo'), option === 'denyInsecure');
+        });
+      }
+
+      it(`should log and apply automationName and wildcard entries when the install name differs`, async function () {
+        const logs: string[] = [];
+        fakeDriver = await getDriverInstance(
+          {
+            allowInsecure: ['my-driver:unused', 'MYAUTOMATION:foo', '*:bar'],
+            denyInsecure: ['my-driver:unused', 'myautomation:foo', '*:baz'],
+          },
+          {driverName: 'my-driver', automationName: 'MyAutomation', logs},
+        );
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['MYAUTOMATION:foo', '*:bar']);
+        assert.deepStrictEqual(fakeDriver.denyInsecure, ['myautomation:foo', '*:baz']);
+        assert.equal(
+          logs.some((message) => message.includes('my-driver:unused')),
+          false,
+        );
+        for (const feature of ['MYAUTOMATION:foo', '*:bar', 'myautomation:foo', '*:baz']) {
+          assert.ok(logs.some((message) => message.trim() === feature));
+        }
+        assert.equal(fakeDriver.isFeatureEnabled('foo'), false);
+        assert.equal(fakeDriver.isFeatureEnabled('bar'), true);
+        assert.equal(fakeDriver.isFeatureEnabled('baz'), false);
       });
     });
     describe('getAppiumSessions', function () {

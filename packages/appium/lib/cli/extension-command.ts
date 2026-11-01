@@ -534,11 +534,9 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
         if (!updateVer) {
           throw new NoUpdatesAvailableError();
         }
-        await spinWith(
-          this.isJsonOutput,
-          `Updating ${this.type} '${e}' from ${update.current} to ${updateVer}`,
-          async () => await this.updateExtension(e, updateVer),
-        );
+        // `updateExtension` calls `spinWith`, so do not wrap it in a `spinWith` of its own
+        this.log.info(`Updating ${this.type} '${e}' from ${update.current} to ${updateVer}`);
+        await this.updateExtension(e, updateVer);
         // if we're doing a safe update, but an unsafe update is also available, let the user know
         if (!unsafe && update.unsafeUpdate) {
           const newMajorUpdateMsg =
@@ -956,7 +954,11 @@ export abstract class ExtensionCliCommand<ExtType extends ExtensionType = Extens
             void pluginName;
             return rest;
           })(extData as ExtInstallReceipt<'plugin'>);
-    await this.config.updateExtension(installSpec, extManifest as any);
+    await spinWith(
+      this.isJsonOutput,
+      `Updating the list of installed ${this.type === 'driver' ? 'drivers' : 'plugins'}`,
+      async () => await this.config.updateExtension(installSpec, extManifest as any),
+    );
   }
 
   /**

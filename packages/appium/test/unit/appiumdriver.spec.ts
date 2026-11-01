@@ -718,37 +718,36 @@ describe('AppiumDriver', function () {
         fakeDriver = await getDriverInstance({relaxedSecurityEnabled: true});
         assert.strictEqual(fakeDriver.relaxedSecurityEnabled, true);
       });
-      it(`should apply global-scope insecure features`, async function () {
-        fakeDriver = await getDriverInstance({
-          allowInsecure: ['*:foo'],
-          denyInsecure: ['*:bar'],
-        });
-        assert.deepStrictEqual(fakeDriver.allowInsecure, ['*:foo']);
-        assert.deepStrictEqual(fakeDriver.denyInsecure, ['*:bar']);
-      });
-      it(`should apply driver-scope insecure features only if the automationName matches`, async function () {
-        fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
-        assert.deepStrictEqual(fakeDriver.allowInsecure, ['fake:foo']);
-      });
-
-      it(`should apply driver-scope features when the prefix is the automationName`, async function () {
-        // the docs tell users to prefix with the automationName, which does not have to be
-        // the name the driver is installed under
-        fakeDriver = await getDriverInstance(
-          {allowInsecure: ['MyAutomation:foo', 'real:bar']},
-          {driverName: 'my-driver', automationName: 'MyAutomation'},
-        );
-        assert.deepStrictEqual(fakeDriver.allowInsecure, ['MyAutomation:foo']);
-      });
-
-      it(`should match the feature prefix case-insensitively`, async function () {
-        fakeDriver = await getDriverInstance({
-          allowInsecure: ['FAKE:foo'],
-          denyInsecure: ['Fake:bar'],
-        });
-        assert.deepStrictEqual(fakeDriver.allowInsecure, ['FAKE:foo']);
-        assert.deepStrictEqual(fakeDriver.denyInsecure, ['Fake:bar']);
-      });
+      for (const {name, features, expected, driverNames} of [
+        {
+          name: 'apply global-scope insecure features',
+          features: ['*:foo'],
+          expected: ['*:foo'],
+        },
+        {
+          name: 'apply driver-scope insecure features only if the automationName matches',
+          features: ['fake:foo', 'real:bar'],
+          expected: ['fake:foo'],
+        },
+        {
+          name: 'apply automationName-scoped features when the install name differs',
+          features: ['MyAutomation:foo', 'real:bar'],
+          expected: ['MyAutomation:foo'],
+          driverNames: {driverName: 'my-driver', automationName: 'MyAutomation'},
+        },
+        {
+          name: 'match the feature prefix case-insensitively',
+          features: ['FAKE:foo', 'Fake:bar'],
+          expected: ['FAKE:foo', 'Fake:bar'],
+        },
+      ]) {
+        for (const option of ['allowInsecure', 'denyInsecure'] as const) {
+          it(`should ${name} in ${option}`, async function () {
+            fakeDriver = await getDriverInstance({[option]: features}, driverNames);
+            assert.deepStrictEqual(fakeDriver[option], expected);
+          });
+        }
+      }
 
       for (const option of ['allowInsecure', 'denyInsecure'] as const) {
         it(`should not assign or log install-name entries in ${option}`, async function () {

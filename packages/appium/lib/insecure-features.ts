@@ -3,6 +3,7 @@ import type {ExternalDriver} from '@appium/types';
 
 import type {AppiumDriver} from './appium.js';
 import {log as logger} from './logger.js';
+import {kebabCase} from './utils/index.js';
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -58,10 +59,8 @@ export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriv
       .filter(Boolean),
   );
   if (automationName) {
-    for (const [option, flag] of [
-      ['allowInsecure', '--allow-insecure'],
-      ['denyInsecure', '--deny-insecure'],
-    ] as const) {
+    for (const option of ['allowInsecure', 'denyInsecure'] as const) {
+      const flag = `--${kebabCase(option)}`;
       for (const feature of this[option]) {
         const prefix = feature.substring(0, feature.indexOf(FEATURE_NAME_SEPARATOR)).toLowerCase();
         if (prefix === driverName.toLowerCase() && !knownAutomationNames.has(prefix)) {

@@ -214,8 +214,22 @@ export class Manifest {
       cwd: this.#appiumHome,
       absolute: true,
     });
+    const seen = new Set(filepaths);
     for (const filepath of filepaths) {
       queue.push(onMatch(filepath));
+    }
+
+    // In monorepos, package managers hoist dependencies to the workspace root's
+    // `node_modules`, which the `APPIUM_HOME` glob above does not cover. Resolve
+    // extensions declared by the package in the current working directory using
+    // Node's own resolution algorithm, which walks up through parent
+    // `node_modules` directories and therefore finds hoisted packages.
+    // See https://github.com/appium/appium/issues/19819
+    for (const filepath of await this.#resolveCwdExtensionPackageJsons()) {
+      if (!seen.has(filepath)) {
+        seen.add(filepath);
+        queue.push(onMatch(filepath));
+      }
     }
 
     await Promise.all(queue);
@@ -335,6 +349,38 @@ export class Manifest {
     }
 
     return this.#manifestPath;
+  }
+
+  /**
+   * Resolves the `package.json` paths of packages declared as dependencies of
+   * the package in the current working directory.
+   *
+   * Uses Node's own resolution algorithm, which walks up through parent
+   * `node_modules` directories, so dependencies hoisted to a monorepo
+   * workspace root are found. Unresolvable packages, and packages that do not
+   * export `./package.json`, are silently skipped; non-extension packages are
+   * filtered out later by the `onMatch` handler in
+   * {@link Manifest.syncWithInstalledExtensions}.
+   *
+   * @returns absolute paths of resolvable `package.json` files
+   */
+  async #resolveCwdExtensionPackageJsons(): Promise<string[]> {
+    const filepaths: string[] = [];
+    const cwd = process.cwd();
+    let pkg: {dependencies?: Record<string, string>; devDependencies?: Record<string, string>};
+    try {
+      pkg = JSON.parse(await fs.readFile(path.join(cwd, 'package.json'), 'utf8'));
+    } catch {
+      return filepaths;
+    }
+    for (const name of Object.keys({...pkg?.dependencies, ...pkg?.devDependencies})) {
+      try {
+        filepaths.push(require.resolve(`${name}/package.json`, {paths: [cwd]}));
+      } catch {
+        // ignore packages that cannot be resolved or do not export `./package.json`
+      }
+    }
+    return filepaths;
   }
 }
 

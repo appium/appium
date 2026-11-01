@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {describe, it, beforeEach, afterEach, before} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
 import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
-import type {SinonSandbox} from 'sinon';
+import type {SinonSandbox, SinonStub} from 'sinon';
 
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {APPIUM_VER} from '../../../lib/helpers/build';
@@ -494,6 +496,91 @@ describe('Manifest', function () {
         });
         it('should reject', async function () {
           await assert.rejects(manifest.syncWithInstalledExtensions(), /bogus/);
+        });
+      });
+
+      describe('when run from a monorepo workspace with hoisted dependencies (#19819)', function () {
+        let tmpRoot: string;
+        let tmpApp: string;
+        const driverPkg = {
+          name: 'fake-driver',
+          version: '1.0.0',
+          appium: {
+            automationName: 'fake',
+            mainClass: 'FakeDriver',
+            platformNames: ['Fake OS'],
+            driverName: 'fakeDriver',
+          },
+          peerDependencies: {
+            appium: '2.0.0',
+          },
+        };
+
+        beforeEach(async function () {
+          // Build a fake monorepo: the driver is hoisted to the workspace
+          // root's `node_modules`, while the command runs from `packages/my-app`.
+          tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-monorepo-'));
+          tmpApp = path.join(tmpRoot, 'packages', 'my-app');
+          await fs.mkdir(path.join(tmpRoot, 'node_modules', 'fake-driver'), {recursive: true});
+          await fs.mkdir(path.join(tmpRoot, 'node_modules', 'not-a-driver'), {recursive: true});
+          await fs.mkdir(tmpApp, {recursive: true});
+          await fs.writeFile(
+            path.join(tmpRoot, 'node_modules', 'fake-driver', 'package.json'),
+            JSON.stringify(driverPkg),
+          );
+          await fs.writeFile(
+            path.join(tmpRoot, 'node_modules', 'not-a-driver', 'package.json'),
+            JSON.stringify({name: 'not-a-driver', version: '1.0.0'}),
+          );
+          sandbox.stub(process, 'cwd').returns(tmpApp);
+          MockAppiumSupport.fs.readFile.callsFake(async (filepath: string) => {
+            if (filepath === path.join(tmpApp, 'package.json')) {
+              return JSON.stringify({
+                name: 'my-app',
+                version: '1.0.0',
+                devDependencies: {'fake-driver': '1.0.0', 'not-a-driver': '1.0.0'},
+              });
+            }
+            if (filepath === path.join(tmpRoot, 'node_modules', 'fake-driver', 'package.json')) {
+              return JSON.stringify(driverPkg);
+            }
+            if (filepath === path.join(tmpRoot, 'node_modules', 'not-a-driver', 'package.json')) {
+              return JSON.stringify({name: 'not-a-driver', version: '1.0.0'});
+            }
+            return '{}';
+          });
+        });
+
+        afterEach(async function () {
+          await fs.rm(tmpRoot, {recursive: true, force: true});
+        });
+
+        it('should discover drivers hoisted to the workspace root', async function () {
+          await manifest.syncWithInstalledExtensions();
+          const drivers = manifest.getExtensionData(DRIVER_TYPE);
+          assert.ok(Object.hasOwn(drivers, 'fakeDriver'));
+          assert.strictEqual(
+            drivers.fakeDriver.installPath,
+            path.join(tmpRoot, 'node_modules', 'fake-driver'),
+          );
+        });
+
+        it('should ignore dependencies that are not Appium extensions', async function () {
+          await manifest.syncWithInstalledExtensions();
+          const drivers = manifest.getExtensionData(DRIVER_TYPE);
+          assert.ok(Object.hasOwn(drivers, 'fakeDriver'));
+          assert.strictEqual(Object.keys(drivers).length, 1);
+        });
+
+        it('should do nothing when the working directory has no package.json', async function () {
+          const emptyDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-empty-'));
+          try {
+            (process.cwd as SinonStub).returns(emptyDir);
+            await manifest.syncWithInstalledExtensions();
+            assert.deepStrictEqual(manifest.getExtensionData(DRIVER_TYPE), {});
+          } finally {
+            await fs.rm(emptyDir, {recursive: true, force: true});
+          }
         });
       });
     });

@@ -53,4 +53,10 @@ describe('isProtocolResponseEnvelope', function () {
     };
     assert.equal(isProtocolResponseEnvelope(fromAnotherCopy), true);
   });
+
+  it('rejects a marker whose value is not true', function () {
+    const symbol = Symbol.for('appium.responseEnvelope');
+    assert.equal(isProtocolResponseEnvelope({[symbol]: false, value: {host: 'example.com'}}), false);
+    assert.equal(isProtocolResponseEnvelope({[symbol]: undefined, protocol: PROTOCOLS.W3C, value: 5}), false);
+  });
 });

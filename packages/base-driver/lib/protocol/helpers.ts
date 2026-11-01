@@ -78,7 +78,8 @@ export function isProtocolResponseEnvelope(value: unknown): value is ProtocolRes
   if (!util.isPlainObject(value)) {
     return false;
   }
-  if (responseEnvelopes.has(value) || Object.hasOwn(value, RESPONSE_ENVELOPE)) {
+  const marker = Object.getOwnPropertyDescriptor(value, RESPONSE_ENVELOPE);
+  if (responseEnvelopes.has(value) || marker?.value === true) {
     return true;
   }
   if (!(value.error instanceof Error)) {

@@ -31,6 +31,10 @@ export function ensureW3cResponse(responseBody: Record<string, unknown>): Record
   return result;
 }
 
+/** Shared by every copy of this package. Enumerable so a spread or `Object.assign` clone keeps it. */
+const RESPONSE_ENVELOPE = Symbol.for('appium.responseEnvelope');
+
+/** Frozen objects cannot take the symbol. This copy still remembers them. */
 const responseEnvelopes = new WeakSet<object>();
 
 type ProtocolResponse = {
@@ -42,12 +46,22 @@ type ProtocolResponse = {
 /**
  * Marks a response Appium built. A command result such as `{protocol: 'W3C', value: 5}` is not marked.
  * Only Appium's umbrella driver calls this. A driver returns the value or throws.
+ * The mark is visible to another copy of this package, and to a spread or `Object.assign` clone.
+ * A frozen object is remembered only by this copy.
  *
  * @param envelope - Response object Appium just built
  * @returns The same object
  */
 export function markResponseEnvelope<T extends object>(envelope: T): T {
   responseEnvelopes.add(envelope);
+  try {
+    Object.defineProperty(envelope, RESPONSE_ENVELOPE, {
+      value: true,
+      enumerable: true,
+    });
+  } catch {
+    // frozen or sealed
+  }
   return envelope;
 }
 
@@ -64,7 +78,7 @@ export function isProtocolResponseEnvelope(value: unknown): value is ProtocolRes
   if (!util.isPlainObject(value)) {
     return false;
   }
-  if (responseEnvelopes.has(value)) {
+  if (responseEnvelopes.has(value) || Object.hasOwn(value, RESPONSE_ENVELOPE)) {
     return true;
   }
   if (!(value.error instanceof Error)) {

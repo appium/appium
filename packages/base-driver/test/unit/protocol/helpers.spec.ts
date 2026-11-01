@@ -40,4 +40,17 @@ describe('isProtocolResponseEnvelope', function () {
     const envelope = Object.freeze({protocol: PROTOCOLS.W3C, value: 5});
     assert.equal(isProtocolResponseEnvelope(markResponseEnvelope(envelope)), true);
   });
+
+  it('keeps the mark on a clone and across copies of the package', function () {
+    const envelope = markResponseEnvelope({protocol: PROTOCOLS.W3C, value: ['sid', {}]});
+    assert.equal(isProtocolResponseEnvelope({...envelope}), true);
+    assert.equal(isProtocolResponseEnvelope(Object.assign({}, envelope)), true);
+
+    const fromAnotherCopy = {
+      [Symbol.for('appium.responseEnvelope')]: true,
+      protocol: PROTOCOLS.W3C,
+      value: ['sid', {}],
+    };
+    assert.equal(isProtocolResponseEnvelope(fromAnotherCopy), true);
+  });
 });

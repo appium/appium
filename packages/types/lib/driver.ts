@@ -43,7 +43,9 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   curValue: unknown,
 ) => Promise<void>;
 
-// TODO: Appium 5: remove `MJSONWP`. `driver.protocol` is ignored. Responses are always W3C.
+/**
+ * @deprecated Ignored. Responses are always W3C. Removed in Appium 5.
+ */
 export type Protocol = 'MJSONWP' | 'W3C';
 
 /**
@@ -57,6 +59,9 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   sessionCreationTimestampMs: number;
   opts: DriverOpts<C>;
   initialOpts: InitialOpts;
+  /**
+   * @deprecated Ignored. Responses are always W3C. Removed in Appium 5.
+   */
   protocol?: Protocol;
   helpers: DriverHelpers;
   basePath: string;

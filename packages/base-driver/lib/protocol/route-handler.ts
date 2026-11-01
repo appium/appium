@@ -3,7 +3,7 @@ import type {Constraints, Core, Driver, DriverMethodDef, ExternalDriver, MethodM
 import type {Application, Express, Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
-import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH} from '../constants.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
 import {ensureW3cResponse, formatResponseValue, isProtocolResponseEnvelope} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
@@ -337,8 +337,8 @@ async function runDriverCommand(
 ): Promise<DriverCommandResult> {
   let driverRes: any = await (driver as BaseDriver<any>).executeCommand(command, ...args);
 
-  // A driver may return a W3C envelope (`{protocol, value}` or `{protocol, error}`).
-  // Any other object that happens to contain a `protocol` field is command data.
+  // A marked envelope, or `{protocol, error}` when `error` is an Error.
+  // `{protocol: 'W3C', value}` is command data.
   if (isProtocolResponseEnvelope(driverRes)) {
     if (driverRes.error) {
       throw driverRes.error;
@@ -350,9 +350,6 @@ async function runDriverCommand(
   // unpack createSession response
   if (command === CREATE_SESSION_COMMAND) {
     newSessionId = driverRes[0];
-    getLogger(driver, newSessionId).debug(
-      `Cached the protocol value '${PROTOCOLS.W3C}' for the new session ${newSessionId}`,
-    );
     driverRes = {
       capabilities: driverRes[1],
     };
@@ -436,7 +433,7 @@ function sendHandlerResponse(
     return;
   }
   // Appium 4 only writes W3C responses, so the new session id is always part of the body.
-  if (newSessionId) {
+  if (newSessionId && util.isPlainObject(httpResBody.value)) {
     httpResBody.value.sessionId = newSessionId;
   }
   res.status(httpStatus).json(ensureW3cResponse(httpResBody));

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {errors, WebDriverProxy} from '@appium/base-driver';
+import {errors, responseEnvelope, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import type {Application, Request, Response} from 'express';
@@ -277,10 +277,12 @@ describe('Protocol', function () {
     });
 
     it('should still unwrap a W3C protocol response envelope', async function () {
-      sandbox.stub(driver, 'executeCommand').resolves({
-        protocol: 'W3C',
-        value: {host: 'example.com'},
-      });
+      sandbox.stub(driver, 'executeCommand').resolves(
+        responseEnvelope({
+          protocol: 'W3C',
+          value: {host: 'example.com'},
+        }),
+      );
 
       const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
 
@@ -288,14 +290,30 @@ describe('Protocol', function () {
       assert.deepStrictEqual(data.value, {host: 'example.com'});
     });
 
-    it('should keep a legacy protocol name on the command result', async function () {
-      const legacy = {protocol: 'MJSONWP', value: {host: 'example.com'}};
-      sandbox.stub(driver, 'executeCommand').resolves(legacy);
+    it('should return a command result whose protocol is W3C', async function () {
+      const result = {protocol: 'W3C', value: 5};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
 
-      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return {protocol: "W3C", value: 5}',
+        args: [],
+      });
 
       assert.strictEqual(status, 200);
-      assert.deepStrictEqual(data.value, legacy);
+      assert.deepStrictEqual(data.value, result);
+    });
+
+    it('should return an error from an MJSONWP response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves({
+        protocol: 'MJSONWP',
+        error: new Error('legacy session failed'),
+      });
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`, {throwOnError: false});
+
+      assert.strictEqual(status, 500);
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.match(data.value.message, /legacy session failed/);
     });
 
     for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
@@ -667,6 +685,24 @@ describe('Protocol', function () {
         });
       } finally {
         if (data.value.sessionId) {
+          await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
+        }
+      }
+    });
+
+    it('should return a W3C new session response when the driver protocol is MJSONWP', async function () {
+      driver.protocol = 'MJSONWP';
+      let data: any;
+      try {
+        ({data} = await httpPost(`${baseUrl}/session`, {
+          capabilities: {alwaysMatch: {}, firstMatch: [{}]},
+        }));
+        assert.strictEqual(data.value.sessionId.indexOf('fakeSession_'), 0);
+        assert.ok(!data.sessionId);
+        assert.ok(!Object.hasOwn(data, 'status'));
+      } finally {
+        driver.protocol = 'W3C';
+        if (data?.value?.sessionId) {
           await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
         }
       }

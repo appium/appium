@@ -31,25 +31,41 @@ export function ensureW3cResponse(responseBody: Record<string, unknown>): Record
   return result;
 }
 
+const RESPONSE_ENVELOPE = Symbol('responseEnvelope');
+
+type ProtocolResponse = {
+  protocol?: typeof PROTOCOLS.W3C | typeof PROTOCOLS.MJSONWP | null;
+  value?: unknown;
+  error?: unknown;
+};
+
+/**
+ * Marks a response Appium built. A command result such as `{protocol: 'W3C', value: 5}` is not marked.
+ * Only Appium's umbrella driver calls this. A driver returns the value or throws.
+ */
+export function responseEnvelope<T extends object>(envelope: T): T {
+  (envelope as Record<symbol, unknown>)[RESPONSE_ENVELOPE] = true;
+  return envelope;
+}
+
 /**
  * Whether `value` is a driver response envelope rather than command data.
- *
- * An envelope has its own `protocol` key set to `W3C` or left unset, and its own `value` and/or
- * `error` key. Any other protocol string is command data. A script result such as a serialized
- * `window.location` (`{href, host, protocol: 'https:'}`) is command data, not an envelope.
+ * Marked responses qualify, as does `{protocol, error}` when `error` is an Error.
+ * `{protocol: 'W3C', value: 5}` is command data.
  *
  * @param value - Command result or already wrapped handler result
  * @returns `true` when the caller should read `value` / `error` instead of returning the object
  */
-export function isProtocolResponseEnvelope(
-  value: unknown,
-): value is {protocol?: typeof PROTOCOLS.W3C | null; value?: unknown; error?: unknown} {
-  if (!util.isPlainObject(value) || !Object.hasOwn(value, 'protocol')) {
+export function isProtocolResponseEnvelope(value: unknown): value is ProtocolResponse {
+  if (!util.isPlainObject(value)) {
     return false;
   }
-  if (!Object.hasOwn(value, 'value') && !Object.hasOwn(value, 'error')) {
+  if ((value as Record<symbol, unknown>)[RESPONSE_ENVELOPE] === true) {
+    return true;
+  }
+  if (!(value.error instanceof Error)) {
     return false;
   }
   const protocol = value.protocol;
-  return protocol === undefined || protocol === null || protocol === PROTOCOLS.W3C;
+  return protocol == null || protocol === PROTOCOLS.W3C || protocol === PROTOCOLS.MJSONWP;
 }

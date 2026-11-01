@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
 import {PROTOCOLS} from '../../../lib/constants.js';
-import {isProtocolResponseEnvelope} from '../../../lib/protocol/helpers.js';
+import {isProtocolResponseEnvelope, responseEnvelope} from '../../../lib/protocol/helpers.js';
 
 describe('isProtocolResponseEnvelope', function () {
   it('rejects script results that contain a protocol field', function () {
@@ -11,19 +11,24 @@ describe('isProtocolResponseEnvelope', function () {
       false,
     );
     assert.equal(isProtocolResponseEnvelope({protocol: 'https:', value: 'https://example.com/home'}), false);
+    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C, value: 5}), false);
+    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.MJSONWP, value: {host: 'example.com'}}), false);
   });
 
-  it('accepts a W3C value or error envelope', function () {
-    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C, value: {host: 'example.com'}}), true);
+  it('accepts a marked envelope or a returned error', function () {
+    assert.equal(
+      isProtocolResponseEnvelope(responseEnvelope({protocol: PROTOCOLS.W3C, value: {host: 'example.com'}})),
+      true,
+    );
+    assert.equal(
+      isProtocolResponseEnvelope(responseEnvelope({protocol: PROTOCOLS.MJSONWP, value: {host: 'example.com'}})),
+      true,
+    );
     assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C, error: new Error('failed')}), true);
-  });
-
-  it('accepts the handler wrapper whose protocol has not been set', function () {
-    assert.equal(isProtocolResponseEnvelope({value: {ready: true}, error: undefined, protocol: undefined}), true);
+    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.MJSONWP, error: new Error('failed')}), true);
   });
 
   it('rejects objects that only share part of the envelope shape', function () {
-    assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.MJSONWP, value: null}), false);
     assert.equal(isProtocolResponseEnvelope({protocol: PROTOCOLS.W3C}), false);
     assert.equal(isProtocolResponseEnvelope({value: {ready: true}}), false);
     assert.equal(isProtocolResponseEnvelope(null), false);

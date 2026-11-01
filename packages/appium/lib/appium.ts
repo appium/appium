@@ -9,6 +9,7 @@ import {
   getProxyReq,
   GET_STATUS_COMMAND,
   isProtocolResponseEnvelope,
+  responseEnvelope,
   isSessionCommand,
   isW3cCaps,
   LIST_DRIVER_COMMANDS_COMMAND,
@@ -420,16 +421,16 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
         }
       }
-      return {
+      return responseEnvelope({
         protocol,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      });
     }
 
-    return {
+    return responseEnvelope({
       protocol,
       value: [innerSessionId, dCaps, protocol],
-    };
+    });
   }
 
   /**
@@ -487,17 +488,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         throw new Error('Session not found');
       }
 
-      return {
+      return responseEnvelope({
         protocol: PROTOCOLS.W3C,
         value: await dstSession.deleteSession(sessionId),
-      };
+      });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       this.log.error(`Had trouble ending session ${sessionId}: ${msg}`);
-      return {
+      return responseEnvelope({
         protocol: PROTOCOLS.W3C,
         error: e instanceof Error ? e : new Error(msg),
-      };
+      });
     } finally {
       // regardless of whether the deleteSession completes successfully or not
       // make the session unavailable, because who knows what state it might
@@ -815,8 +816,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdErr = e;
     }
 
-    // A command result is either bare data or a W3C envelope. Data may contain its own
-    // `protocol` field, so only the envelope shape is passed through unwrapped.
+    // A marked envelope or a returned Error is passed through. `{protocol: 'W3C', value}` is data.
     if (isProtocolResponseEnvelope(cmdRes)) {
       Object.assign(res, cmdRes);
     } else {
@@ -824,7 +824,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       res.error = cmdErr instanceof Error ? cmdErr : undefined;
       res.protocol = PROTOCOLS.W3C;
     }
-    return res;
+    return responseEnvelope(res);
   }
 
   /** Whether the inner session driver is actively proxying for this session id. */

@@ -609,6 +609,7 @@ describe('AppiumDriver', function () {
       for (const scriptResult of [
         {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'},
         {protocol: 'https:', value: 'https://example.com/home'},
+        {protocol: 'W3C', value: 5},
       ]) {
         it(`should return a script result with a protocol field: ${JSON.stringify(scriptResult)}`, async function () {
           fakeDriver.protocol = 'W3C';

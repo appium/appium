@@ -370,9 +370,10 @@ function reflectReceiver(receiver: unknown): unknown {
 
 /**
  * Unwraps constructor references passed to `Reflect.construct`.
+ * Preserves VM-defined subclass constructors (`newTarget`) instead of wrapping them as callbacks.
  */
 function unwrapConstructor(newTarget: HostCallable): HostConstructor {
-  return unwrapIfProxy(newTarget) as unknown as HostConstructor;
+  return (isOurProxy(newTarget) ? proxyToTarget.get(newTarget) : newTarget) as HostConstructor;
 }
 
 /**

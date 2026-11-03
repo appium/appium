@@ -642,6 +642,24 @@ describe('wrapHostBindingForVmContext', function () {
     assert.strictEqual(ctorArgRoundTripsAsOriginal, true);
   });
 
+  it('should preserve VM subclass constructors passed as newTarget when extending a wrapped host constructor', function () {
+    const Box = function (this: {v: unknown}, v: unknown) {
+      this.v = v;
+    } as unknown as new (v: unknown) => {v: unknown};
+    const d = wrapHostBindingForVmContext({Box});
+    const result = vm.runInNewContext(
+      `class Sub extends d.Box {
+         twice() {
+           return this.v * 2;
+         }
+       }
+       new Sub(21).twice();`,
+      {d},
+      {timeout: 500},
+    );
+    assert.strictEqual(result, 42);
+  });
+
   it('should not double-wrap function proxies', function () {
     const fn = function hostFn() {
       return 1;

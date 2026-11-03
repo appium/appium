@@ -250,16 +250,6 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
  */
 const serverArgsDisallowedInConfig: ArgumentDefinitions = new Map([
   [
-    ['--shell'],
-    {
-      required: false,
-      help: 'Enter REPL mode',
-      action: 'store_const',
-      const: true,
-      dest: 'shell',
-    },
-  ],
-  [
     ['--show-build-info'],
     {
       dest: 'showBuildInfo',

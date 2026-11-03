@@ -66,11 +66,6 @@ export interface MoreArgs {
    * If true, show the server debug info and exit
    */
   showDebugInfo?: boolean;
-
-  /**
-   * If true, open a REPL
-   */
-  shell?: boolean;
 }
 
 /**

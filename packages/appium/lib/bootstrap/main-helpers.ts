@@ -1,0 +1,201 @@
+import {inspect as dump, type InspectOptions} from 'node:util';
+
+import {routeConfiguringFunction as makeRouter} from '@appium/base-driver';
+import {normalizeBasePath, server as baseServer} from '@appium/http-server';
+import type {ServerOpts} from '@appium/http-server';
+import {console as supportConsole, util} from '@appium/support';
+import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
+import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';
+import {WebSocketServer} from 'ws';
+
+import type {AppiumDriver} from '../appium.js';
+import {BIDI_BASE_PATH, CORS_FEATURE, LONG_STACKTRACE_LIMIT} from '../constants.js';
+import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
+import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
+import {log as logger} from '../logger.js';
+import {validate as validateSchema} from '../schema/schema.js';
+import {checkNodeOk, requireDir} from './node-helpers.js';
+import {getNonDefaultServerArgs} from './startup-config.js';
+
+const isStdoutTTY = process.stdout.isTTY;
+
+/**
+ * Logs a value to the console using the info logger (with util.inspect formatting).
+ */
+export function inspect(value: unknown): void {
+  logger.info(
+    dump(value, {
+      colors: true,
+      depth: null,
+      compact: !isStdoutTTY,
+    } satisfies InspectOptions),
+  );
+}
+
+/**
+ * Prints the current build info JSON to stdout.
+ *
+ * This updates build metadata first (using GitHub fallback) and then logs the
+ * resulting {@link BuildInfo} object.
+ */
+export async function showBuildInfo(): Promise<void> {
+  await updateBuildInfo(true);
+  // eslint-disable-next-line no-console -- CLI output for --build-info
+  console.log(JSON.stringify(getBuildInfo()));
+}
+
+/**
+ * Human-readable label for where Appium resolved `APPIUM_HOME` from (CLI, env, or autodetect).
+ */
+export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): string {
+  if (util.hasValue(appiumHomeFromArgs)) {
+    return 'appiumHome config value';
+  }
+  if (process.env.APPIUM_HOME) {
+    return 'APPIUM_HOME environment variable';
+  }
+  return 'autodetected Appium home path';
+}
+
+/**
+ * Validates Node version, optional long stack traces, schema, tmp dir, and `--build-info` early exit.
+ *
+ * @param args - Parsed server CLI args
+ * @param throwInsteadOfExit - When true, rethrows failures instead of calling `process.exit(1)`
+ */
+export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwInsteadOfExit = false): Promise<void> {
+  try {
+    checkNodeOk();
+    if (args.longStacktrace) {
+      Error.stackTraceLimit = LONG_STACKTRACE_LIMIT;
+    }
+    if (args.showBuildInfo) {
+      await showBuildInfo();
+      process.exit(0);
+    }
+
+    validateSchema(args);
+
+    if (args.tmpDir) {
+      await requireDir(args.tmpDir, !args.noPermsCheck, 'tmpDir argument value');
+    }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error(supportConsole.styleText('red', message));
+    if (throwInsteadOfExit) {
+      throw err;
+    }
+
+    process.exit(1);
+  }
+}
+
+/**
+ * Prints welcome line (version + optional git rev), non-default server args, and default capabilities.
+ */
+export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promise<void> {
+  let welcome = `Welcome to Appium v${APPIUM_VER}`;
+  const appiumRev = await getGitRev();
+  if (appiumRev) {
+    welcome += ` (REV ${appiumRev})`;
+  }
+  logger.info(welcome);
+
+  const showArgs = getNonDefaultServerArgs(args);
+  if (Object.keys(showArgs).length) {
+    logNonDefaultArgsWarning(showArgs);
+  }
+  if (!util.isEmpty(args.defaultCapabilities)) {
+    logDefaultCapabilitiesWarning(args.defaultCapabilities);
+  }
+}
+
+/**
+ * Collects `updateServer` hooks from active driver and plugin classes for HTTP server customization.
+ */
+export function getServerUpdaters(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): UpdateServerCallback[] {
+  return [...driverClasses.keys(), ...pluginClasses.keys()]
+    .map((klass) => klass.updateServer)
+    .filter(Boolean) as UpdateServerCallback[];
+}
+
+/**
+ * Merges `newMethodMap` contributions from all active drivers and plugins into one method map.
+ */
+export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: PluginNameMap): MethodMap<Driver> {
+  return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
+    (map, klass) => ({
+      ...map,
+      ...klass.newMethodMap,
+    }),
+    {},
+  );
+}
+
+/**
+ * Builds {@link ServerOpts} and normalized base path for the Appium HTTP server from CLI args and extensions.
+ */
+export function buildServerOpts(
+  appiumDriver: AppiumDriver,
+  parsedArgs: ParsedArgs<CliCommandServer>,
+  driverClasses: DriverNameMap,
+  pluginClasses: PluginNameMap,
+): {serverOpts: ServerOpts; normalizedBasePath: string} {
+  const routeConfiguringFunction = makeRouter(appiumDriver);
+  const serverOpts: ServerOpts = {
+    routeConfiguringFunction,
+    port: parsedArgs.port,
+    hostname: parsedArgs.address,
+    allowCors: appiumDriver.isFeatureEnabled(CORS_FEATURE),
+    basePath: parsedArgs.basePath,
+    serverUpdaters: getServerUpdaters(driverClasses, pluginClasses),
+    extraMethodMap: getExtraMethodMap(driverClasses, pluginClasses),
+    cliArgs: parsedArgs,
+  };
+  const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
+  for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout'] as const) {
+    if (Number.isInteger(parsedArgs[timeoutArgName])) {
+      serverOpts[timeoutArgName] = parsedArgs[timeoutArgName] * 1000;
+    }
+  }
+  return {serverOpts, normalizedBasePath};
+}
+
+/**
+ * Creates the Appium HTTP server and attaches WebSocket handlers for BiDi under the normalized base path.
+ */
+export async function createAppiumServer(
+  serverOpts: ServerOpts,
+  appiumDriver: AppiumDriver,
+  normalizedBasePath: string,
+): Promise<AppiumServer> {
+  const bidiServer = new WebSocketServer({noServer: true});
+  bidiServer.on('connection', appiumDriver.onBidiConnection.bind(appiumDriver));
+  bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
+  const server = await baseServer(serverOpts);
+  const bidiBasePath = `${normalizedBasePath}${BIDI_BASE_PATH}`;
+  await server.addWebSocketHandler(bidiBasePath, bidiServer);
+  await server.addWebSocketHandler(`${bidiBasePath}/:sessionId`, bidiServer);
+  return server;
+}
+
+/**
+ * Server args whose values describe the server's internal network and must not leak to clients
+ * via server logs
+ */
+const SENSITIVE_ARGS: ReadonlySet<keyof Args> = new Set(['appUrlRules']);
+
+function logNonDefaultArgsWarning(args: Args): void {
+  const shownArgs = Object.fromEntries(
+    Object.entries(args).map(([name, value]) => [name, SENSITIVE_ARGS.has(name as keyof Args) ? '<redacted>' : value]),
+  );
+  logger.info('Non-default server args:');
+  inspect(shownArgs);
+}
+
+function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {
+  logger.info(
+    'Default capabilities, which will be added to each request ' + 'unless overridden by desired capabilities:',
+  );
+  inspect(caps);
+}

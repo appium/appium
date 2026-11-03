@@ -1,0 +1,28 @@
+{
+  "extends": "@appium/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "rootDir": ".",
+    "outDir": "build",
+    "paths": {
+      "@appium/support": ["../support"],
+      "@appium/types": ["../types"],
+      "@appium/driver-test-support": ["../driver-test-support"]
+    },
+    "checkJs": true,
+    "types": ["node"]
+  },
+  "include": ["lib", "test"],
+  "exclude": ["build"],
+  "references": [
+    {
+      "path": "../support"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../driver-test-support"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+import type {Driver, MethodMap} from '@appium/types';
+
+export const LIST_DRIVER_COMMANDS_COMMAND = 'listCommands';
+export const LIST_DRIVER_EXTENSIONS_COMMAND = 'listExtensions';
+
+/**
+ * Appium-specific routes: sessions, capabilities, settings, and command/extension
+ * introspection. Device interaction routes live in {@link ./appium-device}.
+ */
+export const APPIUM_ROUTES = {
+  '/appium/sessions': {
+    GET: {command: 'getAppiumSessions'},
+  },
+  '/session/:sessionId/appium/context': {
+    GET: {command: 'getCurrentContext'},
+    POST: {command: 'setContext', payloadParams: {required: ['name']}},
+  },
+  '/session/:sessionId/appium/contexts': {
+    GET: {command: 'getContexts'},
+  },
+  '/session/:sessionId/appium/capabilities': {
+    GET: {command: 'getAppiumSessionCapabilities'},
+  },
+  '/session/:sessionId/appium/settings': {
+    POST: {command: 'updateSettings', payloadParams: {required: ['settings']}},
+    GET: {command: 'getSettings'},
+  },
+  '/session/:sessionId/appium/commands': {
+    GET: {command: LIST_DRIVER_COMMANDS_COMMAND},
+  },
+  '/session/:sessionId/appium/extensions': {
+    GET: {command: LIST_DRIVER_EXTENSIONS_COMMAND},
+  },
+  '/session/:sessionId/appium/events': {
+    POST: {command: 'getLogEvents', payloadParams: {optional: ['type']}},
+  },
+  '/session/:sessionId/appium/log_event': {
+    POST: {
+      command: 'logCustomEvent',
+      payloadParams: {required: ['vendor', 'event']},
+    },
+  },
+} as const satisfies MethodMap<Driver>;

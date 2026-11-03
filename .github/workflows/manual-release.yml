@@ -1,0 +1,231 @@
+name: Appium Server Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no publishing or tagging)'
+        required: true
+        type: boolean
+        default: true
+      recover_missing_only:
+        description: 'Recovery mode: skip version bump, publish only packages missing on npm at their current package.json version'
+        required: true
+        type: boolean
+        default: false
+      allow_legacy_peer_deps:
+        description: 'Beta branch only: pass --legacy-peer-deps to lerna''s internal npm calls, for when a dependent''s peerDependencies range still lags a just-bumped major (causes ERESOLVE otherwise). Leave off unless you hit that failure.'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # keep this branch name in sync with env.BETA_BRANCH below - the `env` context isn't available
+    # to jobs.<job_id>.if (GitHub Actions resolves it before job-level env is set up)
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/appium4') && contains(fromJSON('["mykola-mokhnach", "jlipps", "eglitise", "KazuCocoa"]'), github.actor)
+    env:
+      BETA_BRANCH: appium4
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Setup Node and install deps (LTS)
+        uses: ./.github/actions/setup-build
+        with:
+          node-version: lts/*
+          install-command: npm ci
+          run-build: 'true'
+
+      - name: Run Lerna publish
+        env:
+          # for lerna createRelease
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          RECOVER_MISSING_ONLY: ${{ inputs.recover_missing_only }}
+          ALLOW_LEGACY_PEER_DEPS: ${{ inputs.allow_legacy_peer_deps }}
+        run: |
+          set -euo pipefail
+
+          # On the beta branch ($BETA_BRANCH), every release is a beta prerelease anchored at its
+          # target major (see packages/semantic-release-config's "Next-major beta branches" docs
+          # for the equivalent semantic-release behavior this mirrors).
+          #
+          # allow_legacy_peer_deps: independent next-major beta.0 bumps can briefly outrun a
+          # dependent's committed peerDependencies range, aborting lerna's internal lockfile
+          # refresh with ERESOLVE. Opt-in only - it masks a real (if temporary) peer mismatch.
+          LEGACY_PEER_DEPS_FLAGS=""
+          if [ "$ALLOW_LEGACY_PEER_DEPS" = "true" ]; then
+            LEGACY_PEER_DEPS_FLAGS="--npm-client-args=--legacy-peer-deps"
+          fi
+
+          BETA_FLAGS=""
+          DIST_TAG_FLAGS=""
+          NPM_TAG_FLAGS=""
+          if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
+            BETA_FLAGS="--conventional-prerelease --preid beta $LEGACY_PEER_DEPS_FLAGS"
+            DIST_TAG_FLAGS="--dist-tag beta"
+            # `npm publish` takes --tag; --dist-tag is lerna-only
+            NPM_TAG_FLAGS="--tag beta"
+          fi
+
+          # Prints "<pkg_name>@<pkg_version>" to stdout for each non-private workspace package
+          # whose current package.json version is not yet on npm.
+          find_missing_packages() {
+            for pkg_json in packages/*/package.json; do
+              if [ ! -f "$pkg_json" ]; then
+                continue
+              fi
+
+              if [ "$(jq -r '.private // false' "$pkg_json")" = "true" ]; then
+                continue
+              fi
+
+              pkg_name="$(jq -r '.name // empty' "$pkg_json")"
+              pkg_version="$(jq -r '.version // empty' "$pkg_json")"
+              if [ -z "$pkg_name" ] || [ -z "$pkg_version" ]; then
+                echo "Skipping malformed package manifest: $pkg_json" >&2
+                continue
+              fi
+
+              pkg_spec="${pkg_name}@${pkg_version}"
+              if ! npm view "$pkg_spec" version >/dev/null 2>&1; then
+                echo "$pkg_spec"
+              fi
+            done
+          }
+
+          # Resolves the workspace directory of a package given its npm name.
+          package_dir_for() {
+            local target="$1"
+            for pkg_json in packages/*/package.json; do
+              if [ ! -f "$pkg_json" ]; then
+                continue
+              fi
+              if [ "$(jq -r '.name // empty' "$pkg_json")" = "$target" ]; then
+                dirname "$pkg_json"
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          # Publishes each "<pkg_name>@<pkg_version>" package spec passed as an argument.
+          # `lerna publish` has no per-package scope filter, so this runs `npm publish`
+          # directly from each package's directory instead. Returns non-zero if any
+          # individual publish failed; npm publish's own exit code is taken as authoritative,
+          # no npm registry re-scan is done to double-check it.
+          publish_missing_packages() {
+            echo "Publishing missing packages one-by-one"
+            local overall_status=0
+            for pkg_spec in "$@"; do
+              pkg_name="${pkg_spec%@*}"
+              pkg_dir="$(package_dir_for "$pkg_name")"
+              if [ -z "$pkg_dir" ]; then
+                echo "Could not resolve workspace directory for ${pkg_name}"
+                overall_status=1
+                continue
+              fi
+
+              echo "Publishing ${pkg_spec}"
+              set +e
+              (cd "$pkg_dir" && npm publish $NPM_TAG_FLAGS)
+              publish_exit_code=$?
+              set -e
+              if [ $publish_exit_code -ne 0 ]; then
+                echo "npm publish failed for ${pkg_spec} (exit code ${publish_exit_code})"
+                overall_status=1
+              fi
+            done
+            return $overall_status
+          }
+
+          if [ "$RECOVER_MISSING_ONLY" = "true" ]; then
+            echo "Recovery mode: scanning for packages missing on npm at their current package.json version"
+            mapfile -t missing < <(find_missing_packages)
+
+            if [ ${#missing[@]} -eq 0 ]; then
+              echo "No missing packages found; nothing to do"
+              exit 0
+            fi
+
+            echo "Missing package versions on npm:"
+            printf ' - %s\n' "${missing[@]}"
+
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "Dry run: not publishing"
+              exit 0
+            fi
+
+            if ! publish_missing_packages "${missing[@]}"; then
+              echo "Recovery incomplete: one or more packages failed to publish"
+              exit 1
+            fi
+
+            echo "All missing packages published successfully"
+            exit 0
+          fi
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Running lerna publish in dry-run mode"
+            printf "n\n" | npx lerna version --no-git-tag-version --no-push $BETA_FLAGS
+          else
+            echo "Running lerna publish for real"
+            set +e
+            release_output="$(npm run release -- --yes $BETA_FLAGS $DIST_TAG_FLAGS 2>&1)"
+            release_exit_code=$?
+            set -e
+            printf '%s\n' "$release_output"
+
+            if [ $release_exit_code -eq 0 ]; then
+              exit 0
+            fi
+
+            if [[ "$release_output" == *"fatal: tag '"*"' already exists"* ]]; then
+              existing_tag="$(printf '%s\n' "$release_output" | sed -n "s/.*fatal: tag '\\([^']*\\)' already exists.*/\\1/p" | head -n 1)"
+              if [ -z "$existing_tag" ]; then
+                echo "Detected existing tag failure, but could not parse tag name"
+                exit $release_exit_code
+              fi
+
+              echo "Detected existing tag failure for ${existing_tag}; attempting scoped publish recovery from tagged commit"
+              git fetch --tags --force origin
+              tagged_commit="$(git rev-list -n 1 "$existing_tag")"
+              if [ -z "$tagged_commit" ]; then
+                echo "Tag ${existing_tag} was not found after fetching tags"
+                exit $release_exit_code
+              fi
+
+              git checkout "$tagged_commit"
+              mapfile -t missing < <(find_missing_packages)
+
+              if [ ${#missing[@]} -gt 0 ]; then
+                echo "Missing package versions on npm before scoped recovery:"
+                printf ' - %s\n' "${missing[@]}"
+                if ! publish_missing_packages "${missing[@]}"; then
+                  echo "Recovery incomplete: one or more packages failed to publish"
+                  exit $release_exit_code
+                fi
+              fi
+
+              echo "All publishable workspace package versions are present on npm; treating recovery as successful."
+            else
+              echo "Release failed and no known recovery condition matched"
+              exit $release_exit_code
+            fi
+          fi

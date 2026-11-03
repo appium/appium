@@ -1,0 +1,92 @@
+import {randomUUID} from 'node:crypto';
+import _fs from 'node:fs';
+import path from 'node:path';
+
+import {sizeOf} from './internal/index.js';
+
+const OBJECTS_MAPPING = new WeakMap<object, string>();
+
+/**
+ * Calculate the in-depth size in memory of the provided object.
+ * The original implementation is borrowed from https://github.com/miktam/sizeof.
+ *
+ * @param obj - An object whose size should be calculated
+ * @returns Object size in bytes.
+ */
+export function getObjectSize(obj: unknown): number {
+  return sizeOf(obj);
+}
+
+/**
+ * Calculates a unique object identifier
+ *
+ * @param object - Any valid ECMA object
+ * @returns A uuidV4 string that uniquely identifies given object
+ */
+export function getObjectId(object: object): string {
+  const existing = OBJECTS_MAPPING.get(object);
+  if (existing !== undefined) {
+    return existing;
+  }
+  const id = randomUUID();
+  OBJECTS_MAPPING.set(object, id);
+  return id;
+}
+
+/**
+ * Perform deep freeze of the given object (e. g.
+ * all nested objects also become immutable).
+ * If the passed object is of a plain type
+ * then no change is done and the same object
+ * is returned.
+ * ! This function changes the given object,
+ * so it becomes immutable.
+ *
+ * @param object - Any valid ECMA object
+ * @returns The same object that was passed after it was made immutable.
+ */
+export function deepFreeze<T>(object: T): T {
+  let propNames: string[];
+  try {
+    propNames = Object.getOwnPropertyNames(object as object);
+  } catch {
+    return object;
+  }
+  for (const name of propNames) {
+    const value = (object as Record<string, unknown>)[name];
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  }
+  return Object.freeze(object) as T;
+}
+
+/**
+ * Tries to synchronously detect the absolute path to the folder
+ * where the given `moduleName` is located.
+ *
+ * @param moduleName - The name of the module as it is written in package.json
+ * @param filePath - Full path to any of files that `moduleName` contains. Use
+ * `import.meta.filename` to find the root of the module where this helper is called.
+ * @returns Full path to the module root, or null if not found
+ */
+export function getModuleRootSync(moduleName: string, filePath: string): string | null {
+  let currentDir = path.dirname(path.resolve(filePath));
+  let isAtFsRoot = false;
+  while (!isAtFsRoot) {
+    const manifestPath = path.join(currentDir, 'package.json');
+    try {
+      if (
+        _fs.existsSync(manifestPath) &&
+        (JSON.parse(_fs.readFileSync(manifestPath, 'utf8')) as {name?: string}).name === moduleName
+      ) {
+        return currentDir;
+      }
+    } catch {
+      // ignore
+    }
+    currentDir = path.dirname(currentDir);
+    isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
+  }
+  return null;
+}

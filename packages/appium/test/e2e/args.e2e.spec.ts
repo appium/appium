@@ -1,0 +1,119 @@
+import assert from 'node:assert/strict';
+import {describe, it, before, after} from 'node:test';
+
+import {fs, tempDir} from '@appium/support';
+import {exec} from 'teen_process';
+
+import {stripColorCodes} from '../../lib/logsink.js';
+import {APPIUM_ROOT, getTestPort} from '../helpers.js';
+import {EXECUTABLE, formatAppiumArgErrorOutput, readAppiumArgErrorFixture, runAppiumRaw} from './e2e-helpers.js';
+
+describe('argument parsing', function () {
+  let appiumHome: string;
+
+  before(async function () {
+    appiumHome = await tempDir.openDir();
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+  });
+
+  describe('when the user provides a very long string for an arg accepting a blob or filename', function () {
+    describe('when the very long string is a JSON blob', function () {
+      it('should not throw an ENAMETOOLONG exception', {timeout: 10000}, async function () {
+        const capsArg = JSON.stringify({
+          'appium:platformName': 'ANDROID',
+          'appium:platformVersion': '11',
+          'appium:deviceName':
+            'Spicy jalapeno bacon ipsum dolor amet deserunt tempor pork belly aliqua drumstick, occaecat dolor venison et labore. Rump meatball pork chop tail. Consequat adipisicing kielbasa occaecat laborum pig. Qui pork chop chicken nostrud boudin fugiat. Proident ut culpa, chuck nulla sunt pastrami ut tri-tip. Buffalo dolore adipisicing, labore venison elit beef fatback kevin burgdoggen tail pancetta filet mignon. Dolor turducken rump, anim kevin sunt exercitation ham filet mignon beef ribs ad officia eiusmod id cillum.',
+        });
+
+        await assert.rejects(
+          exec(
+            process.execPath,
+            [
+              EXECUTABLE,
+              '-pa=/wd/hub',
+              '--session-override',
+              '--local-timezone',
+              '--relaxed-security',
+              `--default-capabilities=${capsArg}`,
+              '--port',
+              String(await getTestPort()),
+            ],
+            {
+              env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
+              cwd: APPIUM_ROOT,
+              timeout: 5000,
+            },
+          ),
+          {name: 'Error', message: /timed out/},
+        );
+      });
+    });
+  });
+
+  describe('when the user provides an string where a number was expected', function () {
+    describe('when color output is supported', function () {
+      it('should output a fancy error message', async function () {
+        const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {
+          env: {FORCE_COLOR: '1'},
+        });
+        const actual = 'stderr' in result ? result.stderr : '';
+        assert.notStrictEqual(stripColorCodes(actual), actual);
+      });
+    });
+
+    describe('when color output is unsupported', function () {
+      it('should output a colorless yet fancy error message', async function () {
+        const result = await runAppiumRaw(appiumHome, ['--port=sheep'], {});
+        const actual = 'stderr' in result ? result.stderr : '';
+        assert.strictEqual(stripColorCodes(actual), actual);
+      });
+    });
+  });
+
+  describe('when the user provides a value for a boolean argument', function () {
+    it('should output a basic error message', async function () {
+      const [runResult, expected] = await Promise.all([
+        runAppiumRaw(appiumHome, ['--relaxed-security=sheep'], {}),
+        readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt'),
+      ]);
+      const actual = 'stderr' in runResult ? runResult.stderr : '';
+      assert.strictEqual(formatAppiumArgErrorOutput(actual), expected);
+    });
+  });
+
+  describe('when the user provides an unknown argument', function () {
+    it('should output a basic error message', async function () {
+      const [runResult, expected] = await Promise.all([
+        runAppiumRaw(appiumHome, ['--pigs=sheep'], {}),
+        readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt'),
+      ]);
+      const actual = 'stderr' in runResult ? runResult.stderr : '';
+      assert.strictEqual(formatAppiumArgErrorOutput(actual), expected);
+    });
+  });
+
+  describe('when the user provides an unknown argument with --allow-unknown-args', function () {
+    it('should tolerate the unknown argument and start the server', {timeout: 10000}, async function () {
+      // Unlike the unknown-argument case above, `--allow-unknown-args` must not abort parsing:
+      // the unrecognized flag is ignored and the server starts. We assert the run reaches
+      // server startup (and thus hits the exec timeout) instead of exiting early with an
+      // argument-parsing error.
+      await assert.rejects(
+        exec(
+          process.execPath,
+          [EXECUTABLE, '--pigs=sheep', '--allow-unknown-args', '--port', String(await getTestPort())],
+          {
+            env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
+            cwd: APPIUM_ROOT,
+            timeout: 5000,
+          },
+        ),
+        {name: 'Error', message: /timed out/},
+      );
+    });
+  });
+});

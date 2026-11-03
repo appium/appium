@@ -1,0 +1,47 @@
+name: Publish docs
+
+on:
+  workflow_dispatch:
+  push:
+    # Runs when any new Appium tag is pushed = there is a new release
+    # Does not trigger for tags with a slash, e.g. 1.0/beta
+    tags:        
+      - appium@*
+      - '!appium@*beta*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # ensure the docs branch is also fetched
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Setup Node and install deps (LTS)
+        uses: ./.github/actions/setup-build
+        with:
+          node-version: lts/*
+          install-command: npm ci
+          run-build: 'true'
+      - name: Install dependencies (Python)
+        run: npm run install-docs-deps
+      - name: Publish docs
+        run: npm run docs:publish
+      # The docs are deployed by mike into docs/<lang>/<version>, but crawlers look for
+      # /llms.txt at the domain root. The file's links are absolute, so the same file serves
+      # both locations.
+      - name: Publish llms.txt to the site root
+        run: |
+          cp packages/appium/docs/en/llms.txt "${RUNNER_TEMP}/llms.txt"
+          git checkout -f gh-pages
+          cp "${RUNNER_TEMP}/llms.txt" llms.txt
+          git add llms.txt
+          if git diff --cached --quiet -- llms.txt; then
+            echo "Root llms.txt is already up to date"
+          else
+            git commit -m "docs: update root llms.txt"
+            git push origin gh-pages
+          fi

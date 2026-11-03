@@ -1,0 +1,27 @@
+{
+  "name": "test-driver-invalid-peer-dep",
+  "version": "1.0.0",
+  "private": true,
+  "appium": {
+    "driverName": "test",
+    "automationName": "Test",
+    "platformNames": [
+      "Test"
+    ],
+    "mainClass": "TestDriver",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "mcmonkey-mcbean": {
+          "type": "string",
+          "appiumCliIgnored": true
+        },
+        "oliver-boliver": {
+          "type": "number",
+          "appiumDeprecated": true,
+          "description": "funkytelechy"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1068 @@
+import assert from 'node:assert/strict';
+import type {AddressInfo} from 'node:net';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
+
+import {BaseDriver, getResponseForW3CError, runWithProxyReq} from '@appium/base-driver';
+import {BasePlugin} from '@appium/base-plugin';
+import {FakeDriver} from '@appium/fake-driver';
+import type {Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
+import {sleep} from 'asyncbox';
+import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
+import {createSandbox, stub} from 'sinon';
+import {WebSocket, WebSocketServer} from 'ws';
+
+import type * as AppiumModule from '../../lib/appium.js';
+import {CORS_FEATURE, PLUGIN_TYPE, SESSION_DISCOVERY_FEATURE} from '../../lib/constants.js';
+import * as buildInfoModule from '../../lib/helpers/build.js';
+import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/helpers/capability.js';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
+import {BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.js';
+
+interface MockConfigShape {
+  getBuildInfo: SinonStubbedMember<() => {version: string}>;
+  updateBuildInfo: SinonStubbedMember<() => Promise<void>>;
+  APPIUM_VER: string;
+}
+
+const SESSION_ID = '1';
+const SESSION_DISCOVERY_ENABLED = {allowInsecure: [`*:${SESSION_DISCOVERY_FEATURE}`]};
+
+/**
+ * Fills the umbrella driver's plugin map without replacing the readonly `pluginClasses` reference.
+ */
+function setPluginClassesForTest(appium: {pluginClasses: Map<any, string>}, classes: Map<any, string>): void {
+  appium.pluginClasses.clear();
+  for (const [cls, name] of classes) {
+    appium.pluginClasses.set(cls, name);
+  }
+}
+
+describe('AppiumDriver', function () {
+  let sandbox: SinonSandbox;
+  let AppiumDriver: typeof AppiumModule.AppiumDriver;
+  let MockConfig: MockConfigShape;
+  let importCounter = 0;
+
+  // `MockConfig`'s stub functions are created once (stable identity for `mock.module`, which
+  // throws if re-registered) and reconfigured per test via sinon; `AppiumDriver` is
+  // re-imported fresh (cache-busted) every test to reset its own per-class state.
+  before(function () {
+    MockConfig = {
+      getBuildInfo: undefined as unknown as MockConfigShape['getBuildInfo'],
+      updateBuildInfo: undefined as unknown as MockConfigShape['updateBuildInfo'],
+      APPIUM_VER: '2.0',
+    };
+    MockConfig.getBuildInfo = stub().callsFake(() => ({
+      version: MockConfig.APPIUM_VER,
+    })) as MockConfigShape['getBuildInfo'];
+    MockConfig.updateBuildInfo = stub().resolves() as MockConfigShape['updateBuildInfo'];
+    mock.module('../../lib/helpers/build.js', {
+      namedExports: {
+        ...buildInfoModule,
+        getBuildInfo: MockConfig.getBuildInfo,
+        updateBuildInfo: MockConfig.updateBuildInfo,
+        APPIUM_VER: MockConfig.APPIUM_VER,
+      },
+    });
+  });
+
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    sandbox = createSandbox();
+    resetSchema();
+    await finalizeSchema();
+
+    MockConfig.getBuildInfo.resetHistory();
+    MockConfig.getBuildInfo.resetBehavior();
+    MockConfig.getBuildInfo.callsFake(() => ({version: MockConfig.APPIUM_VER}));
+    MockConfig.updateBuildInfo.resetHistory();
+    MockConfig.updateBuildInfo.resetBehavior();
+    MockConfig.updateBuildInfo.resolves();
+
+    const mod = await import(`../../lib/appium.js?t=${importCounter++}`);
+    ({AppiumDriver} = mod);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  describe('constructor', function () {
+    it('should not emit an uncaught rejection if updateBuildInfo() fails', async function () {
+      const err = new Error('oops');
+      // this test is wacky because we do not await the call to `updateBuildInfo()` within
+      // the constructor. in that case, we won't actually know _when_ the promise is resolved or rejected.
+      // the following is the workaround
+      const promise = new Promise<void>((resolve) => {
+        MockConfig.updateBuildInfo.callsFake(() => {
+          resolve();
+          return Promise.reject(err);
+        });
+      });
+
+      const ad = new AppiumDriver({} as any);
+      // triggers the `log` getter to set `_log`
+      ad.log;
+      // now we can stub `_log`, since it exists
+      const debugStrub = sandbox.stub((ad as any)._log, 'debug');
+      // finally, wait for `updateBuildInfo()` to finish up
+      await promise;
+      assert.strictEqual(debugStrub.calledOnce, true);
+    });
+  });
+
+  describe('instance method', function () {
+    let fakeDriver: FakeDriver;
+
+    function getDriverAndFakeDriver(
+      appiumArgs: any = {},
+      DriverClass: typeof FakeDriver = FakeDriver,
+    ): [InstanceType<typeof AppiumModule.AppiumDriver>, SinonMock] {
+      const appium = new AppiumDriver(appiumArgs);
+      fakeDriver = new DriverClass();
+      const mockFakeDriver = sandbox.mock(fakeDriver);
+      const mockedDriverReturnerClass = function Driver() {
+        return fakeDriver;
+      };
+
+      // stub does not satisfy DriverConfig typing
+      (appium as any).driverConfig = {
+        findMatchingDriver: sandbox.stub().returns({
+          driver: mockedDriverReturnerClass,
+          version: '1.2.3',
+          driverName: 'fake',
+        }),
+      };
+
+      return [appium, mockFakeDriver];
+    }
+    describe('configureGlobalFeatures', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+
+      function createDriver(cliArgs: any) {
+        appium = new AppiumDriver(cliArgs);
+        appium.configureGlobalFeatures();
+      }
+      it('should not allow insecure features by default', function () {
+        createDriver({} as any);
+        assert.strictEqual(appium.allowInsecure.length, 0);
+        assert.strictEqual(appium.denyInsecure.length, 0);
+        assert.strictEqual(appium.relaxedSecurityEnabled, false);
+      });
+      it('should allow insecure features', function () {
+        createDriver({allowInsecure: ['foo:bar']} as any);
+        assert.deepStrictEqual(appium.allowInsecure, ['foo:bar']);
+      });
+      it('should deny insecure features', function () {
+        createDriver({denyInsecure: ['foo:baz']} as any);
+        assert.deepStrictEqual(appium.denyInsecure, ['foo:baz']);
+      });
+      it('should allow relaxed security', function () {
+        createDriver({relaxedSecurityEnabled: true} as any);
+        assert.strictEqual(appium.relaxedSecurityEnabled, true);
+      });
+      it('should ignore allowed features in combination with relaxed security', function () {
+        createDriver({
+          allowInsecure: ['foo:bar'],
+          relaxedSecurityEnabled: true,
+        } as any);
+        assert.strictEqual(appium.allowInsecure.length, 0);
+        assert.strictEqual(appium.relaxedSecurityEnabled, true);
+      });
+      it('should not enable cors by default', function () {
+        createDriver({} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), false);
+      });
+      it('should enable cors via allow-insecure=*:cors', function () {
+        createDriver({allowInsecure: [`*:${CORS_FEATURE}`]} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), true);
+      });
+      it('should enable cors via relaxed security', function () {
+        createDriver({relaxedSecurityEnabled: true} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), true);
+      });
+      it('should deny cors via deny-insecure=*:cors even with relaxed security', function () {
+        createDriver({relaxedSecurityEnabled: true, denyInsecure: [`*:${CORS_FEATURE}`]} as any);
+        assert.strictEqual(appium.isFeatureEnabled(CORS_FEATURE), false);
+      });
+    });
+    describe('createSession', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      beforeEach(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
+      });
+      afterEach(async function () {
+        mockFakeDriver.restore();
+        await appium.deleteSession(SESSION_ID);
+      });
+
+      for (const caps of [
+        {
+          alwaysMatch: {platformName: 'Fake'},
+          firstMatch: [
+            {'appium:automationName': 42, 'appium:settings': {rejected: true}},
+            {'appium:automationName': 'Fake', 'appium:settings': {selected: true}},
+          ],
+        },
+        {
+          alwaysMatch: {platformName: 'Fake'},
+          firstMatch: [{'appium:automationName': 'Fake'}, {platformName: 'Fake'}],
+        },
+      ]) {
+        it(`should reject invalid candidates before selecting a driver: ${JSON.stringify(caps)}`, async function () {
+          mockFakeDriver.expects('createSession').never();
+          const {error} = await appium.createSession(caps as any);
+          assert.ok(error);
+          const [status, body] = getResponseForW3CError(error);
+          assert.equal(status, 400);
+          assert.equal(body.value.error, 'invalid argument');
+          mockFakeDriver.verify();
+        });
+      }
+
+      for (const caps of [{alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
+        it(`should reject malformed capabilities before selecting a driver: ${JSON.stringify(caps)}`, async function () {
+          mockFakeDriver.expects('createSession').never();
+          await assert.rejects(appium.createSession(caps as any), (error) => {
+            const [status, body] = getResponseForW3CError(error);
+            assert.equal(status, 400);
+            assert.equal(body.value.error, 'invalid argument');
+            return true;
+          });
+          mockFakeDriver.verify();
+        });
+      }
+
+      it('should start the idle timeout after applying initial settings', async function () {
+        const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+        fakeDriver.setProtocolW3C();
+        fakeDriver.sessionId = SESSION_ID;
+        fakeDriver.newCommandTimeoutMs = 1000;
+        sandbox.stub(fakeDriver, 'onIpcInit').resolves();
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .returns([SESSION_ID, {...BASE_CAPS}]);
+        sandbox.stub(fakeDriver, 'updateSettings').callsFake(async () => {
+          await clock.tickAsync(2000);
+        });
+
+        const {value, error} = await appium.createSession({
+          ...W3C_CAPS,
+          alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {initial: true}},
+        } as any);
+
+        assert.equal(error, undefined);
+        assert.equal(value?.[0], SESSION_ID);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(999);
+        assert.equal(appium.sessions[SESSION_ID], fakeDriver);
+        await clock.tickAsync(1);
+        assert.equal(appium.sessions[SESSION_ID], undefined);
+        mockFakeDriver.verify();
+      });
+
+      for (const cleanupFails of [false, true]) {
+        it(`should roll back failed initial settings even when cleanup fails=${cleanupFails}`, async function () {
+          const originalError = new Error('unsupported initial setting');
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          mockFakeDriver
+            .expects('createSession')
+            .once()
+            .returns([SESSION_ID, {...BASE_CAPS}]);
+          sandbox.stub(fakeDriver, 'updateSettings').rejects(originalError);
+          const deleteSession = cleanupFails
+            ? sandbox.stub(fakeDriver, 'deleteSession').rejects(new Error('cleanup failed'))
+            : sandbox.spy(fakeDriver, 'deleteSession');
+          const result = await appium.createSession({
+            ...W3C_CAPS,
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {invalid: true}},
+          } as any);
+          assert.equal(result.error, originalError);
+          assert.equal(deleteSession.calledOnceWithExactly(SESSION_ID), true);
+          assert.equal(fakeDriver.noCommandTimer, null);
+          assert.deepEqual(Object.keys(appium.sessions), []);
+          assert.deepEqual(Object.keys(appium.sessionIpcs), []);
+          assert.deepEqual(Object.keys(appium.sessionPlugins), []);
+          if (!cleanupFails) {
+            assert.equal(fakeDriver.sessionId, null);
+          }
+          mockFakeDriver.verify();
+        });
+      }
+
+      const initialSettingsCases = [
+        {
+          name: 'only the selected firstMatch candidate',
+          caps: {
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings': {shared: true, choice: 'always'}},
+            firstMatch: [
+              {'appium:settings': {choice: 'first'}},
+              {'appium:settings': {choice: 'last', unselected: true}},
+            ],
+          },
+          expected: {shared: true, choice: 'first'},
+        },
+        {
+          name: 'settings inside appium:options with nested values taking precedence',
+          caps: {
+            alwaysMatch: {
+              ...W3C_CAPS.alwaysMatch,
+              'appium:settings': {choice: 'outer'},
+              'appium:options': {settings: {choice: 'nested'}, 'settings[flag]': true},
+            },
+          },
+          expected: {choice: 'nested', flag: true},
+        },
+        {
+          name: 'settings inside firstMatch appium:options',
+          caps: {
+            alwaysMatch: W3C_CAPS.alwaysMatch,
+            firstMatch: [{'appium:options': {settings: {choice: 'nested'}}}],
+          },
+          expected: {choice: 'nested'},
+        },
+        {
+          name: 'default settings without overwriting requested settings',
+          defaults: {'appium:options': {settings: {defaultOnly: true, choice: 'default'}}},
+          caps: {alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:settings[choice]': 'requested'}},
+          expected: {defaultOnly: true, choice: 'requested'},
+        },
+      ];
+      for (const {name, caps, defaults, expected} of initialSettingsCases) {
+        it(`should apply ${name}`, async function () {
+          const originalCaps = structuredClone(caps);
+          appium.args.defaultCapabilities = defaults;
+          fakeDriver.setProtocolW3C();
+          fakeDriver.sessionId = SESSION_ID;
+          const create = sandbox.stub(fakeDriver, 'createSession').resolves([SESSION_ID, {...BASE_CAPS}] as any);
+          const update = sandbox.stub(fakeDriver, 'updateSettings').resolves();
+
+          const {error} = await appium.createSession(caps as any);
+
+          assert.equal(error, undefined);
+          assert.equal(update.calledOnceWithExactly(expected), true);
+          const forwarded = create.firstCall.args[0];
+          assert.ok(forwarded);
+          assert.equal(
+            Object.keys(forwarded.alwaysMatch ?? {}).some((key) => key.includes('settings')),
+            false,
+          );
+          assert.deepEqual(caps, originalCaps);
+        });
+      }
+
+      for (const address of ['::1', '2001:db8::1', '127.0.0.1', 'localhost']) {
+        for (const secure of [false, true]) {
+          it(`should return a valid BiDi URL for ${address} with TLS=${secure}`, async function () {
+            appium.args.address = address;
+            appium.args.port = 4723;
+            appium.args.basePath = '/wd/hub';
+            appium.server = {isSecure: () => secure} as any;
+            mockFakeDriver
+              .expects('createSession')
+              .once()
+              .returns([SESSION_ID, {...BASE_CAPS, webSocketUrl: true}]);
+            const {value, error} = await appium.createSession(W3C_CAPS);
+            assert.equal(error, undefined);
+            const url = new URL(String(value![1].webSocketUrl));
+            assert.equal(url.protocol, secure ? 'wss:' : 'ws:');
+            assert.equal(url.hostname, address.includes(':') ? `[${address}]` : address);
+            assert.equal(url.port, '4723');
+            assert.equal(url.pathname, `/wd/hub/bidi/${SESSION_ID}`);
+            mockFakeDriver.verify();
+          });
+        }
+      }
+
+      it(`should call inner driver's createSession with desired capabilities`, async function () {
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withExactArgs(W3C_CAPS)
+          .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
+        await appium.createSession(W3C_CAPS);
+        mockFakeDriver.verify();
+      });
+      it(`should call inner driver's createSession with desired and default capabilities`, async function () {
+        const defaultCaps = {'appium:someCap': 'hello'};
+        const allCaps = {
+          ...W3C_CAPS,
+          alwaysMatch: {...W3C_CAPS.alwaysMatch, ...defaultCaps},
+        };
+        appium.args.defaultCapabilities = defaultCaps;
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withArgs(allCaps)
+          .returns([SESSION_ID, removeAppiumPrefixes(allCaps.alwaysMatch as NSCapabilities<Constraints>)]);
+        await appium.createSession(W3C_CAPS);
+        mockFakeDriver.verify();
+      });
+      it(`should call inner driver's createSession with desired and default capabilities without overriding caps`, async function () {
+        // a default capability with the same key as a desired capability
+        // should do nothing
+        const defaultCaps = {platformName: 'Ersatz'};
+        appium.args.defaultCapabilities = defaultCaps;
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withArgs(W3C_CAPS)
+          .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
+        await appium.createSession(W3C_CAPS);
+        mockFakeDriver.verify();
+      });
+      it('should kill all other sessions if sessionOverride is on', async function () {
+        appium.configureGlobalFeatures();
+        appium.args.sessionOverride = true;
+
+        // mock three sessions that should be removed when the new one is created
+        const fakeDrivers = [new FakeDriver(), new FakeDriver(), new FakeDriver()];
+        const mockFakeDrivers = fakeDrivers.map((fd) => sandbox.mock(fd));
+        mockFakeDrivers[0].expects('deleteSession').once();
+        mockFakeDrivers[1]
+          .expects('deleteSession')
+          .once()
+          .throws('Cannot shut down Android driver; it has already shut down');
+        mockFakeDrivers[2].expects('deleteSession').once();
+        (appium as any).sessions['abc-123-xyz'] = fakeDrivers[0];
+        (appium as any).sessions['xyz-321-abc'] = fakeDrivers[1];
+        (appium as any).sessions['123-abc-xyz'] = fakeDrivers[2];
+
+        let sessions = await appium.getAppiumSessions();
+        assert.strictEqual(sessions.length, 3);
+
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withExactArgs(W3C_CAPS)
+          .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
+        await appium.createSession(W3C_CAPS);
+
+        sessions = await appium.getAppiumSessions();
+        assert.strictEqual(sessions.length, 1);
+
+        for (const mfd of mockFakeDrivers) {
+          mfd.verify();
+        }
+        mockFakeDriver.verify();
+      });
+      it('should call "createSession" with W3C capabilities argument, if provided', async function () {
+        mockFakeDriver.expects('createSession').once().withArgs(W3C_CAPS).returns([SESSION_ID, BASE_CAPS]);
+        await appium.createSession(W3C_CAPS);
+        mockFakeDriver.verify();
+      });
+      it('should call "createSession" with W3C capabilities argument with additional provided parameters', async function () {
+        const w3cCaps: W3CCapabilities<Constraints> = {
+          ...W3C_CAPS,
+          alwaysMatch: {
+            ...W3C_CAPS.alwaysMatch,
+            'appium:someOtherParm': 'someOtherParm',
+          },
+        };
+        const expectedCaps = {
+          alwaysMatch: {
+            ...w3cCaps.alwaysMatch,
+            'appium:someOtherParm': 'someOtherParm',
+          },
+          firstMatch: [{}],
+        };
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withArgs(expectedCaps)
+          .returns([SESSION_ID, insertAppiumPrefixes(BASE_CAPS as Capabilities<Constraints>)]);
+
+        await appium.createSession(w3cCaps);
+        mockFakeDriver.verify();
+      });
+
+      it('should assign args to property `cliArgs`', async function () {
+        class ArgsDriver extends BaseDriver<Constraints> {}
+        const args = {driver: {fake: {randomArg: 1234}}};
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver as typeof FakeDriver);
+        const {value} = await appium.createSession(W3C_CAPS);
+        try {
+          assert.deepStrictEqual(fakeDriver.cliArgs, {randomArg: 1234});
+        } finally {
+          await appium.deleteSession(value![0]);
+        }
+      });
+    });
+    describe('deleteSession', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      beforeEach(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
+      });
+      afterEach(function () {
+        mockFakeDriver.restore();
+      });
+      it('should remove the session if it is found', async function () {
+        appium.configureGlobalFeatures();
+        const [sessionId] = (await appium.createSession(W3C_CAPS)).value!;
+        let sessions = await appium.getAppiumSessions();
+        assert.strictEqual(sessions.length, 1);
+        await appium.deleteSession(sessionId);
+        sessions = await appium.getAppiumSessions();
+        assert.strictEqual(sessions.length, 0);
+      });
+      it("should call inner driver's deleteSession method", async function () {
+        const [sessionId] = (await appium.createSession(W3C_CAPS)).value!;
+        mockFakeDriver.expects('deleteSession').once().withExactArgs(sessionId).returns(undefined);
+        await appium.deleteSession(sessionId);
+        mockFakeDriver.verify();
+
+        // cleanup, since we faked the delete session call
+        await (mockFakeDriver as any).object.deleteSession();
+      });
+    });
+    describe('executeCommand', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      beforeEach(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        (appium as any).sessions[SESSION_ID] = fakeDriver;
+      });
+      afterEach(function () {
+        mockFakeDriver.restore();
+      });
+
+      for (const fails of [false, true]) {
+        it(`should restore idle expiry after a plugin proxies a ${fails ? 'failing' : 'successful'} command`, async function () {
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          fakeDriver.sessionId = SESSION_ID;
+          fakeDriver.newCommandTimeoutMs = 1000;
+          class PassThroughPlugin extends BasePlugin {
+            async getPageSource(next: () => Promise<unknown>) {
+              return await next();
+            }
+          }
+          appium.sessionPlugins[SESSION_ID] = [new PassThroughPlugin('passthrough')];
+          const proxy = sandbox.stub(fakeDriver, 'proxyCommand');
+          if (fails) {
+            proxy.rejects(new Error('proxy failed'));
+          } else {
+            proxy.resolves('<source/>');
+          }
+          try {
+            await fakeDriver.startNewCommandTimeout();
+            const result = await runWithProxyReq(
+              {originalUrl: `/session/${SESSION_ID}/source`, method: 'GET'} as any,
+              () => appium.executeCommand('getPageSource', SESSION_ID),
+            );
+            assert.equal(Boolean(result.error), fails);
+            await clock.tickAsync(999);
+            assert.equal(fakeDriver.sessionId, SESSION_ID);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+          }
+        });
+      }
+
+      it('should protect plugin post-processing from overlapping HTTP commands and restore expiry on failure', async function () {
+        const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+        fakeDriver.sessionId = SESSION_ID;
+        fakeDriver.newCommandTimeoutMs = 1000;
+        let finishPostProcessing!: () => void;
+        const postProcessing = new Promise<void>((resolve) => {
+          finishPostProcessing = resolve;
+        });
+        let markStarted!: () => void;
+        const started = new Promise<void>((resolve) => {
+          markStarted = resolve;
+        });
+        class PostProcessingPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            await next();
+            markStarted();
+            await postProcessing;
+            throw new Error('post-processing failed');
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new PostProcessingPlugin('postprocessing')];
+        sandbox.stub(fakeDriver, 'getPageSource').resolves('<source/>');
+        const command = appium.executeCommand('getPageSource', SESSION_ID);
+        try {
+          await started;
+          await fakeDriver.executeCommand('getStatus');
+          await clock.tickAsync(2000);
+          assert.equal(fakeDriver.sessionId, SESSION_ID);
+          finishPostProcessing();
+          assert.match((await command).error!.message, /post-processing failed/);
+          await clock.tickAsync(1000);
+          assert.equal(fakeDriver.sessionId, null);
+        } finally {
+          finishPostProcessing();
+          await command;
+          await fakeDriver.clearNewCommandTimeout();
+        }
+      });
+
+      it('should not leak the ambient proxy request into a command a plugin re-enters via executeCommand', async function () {
+        // a plugin handling the outer (proxy-deferred) command, which re-enters dispatch for an
+        // unrelated command before deferring to the rest of the chain
+        class ReentrantPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            await appium.executeCommand('getWindowHandle', SESSION_ID);
+            return await next();
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new ReentrantPlugin('reentrant')];
+
+        // the re-entered command should run normally, not be proxied
+        sandbox.stub(fakeDriver, 'getWindowHandle').resolves('a-handle');
+        // only the outer command, which the ambient context was actually set up for, gets proxied
+        mockFakeDriver
+          .expects('proxyCommand')
+          .once()
+          .withExactArgs('/session/x/context', 'POST', {name: 'NATIVE_APP'})
+          .resolves('<<proxied>>');
+
+        const fakeReq = {originalUrl: '/session/x/context', method: 'POST', body: {name: 'NATIVE_APP'}} as any;
+        const res = await runWithProxyReq(fakeReq, () => appium.executeCommand('getPageSource', SESSION_ID));
+
+        mockFakeDriver.verify();
+        assert.strictEqual(res.value, '<<proxied>>');
+      });
+
+      it('should serialize proxied commands even when a plugin handles them', async function () {
+        class PassThroughPlugin extends BasePlugin {
+          async getPageSource(next: () => Promise<unknown>) {
+            return await next();
+          }
+        }
+        appium.sessionPlugins[SESSION_ID] = [new PassThroughPlugin('passthrough')];
+        let finish!: () => void;
+        const pending = new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+        const proxy = sandbox.stub(fakeDriver, 'proxyCommand');
+        proxy.onFirstCall().callsFake(async () => (await pending) as any);
+        proxy.onSecondCall().resolves('<source/>');
+        const call = () =>
+          runWithProxyReq({originalUrl: `/session/${SESSION_ID}/source`, method: 'GET'} as any, () =>
+            appium.executeCommand('getPageSource', SESSION_ID),
+          );
+        const commands = Promise.all([call(), call()]);
+        try {
+          await new Promise((resolve) => setImmediate(resolve));
+          assert.equal(proxy.callCount, 1);
+          finish();
+          const results = await commands;
+          assert.equal(results[1].value, '<source/>');
+          assert.equal(proxy.callCount, 2);
+        } finally {
+          finish();
+          await commands;
+          await fakeDriver.clearNewCommandTimeout();
+        }
+      });
+    });
+    describe('configureDriverFeatures', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+
+      async function getDriverInstance(
+        appiumArgs: any,
+        {driverName = 'fake', automationName = 'Fake'} = {},
+      ): Promise<FakeDriver> {
+        appium = new AppiumDriver(appiumArgs);
+        appium.configureGlobalFeatures();
+        const fakeDriver = new FakeDriver();
+        const mockFakeDriver = sandbox.mock(fakeDriver);
+        const mockedDriverReturnerClass = function Driver() {
+          return fakeDriver;
+        };
+
+        // stub does not satisfy DriverConfig typing
+        (appium as any).driverConfig = {
+          installedExtensions: {[driverName]: {automationName}},
+          findMatchingDriver: sandbox.stub().returns({
+            driver: mockedDriverReturnerClass,
+            version: '1.2.3',
+            driverName,
+          }),
+        };
+
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .withExactArgs(W3C_CAPS)
+          .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS as NSCapabilities<Constraints>)]);
+        await appium.createSession(W3C_CAPS);
+
+        return fakeDriver;
+      }
+      afterEach(async function () {
+        await appium.deleteSession(SESSION_ID);
+      });
+      it(`should not apply any insecure features by default`, async function () {
+        fakeDriver = await getDriverInstance({});
+        assert.strictEqual(fakeDriver.allowInsecure.length, 0);
+        assert.strictEqual(fakeDriver.denyInsecure.length, 0);
+        assert.strictEqual(fakeDriver.relaxedSecurityEnabled, false);
+      });
+      it(`should apply relaxed security`, async function () {
+        fakeDriver = await getDriverInstance({relaxedSecurityEnabled: true});
+        assert.strictEqual(fakeDriver.relaxedSecurityEnabled, true);
+      });
+      it(`should apply global-scope insecure features`, async function () {
+        fakeDriver = await getDriverInstance({
+          allowInsecure: ['*:foo'],
+          denyInsecure: ['*:bar'],
+        });
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['*:foo']);
+        assert.deepStrictEqual(fakeDriver.denyInsecure, ['*:bar']);
+      });
+      it(`should apply driver-scope insecure features only if the driver name matches`, async function () {
+        fakeDriver = await getDriverInstance({allowInsecure: ['fake:foo', 'real:bar']});
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['fake:foo']);
+      });
+
+      it(`should apply driver-scope features when the prefix is the automationName`, async function () {
+        // the docs tell users to prefix with the automationName, which does not have to be
+        // the name the driver is installed under
+        fakeDriver = await getDriverInstance(
+          {allowInsecure: ['MyAutomation:foo', 'real:bar']},
+          {driverName: 'my-driver', automationName: 'MyAutomation'},
+        );
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['MyAutomation:foo']);
+      });
+
+      it(`should match the feature prefix case-insensitively`, async function () {
+        fakeDriver = await getDriverInstance({
+          allowInsecure: ['FAKE:foo'],
+          denyInsecure: ['Fake:bar'],
+        });
+        assert.deepStrictEqual(fakeDriver.allowInsecure, ['FAKE:foo']);
+        assert.deepStrictEqual(fakeDriver.denyInsecure, ['Fake:bar']);
+      });
+    });
+    describe('getAppiumSessions', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      let sessions: Awaited<ReturnType<InstanceType<typeof AppiumModule.AppiumDriver>['getAppiumSessions']>>;
+      before(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(SESSION_DISCOVERY_ENABLED);
+        appium.configureGlobalFeatures();
+      });
+      afterEach(async function () {
+        for (const session of sessions) {
+          await appium.deleteSession(session.id);
+        }
+        mockFakeDriver.restore();
+      });
+      it('should return an empty array of sessions', async function () {
+        sessions = await appium.getAppiumSessions();
+        assert.ok(Array.isArray(sessions));
+        assert.strictEqual(sessions.length, 0);
+      });
+      it('should return sessions created', async function () {
+        const caps1 = {
+          alwaysMatch: {...W3C_PREFIXED_CAPS, 'appium:cap': 'value'},
+        };
+        const caps2 = {
+          alwaysMatch: {...W3C_PREFIXED_CAPS, 'appium:cap': 'other value'},
+        };
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .returns(['fake-session-id-1', removeAppiumPrefixes(caps1.alwaysMatch as NSCapabilities<Constraints>)]);
+        const [session1Id, session1Caps] = (await appium.createSession(caps1 as any)).value!;
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .returns(['fake-session-id-2', removeAppiumPrefixes(caps2.alwaysMatch as NSCapabilities<Constraints>)]);
+        const [session2Id, session2Caps] = (await appium.createSession(caps2 as any)).value!;
+
+        sessions = await appium.getAppiumSessions();
+        assert.ok(Array.isArray(sessions));
+        assert.strictEqual(sessions.length, 2);
+        assert.strictEqual(sessions[0].id, session1Id);
+        assert.ok(Object.hasOwn(sessions[0], 'created'));
+        assert.deepStrictEqual(removeAppiumPrefixes(caps1.alwaysMatch as NSCapabilities<Constraints>), session1Caps);
+        assert.strictEqual(sessions[1].id, session2Id);
+        assert.ok(Object.hasOwn(sessions[1], 'created'));
+        assert.deepStrictEqual(removeAppiumPrefixes(caps2.alwaysMatch as NSCapabilities<Constraints>), session2Caps);
+      });
+    });
+    describe('getStatus', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      before(function () {
+        appium = new AppiumDriver({} as any);
+      });
+      it('should return a status', async function () {
+        const status = await appium.getStatus();
+        assert.ok(status.build);
+        assert.ok(status.build.version);
+      });
+    });
+    describe('sessionExists', function () {});
+    describe('attachUnexpectedShutdownHandler', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      beforeEach(function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+      });
+      afterEach(async function () {
+        await (mockFakeDriver as any).object.deleteSession();
+        mockFakeDriver.restore();
+        appium.args.defaultCapabilities = {};
+      });
+
+      it('should remove session if inner driver unexpectedly exits with an error', async function () {
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        assert.ok(Object.keys(appium.sessions).includes(sessionId));
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
+      });
+      it('should remove session if inner driver unexpectedly exits with no error', async function () {
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        assert.ok(Object.keys(appium.sessions).includes(sessionId));
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
+      });
+      it('should close bidi sockets if the inner driver unexpectedly exits', async function () {
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        const closed: number[] = [];
+        const track = (code?: number) => {
+          closed.push(code ?? -1);
+        };
+        appium.bidiSockets[sessionId] = [{close: track} as WebSocket];
+        appium.bidiProxyClients[sessionId] = {close: track} as WebSocket;
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        assert.deepEqual(closed, [1001, 1000]);
+        assert.strictEqual(appium.bidiSockets[sessionId], undefined);
+        assert.strictEqual(appium.bidiProxyClients[sessionId], undefined);
+        assert.ok(!Object.keys(appium.sessions).includes(sessionId));
+      });
+    });
+    describe('proxied bidi socket', function () {
+      let appium: InstanceType<typeof AppiumModule.AppiumDriver>;
+      let mockFakeDriver: SinonMock;
+      let upstreamServer: WebSocketServer;
+      let appiumServer: WebSocketServer;
+      let client: WebSocket;
+      let upstreamSocket: WebSocket;
+
+      async function listen(): Promise<WebSocketServer> {
+        const server = new WebSocketServer({port: 0, host: '127.0.0.1'});
+        await new Promise((resolve) => server.once('listening', resolve));
+        return server;
+      }
+
+      beforeEach(async function () {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+        const [sessionId] = (await appium.createSession(structuredClone(W3C_CAPS))).value!;
+        upstreamServer = await listen();
+        (fakeDriver as any)._bidiProxyUrl = `ws://127.0.0.1:${(upstreamServer.address() as AddressInfo).port}`;
+        const upstreamConnected = new Promise<WebSocket>((resolve) => upstreamServer.once('connection', resolve));
+        appiumServer = await listen();
+        appiumServer.on('connection', (ws, req) => appium.onBidiConnection(ws, req));
+        client = new WebSocket(`ws://127.0.0.1:${(appiumServer.address() as AddressInfo).port}/bidi/${sessionId}`);
+        await new Promise((resolve) => client.once('open', resolve));
+        upstreamSocket = await upstreamConnected;
+      });
+      afterEach(async function () {
+        client.terminate();
+        await new Promise((resolve) => appiumServer.close(resolve));
+        await new Promise((resolve) => upstreamServer.close(resolve));
+        await (mockFakeDriver as any).object.deleteSession();
+        mockFakeDriver.restore();
+      });
+
+      it('should close the upstream socket when the client drops without a close frame', async function () {
+        const upstreamClosed = new Promise((resolve) => upstreamSocket.once('close', resolve));
+        client.terminate();
+        assert.strictEqual(await upstreamClosed, 1011);
+      });
+      it('should close the client socket when the upstream drops without a close frame', async function () {
+        const clientClosed = new Promise((resolve) => client.once('close', resolve));
+        upstreamSocket.terminate();
+        assert.strictEqual(await clientClosed, 1011);
+      });
+
+      for (const {disconnect, commandIds, responseType} of [
+        {disconnect: false, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: true, commandIds: [1, 2], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'success'},
+        {disconnect: false, commandIds: [1, 1], responseType: 'error'},
+        {disconnect: true, commandIds: [1, 1], responseType: 'success'},
+      ]) {
+        it(`should suspend idle expiry for IDs ${commandIds} until ${disconnect ? 'disconnect' : `all ${responseType} responses arrive`}`, async function () {
+          await fakeDriver.clearNewCommandTimeout();
+          sandbox.stub(fakeDriver as any, 'stopClock').resolves();
+          const clock = sandbox.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+          try {
+            fakeDriver.newCommandTimeoutMs = 1000;
+            await fakeDriver.startNewCommandTimeout();
+            for (const id of commandIds) {
+              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
+              await received;
+            }
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            const eventReceived = new Promise((resolve) => client.once('message', resolve));
+            upstreamSocket.send(JSON.stringify({type: 'event', method: 'log.entryAdded', params: {}}));
+            await eventReceived;
+            await clock.tickAsync(2000);
+            assert.notEqual(fakeDriver.sessionId, null);
+            if (disconnect) {
+              const closed = new Promise((resolve) => client.once('close', resolve));
+              upstreamSocket.close();
+              await closed;
+            } else {
+              for (const [responseIndex, id] of commandIds.toReversed().entries()) {
+                const received = new Promise((resolve) => client.once('message', resolve));
+                upstreamSocket.send(
+                  JSON.stringify(
+                    responseType === 'success'
+                      ? {id, type: 'success', result: {contexts: []}}
+                      : {id, type: 'error', error: 'unknown error', message: 'Test command failed'},
+                  ),
+                );
+                await received;
+                if (responseIndex === 0) {
+                  await clock.tickAsync(2000);
+                  assert.notEqual(fakeDriver.sessionId, null);
+                }
+              }
+            }
+            await clock.tickAsync(999);
+            assert.notEqual(fakeDriver.sessionId, null);
+            await clock.tickAsync(1);
+            assert.equal(fakeDriver.sessionId, null);
+          } finally {
+            await fakeDriver.clearNewCommandTimeout();
+            clock.restore();
+          }
+        });
+      }
+    });
+    describe('createPluginInstances', function () {
+      class NoArgsPlugin extends BasePlugin {}
+      (NoArgsPlugin as any).baseVersion = '1.0';
+
+      class ArgsPlugin extends BasePlugin {}
+      (ArgsPlugin as any).baseVersion = '1.0';
+
+      class ArrayArgPlugin extends BasePlugin {}
+      (ArrayArgPlugin as any).baseVersion = '1.0';
+
+      beforeEach(async function () {
+        resetSchema();
+        // to establish defaults, we need to register a schema for the plugin.
+        // note that the `noargs` plugin does not need a schema, because it
+        // accepts no arguments.
+        await registerSchema(PLUGIN_TYPE, 'args', {
+          type: 'object',
+          properties: {
+            randomArg: {
+              type: 'number',
+              default: 2000,
+            },
+          },
+        });
+        await registerSchema(PLUGIN_TYPE, 'arrayarg', {
+          type: 'object',
+          properties: {
+            arr: {
+              type: 'array',
+              default: [],
+            },
+          },
+        });
+        await finalizeSchema();
+      });
+
+      describe('when args are not present', function () {
+        it('the `cliArgs` prop should be an empty object', function () {
+          const appium = new AppiumDriver({} as any);
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ]),
+          );
+          for (const plugin of appium.createPluginInstances()) {
+            assert.deepStrictEqual(plugin.cliArgs, {});
+          }
+        });
+      });
+
+      describe('when args are equal to the schema defaults', function () {
+        it('the `cliArgs` prop should contain the schema defaults', function () {
+          const appium = new AppiumDriver({plugin: {args: {randomArg: 2000}}} as any);
+          setPluginClassesForTest(
+            appium,
+            new Map<any, string>([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+            ]),
+          );
+          const [noargs, args] = appium.createPluginInstances();
+          assert.deepStrictEqual(noargs.cliArgs, {});
+          assert.deepStrictEqual(args.cliArgs, {randomArg: 2000});
+        });
+
+        describe('when the default is an "object"', function () {
+          it('the `cliArgs` prop should contain the schema defaults', function () {
+            const appium = new AppiumDriver({plugin: {arrayarg: {arr: []}}} as any);
+            setPluginClassesForTest(
+              appium,
+              new Map<any, string>([
+                [NoArgsPlugin, 'noargs'],
+                [ArgsPlugin, 'args'],
+                [ArrayArgPlugin, 'arrayarg'],
+              ]),
+            );
+            const [noargs, args, arrayarg] = appium.createPluginInstances();
+            assert.deepStrictEqual(noargs.cliArgs, {});
+            assert.deepStrictEqual(args.cliArgs, {});
+            assert.deepStrictEqual(arrayarg.cliArgs, {arr: []});
+          });
+        });
+      });
+
+      describe('when args are not equal to the schema defaults', function () {
+        it('should add cliArgs to the plugin', function () {
+          const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}} as any);
+          setPluginClassesForTest(appium, new Map<any, string>([[ArgsPlugin, 'args']]));
+          const plugin = appium.createPluginInstances()[0] as BasePlugin;
+          assert.deepStrictEqual(plugin.cliArgs, {randomArg: 1234});
+        });
+      });
+    });
+
+    describe('pluginsForSession', function () {
+      it('should cache plugin instances per existing session', function () {
+        const appium = new AppiumDriver({} as any);
+        const fakeDriver = new FakeDriver();
+        (appium as any).sessions[SESSION_ID] = fakeDriver;
+
+        const createPluginInstancesSpy = sandbox.spy(appium, 'createPluginInstances');
+        const firstPlugins = appium.pluginsForSession(SESSION_ID);
+        const secondPlugins = appium.pluginsForSession(SESSION_ID);
+
+        assert.strictEqual(firstPlugins, secondPlugins);
+        assert.strictEqual(appium.sessionPlugins[SESSION_ID], firstPlugins);
+        assert.strictEqual(createPluginInstancesSpy.calledOnce, true);
+      });
+    });
+  });
+});

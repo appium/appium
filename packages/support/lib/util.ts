@@ -1,0 +1,552 @@
+import {randomUUID} from 'node:crypto';
+import stream from 'node:stream';
+import {isDeepStrictEqual, promisify} from 'node:util';
+
+import {asyncmap} from 'asyncbox';
+import * as semver from 'semver';
+import {parse as shellParse, quote as shellQuote} from 'shell-quote';
+
+import {fs} from './fs.js';
+import {
+  createBase64EncodeStream,
+  GiB,
+  isSubPath,
+  isPlainObject,
+  KiB,
+  MiB,
+  pluralize,
+  type PluralizeOptions,
+} from './internal/index.js';
+export {shellParse};
+import type {Element} from '@appium/types';
+import * as _lockfile from 'lockfile';
+
+export {GiB, isPlainObject, isSubPath, KiB, MiB, pluralize, type PluralizeOptions};
+
+/** W3C WebDriver element identifier key used in element objects. */
+export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
+
+/** A string which is never `''`. */
+export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
+
+/**
+ * Generates a v4 UUID using Node.js crypto.
+ *
+ * @returns A UUID v4 string
+ */
+export function uuidV4(): string {
+  return randomUUID();
+}
+
+/**
+ * Type guard: returns true if the value is a non-empty string.
+ *
+ * @param val - Value to check
+ * @returns `true` if `val` is a string with at least one character
+ */
+export function hasContent(val: unknown): val is NonEmptyString {
+  return typeof val === 'string' && val !== '';
+}
+
+/**
+ * Type guard: returns true if the value is not `undefined`, `null`, or `NaN`.
+ *
+ * @param val - Value to check
+ * @returns `true` if `val` is non-null and non-undefined (and not NaN for numbers)
+ */
+export function hasValue<T>(val: T): val is NonNullable<T> {
+  if (typeof val === 'number') {
+    return !Number.isNaN(val);
+  }
+  return val !== undefined && val !== null;
+}
+
+/**
+ * Creates a memoized version of a function.
+ *
+ * @param fn - Function to memoize
+ * @param resolver - Optional cache key resolver. If omitted, the first argument is used as the cache key.
+ * @returns Memoized function with a mutable `.cache` map (compatible with lodash-style cache resets in tests).
+ */
+export function memoize<Fn extends (...args: any[]) => any>(
+  fn: Fn,
+  resolver?: (...args: Parameters<Fn>) => unknown,
+): Fn & {cache: Map<unknown, ReturnType<Fn>>} {
+  const memoizedFn = function (this: unknown, ...args: Parameters<Fn>) {
+    const key = resolver ? resolver.apply(this, args) : args[0];
+    if (memoizedFn.cache.has(key)) {
+      return memoizedFn.cache.get(key) as ReturnType<Fn>;
+    }
+    const result = fn.apply(this, args);
+    memoizedFn.cache.set(key, result);
+    return result;
+  } as unknown as Fn & {cache: Map<unknown, ReturnType<Fn>>};
+  memoizedFn.cache = new Map<unknown, ReturnType<Fn>>();
+  return memoizedFn;
+}
+
+/**
+ * Returns true when the value has no elements/properties.
+ *
+ * @param value - Value to check
+ * @returns `true` if the value is empty
+ */
+export function isEmpty(value: unknown[] | null | undefined): value is [] | null | undefined;
+export function isEmpty(value: unknown): boolean;
+export function isEmpty(value: unknown): boolean {
+  if (value == null) {
+    return true;
+  }
+  if (typeof value === 'string' || Array.isArray(value) || Buffer.isBuffer(value)) {
+    return value.length === 0;
+  }
+  if (value instanceof Map || value instanceof Set) {
+    return value.size === 0;
+  }
+  if (typeof value === 'object' || typeof value === 'function') {
+    return Object.keys(value).length === 0;
+  }
+  return true;
+}
+
+/**
+ * Performs a deep equality check between two values.
+ *
+ * @param left - First value
+ * @param right - Second value
+ * @returns `true` when values are deeply equal
+ */
+export function isEqual(left: unknown, right: unknown): boolean {
+  return isDeepStrictEqual(left, right);
+}
+
+/**
+ * Escapes RegExp special characters in a string.
+ *
+ * @param value - Input string
+ * @returns Escaped string safe for RegExp source
+ */
+export function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Returns a duplicate-free copy of the input array.
+ *
+ * @param values - Input array
+ * @returns New array with unique values preserving input order
+ */
+export function uniq<T>(values: readonly T[]): T[] {
+  return [...new Set(values)];
+}
+
+/**
+ * Truncates a string to a maximum length.
+ *
+ * @param value - Input string
+ * @param options - Truncation options or max length
+ * @returns Truncated string
+ */
+export function truncateString(value: string, options: TruncateStringOptions | number = {}): string {
+  const normalizedOptions = typeof options === 'number' ? {length: options} : options;
+  const {length, omission = '…'} = normalizedOptions;
+  const stringValue = value == null ? '' : typeof value === 'number' && Object.is(value, -0) ? '-0' : String(value);
+  const maxLength = length ?? 30;
+  if (maxLength <= 0) {
+    return omission;
+  }
+  if (stringValue.length <= maxLength) {
+    return stringValue;
+  }
+  const contentLength = maxLength - omission.length;
+  return contentLength > 0 ? `${stringValue.slice(0, contentLength)}${omission}` : omission;
+}
+
+/**
+ * Escapes spaces in a string for use in command-line arguments (e.g. ` ` → `\ `).
+ *
+ * @param str - String that may contain spaces
+ * @returns String with spaces escaped by a backslash
+ */
+export function escapeSpace(str: string): string {
+  return str.split(/ /).join('\\ ');
+}
+
+/**
+ * Escapes special characters in a string (backslash, slash, quotes, control chars).
+ * If `quoteEscape` is provided, that character is also escaped.
+ *
+ * @param str - String to escape, or non-string value (returned unchanged)
+ * @param quoteEscape - Optional character to escape, or `false` to skip
+ * @returns Escaped string, or original value if `str` is not a string
+ */
+export function escapeSpecialChars(str: unknown, quoteEscape?: string | false): unknown {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  const result = str
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t')
+    .replace(/["]/g, '\\"')
+    .replace(/\\'/g, "\\'");
+  if (!quoteEscape) {
+    return result;
+  }
+  const re = new RegExp(quoteEscape, 'g');
+  return result.replace(re, `\\${quoteEscape}`);
+}
+
+/**
+ * Parses a value as JSON if it is a string; otherwise returns the value as-is.
+ *
+ * @param obj - String (to parse) or other value (returned unchanged)
+ * @returns Parsed object or original value
+ */
+export function safeJsonParse<T>(obj: unknown): T {
+  if (typeof obj !== 'string') {
+    return obj as T;
+  }
+  try {
+    return JSON.parse(obj) as T;
+  } catch {
+    return obj as T;
+  }
+}
+
+/**
+ * Stringifies an object to JSON, converting Buffers to strings for readable output.
+ *
+ * @param obj - Object to serialize
+ * @param replacer - Optional replacer function (same as JSON.stringify)
+ * @param space - Indentation for pretty-printing. Defaults to 2
+ * @returns JSON string
+ */
+export function jsonStringify(
+  obj: unknown,
+  replacer: ((key: string, value: unknown) => unknown) | null = null,
+  space: number | string = 2,
+): string {
+  const replacerFunc = typeof replacer === 'function' ? replacer : (_k: string, v: unknown) => v;
+
+  const bufferToJSON = Buffer.prototype.toJSON;
+  delete (Buffer.prototype as Record<string, unknown>).toJSON;
+  try {
+    return JSON.stringify(
+      obj,
+      (key, value) => {
+        const updatedValue = Buffer.isBuffer(value) ? value.toString('utf8') : value;
+        return replacerFunc(key, updatedValue);
+      },
+      space,
+    );
+  } finally {
+    (Buffer.prototype as Record<string, unknown>).toJSON = bufferToJSON;
+  }
+}
+
+/**
+ * Extracts the element ID from a W3C or JSONWP element object, or returns the string if already an ID.
+ *
+ * @param el - Element object (with ELEMENT or W3C identifier) or raw element ID string
+ * @returns The element ID string
+ */
+export function unwrapElement(el: Element | string): string {
+  if (isPlainObject(el)) {
+    for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
+      if (Object.hasOwn(el, propName)) {
+        return el[propName] as string;
+      }
+    }
+  }
+  return el as string;
+}
+
+/**
+ * Wraps an element ID string in an element object compatible with both W3C and JSONWP.
+ *
+ * @param elementId - The element ID to wrap
+ * @returns Element object with both ELEMENT and W3C identifier keys
+ */
+export function wrapElement(elementId: string): Element {
+  return {
+    ELEMENT: elementId,
+    [W3C_WEB_ELEMENT_IDENTIFIER]: elementId,
+  } as Element;
+}
+
+/**
+ * Returns a copy of the object containing only properties that pass the predicate.
+ * If the predicate is missing, removes properties whose values are undefined.
+ * If the predicate is a scalar, keeps only properties whose value equals that scalar.
+ * If the predicate is a function, calls it for each (value, obj) and keeps properties where it returns true.
+ *
+ * @param obj - Source object to filter
+ * @param predicate - Optional filter: undefined (drop undefined values), scalar (value match), or function
+ * @returns New object with only the properties that pass the predicate
+ */
+export function filterObject<T extends Record<string, unknown>>(obj: T, predicate?: unknown): Partial<T> {
+  const newObj = {...obj} as Record<string, unknown>;
+  let pred: (v: unknown, o: T) => boolean;
+  if (predicate === undefined) {
+    pred = (v) => v !== undefined;
+  } else if (typeof predicate !== 'function') {
+    const valuePredicate = predicate;
+    pred = (v) => v === valuePredicate;
+  } else {
+    pred = predicate as (v: unknown, o: T) => boolean;
+  }
+  for (const key of Object.keys(obj)) {
+    if (!pred(obj[key], obj)) {
+      delete newObj[key];
+    }
+  }
+  return newObj as Partial<T>;
+}
+
+/**
+ * Converts a byte count to a human-readable size string (e.g. "1.50 MB").
+ *
+ * @param bytes - Number of bytes (or string coercible to a number)
+ * @returns Formatted string like "123 B", "1.50 KB", "2.00 MB", "3.00 GB"
+ * @throws {Error} If bytes cannot be converted to a non-negative integer
+ */
+export function toReadableSizeString(bytes: number | string): string {
+  const intBytes = parseInt(String(bytes), 10);
+  if (isNaN(intBytes) || intBytes < 0) {
+    throw new Error(`Cannot convert '${bytes}' to a readable size format`);
+  }
+  if (intBytes >= GiB) {
+    return `${(intBytes / (GiB * 1.0)).toFixed(2)} GB`;
+  } else if (intBytes >= MiB) {
+    return `${(intBytes / (MiB * 1.0)).toFixed(2)} MB`;
+  } else if (intBytes >= KiB) {
+    return `${(intBytes / (KiB * 1.0)).toFixed(2)} KB`;
+  }
+  return `${intBytes} B`;
+}
+
+/**
+ * Checks whether the given paths refer to the same file system entity (same device and inode).
+ * All paths must exist.
+ *
+ * @param path1 - First path
+ * @param path2 - Second path
+ * @param pathN - Additional paths to compare
+ * @returns `true` if all paths resolve to the same file/directory
+ */
+export async function isSameDestination(path1: string, path2: string, ...pathN: string[]): Promise<boolean> {
+  const allPaths = [path1, path2, ...pathN];
+  if (!(await asyncmap(allPaths, async (p) => fs.exists(p))).every(Boolean)) {
+    return false;
+  }
+
+  const areAllItemsEqual = (arr: unknown[]) => !!arr.reduce((a, b) => (a === b ? a : NaN));
+  if (areAllItemsEqual(allPaths)) {
+    return true;
+  }
+
+  const stats = await asyncmap(allPaths, (p) => fs.stat(p, {bigint: true}));
+  return stats[0].ino !== 0n && stats.every(({dev, ino}) => dev === stats[0].dev && ino === stats[0].ino);
+}
+
+/**
+ * Coerces a value to a valid semver string (e.g. "1.0" → "1.0.0").
+ *
+ * @param ver - Version string or number to coerce
+ * @param strict - If true, throws when coercion fails; if false, returns null
+ * @returns Valid semver string, or null when strict is false and coercion fails
+ * @throws {Error} When strict is true and ver cannot be coerced
+ */
+export function coerceVersion(ver: string, strict: true): string;
+export function coerceVersion(ver: string, strict?: false): string | null;
+export function coerceVersion(ver: string, strict = true): string | null {
+  let result = semver.valid(`${ver}`);
+  if (!result) {
+    result = semver.valid(semver.coerce(`${ver}`));
+  }
+  if (strict && !result) {
+    throw new Error(`'${ver}' cannot be coerced to a valid version number`);
+  }
+  return result;
+}
+
+const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
+
+/** Options for toInMemoryBase64(). */
+export interface EncodingOptions {
+  /** Maximum size of the resulting buffer in bytes. Default 1GB. */
+  maxSize?: number;
+}
+
+/** Options for getLockFileGuard(). */
+export interface LockFileOptions {
+  /** Max time in seconds to wait for the lock. Default 120. */
+  timeout?: number;
+  /** If true, attempt to unlock and retry once if the first acquisition times out (e.g. stale lock). */
+  tryRecovery?: boolean;
+}
+
+/** Options for truncateString(). */
+export interface TruncateStringOptions {
+  /** Maximum length of the resulting string. Default 30. */
+  length?: number;
+  /** Suffix appended to truncated strings. Default "…". */
+  omission?: string;
+}
+
+/** Guard function that runs the given behavior under the lock. */
+type LockFileGuardFn<T> = (behavior: () => Promise<T> | T) => Promise<T>;
+
+/** Return type of getLockFileGuard: guard function with a .check() method. */
+type LockFileGuard<T> = LockFileGuardFn<T> & {check: () => Promise<boolean>};
+
+/**
+ * Compares two version strings using the given operator.
+ *
+ * @param ver1 - First version string
+ * @param operator - One of: ==, !=, >, <, >=, <=, =
+ * @param ver2 - Second version string
+ * @returns `true` if ver1 operator ver2 holds (e.g. "2.0.0" >= "1.0.0")
+ * @throws {Error} If operator is unsupported or either version cannot be coerced
+ */
+export function compareVersions(ver1: string, operator: string, ver2: string): boolean {
+  if (!SUPPORTED_OPERATORS.includes(operator)) {
+    throw new Error(
+      `The '${operator}' comparison operator is not supported. ` +
+        `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`,
+    );
+  }
+
+  const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
+  const v1 = coerceVersion(ver1, true);
+  const v2 = coerceVersion(ver2, true);
+  const result = semver.satisfies(v1, `${semverOperator}${v2}`, {includePrerelease: true});
+  return operator === '!=' ? !result : result;
+}
+
+/**
+ * Quotes and escapes command-line arguments so they can be safely passed to a shell.
+ *
+ * @param args - Single argument or array of arguments to quote
+ * @returns Quoted string suitable for shell parsing
+ */
+export function quote(args: string | string[]): string {
+  return shellQuote(Array.isArray(args) ? args : [args]);
+}
+
+/**
+ * Reads a file and returns its contents as a base64-encoded buffer.
+ *
+ * @param srcPath - Full path to the file to encode
+ * @param opts - Encoding options (e.g. maxSize to cap buffer size)
+ * @returns Buffer containing the base64-encoded file content
+ * @throws {Error} If the file does not exist, is a directory, cannot be read, or exceeds maxSize
+ */
+export async function toInMemoryBase64(srcPath: string, opts: EncodingOptions = {}): Promise<Buffer> {
+  if (!(await fs.exists(srcPath)) || (await fs.stat(srcPath)).isDirectory()) {
+    throw new Error(`No such file: ${srcPath}`);
+  }
+
+  const {maxSize = 1 * GiB} = opts;
+  const resultBuffers: Buffer[] = [];
+  let resultBuffersSize = 0;
+  const resultWriteStream = new stream.Writable({
+    write(buffer: Buffer, _encoding: string, next: (err?: Error) => void) {
+      resultBuffers.push(buffer);
+      resultBuffersSize += buffer.length;
+      if (maxSize > 0 && resultBuffersSize > maxSize) {
+        resultWriteStream.emit(
+          'error',
+          new Error(`The size of the resulting buffer must not be greater than ${toReadableSizeString(maxSize)}`),
+        );
+      }
+      next();
+    },
+  });
+
+  const readerStream = fs.createReadStream(srcPath);
+  const base64EncoderStream = createBase64EncodeStream();
+  const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
+    resultWriteStream.once('error', (e: Error) => {
+      readerStream.unpipe(base64EncoderStream);
+      base64EncoderStream.unpipe(resultWriteStream);
+      readerStream.destroy();
+      reject(e);
+    });
+    resultWriteStream.once('finish', () => resolve());
+  });
+  const readStreamPromise = new Promise<void>((resolve, reject) => {
+    readerStream.once('close', () => resolve());
+    readerStream.once('error', (e: Error) => reject(new Error(`Failed to read '${srcPath}': ${e.message}`)));
+  });
+  readerStream.pipe(base64EncoderStream);
+  base64EncoderStream.pipe(resultWriteStream);
+
+  await Promise.all([readStreamPromise, resultWriteStreamPromise]);
+  return Buffer.concat(resultBuffers);
+}
+
+/**
+ * Creates a guard that serializes access to a critical section using a lock file.
+ * The returned function acquires the lock, runs the given behavior, then releases the lock.
+ * Also exposes `.check()` to test whether the lock is currently held.
+ *
+ * @param lockFile - Full path to the lock file
+ * @param opts - Options (see {@link LockFileOptions})
+ * @returns Async function that accepts a callback to run under the lock, plus a `.check()` method
+ */
+export function getLockFileGuard<T>(lockFile: string, opts: LockFileOptions = {}): LockFileGuard<T> {
+  const {timeout = 120, tryRecovery = false} = opts;
+
+  const lock = promisify(_lockfile.lock) as (lockfile: string, opts: {wait: number}) => Promise<void>;
+  const checkLock = promisify(_lockfile.check) as (lockfile: string) => Promise<boolean>;
+  const unlock = promisify(_lockfile.unlock) as (lockfile: string) => Promise<void>;
+
+  const guard: LockFileGuard<T> = Object.assign(
+    async (behavior: () => Promise<T> | T): Promise<T> => {
+      let triedRecovery = false;
+      let acquired = false;
+      while (!acquired) {
+        try {
+          try {
+            _lockfile.lockSync(lockFile);
+          } catch (e) {
+            const lockErr = e as NodeJS.ErrnoException;
+            if (lockErr.code !== 'EEXIST') {
+              throw lockErr;
+            }
+            // Someone else is holding the lock (possibly grabbed it between us checking and
+            // locking) -- wait for them to release it instead of failing outright.
+            await lock(lockFile, {wait: timeout * 1000});
+          }
+          acquired = true;
+        } catch (e) {
+          const err = e as Error;
+          if (err.message?.includes('EEXIST') && tryRecovery && !triedRecovery) {
+            _lockfile.unlockSync(lockFile);
+            triedRecovery = true;
+          } else {
+            throw new Error(
+              `Could not acquire lock on '${lockFile}' after ${timeout}s. ` + `Original error: ${err.message}`,
+              {cause: e},
+            );
+          }
+        }
+      }
+      try {
+        return await behavior();
+      } finally {
+        await unlock(lockFile);
+      }
+    },
+    {check: () => checkLock(lockFile)},
+  );
+
+  return guard;
+}

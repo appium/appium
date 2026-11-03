@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework</key>
+	<dict>
+		<key>Whitelisted</key>
+		<false/>
+		<key>Executable</key>
+		<string></string>
+		<key>BundlePath</key>
+		<string>/System/Library/PrivateFrameworks/Parsec.framework</string>
+		<key>Registered</key>
+		<string></string>
+	</dict>
+	<key>com.apple.locationd.bundle-/System/Library/PrivateFrameworks/WirelessDiagnostics.framework</key>
+	<dict>
+		<key>Whitelisted</key>
+		<false/>
+		<key>Executable</key>
+		<string></string>
+		<key>BundlePath</key>
+		<string>/System/Library/PrivateFrameworks/WirelessDiagnostics.framework</string>
+		<key>Registered</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>

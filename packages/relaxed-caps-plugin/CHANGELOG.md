@@ -1,0 +1,304 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [4.0.0-beta.6](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.5...@appium/relaxed-caps-plugin@4.0.0-beta.6) (2026-10-26)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [4.0.0-beta.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.4...@appium/relaxed-caps-plugin@4.0.0-beta.5) (2026-10-18)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.3...@appium/relaxed-caps-plugin@4.0.0-beta.4) (2026-10-09)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [4.0.0-beta.3](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.2...@appium/relaxed-caps-plugin@4.0.0-beta.3) (2026-10-05)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [4.0.0-beta.2](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.1...@appium/relaxed-caps-plugin@4.0.0-beta.2) (2026-09-27)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [4.0.0-beta.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@4.0.0-beta.0...@appium/relaxed-caps-plugin@4.0.0-beta.1) (2026-09-19)
+
+### Bug Fixes
+
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([b09efc3](https://github.com/appium/appium/commit/b09efc31c6967bbcf2c4314db9d2a0b6454fa8fb))
+
+
+## [4.0.0-beta.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@3.0.0...@appium/relaxed-caps-plugin@4.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** ISessionHandler.createSession (@appium/types) and LegacyCreateSessionArgs — overload and type deleted, single-argument signature only.
+* **base-driver:** BaseDriver.createSession and AppiumDriver.createSession — collapsed to the single-argument mplementation; capability validation now checks the one argument directly instead of scanning three positions for the first W3C-shaped value.
+* **base-driver:** FakeDriver.createSession (and the base-driver e2e test double) — overrides updated to match.
+* **base-driver:** RelaxedCapsPlugin.createSession — this plugin existed specifically to normalize capabilities across the (now-gone) three positions; its hook is simplified to a single caps argument.
+* **base-driver:** POST /session wire route (w3c.ts) — payloadParams.optional no longer sends capabilities three times into the command args.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+
+### Code Refactoring
+
+* **base-driver:** remove deprecated multi-argument createSession overload ([#22730](https://github.com/appium/appium/issues/22730)) ([db72249](https://github.com/appium/appium/commit/db722498739ae7fe1deef1b98e02d04b455a4f70))
+
+
+## [3.0.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.5...@appium/relaxed-caps-plugin@3.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **relaxed-caps-plugin:** @appium/relaxed-caps-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **relaxed-caps-plugin:** Migrate to ESM ([#22573](https://github.com/appium/appium/issues/22573)) ([e625408](https://github.com/appium/appium/commit/e625408f559b4354a0cae38f5a5238d66d2e22ce))
+
+
+## [2.2.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.4...@appium/relaxed-caps-plugin@2.2.5) (2026-07-25)
+
+
+### Bug Fixes
+
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
+## [2.2.4](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.3...@appium/relaxed-caps-plugin@2.2.4) (2026-06-18)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.2.3](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.2...@appium/relaxed-caps-plugin@2.2.3) (2026-05-31)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.2.2](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.1...@appium/relaxed-caps-plugin@2.2.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.2.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.2.0...@appium/relaxed-caps-plugin@2.2.1) (2026-04-23)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.2.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.1.0...@appium/relaxed-caps-plugin@2.2.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [2.1.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.2...@appium/relaxed-caps-plugin@2.1.0) (2026-03-08)
+
+
+### Features
+
+* **relaxed-caps-plugin:** Migrate to typescript ([#21908](https://github.com/appium/appium/issues/21908)) ([59ef8af](https://github.com/appium/appium/commit/59ef8af269dfcea96f1b270ab5785540007ab8a9))
+
+
+### Bug Fixes
+
+* Move @appium/types to dev dependencies for various packages ([#21920](https://github.com/appium/appium/issues/21920)) ([2615935](https://github.com/appium/appium/commit/261593593947bc59e7a937e518fc6f019cafda7a))
+
+
+
+## [2.0.2](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.1...@appium/relaxed-caps-plugin@2.0.2) (2026-01-26)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.0.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.0...@appium/relaxed-caps-plugin@2.0.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* **base-driver,relaxed-caps-plugin,types:** add missing W3C caps ([#21642](https://github.com/appium/appium/issues/21642)) ([e6635b7](https://github.com/appium/appium/commit/e6635b737d0f42d8fd38c3d8bea70067d2e7c87a))
+
+
+
+## [2.0.0](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@2.0.0-rc.1...@appium/relaxed-caps-plugin@2.0.0) (2025-08-18)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [2.0.0-rc.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.6...@appium/relaxed-caps-plugin@2.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
+## [1.0.6](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.5...@appium/relaxed-caps-plugin@1.0.6) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+
+
+
+## [1.0.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.4...@appium/relaxed-caps-plugin@1.0.5) (2023-02-09)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [1.0.4](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.3...@appium/relaxed-caps-plugin@1.0.4) (2023-01-13)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [1.0.3](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.2...@appium/relaxed-caps-plugin@1.0.3) (2023-01-13)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [1.0.2](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.1...@appium/relaxed-caps-plugin@1.0.2) (2023-01-13)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+## [1.0.1](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.14...@appium/relaxed-caps-plugin@1.0.1) (2023-01-13)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+
+
+
+
+# [1.0.0-beta.14](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.13...@appium/relaxed-caps-plugin@1.0.0-beta.14) (2022-12-14)
+
+- chore!: set engines to minimum Node.js v14.17.0 ([a1dbe6c](https://github.com/appium/appium/commit/a1dbe6c43efe76604943a607d402f4c8b864d652))
+
+### Features
+
+- experimental support for typedoc generation ([4746080](https://github.com/appium/appium/commit/4746080e54ed8bb494cbc7c6ce83db503bf6bb52))
+
+### BREAKING CHANGES
+
+- Appium now supports version range `^14.17.0 || ^16.13.0 || >=18.0.0`
+
+# [1.0.0-beta.13](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.12...@appium/relaxed-caps-plugin@1.0.0-beta.13) (2022-10-13)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.12](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.11...@appium/relaxed-caps-plugin@1.0.0-beta.12) (2022-09-07)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.11](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.10...@appium/relaxed-caps-plugin@1.0.0-beta.11) (2022-08-03)
+
+### Bug Fixes
+
+- **appium,base-driver,base-plugin,doctor,docutils,eslint-config-appium,execute-driver-plugin,fake-driver,fake-plugin,gulp-plugins,images-plugin,opencv,relaxed-caps-plugin,schema,support,test-support,types,universal-xml-plugin:** update engines ([d8d2382](https://github.com/appium/appium/commit/d8d2382327ba7b7db8a4d1cad987c0e60184c92d))
+
+# [1.0.0-beta.10](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.9...@appium/relaxed-caps-plugin@1.0.0-beta.10) (2022-07-28)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.9](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.8...@appium/relaxed-caps-plugin@1.0.0-beta.9) (2022-06-01)
+
+### Bug Fixes
+
+- **execute-driver-plugin,fake-plugin,images-plugin,relaxed-caps-plugin,universal-xml-plugin:** ensure babel runtime is present ([df64612](https://github.com/appium/appium/commit/df64612d98c35fd64219816269f83f628e538fe2))
+
+# [1.0.0-beta.8](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.7...@appium/relaxed-caps-plugin@1.0.0-beta.8) (2022-05-31)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.7](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.6...@appium/relaxed-caps-plugin@1.0.0-beta.7) (2022-05-31)
+
+### Bug Fixes
+
+- **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+- **relaxed-caps-plugin:** export RelaxedCapsPlugin class ([d09c915](https://github.com/appium/appium/commit/d09c915dadef0e30e9282ae8f1e0ee7fc01963c0)), closes [#16981](https://github.com/appium/appium/issues/16981)
+
+### Features
+
+- **relaxed-caps-plugin:** use peer deps ([a98e0e8](https://github.com/appium/appium/commit/a98e0e8201d5a1e4c4d21ee3e834646338117dde))
+
+### BREAKING CHANGES
+
+- **relaxed-caps-plugin:** `@appium/relaxed-caps-plugin` now expects to be installed alongside `appium`.
+
+# [1.0.0-beta.6](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.5...@appium/relaxed-caps-plugin@1.0.0-beta.6) (2022-05-02)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.4...@appium/relaxed-caps-plugin@1.0.0-beta.5) (2022-04-20)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# [1.0.0-beta.4](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.0-beta.3...@appium/relaxed-caps-plugin@1.0.0-beta.4) (2022-04-20)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin
+
+# 1.0.0-beta.3 (2022-04-20)
+
+**Note:** Version bump only for package @appium/relaxed-caps-plugin

@@ -1,0 +1,180 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [3.0.0-beta.1](https://github.com/appium/appium/compare/@appium/strongbox@3.0.0-beta.0...@appium/strongbox@3.0.0-beta.1) (2026-10-05)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [3.0.0-beta.0](https://github.com/appium/appium/compare/@appium/strongbox@2.0.0...@appium/strongbox@3.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* backport diff from master ([#22749](https://github.com/appium/appium/issues/22749)) ([6323df1](https://github.com/appium/appium/commit/6323df1d7354f85cc631508f5cb6a3e35270d4bd))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+
+
+## [2.0.0](https://github.com/appium/appium/compare/@appium/strongbox@1.1.3...@appium/strongbox@2.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **strongbox:** @appium/strongbox is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). No other package in this monorepo currently depends on @appium/strongbox, so this only affects external consumers.
+
+### Features
+
+* **strongbox:** Migrate package to ESM ([#22563](https://github.com/appium/appium/issues/22563)) ([c733c09](https://github.com/appium/appium/commit/c733c090f6688feadd81c9838a0fe58351be3045))
+
+### Bug Fixes
+
+* **strongbox:** custom container paths are always rejected on Windows ([#22665](https://github.com/appium/appium/issues/22665)) ([76ff5aa](https://github.com/appium/appium/commit/76ff5aa69a8f3c6661af47896d8239a1190ad36d))
+
+
+## [1.1.3](https://github.com/appium/appium/compare/@appium/strongbox@1.1.2...@appium/strongbox@1.1.3) (2026-07-25)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [1.1.2](https://github.com/appium/appium/compare/@appium/strongbox@1.1.1...@appium/strongbox@1.1.2) (2026-06-18)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [1.1.1](https://github.com/appium/appium/compare/@appium/strongbox@1.1.0...@appium/strongbox@1.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/strongbox@1.0.2...@appium/strongbox@1.1.0) (2026-04-09)
+
+
+### Features
+
+* **strongbox:** Add a possibility to list strongbox items ([#22091](https://github.com/appium/appium/issues/22091)) ([73b7820](https://github.com/appium/appium/commit/73b7820df57d6d4a3f345230b4ae406615e3f951))
+
+
+
+## [1.0.2](https://github.com/appium/appium/compare/@appium/strongbox@1.0.1...@appium/strongbox@1.0.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [1.0.1](https://github.com/appium/appium/compare/@appium/strongbox@1.0.0...@appium/strongbox@1.0.1) (2026-01-26)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [1.0.0](https://github.com/appium/appium/compare/@appium/strongbox@1.0.0-rc.1...@appium/strongbox@1.0.0) (2025-08-18)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [1.0.0-rc.1](https://github.com/appium/appium/compare/@appium/strongbox@0.3.3...@appium/strongbox@1.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Features
+
+* **base-driver:** Make extension name prefix mandatory ([#21110](https://github.com/appium/appium/issues/21110)) ([9402291](https://github.com/appium/appium/commit/9402291f1c634bcb376ff69aef7a7b4d0628cbd4))
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
+## [0.3.4](https://github.com/appium/appium/compare/@appium/strongbox@0.3.3...@appium/strongbox@0.3.4) (2025-06-01)
+
+
+### Bug Fixes
+
+* Reduce linter warnings ([#20860](https://github.com/appium/appium/issues/20860)) ([65658cc](https://github.com/appium/appium/commit/65658ccbdde9144c45cb5aad6a9089a5d6f3a0a3))
+
+
+
+## [0.3.3](https://github.com/appium/appium/compare/@appium/strongbox@0.3.2...@appium/strongbox@0.3.3) (2024-07-10)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [0.3.2](https://github.com/appium/appium/compare/@appium/strongbox@0.3.1...@appium/strongbox@0.3.2) (2023-12-18)
+
+**Note:** Version bump only for package @appium/strongbox
+
+
+
+
+
+## [0.3.1](https://github.com/appium/appium/compare/@appium/strongbox@0.3.0...@appium/strongbox@0.3.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **strongbox:** do not force-lowercase slugged containers ([1ccf857](https://github.com/appium/appium/commit/1ccf857a4bdd77af3ccf2ad268e3410855509af8))
+
+
+
+## [0.3.0](https://github.com/appium/appium/compare/@appium/strongbox@0.2.0...@appium/strongbox@0.3.0) (2023-04-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **strongbox:** The signature for an `ItemCtor` has changed. The second parameter is now a type extending `Strongbox` instead of a `container` string.  This allows for deeper integration between a custom `Item` implementation and a custom `Strongbox` implementation. Further, a custom `container` now must be an absolute path after it's been slugified.
+
+- The `Strongbox.clearAll()` method now accepts a `force` param which, if `true`, will rimraf the entire container.
+- Added two methods to the `Strongbox` class which can be overridden to accept custom options, apply defaults to those options, then validate and/or transform them.
+- Added nearly-complete unit test coverage and added E2E coverage of the `BaseItem` implementation.
+
+### Features
+
+* **strongbox:** allow rimraf of entire container ([93bddb4](https://github.com/appium/appium/commit/93bddb4c73ab16fffda09909786074b9e5f2b7e5))
+
+
+
+# 0.2.0 (2023-04-10)
+
+
+### Features
+
+* **strongbox:** create @appium/strongbox ([fd91234](https://github.com/appium/appium/commit/fd912346fade8f29f5b4d1458828ea677d7e9fcc))
+* **strongbox:** export BaseItem ([377e982](https://github.com/appium/appium/commit/377e9825de74d9929631fb331e6d348c9df0964e))

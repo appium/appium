@@ -1,0 +1,16 @@
+name: Labeler
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+    branches: [master]
+
+permissions: read-all
+
+jobs:
+  labeler:
+    permissions:
+      pull-requests: write
+    name: Auto-Label PRs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fuxingloh/multi-labeler@v5.0.0

@@ -1,0 +1,396 @@
+import type {DriverCaps, W3CDriverCaps} from '../capabilities.js';
+import type {Constraints} from '../constraints.js';
+import type {Timeouts, TimeoutValue} from '../standard-caps.js';
+import type {Element, StringRecord} from '../util.js';
+
+export interface IBidiCommands {
+  bidiSubscribe(events: string[], contexts?: string[], userContexts?: string[]): Promise<{subscription: string}>;
+  bidiUnsubscribe(events?: string[], contexts?: string[], subscriptions?: string[]): Promise<void>;
+  bidiStatus(): Promise<DriverStatus>;
+}
+
+export interface DriverStatus {
+  ready: boolean;
+  message: string;
+  [key: string]: any;
+}
+
+export interface ITimeoutCommands {
+  /**
+   * Set the various timeouts associated with a session
+   * @see {@link https://w3c.github.io/webdriver/#set-timeouts}
+   *
+   * @param type - the type of the timeout (deprecated)
+   * @param ms - the ms for the timeout (deprecated)
+   * @param script - the script timeout in ms, or null to disable the timeout
+   * @param pageLoad - the page load timeout in ms, or null to disable the timeout
+   * @param implicit - the implicit wait timeout in ms, or null to disable the timeout
+   * @param command - the number in ms for the Appium-specific command timeout
+   */
+  timeouts(
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
+    type?: string,
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
+    ms?: number | string,
+    script?: TimeoutValue,
+    pageLoad?: TimeoutValue,
+    implicit?: TimeoutValue,
+    command?: number,
+  ): Promise<void>;
+
+  /**
+   * Set the new command timeout
+   *
+   * @param ms - the timeout in ms
+   */
+  setNewCommandTimeout(ms: number): void;
+
+  /**
+   * A helper method (not a command) used to set the script timeout value
+   *
+   * @param ms - the script timeout in ms, or null to disable the timeout
+   */
+  setScriptTimeout(ms: TimeoutValue): void;
+
+  /**
+   * A helper method (not a command) used to set the page load timeout value
+   *
+   * @param ms - the page load timeout in ms, or null to disable the timeout
+   */
+  setPageLoadTimeout(ms: TimeoutValue): void;
+
+  /**
+   * A helper method (not a command) used to set the implicit wait value
+   *
+   * @param ms - the implicit wait in ms, or null to disable the timeout
+   */
+  setImplicitWait(ms: TimeoutValue): void;
+
+  /**
+   * Periodically retry an async function up until the currently set implicit wait timeout
+   *
+   * @param condition - the behaviour to retry until it returns truthy
+   *
+   * @returns The return value of the condition
+   */
+  implicitWaitForCondition(condition: (...args: any[]) => Promise<any>): Promise<unknown>;
+
+  /**
+   * Get the current timeouts
+   * @see {@link https://w3c.github.io/webdriver/#get-timeouts}
+   *
+   * @returns A map of timeout names to ms values
+   */
+  getTimeouts(): Promise<Timeouts & {command: number}>;
+
+  /**
+   * Get a timeout value from a number or a string
+   *
+   * @param ms - the timeout value as a number or a string
+   *
+   * @returns The timeout as a number in ms
+   */
+  parseTimeoutArgument(ms: number | string): number;
+}
+
+export interface IEventCommands {
+  /**
+   * Add a custom-named event to the Appium event log
+   *
+   * @param vendor - the name of the vendor or tool the event belongs to, to namespace the event
+   * @param event - the name of the event itself
+   */
+  logCustomEvent(vendor: string, event: string): Promise<void>;
+
+  /**
+   * Get a list of events that have occurred in the current session
+   *
+   * @param type - filter the returned events by including one or more types
+   *
+   * @returns The event history for the session
+   */
+  getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
+}
+
+export interface EventHistory {
+  commands: EventHistoryCommand[];
+  [key: string]: any;
+}
+
+export interface EventHistoryCommand {
+  cmd: string;
+  startTime: number;
+  endTime: number;
+}
+
+export interface IExecuteCommands {
+  /**
+   * Call an `Execute Method` by its name with the given arguments. This method will check that the
+   * driver has registered the method matching the name, and send it the arguments.
+   *
+   * @param script - the name of the Execute Method
+   * @param args - a singleton array containing an arguments object
+   *
+   * @returns The result of calling the Execute Method
+   */
+  executeMethod<TArgs extends readonly any[] | readonly [StringRecord<unknown>] = unknown[], TReturn = unknown>(
+    script: string,
+    args: TArgs,
+  ): Promise<TReturn>;
+}
+
+export interface IFindCommands {
+  /**
+   * Find a UI element given a locator strategy and a selector, erroring if it can't be found
+   * @see {@link https://w3c.github.io/webdriver/#find-element}
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific element
+   *
+   * @returns The element object encoding the element id which can be used in element-related
+   * commands
+   */
+  findElement(strategy: string, selector: string): Promise<Element>;
+
+  /**
+   * Find a list of all UI elements matching a given locator strategy and a selector
+   * @see {@link https://w3c.github.io/webdriver/#find-elements}
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific elements
+   *
+   * @returns A possibly-empty list of element objects
+   */
+  findElements(strategy: string, selector: string): Promise<Element[]>;
+
+  /**
+   * Find a UI element given a locator strategy and a selector, erroring if it can't be found. Only
+   * look for elements among the set of descendants of a given element
+   * @see {@link https://w3c.github.io/webdriver/#find-element-from-element}
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific element
+   * @param elementId - the id of the element to use as the search basis
+   *
+   * @returns The element object encoding the element id which can be used in element-related
+   * commands
+   */
+  findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
+
+  /**
+   * Find a list of all UI elements matching a given locator strategy and a selector. Only
+   * look for elements among the set of descendants of a given element
+   * @see {@link https://w3c.github.io/webdriver/#find-elements-from-element}
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific elements
+   * @param elementId - the id of the element to use as the search basis
+   *
+   * @returns A possibly-empty list of element objects
+   */
+  findElementsFromElement(strategy: string, selector: string, elementId: string): Promise<Element[]>;
+
+  /**
+   * Find an element from a shadow root
+   * @see {@link https://w3c.github.io/webdriver/#find-element-from-shadow-root}
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific elements
+   * @param shadowId - the id of the element to use as the search basis
+   *
+   * @returns The element inside the shadow root matching the selector
+   */
+  findElementFromShadowRoot?(strategy: string, selector: string, shadowId: string): Promise<Element>;
+
+  /**
+   * Find elements from a shadow root
+   * @see {@link https://w3c.github.io/webdriver/#find-element-from-shadow-root}
+   * @param strategy - the locator strategy
+   * @param selector - the selector to combine with the strategy to find the specific elements
+   * @param shadowId - the id of the element to use as the search basis
+   *
+   * @returns A possibly empty list of elements inside the shadow root matching the selector
+   */
+  findElementsFromShadowRoot?(strategy: string, selector: string, shadowId: string): Promise<Element[]>;
+
+  /**
+   * A helper method that returns one or more UI elements based on the search criteria
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector
+   * @param mult - whether or not we want to find multiple elements
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
+   *
+   * @returns A single element or list of elements
+   */
+  findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+  findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+  findElOrEls(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element[] | Element>;
+
+  /**
+   * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
+   * and implements the `appium:printPageSourceOnFindFailure` capability
+   *
+   * @param strategy - the locator strategy
+   * @param selector - the selector
+   * @param mult - whether or not we want to find multiple elements
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
+   *
+   * @returns A single element or list of elements
+   */
+  findElOrElsWithProcessing(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+  findElOrElsWithProcessing(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+
+  /**
+   * Get the current page/app source as HTML/XML
+   * @see {@link https://w3c.github.io/webdriver/#get-page-source}
+   *
+   * @returns The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
+   */
+  getPageSource(): Promise<string>;
+}
+
+export interface ILogCommands {
+  /**
+   * Definition of the available log types
+   */
+  supportedLogTypes: Readonly<LogDefRecord>;
+
+  /**
+   * Get available log types as a list of strings
+   */
+  getLogTypes(): Promise<string[]>;
+
+  /**
+   * Get the log for a given log type.
+   *
+   * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
+   */
+  getLog(logType: string): Promise<any>;
+}
+
+/**
+ * A record of {@linkcode LogDef} objects, keyed by the log type name.
+ * Used in {@linkcode ILogCommands.supportedLogTypes}
+ */
+export type LogDefRecord = Record<string, LogDef>;
+
+/**
+ * A definition of a log type
+ */
+export interface LogDef {
+  /**
+   * Description of the log type.
+   *
+   * The only place this is used is in error messages if the client provides an invalid log type
+   * via {@linkcode ILogCommands.getLog}.
+   */
+  description: string;
+  /**
+   * Returns all the log data for the given type
+   *
+   * This implementation *should* drain, truncate or otherwise reset the log buffer.
+   */
+  getter: (driver: any) => unknown;
+}
+
+export interface ISettingsCommands<T extends object = object> {
+  /**
+   * Update the session's settings dictionary with a new settings object
+   *
+   * @param settings - A key-value map of setting names to values. Settings not named in the map
+   * will not have their value adjusted.
+   */
+  updateSettings: (settings: T) => Promise<void>;
+
+  /**
+   * Get the current settings for the session
+   *
+   * @returns The settings object
+   */
+  getSettings(): Promise<T>;
+}
+
+/**
+ * An interface which creates and deletes sessions.
+ */
+export interface ISessionHandler<
+  C extends Constraints = Constraints,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+> {
+  /**
+   * Start a new automation session
+   * @see {@link https://w3c.github.io/webdriver/#new-session}
+   *
+   * @param w3cCapabilities - the new session capabilities
+   * @returns The capabilities object representing the created session
+   */
+  createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
+
+  /**
+   * Stop an automation session
+   * @see {@link https://w3c.github.io/webdriver/#delete-session}
+   *
+   * @param sessionId - the id of the session that is to be deleted
+   */
+  deleteSession(sessionId?: string): Promise<DeleteResult | void>;
+
+  /**
+   * Get the capabilities of the current session
+   *
+   * @returns A session capabilities object
+   */
+  getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>>;
+}
+
+/**
+ * @see {@linkcode ISessionHandler}
+ */
+export type DefaultCreateSessionResult<C extends Constraints> = [sessionId: string, capabilities: DriverCaps<C>];
+
+/**
+ * @see {@linkcode ISessionHandler}
+ */
+export type DefaultDeleteSessionResult = void;
+
+/**
+ * Data returned by `AppiumDriver.getAppiumSessions`
+ *
+ * @typeParam C - The driver's constraints
+ */
+export interface TimestampedMultiSessionData<C extends Constraints = Constraints> {
+  id: string;
+  created: number; // Unix timestamp in milliseconds
+  capabilities: DriverCaps<C>;
+}
+
+/**
+ * Data returned by {@linkcode ISessionCommands.getAppiumSessionCapabilities}.
+ *
+ * @typeParam C - The driver's constraints
+ * @typeParam T - Any extra data the driver stuffs in here
+ */
+export type SessionCapabilities<C extends Constraints = Constraints, T extends StringRecord = StringRecord> = {
+  capabilities: DriverCaps<C>;
+} & T;
+
+/**
+ * Interface for all commands expected to be implemented by BaseDriver.
+ */
+export type IImplementedCommands<
+  C extends Constraints = Constraints,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+> = IBidiCommands &
+  ILogCommands &
+  IFindCommands &
+  ISettingsCommands<Settings> &
+  ITimeoutCommands &
+  IEventCommands &
+  IExecuteCommands &
+  ISessionHandler<C, CreateResult, DeleteResult>;

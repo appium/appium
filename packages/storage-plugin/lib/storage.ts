@@ -1,0 +1,274 @@
+import {createHash} from 'node:crypto';
+import nativeFs, {type Dirent} from 'node:fs';
+import path from 'node:path';
+import type Stream from 'node:stream';
+
+import {fs, net, timing, util} from '@appium/support';
+import type {AppiumLogger} from '@appium/types';
+import {errors} from 'appium/driver.js';
+import {AsyncLock, asyncmap} from 'asyncbox';
+import type WebSocket from 'ws';
+
+import type {ItemOptions, StorageItem} from './types.js';
+
+const MAX_TASKS = 5;
+const TMP_EXT = '.filepart';
+const ADDITION_LOCK = new AsyncLock();
+const SHA1_HASH_PATTERN = /^[a-f\d]{40}$/i;
+
+export class Storage {
+  private readonly _root: string;
+  private readonly _log: AppiumLogger;
+  private readonly _shouldPreserveRoot: boolean;
+  private readonly _shouldPreserveFiles: boolean;
+
+  constructor(root: string, shouldPreserveRoot: boolean, shouldPreserveFiles: boolean, log: AppiumLogger) {
+    this._root = root;
+    this._log = log;
+    this._shouldPreserveRoot = shouldPreserveRoot;
+    this._shouldPreserveFiles = shouldPreserveFiles;
+  }
+
+  async list(): Promise<StorageItem[]> {
+    const items = (await this._listFiles()).filter((item) => !item.name.endsWith(TMP_EXT));
+    if (util.isEmpty(items)) {
+      return [];
+    }
+
+    const stats = await asyncmap(items, (item) => fs.stat(this._toFullPath(item)), {
+      concurrency: MAX_TASKS,
+    });
+    return items.map((item, index) => ({
+      name: item.name,
+      path: this._toFullPath(item),
+      size: stats[index].size,
+    }));
+  }
+
+  async add(opts: ItemOptions, source: Stream | WebSocket): Promise<void> {
+    const {name} = requireValidItemOptions(opts);
+    const isStream = typeof (source as any).pipe === 'function';
+    const lockKey = name.toLowerCase();
+    // WebSocket messages cannot wait for the lock: frames and close events would be lost.
+    // Reject contention synchronously so the client can retry with a fresh connection.
+    if (!isStream && ADDITION_LOCK.isBusy(lockKey)) {
+      (source as WebSocket).close(net.WebSocketCloseCode.TRY_AGAIN_LATER);
+      throw new StorageArgumentError(`An upload of '${name}' is already in progress. Retry after it completes.`);
+    }
+    // toLowerCase is needed for case-insensitive server filesystems
+    await ADDITION_LOCK.acquire(lockKey, async () => {
+      if (isStream) {
+        await this._addFromStream(opts, source as Stream);
+      } else {
+        await this._addFromWebSocket(opts, source as WebSocket);
+      }
+    });
+  }
+
+  async delete(name: string): Promise<boolean> {
+    if (name.toLowerCase().endsWith(TMP_EXT)) {
+      return false;
+    }
+    const destinationPath = path.join(this._root, name);
+    if (!(await fs.exists(destinationPath))) {
+      return false;
+    }
+    await fs.rimraf(destinationPath);
+    return true;
+  }
+
+  async reset(): Promise<void> {
+    if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
+      await fs.rimraf(this._root);
+    }
+
+    if (!(await fs.exists(this._root))) {
+      await fs.mkdirp(this._root);
+      return;
+    }
+
+    const files = (await this._listFiles())
+      .filter((item) => !this._shouldPreserveFiles || item.name.toLowerCase().endsWith(TMP_EXT))
+      .map((item) => this._toFullPath(item));
+    if (util.isEmpty(files)) {
+      return;
+    }
+
+    await asyncmap(files, (fullPath) => fs.rimraf(fullPath), {concurrency: MAX_TASKS});
+  }
+
+  cleanupSync(): void {
+    this._log.debug(`Cleaning up the '${this._root}' server storage folder`);
+
+    if (!this._shouldPreserveRoot && !this._shouldPreserveFiles) {
+      fs.rimrafSync(this._root);
+      return;
+    }
+
+    let itemNames: string[];
+    try {
+      itemNames = nativeFs.readdirSync(this._root).filter((name) => !name.startsWith('.'));
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      this._log.warn(
+        `Cannot list the '${this._root}' server storage folder. Original error: ${message}. ` + `Skipping the cleanup.`,
+      );
+      return;
+    }
+    if (util.isEmpty(itemNames)) {
+      if (!this._shouldPreserveRoot) {
+        fs.rimrafSync(this._root);
+      }
+      return;
+    }
+
+    const matchedNames = itemNames.filter((name) => !this._shouldPreserveFiles || name.toLowerCase().endsWith(TMP_EXT));
+    for (const matchedName of matchedNames) {
+      fs.rimrafSync(path.join(this._root, matchedName));
+    }
+    const remainingNames = itemNames.filter((name) => !matchedNames.includes(name));
+    if (!this._shouldPreserveRoot && util.isEmpty(remainingNames)) {
+      fs.rimrafSync(this._root);
+    }
+  }
+
+  private async _listFiles(): Promise<Dirent[]> {
+    const items = await fs.glob('*', {cwd: this._root, withFileTypes: true});
+    return items.filter((item) => item.isFile());
+  }
+
+  private _toFullPath(item: Dirent): string {
+    return path.join(item.parentPath, item.name);
+  }
+
+  private async _addFromStream(opts: ItemOptions, source: Stream): Promise<void> {
+    const {name} = opts;
+    const fullPath = path.join(this._root, toTempName(name));
+    const timer = new timing.Timer().start();
+    const destination = fs.createWriteStream(fullPath);
+    source.pipe(destination);
+    try {
+      await new Promise((resolve, reject) => {
+        destination.once('finish', () => resolve(true));
+        source.once('error', reject);
+        destination.once('error', reject);
+      });
+      await this._finalizeItem(opts, timer, fullPath, await fs.hash(fullPath));
+    } catch (e) {
+      await fs.rimraf(fullPath);
+      throw e;
+    }
+  }
+
+  private async _addFromWebSocket(opts: ItemOptions, source: WebSocket): Promise<void> {
+    const {name, sha1} = opts;
+    const fullPath = path.join(this._root, toTempName(name));
+    const timer = new timing.Timer().start();
+    const destination = fs.createWriteStream(fullPath);
+    const sha1sum = createHash('sha1');
+    let didDigestMatch = false;
+    let recentDigest: string | null = null;
+    try {
+      await new Promise((resolve, reject) => {
+        source.on('message', (data: WebSocket.RawData) => {
+          if (didDigestMatch) {
+            // ignore further chunks if hashes have already matched
+            return;
+          }
+          destination.write(data, (e) => {
+            if (e) {
+              source.close(net.WebSocketCloseCode.INTERNAL_ERROR);
+              reject(e);
+            }
+          });
+          sha1sum.update(data as any);
+          recentDigest = sha1sum.copy().digest('hex');
+          if (recentDigest.toLowerCase() === sha1.toLowerCase()) {
+            didDigestMatch = true;
+            destination.close(() => resolve(true));
+          }
+        });
+        source.once('close', () => {
+          destination.close(() => resolve(true));
+        });
+        source.once('error', reject);
+        destination.once('error', (e) => {
+          source.close(net.WebSocketCloseCode.INTERNAL_ERROR);
+          reject(e);
+        });
+      });
+      await this._finalizeItem(opts, timer, fullPath, recentDigest ?? sha1sum.digest('hex'));
+    } catch (e) {
+      await fs.rimraf(fullPath);
+      throw e;
+    }
+  }
+
+  private async _finalizeItem(
+    opts: ItemOptions,
+    timer: timing.Timer,
+    fullPath: string,
+    actualHashDigest: string,
+  ): Promise<void> {
+    const {name, sha1} = opts;
+    this._log.info(
+      `'${name}' has been added to the server storage within ` +
+        `${timer.getDuration().asMilliSeconds}ms. Verifying hashes.`,
+    );
+    if (actualHashDigest.toLowerCase() !== sha1.toLowerCase()) {
+      throw new StorageArgumentError(
+        `The actual SHA1 hash value '${actualHashDigest}' must be equal ` +
+          `to the expected hash value of '${sha1}' for '${name}'`,
+      );
+    }
+    await fs.mv(fullPath, path.join(this._root, name));
+  }
+}
+
+export class StorageArgumentError extends errors.InvalidArgumentError {}
+
+/**
+ * Validates storage item options and returns the same object when valid.
+ * @param opts Candidate item options.
+ */
+export function requireValidItemOptions(opts: ItemOptions): ItemOptions {
+  validateStorageItemName(opts.name);
+  if (typeof opts.sha1 !== 'string' || !SHA1_HASH_PATTERN.test(opts.sha1)) {
+    throw new StorageArgumentError(
+      `The provided hash value '${opts.sha1}' must be a valid SHA1 string, for ` +
+        `example 'ccc963411b2621335657963322890305ebe96186'`,
+    );
+  }
+  return opts;
+}
+
+/**
+ * Validate storage item name and throw if it is invalid.
+ * @param name The name to validate.
+ */
+export function validateStorageItemName(name: string): void {
+  if (util.isEmpty(name)) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not be empty`);
+  }
+  if (name.startsWith('.')) {
+    throw new StorageArgumentError(`The provided file name '${name}' must not start with a dot`);
+  }
+  if (name.toLowerCase().endsWith(TMP_EXT)) {
+    throw new StorageArgumentError(
+      `The provided file name '${name}' must not end with the reserved '${TMP_EXT}' suffix`,
+    );
+  }
+
+  const sanitizedName = fs.sanitizeName(name, {
+    replacement: '_',
+  });
+  if (name !== sanitizedName) {
+    throw new StorageArgumentError(
+      `The provided name value '${name}' must be a valid file name. ` + `Did you mean '${sanitizedName}'?`,
+    );
+  }
+}
+
+function toTempName(origName: string): string {
+  return `${origName}${TMP_EXT}`;
+}

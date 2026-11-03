@@ -1,0 +1,155 @@
+import type {LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule} from './types.js';
+import {escapeRegExp, isPlainObject} from './utils/index.js';
+
+export const DEFAULT_SECURE_REPLACER = '**SECURE**';
+
+export class SecureValuesPreprocessor {
+  _rules: SecureValuePreprocessingRule[];
+
+  constructor() {
+    this._rules = [];
+  }
+
+  /**
+   * @returns {Array<SecureValuePreprocessingRule>} The list of successfully
+   * parsed preprocessing rules
+   */
+  get rules(): Array<SecureValuePreprocessingRule> {
+    return this._rules;
+  }
+
+  /**
+   * Parses single rule from the given JSON file
+   *
+   * @param {string|LogFilter} rule The rule might
+   * either be represented as a single string or a configuration object
+   * @throws {Error} If there was an error while parsing the rule
+   * @returns {SecureValuePreprocessingRule} The parsed rule
+   */
+  parseRule(rule: string | LogFilter): SecureValuePreprocessingRule {
+    let pattern: string | undefined;
+    let replacer = DEFAULT_SECURE_REPLACER;
+    let flags = ['g'];
+    if (typeof rule === 'string') {
+      if (rule.length === 0) {
+        throw new Error(`${JSON.stringify(rule)} -> The value must not be empty`);
+      }
+      pattern = toExactMatchPattern(rule);
+    } else if (isPlainObject(rule)) {
+      if (isLogFilterRegex(rule)) {
+        if (typeof rule.pattern !== 'string' || rule.pattern.length === 0) {
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`);
+        }
+        pattern = rule.pattern;
+      } else if (Object.hasOwn(rule, 'text')) {
+        if (typeof rule.text !== 'string' || rule.text.length === 0) {
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`);
+        }
+        pattern = toExactMatchPattern(rule.text);
+      }
+      if (!pattern) {
+        throw new Error(`${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`);
+      }
+
+      if (Object.hasOwn(rule, 'flags') && rule.flags != null) {
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
+        for (const flag of ['i', 'g', 'm', 's', 'u', 'y']) {
+          if (rule.flags?.includes(flag)) {
+            flags.push(flag);
+          }
+        }
+        flags = [...new Set(flags)];
+      }
+
+      if (typeof rule.replacer === 'string') {
+        replacer = rule.replacer;
+      }
+    } else {
+      throw new Error(`${JSON.stringify(rule)} -> Must either be a string or an object`);
+    }
+
+    return {
+      pattern: new RegExp(pattern, flags.join('')),
+      replacer,
+    };
+  }
+
+  /**
+   * Loads rules from the given JSON file
+   *
+   * @param {string|string[]|LogFiltersConfig} filters
+   * One or more log parsing rules
+   * @throws {Error} If the format of the source file is invalid or
+   * it does not exist
+   * @returns {Promise<string[]>} The list of issues found while parsing each rule.
+   * An empty list is returned if no rule parsing issues were found
+   */
+  async loadRules(filters: string | string[] | LogFiltersConfig): Promise<string[]> {
+    const issues: string[] = [];
+    const rawRules: (LogFilter | string)[] = [];
+    for (const source of Array.isArray(filters) ? filters : [filters]) {
+      if (isPlainObject(source)) {
+        rawRules.push(source as LogFilter);
+      } else if (typeof source === 'string') {
+        rawRules.push(String(source));
+      } else {
+        issues.push(`${JSON.stringify(source)} must be a valid log filtering rule`);
+      }
+    }
+    this._rules = [];
+    for (const rawRule of rawRules) {
+      try {
+        this._rules.push(this.parseRule(rawRule));
+      } catch (e) {
+        issues.push((e as Error).message);
+      }
+    }
+    return issues;
+  }
+
+  /**
+   * Performs secure values replacement inside the given string
+   * according to the previously loaded rules. No replacement is made
+   * if there are no rules or the given value is not a string
+   *
+   * @param {string} str The string to make replacements in
+   * @returns {string} The string with replacements made
+   */
+  preprocess(str: string): string {
+    if (this._rules.length === 0 || !str || typeof str !== 'string') {
+      return str;
+    }
+
+    let result = str;
+    for (const rule of this._rules) {
+      result = result.replace(rule.pattern, rule.replacer ?? DEFAULT_SECURE_REPLACER);
+    }
+    return result;
+  }
+}
+
+/**
+ * Type guard for log filter type
+ * @param {object} value
+ * @returns {value is LogFilterRegex}
+ */
+function isLogFilterRegex(value: object): value is LogFilterRegex {
+  return 'pattern' in value;
+}
+
+/**
+ * Transforms the given text to a pattern, which does not match if the
+ * text is only a part of a longer word.
+ *
+ * `\b` only asserts a boundary next to a word character, so it is only added
+ * to the sides where the text itself begins or ends with one. Otherwise values
+ * like `P@ssw0rd!` would never match anything.
+ *
+ * @param {string} text The text to match
+ * @returns {string} The resulting regular expression source
+ */
+function toExactMatchPattern(text: string): string {
+  const prefix = /^\w/.test(text) ? '\\b' : '';
+  const suffix = /\w$/.test(text) ? '\\b' : '';
+  return `${prefix}${escapeRegExp(text)}${suffix}`;
+}

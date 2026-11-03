@@ -1,0 +1,429 @@
+import type {JSONSchema7} from 'json-schema';
+
+/**
+ * The single-source-of-truth of the Appium server configuration.
+ *
+ * This defines _both_ what the CLI supports and what the config files support.
+ */
+
+export const AppiumConfigJsonSchema = {
+  $schema: 'http://json-schema.org/draft-07/schema',
+  additionalProperties: false,
+  description: 'A schema for Appium configuration files',
+  properties: {
+    $schema: {
+      description: 'The JSON schema for this file',
+      default: 'https://raw.githubusercontent.com/appium/appium/master/packages/schema/lib/appium-config.schema.json',
+      type: 'string',
+      format: 'uri',
+    },
+    server: {
+      additionalProperties: false,
+      description: 'Configuration when running Appium as a server',
+      properties: {
+        address: {
+          appiumCliAliases: ['a'],
+          default: '0.0.0.0',
+          description: 'IPv4/IPv6 address or a hostname to listen on',
+          title: 'address config',
+          type: 'string',
+          anyOf: [
+            {
+              type: 'string',
+              format: 'hostname',
+            },
+            {
+              type: 'string',
+              format: 'ipv6',
+            },
+          ],
+        },
+        'allow-insecure': {
+          appiumCliTransformer: 'csv',
+          default: [],
+          description:
+            'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
+          items: {
+            minLength: 1,
+            type: 'string',
+          },
+          title: 'allow-insecure config',
+          type: 'array',
+          uniqueItems: true,
+        },
+        'allow-unknown-args': {
+          description:
+            'Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. This can be useful when the Appium CLI is wrapped by external tooling that appends extra flags. Disabled by default, so unknown arguments are still treated as errors.',
+          title: 'allow-unknown-args config',
+          type: 'boolean',
+          default: false,
+        },
+        'app-url-rules': {
+          $comment:
+            'The actual rules are defined in $defs/appUrlRules, since inline `properties` are reserved for extension config sections',
+          allOf: [{$ref: '#/$defs/appUrlRules'}],
+          description:
+            'Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.',
+          title: 'app-url-rules config',
+          type: 'object',
+        },
+        'base-path': {
+          appiumCliAliases: ['pa'],
+          default: '',
+          description: 'Base path to use as the prefix for all webdriver routes running on the server',
+          title: 'base-path config',
+          type: 'string',
+        },
+        'default-capabilities': {
+          $comment: 'TODO',
+          appiumCliAliases: ['dc'],
+          description:
+            'Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.',
+          title: 'default-capabilities config',
+          type: 'object',
+        },
+        'deny-insecure': {
+          $comment: 'Allowed values are defined by drivers',
+          appiumCliTransformer: 'csv',
+          default: [],
+          description:
+            'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
+          items: {
+            minLength: 1,
+            type: 'string',
+          },
+          title: 'deny-insecure config',
+          type: 'array',
+          uniqueItems: true,
+        },
+        driver: {
+          description: 'Driver-specific configuration. Keys should correspond to driver package names',
+          properties: {} as Record<string, JSONSchema7>,
+          title: 'driver config',
+          type: 'object',
+        },
+        'keep-alive-timeout': {
+          appiumCliAliases: ['ka'],
+          default: 600,
+          description:
+            'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout ' +
+            'for all requests. A value of 0 disables the timeout.',
+          minimum: 0,
+          title: 'keep-alive-timeout config',
+          type: 'integer',
+        },
+        'request-timeout': {
+          default: 3600,
+          description:
+            'Number of seconds the Appium server should apply for receiving the entire HTTP request from the client. ' +
+            'A value of 0 disables the timeout. Set it to a non-zero value to protect against ' +
+            'potential Denial-of-Service attacks in case the server is deployed without a reverse proxy in front. ' +
+            'HTTP requests that are running longer than allowed by this timeout would be rejected with the status code 408.',
+          minimum: 0,
+          title: 'request-timeout config',
+          type: 'integer',
+        },
+        'local-timezone': {
+          default: false,
+          description: 'Use local timezone for timestamps',
+          title: 'local-timezone config',
+          type: 'boolean',
+        },
+        log: {
+          appiumCliAliases: ['g'],
+          appiumCliDest: 'logFile',
+          description: 'Also send log output to this file',
+          title: 'log config',
+          type: 'string',
+        },
+        'log-filters': {
+          description: 'One or more log filtering rules',
+          title: 'log-filters config',
+          type: 'array',
+          items: {$ref: '#/$defs/logFilter'},
+          appiumCliTransformer: 'json',
+        },
+        'log-level': {
+          appiumCliDest: 'loglevel',
+          default: 'info',
+          description: 'Log level (console[:file])',
+          enum: [
+            'info',
+            'info:debug',
+            'info:info',
+            'info:warn',
+            'info:error',
+            'warn',
+            'warn:debug',
+            'warn:info',
+            'warn:warn',
+            'warn:error',
+            'error',
+            'error:debug',
+            'error:info',
+            'error:warn',
+            'error:error',
+            'debug',
+            'debug:debug',
+            'debug:info',
+            'debug:warn',
+            'debug:error',
+          ],
+          title: 'log-level config',
+          type: 'string',
+        },
+        'log-format': {
+          appiumCliDest: 'logFormat',
+          default: 'text',
+          description: 'Log format (text|json|pretty_json)',
+          enum: ['text', 'json', 'pretty_json'],
+          title: 'log-format config',
+          type: 'string',
+        },
+        'log-no-colors': {
+          default: false,
+          description: 'Do not use color in console output',
+          title: 'log-no-colors config',
+          type: 'boolean',
+        },
+        'log-timestamp': {
+          default: false,
+          description: 'Show timestamps in console output',
+          title: 'log-timestamp config',
+          type: 'boolean',
+        },
+        'plugins-import-chunk-size': {
+          default: 7,
+          description: 'The maximum amount of plugins that could be imported in parallel on server startup',
+          title: 'plugins-import-chunk-size config',
+          type: 'number',
+        },
+        'drivers-import-chunk-size': {
+          default: 3,
+          description: 'The maximum amount of drivers that could be imported in parallel on server startup',
+          title: 'drivers-import-chunk-size config',
+          type: 'number',
+        },
+        'long-stacktrace': {
+          default: false,
+          description: 'Add long stack traces to log entries. Recommended for debugging only.',
+          title: 'long-stacktrace config',
+          type: 'boolean',
+        },
+        'no-perms-check': {
+          default: false,
+          description: 'Skip various permission checks on the server startup if set to true',
+          title: 'no-perms-check config',
+          type: 'boolean',
+        },
+        plugin: {
+          description: 'Plugin-specific configuration. Keys should correspond to plugin package names',
+          properties: {} as Record<string, JSONSchema7>,
+          title: 'plugin config',
+          type: 'object',
+        },
+        port: {
+          appiumCliAliases: ['p'],
+          default: 4723,
+          description: 'Port to listen on',
+          maximum: 65535,
+          minimum: 1,
+          title: 'port config',
+          type: 'integer',
+        },
+        'relaxed-security': {
+          default: false,
+          description:
+            'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
+          title: 'relaxed-security config',
+          type: 'boolean',
+          appiumCliDest: 'relaxedSecurityEnabled',
+        },
+        'shutdown-timeout': {
+          default: 5000,
+          description:
+            'For how long the server should delay its shutdown before force-closing all open connections to it. ' +
+            'Setting its value to zero should close the server without waiting for active connections.',
+          title: 'Graceful server shutdown timeout in milliseconds',
+          type: 'integer',
+          minimum: 0,
+        },
+        'session-override': {
+          default: false,
+          description: 'Enables session override (clobbering)',
+          title: 'session-override config',
+          type: 'boolean',
+        },
+        'ssl-cert-path': {
+          description: 'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
+          title: '.cert file path',
+          appiumCliDest: 'sslCertificatePath',
+          type: 'string',
+        },
+        'ssl-key-path': {
+          description: 'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
+          title: '.key file path',
+          appiumCliDest: 'sslKeyPath',
+          type: 'string',
+        },
+        tmp: {
+          appiumCliDest: 'tmpDir',
+          description:
+            'Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().',
+          title: 'tmp config',
+          type: 'string',
+        },
+        'use-drivers': {
+          appiumCliDescription:
+            'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',
+          default: [],
+          description: 'A list of drivers to activate. By default, all installed drivers will be activated.',
+          items: {
+            type: 'string',
+          },
+          title: 'use-drivers config',
+          type: 'array',
+          uniqueItems: true,
+        },
+        'use-plugins': {
+          appiumCliDescription:
+            'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',
+          default: [],
+          description:
+            'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
+          items: {
+            type: 'string',
+          },
+          title: 'use-plugins config',
+          type: 'array',
+          uniqueItems: true,
+        },
+        webhook: {
+          $comment: 'This should probably use a uri-template format to restrict the protocol to http/https',
+          appiumCliAliases: ['G'],
+          description: 'Also send log output to this http listener',
+          format: 'uri',
+          title: 'webhook config',
+          type: 'string',
+        },
+        'max-ipc-data-size': {
+          appiumCliDescription: 'The maximum size in bytes allowed for message objects sent on IPC topics.',
+          description: 'Maximum size in bytes for IPC messages',
+          type: 'integer',
+          minimum: 1,
+          default: 1048576,
+          title: 'max-ipc-data-size config',
+        },
+        'max-ipc-topics': {
+          appiumCliDescription: 'The maximum number of IPC topics allowed per session.',
+          description: 'Maximum number of IPC topics per session',
+          type: 'integer',
+          minimum: 1,
+          default: 1000,
+          title: 'max-ipc-topics config',
+        },
+      },
+      title: 'server config',
+      type: 'object',
+    },
+  },
+  title: 'Appium Configuration',
+  type: 'object',
+  $defs: {
+    appUrlRules: {
+      type: 'object',
+      description: 'Rules that remote application URLs must satisfy',
+      properties: {
+        allow: {
+          description:
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        deny: {
+          description:
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        httpsOnly: {
+          description: 'Whether only "https:" URLs are accepted',
+          type: 'boolean',
+          default: false,
+        },
+        allowCredentials: {
+          description: 'Whether URLs containing a username and/or a password are accepted',
+          type: 'boolean',
+          default: true,
+        },
+        maxRedirects: {
+          description:
+            'Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.',
+          type: 'integer',
+          minimum: 0,
+        },
+      },
+      additionalProperties: false,
+    },
+    logFilterText: {
+      type: 'object',
+      description: 'Log filter with plain text',
+      properties: {
+        text: {
+          description: 'Text to match',
+          type: 'string',
+        },
+      },
+      required: ['text'],
+      not: {
+        required: ['pattern'],
+      },
+    },
+    logFilterRegex: {
+      type: 'object',
+      description: 'Log filter with regular expression',
+      properties: {
+        pattern: {
+          description: 'Regex pattern to match',
+          type: 'string',
+          format: 'regex',
+        },
+      },
+      required: ['pattern'],
+      not: {
+        required: ['text'],
+      },
+    },
+    logFilter: {
+      type: 'object',
+      description: 'Log filtering rule',
+      allOf: [
+        {
+          type: 'object',
+          properties: {
+            replacer: {
+              description: 'Replacement string for matched text',
+              type: 'string',
+              default: '**SECURE**',
+            },
+            flags: {
+              description:
+                'Matching flags; see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags',
+              type: 'string',
+              pattern: '^[igmsduy](,[igmsduy])*$',
+            },
+          },
+        },
+        {
+          anyOf: [{$ref: '#/$defs/logFilterText'}, {$ref: '#/$defs/logFilterRegex'}],
+        },
+      ],
+    },
+  },
+} as const;

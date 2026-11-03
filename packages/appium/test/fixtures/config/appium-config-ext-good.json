@@ -1,0 +1,9 @@
+{
+  "server": {
+    "driver": {
+      "fake": {
+        "answer": 24
+      }
+    }
+  }
+}

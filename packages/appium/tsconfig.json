@@ -1,0 +1,32 @@
+{
+  "extends": "@appium/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "strict": true,
+    "paths": {
+      "@appium/support": ["../support"],
+      "@appium/base-driver": ["../base-driver"],
+      "@appium/base-plugin": ["../base-plugin"],
+      "@appium/fake-driver": ["../fake-driver"],
+      "@appium/http-server": ["../http-server"],
+      "@appium/logger": ["../logger"],
+      "@appium/types": ["../types"],
+      "@appium/schema": ["../schema"],
+      "appium": ["."]
+    },
+    "checkJs": true,
+    "types": ["node"]
+  },
+  "include": ["lib", "types", "test"],
+  "references": [
+    {"path": "../base-driver"},
+    {"path": "../base-plugin"},
+    {"path": "../fake-driver"},
+    {"path": "../http-server"},
+    {"path": "../logger"},
+    {"path": "../types"},
+    {"path": "../schema"},
+    {"path": "../support"}
+  ]
+}

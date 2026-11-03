@@ -1,0 +1,36 @@
+server:
+  address: 127.0.0.1
+  allow-insecure:
+    - foo
+    - bar
+  base-path: /
+  default-capabilities:
+    key: value
+  deny-insecure:
+    - baz
+    - quux
+  driver:
+    xcuitest:
+      key: value
+  keep-alive-timeout: 600
+  local-timezone: true
+  log: /tmp/appium.log
+  log-level: info
+  log-no-colors: false
+  log-timestamp: true
+  long-stacktrace: false
+  no-perms-check: false
+  plugin:
+    images:
+      key: value
+  port: 4723
+  relaxed-security: false
+  session-override: false
+  tmp: /tmp
+  use-drivers:
+    - foo
+    - bar
+  use-plugins:
+    - baz
+    - quux
+  webhook: https://some-url.com

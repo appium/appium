@@ -1,0 +1,108 @@
+---
+hide:
+  - toc
+
+title: appium server
+---
+
+Launches an Appium server.
+
+```
+appium server
+```
+
+You can also omit the `server` subcommand:
+
+```
+appium
+```
+
+### Options
+
+!!! note
+
+    All of these options can also be set via a [Configuration File](../../guides/config.md). Options
+    set on the command line will override any options found in a configuration file.
+
+|<div style="width:15em">Argument</div>|Description|Type|<div style="width:7em">Default</div>|
+|--|--|--|--|
+|`--address`, `-a`|IPv4/IPv6 address or a hostname or a hostname or a hostname or a hostname to listen on|string|`0.0.0.0`|
+|`--allow-insecure`|List of [insecure features](../../guides/security.md) that should be allowed in this server's sessions. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`|
+|`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
+|`--app-url-rules`|Rules that remote application URLs (e.g. in the `appium:app` capability) must satisfy before the server downloads them. See the [Restricting Remote App URLs](../../guides/security.md#restricting-remote-app-urls) guide for details. Can be a path to a JSON file or raw JSON.|object||
+|`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
+|`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
+|`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
+|`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
+|`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
+|`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
+|`--keep-alive-timeout`, `-ka`|Timeout (in seconds) to use as both the keep-alive timeout and the connection timeout for all client requests. Disabled if set to `0`.|integer|`600`|
+|`--request-timeout`|Timeout (in seconds) for waiting to receive the entire HTTP request from the client. Disabled if set to `0`. Requests exceeding this timeout will be rejected with the code `HTTP 408`.|integer|`3600`|
+|`--local-timezone`|Use local timezone for log timestamps|boolean|`false`|
+|`--log`, `-g`|Path to a file where the server logs should be output. This does not affect output on the console.|string||
+|`--log-filters`|List of log filtering rules. See the [log filtering guide](../../guides/log-filters.md) for details.|array||
+|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`info`|
+|`--log-format`|The log format of the server logs. Supported values are `text`, `json`, or `pretty_json`. Setting the value to `json` disables colors.|string|`text`|
+|`--log-no-colors`|Disable colors in the server log|boolean|`false`|
+|`--log-timestamp`|Show timestamps in the server log|boolean|`false`|
+|`--long-stacktrace`|Add long stack traces to log entries. Recommended for debugging only.|boolean|`false`|
+|`--max-ipc-data-size`|Maximum byte size of IPC message objects.|integer|`1048576` (1MB)|
+|`--max-ipc-topics`|Maximum number of IPC topics per session.|integer|`1000`|
+|`--no-perms-check`|Skip various permission checks on the server startup|boolean|`false`|
+|`--plugin`|Plugin-specific configuration. Keys should correspond to plugin package names|object||
+|`--plugins-import-chunk-size`|Maximum number of plugins that can be imported in parallel on server startup|number|`7`|
+|`--port`, `-p`|Port to listen on|integer|`4723`|
+|`--relaxed-security`|Allow all [insecure features](../../guides/security.md). Only use this if all clients are in a trusted network and could not potentially break out of the session sandbox. Specific features can be overridden by using `--deny-insecure`.|boolean|`false`|
+|`--session-override`|Enable session override (clobbering)|boolean|`false`|
+|`--shutdown-timeout`|Timeout (in milliseconds) for waiting on all active connections to close, when shutting down the server|number|`5000`|
+|`--ssl-cert-path`|Absolute path to the `.cert` file if TLS is used. Must be provided together with `--ssl-key-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
+|`--ssl-key-path`|Absolute path to the `.key` file if TLS is used. Must be provided together with `--ssl-cert-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
+|`--tmp`|Absolute path to the directory used for temporary files|string|[`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir)|
+|`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
+|`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
+|`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
+
+### Default Capabilities
+
+Capabilities set with `--default-capabilities` are added to the received capabilities before a
+driver is matched. This is Appium's own defaulting behavior, not something defined by the W3C
+WebDriver specification.
+
+* A value the client sends in `alwaysMatch`, or in a given `firstMatch` candidate, takes precedence
+  over the server default
+* Defaults fill missing keys in each `firstMatch` candidate separately. A value in one candidate
+  does not stop the default from being applied to another candidate
+* A key sent in both `alwaysMatch` and `firstMatch` is still rejected by the usual capability
+  validation. Server defaults do not change that
+
+For example, with these server defaults:
+
+```json
+{"appium:newCommandTimeout": 60}
+```
+
+and these received capabilities:
+
+```json
+{
+  "alwaysMatch": {"appium:deviceName": "Pixel"},
+  "firstMatch": [
+    {"platformName": "iOS", "appium:newCommandTimeout": 120},
+    {"platformName": "Android"}
+  ]
+}
+```
+
+the iOS candidate keeps `appium:newCommandTimeout` of `120`, and the Android candidate gets the
+default `60`. The session uses the value from whichever candidate it is created with.
+
+### Info Options
+
+The following options are used for reference or debug purposes. They are only supported for the base `appium` command (not `appium server`), and will not launch the server.
+
+|<div style="width:10em">Argument</div>|Description|
+|--|--|
+|`--show-build-info`|Print detailed information on the Appium server version|
+|`--show-config`|Print the current Appium server configuration details|
+|`--show-debug-info`|Print information on the current environment: details about the operating system, Node.js, and Appium itself|
+|`--version`, `-v`|Print the Appium server version|

@@ -1,0 +1,31 @@
+name: License Checks
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+permissions:
+  contents: read
+
+jobs:
+  fossa-check:
+    name: Run FOSSA Analysis
+    runs-on: ubuntu-latest
+    env:
+      FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: master
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1.12.1
+      - name: Install fossa-cli
+        run: |
+          curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+      - name: Run FOSSA analysis
+        run: |
+          if [ -n "$FOSSA_API_KEY" ]; then
+            fossa analyze
+            fossa test
+          else
+            echo "License checks did not run. FOSSA_API_KEY is not defined for this fork."
+          fi

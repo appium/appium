@@ -1,0 +1,94 @@
+INHERIT: ./base-mkdocs.yml
+site_url: https://appium.io/docs/en
+edit_uri: edit/master/packages/appium/docs/en
+site_description: The Appium automation project documentation
+docs_dir: en
+site_dir: site/docs/en
+theme:
+  language: en
+nav:
+  - Welcome: index.md
+  - Blog: blog/index.md
+  - Introduction:
+      - intro/index.md
+      - Background:
+          - intro/appium.md
+          - intro/drivers.md
+          - intro/clients.md
+          - intro/history.md
+  - Quickstart:
+      - quickstart/index.md
+      - quickstart/requirements.md
+      - quickstart/install.md
+      - quickstart/uiauto2-driver.md
+      - Write a Test:
+          - quickstart/test-js.md
+          - quickstart/test-py.md
+          - quickstart/test-java.md
+          - quickstart/test-rb.md
+          - quickstart/test-dotnet.md
+      - quickstart/next-steps.md
+  - Ecosystem:
+      - ecosystem/index.md
+      - ecosystem/drivers.md
+      - ecosystem/clients.md
+      - ecosystem/plugins.md
+      - ecosystem/tools.md
+  - Reference:
+      - reference/index.md
+      - Command Line Interface:
+          - reference/cli/index.md
+          - reference/cli/server.md
+          - reference/cli/extensions.md
+          - reference/cli/setup.md
+          - reference/cli/env-vars.md
+          - reference/cli/insecure-features.md
+      - Session Properties:
+          - reference/session/index.md
+          - reference/session/caps.md
+      - API Endpoints:
+          - reference/api/index.md
+          - reference/api/webdriver.md
+          - reference/api/bidi.md
+          - reference/api/jsonwp.md
+          - reference/api/mjsonwp.md
+          - reference/api/appium.md
+          - reference/api/others.md
+          - reference/api/plugins.md
+  - Guides:
+      - Migration:
+          - guides/migrating-3-to-4.md
+          - guides/migrating-2-to-3.md
+          - guides/migrating-1-to-2.md
+      - Server/Driver Configuration:
+          - guides/managing-exts.md
+          - guides/branch-testing.md
+          - guides/config.md
+          - guides/security.md
+          - guides/log-filters.md
+          - guides/headers.md
+          - guides/grid.md
+          - guides/caching.md
+          - guides/tls.md
+      - Session Configuration:
+          - guides/caps.md
+          - guides/settings.md
+          - guides/execute-methods.md
+          - guides/gestures.md
+          - guides/context.md
+          - guides/event-timing.md
+  - More Resources:
+      - resources/index.md
+  - Developing:
+      - developing/index.md
+      - developing/build-drivers.md
+      - developing/build-plugins.md
+      - developing/build-docs.md
+      - developing/build-doctor-checks.md
+      - developing/sensitive.md
+      - Developer Reference:
+          - developing/config-system.md
+  - Contributing:
+      - contributing/index.md
+  - Sponsors:
+      - sponsors/index.md

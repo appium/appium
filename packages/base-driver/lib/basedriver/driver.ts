@@ -1,0 +1,580 @@
+import {logger, util} from '@appium/support';
+import {
+  type AppiumServer,
+  BASE_DESIRED_CAP_CONSTRAINTS,
+  type BaseDriverCapConstraints,
+  type Capabilities,
+  type Constraints,
+  type DefaultCreateSessionResult,
+  type DefaultDeleteSessionResult,
+  type Driver,
+  type DriverCaps,
+  type DriverOpts,
+  type LogDefRecord,
+  type ServerArgs,
+  type SessionCapabilities,
+  type StringRecord,
+  type W3CDriverCaps,
+} from '@appium/types';
+
+import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
+import {calcSignature} from '../helpers/session.js';
+import {DELETE_SESSION_COMMAND, errors, isErrorType} from '../protocol/index.js';
+import {mergePlainObjects} from '../utils.js';
+import {processCapabilities, validateCaps} from './capabilities.js';
+import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
+// oxlint-disable import/no-duplicates -- see comment below
+import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
+import {getLogEvents, logCustomEvent} from './commands/event.js';
+import {executeMethod} from './commands/execute.js';
+import {
+  findElement,
+  findElementFromElement,
+  findElements,
+  findElementsFromElement,
+  findElOrEls,
+  findElOrElsWithProcessing,
+  getPageSource,
+} from './commands/find.js';
+import {getLog, getLogTypes} from './commands/log.js';
+import {
+  getTimeouts,
+  implicitWaitForCondition,
+  parseTimeoutArgument,
+  setImplicitWait,
+  setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
+  timeouts,
+} from './commands/timeout.js';
+// oxlint-enable import/no-duplicates
+// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop them from the declaration output.
+import './commands/bidi.js';
+import './commands/event.js';
+import './commands/execute.js';
+import './commands/find.js';
+import './commands/log.js';
+import './commands/timeout.js';
+import {DriverCore} from './core.js';
+import * as helpers from './helpers/index.js';
+import {deserializeTimeouts, W3C_TIMEOUTS} from './helpers/timeouts.js';
+
+type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
+
+const EVENT_SESSION_INIT = 'newSessionRequested';
+const EVENT_SESSION_START = 'newSessionStarted';
+const EVENT_SESSION_QUIT_START = 'quitSessionRequested';
+const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
+const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+
+export class BaseDriver<
+  const C extends Constraints,
+  CArgs extends StringRecord = StringRecord,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+>
+  extends DriverCore<C, Settings>
+  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult>
+{
+  cliArgs: CArgs & ServerArgs = {} as CArgs & ServerArgs;
+  caps: DriverCaps<C> = {} as DriverCaps<C>;
+  originalCaps!: W3CDriverCaps<C>;
+  desiredCapConstraints!: C;
+  server?: AppiumServer;
+  serverHost?: string;
+  serverPort?: number;
+  serverPath?: string;
+  supportedLogTypes: Readonly<LogDefRecord> = {};
+
+  private readonly pendingCommandControllers = new Set<AbortController>();
+
+  /**
+   * This is the main command handler for the driver. It wraps command
+   * execution with timeout logic, checking that we have a valid session,
+   * and ensuring that we execute commands one at a time. This method is called
+   * by the WebDriver protocol's express router.
+   */
+  async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
+    // get start time for this command, and log in special cases
+    const startTime = Date.now();
+
+    if (cmd === 'createSession') {
+      this.logEvent(EVENT_SESSION_INIT);
+    } else if (cmd === DELETE_SESSION_COMMAND) {
+      this.logEvent(EVENT_SESSION_QUIT_START);
+    }
+
+    // if we had a command timer running, clear it now that we're starting
+    // a new command and so don't want to time out
+    await this.clearNewCommandTimeout();
+
+    if (this.shutdownUnexpectedly) {
+      throw new errors.NoSuchDriverError('The driver was unexpectedly shut down!');
+    }
+
+    const invoker = this as unknown as CommandInvoker<C>;
+    const command = invoker[cmd];
+    // If we don't have this command, it must not be implemented
+    if (!command) {
+      if (this.isCommandsQueueEnabled && !hasRunningCommands(this)) {
+        await this.startNewCommandTimeout();
+      }
+      throw new errors.NotYetImplementedError();
+    }
+
+    const runCommandPromise = async () => {
+      let wasSessionShutdownUnexpectedly = false;
+      return await runWithCommandTimeout(
+        this,
+        async () => {
+          const shutdown = Promise.withResolvers<void>();
+          const onUnexpectedShutdown = (e: Error) => {
+            wasSessionShutdownUnexpectedly = true;
+            shutdown.reject(e);
+          };
+          try {
+            this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+            return await Promise.race([
+              shutdown.promise,
+              // Observe both promises before the command can emit shutdown or throw synchronously.
+              Promise.resolve().then(() => command.call(this, ...args)),
+            ]);
+          } finally {
+            this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+            shutdown.resolve();
+          }
+        },
+        {restart: () => cmd !== DELETE_SESSION_COMMAND && !wasSessionShutdownUnexpectedly},
+      );
+    };
+
+    // exempt commands bypass the queue, so they can run while other commands are queued/running,
+    // without needing to wait their turn behind them
+    const isQueueExempt = this.queueExemptCommands.has(cmd);
+
+    const synchronizationKey = BaseDriver.name;
+    const commandsQueueLen = this.commandsQueueGuard.getQueueLength(synchronizationKey);
+    if (this.isCommandsQueueEnabled && !isQueueExempt && commandsQueueLen > 0) {
+      this.log.debug(
+        `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
+          `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
+          `already waiting for execution.`,
+      );
+    }
+
+    const res =
+      this.isCommandsQueueEnabled && !isQueueExempt
+        ? await this.runQueuedCommand(synchronizationKey, runCommandPromise)
+        : await runCommandPromise();
+
+    // log timing information about this command
+    const endTime = Date.now();
+
+    if (this.clarifyCommandName) {
+      cmd = this.clarifyCommandName(cmd, args);
+    }
+
+    this._eventHistory.commands.push({cmd, startTime, endTime});
+    if (cmd === 'createSession') {
+      this.logEvent(EVENT_SESSION_START);
+    } else if (cmd === DELETE_SESSION_COMMAND) {
+      this.logEvent(EVENT_SESSION_QUIT_DONE);
+    }
+
+    return res;
+  }
+
+  /**
+   * A helper method to modify the command name before it's logged.
+   *
+   * Useful for resolving generic commands like 'execute' to a more specific
+   * name based on arguments (e.g., identifying custom extensions).
+   *
+   * @param cmd - The original command name
+   * @param args - Arguments passed to the command
+   * @returns A potentially updated command name
+   */
+  clarifyCommandName(cmd: string, args: string[]): string {
+    if (cmd === 'execute') {
+      const firstArg = args?.[0];
+      if (typeof firstArg === 'string' && firstArg.trim().length > 0) {
+        return resolveExecuteExtensionName.call(this as BaseDriver<Constraints>, firstArg);
+      }
+    }
+
+    return cmd;
+  }
+
+  /**
+   * Signify to any owning processes that this driver encountered an error which should cause the
+   * session to terminate immediately (for example an upstream service failed)
+   *
+   * @param err - the Error object which is causing the shutdown
+   */
+  async startUnexpectedShutdown(
+    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!'),
+  ): Promise<void> {
+    this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
+    this.shutdownUnexpectedly = true;
+    try {
+      if (this.sessionId !== null) {
+        await this.deleteSession(this.sessionId);
+      }
+    } finally {
+      this.shutdownUnexpectedly = false;
+    }
+  }
+
+  /**
+   * Start the timer for the New Command Timeout, which when it runs out, will stop the current
+   * session
+   */
+  async startNewCommandTimeout(): Promise<void> {
+    // make sure there are no rogue timeouts
+    await this.clearNewCommandTimeout();
+
+    // arming this while a command is still running shuts that command down
+    if (hasRunningCommands(this)) {
+      return;
+    }
+
+    // if command timeout is 0, it is disabled
+    if (!this.newCommandTimeoutMs) {
+      return;
+    }
+
+    this.noCommandTimer = setTimeout(async () => {
+      this.log.warn(`Shutting down because we waited ` + `${this.newCommandTimeoutMs / 1000.0} seconds for a command`);
+      const errorMessage =
+        `New Command Timeout of ` +
+        `${this.newCommandTimeoutMs / 1000.0} seconds ` +
+        `expired. Try customizing the timeout using the ` +
+        `'newCommandTimeout' desired capability`;
+      try {
+        await this.startUnexpectedShutdown(new Error(errorMessage));
+      } catch (err) {
+        // Timer callbacks have no caller to handle a rejected shutdown promise.
+        this.log.warn(
+          `Failed to clean up the session after the new command timeout: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }, this.newCommandTimeoutMs);
+  }
+
+  /**
+   * A helper function used to assign server information to the driver instance so the driver knows
+   * where the server is Running
+   *
+   * @param server - the server object
+   * @param host - the server hostname
+   * @param port - the server port
+   * @param path - the server base url
+   */
+  assignServer(server: AppiumServer, host: string, port: number, path: string): void {
+    this.server = server;
+    this.serverHost = host;
+    this.serverPort = port;
+    this.serverPath = path;
+  }
+
+  /**
+   * Start a new automation session.
+   *
+   * @param w3cCapabilities - the new session capabilities in W3C format
+   */
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult> {
+    if (this.sessionId !== null) {
+      throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
+    }
+
+    this.log.debug();
+
+    const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
+    if (!originalCaps) {
+      throw new errors.InvalidArgumentError(
+        'Appium only supports W3C-style capability objects. ' +
+          'Your client is sending an older capabilities format. Please update your client library.',
+      );
+    }
+
+    this.setProtocolW3C();
+
+    this.originalCaps = originalCaps;
+    this.log.debug(
+      'Creating session with W3C capabilities: %s',
+      logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
+    );
+
+    const caps = this.processSessionCapabilities(originalCaps);
+    const initialTimeouts = deserializeTimeouts(caps.timeouts);
+    const opts = this.configureSessionOptions(caps);
+    this.applyNewCommandTimeout(caps);
+
+    // Initialize local state before the concrete driver starts its backend.
+    // Timeout command/setter overrides may require an already running backend.
+    for (const {name, property} of W3C_TIMEOUTS) {
+      const value = initialTimeouts[name];
+      if (value !== undefined) {
+        this[property] = value;
+      }
+    }
+    this.sessionId = util.uuidV4();
+    this.sessionCreationTimestampMs = Date.now();
+    this.caps = caps;
+    this.opts = opts;
+
+    this.log.prefix = helpers.generateDriverLogPrefix(this);
+
+    this.log.updateAsyncContext({
+      sessionId: this.sessionId,
+      sessionSignature: calcSignature(this.sessionId),
+    });
+
+    this.log.info(`Session created with session id: ${this.sessionId}`);
+
+    return [this.sessionId, caps] as CreateResult;
+  }
+
+  /**
+   * Returns capabilities for the session
+   */
+  async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
+    return {capabilities: this.caps};
+  }
+
+  /**
+   * Stop the current automation session.
+   * @see {@link https://w3c.github.io/webdriver/#delete-session}
+   *
+   * @param sessionId - the id of the session that is to be deleted
+   */
+  async deleteSession(sessionId?: string | null): Promise<void> {
+    void sessionId;
+    await this.clearNewCommandTimeout();
+    for (const controller of this.pendingCommandControllers) {
+      controller.abort(new errors.NoSuchDriverError('The session was deleted before this command could run'));
+    }
+    this.pendingCommandControllers.clear();
+    this.sessionId = null;
+    clearBidiSubscriptions(this);
+  }
+
+  /**
+   * A helper function to log unrecognized capabilities to the console
+   *
+   * @param caps - the capabilities
+   */
+  logExtraCaps(caps: Capabilities<C>): void {
+    const knownCaps = Object.keys(this._desiredCapConstraints);
+    const knownCapsSet = new Set(knownCaps);
+    const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
+    if (extraCaps.length) {
+      this.log.warn(`The following provided capabilities were not recognized by this driver:`);
+      for (const cap of extraCaps) {
+        const suggestion = getLevenshteinSuggestion(cap, knownCaps);
+        this.log.warn(suggestion ? `  ${cap} (did you mean '${suggestion}'?)` : `  ${cap}`);
+      }
+    }
+  }
+
+  /**
+   * Validate the capabilities used to start a session
+   *
+   * @param caps - the capabilities
+   *
+   * @returns Whether or not the capabilities are valid
+   */
+  validateDesiredCaps(caps: any): caps is DriverCaps<C> {
+    if (!this.shouldValidateCaps) {
+      return true;
+    }
+
+    try {
+      validateCaps(caps, this._desiredCapConstraints);
+    } catch (e) {
+      const capError = e instanceof Error ? e : new Error(String(e));
+      throw this.log.errorWithException(
+        new errors.SessionNotCreatedError(
+          `Session capabilities were not valid for the ` + `following reason(s): ${capError.message}`,
+          capError,
+        ),
+      );
+    }
+
+    this.logExtraCaps(caps);
+
+    return true;
+  }
+
+  /**
+   * Update the session's settings dictionary with a new settings object
+   *
+   * @param newSettings - A key-value map of setting names to values. Settings not named in the map
+   * will not have their value adjusted.
+   */
+  async updateSettings(newSettings: Settings): Promise<void> {
+    if (!this.settings) {
+      throw this.log.errorWithException('Cannot update settings; settings object not found');
+    }
+    return await this.settings.update(newSettings);
+  }
+
+  /**
+   * Get the current settings for the session
+   *
+   * @returns The settings object
+   */
+  async getSettings(): Promise<Settings> {
+    if (!this.settings) {
+      throw this.log.errorWithException('Cannot get settings; settings object not found');
+    }
+    return this.settings.getSettings();
+  }
+
+  /**
+   * Contains the base constraints plus whatever the subclass wants to add.
+   *
+   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
+   * an issue:
+   * @see {@link https://github.com/appium/appium/issues/new}
+   */
+  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
+    return Object.freeze(
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
+    );
+  }
+
+  /**
+   * Reject waiting commands when their session ends without interrupting a running command.
+   */
+  private async runQueuedCommand<T>(key: string, command: () => Promise<T>): Promise<T> {
+    const controller = new AbortController();
+    const {signal} = controller;
+    const cancellation = Promise.withResolvers<never>();
+    const onAbort = () => cancellation.reject(signal.reason);
+    signal.addEventListener('abort', onAbort, {once: true});
+    this.pendingCommandControllers.add(controller);
+    try {
+      const execution = this.commandsQueueGuard.acquire(key, async () => {
+        this.pendingCommandControllers.delete(controller);
+        signal.removeEventListener('abort', onAbort);
+        signal.throwIfAborted();
+        return await command();
+      });
+      return await Promise.race([execution, cancellation.promise]);
+    } finally {
+      this.pendingCommandControllers.delete(controller);
+      signal.removeEventListener('abort', onAbort);
+    }
+  }
+
+  /** Process and validate capabilities while preserving protocol error types. */
+  private processSessionCapabilities(originalCaps: W3CDriverCaps<C>): DriverCaps<C> {
+    let caps: DriverCaps<C>;
+    try {
+      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
+      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
+    } catch (e) {
+      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
+        throw e;
+      }
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
+    }
+
+    this.validateDesiredCaps(caps);
+    return caps;
+  }
+
+  /**
+   * Store `newCommandTimeout` as milliseconds.
+   * Null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout.
+   * Node runs a negative timer delay immediately, which ends the session.
+   */
+  private applyNewCommandTimeout(caps: DriverCaps<C>): void {
+    const newCommandTimeout = caps.newCommandTimeout;
+    if (typeof newCommandTimeout !== 'number' || !Number.isFinite(newCommandTimeout)) {
+      return;
+    }
+    if (newCommandTimeout < 0) {
+      throw new errors.InvalidArgumentError(`Invalid newCommandTimeout value '${newCommandTimeout}'`);
+    }
+    this.newCommandTimeoutMs = newCommandTimeout * 1000;
+  }
+
+  /** Merge and normalize session options without changing driver state. */
+  private configureSessionOptions(caps: DriverCaps<C>): DriverOpts<C> {
+    // merge caps onto opts so we don't need to worry about what's where
+    const opts = {...this.initialOpts, ...caps};
+
+    // deal with resets
+    // some people like to do weird things by setting noReset and fullReset
+    // both to true, but this is misguided and strange, so error here instead
+    if (opts.noReset && opts.fullReset) {
+      throw new errors.SessionNotCreatedError(
+        "The 'noReset' and 'fullReset' capabilities are mutually " +
+          'exclusive and should not both be set to true. You ' +
+          "probably meant to just use 'fullReset' on its own",
+      );
+    }
+    for (const [enabledOption, disabledOption] of [
+      ['noReset', 'fullReset'],
+      ['fullReset', 'noReset'],
+    ] as const) {
+      if (opts[enabledOption] === true) {
+        opts[disabledOption] = false;
+      }
+    }
+    opts.fastReset = !opts.fullReset && !opts.noReset;
+    opts.skipUninstall = opts.fastReset || opts.noReset;
+
+    // Prevents empty string caps so we don't need to test it everywhere
+    if (typeof opts.app === 'string' && opts.app.trim() === '') {
+      delete opts.app;
+    }
+    return opts;
+  }
+}
+
+Object.assign(BaseDriver.prototype, {
+  // bidi
+  bidiSubscribe,
+  bidiUnsubscribe,
+  bidiStatus,
+
+  // event
+  logCustomEvent,
+  getLogEvents,
+
+  // execute
+  executeMethod,
+
+  // find
+  findElement,
+  findElements,
+  findElementFromElement,
+  findElementsFromElement,
+  findElOrEls,
+  getPageSource,
+  findElOrElsWithProcessing,
+
+  // log
+  getLogTypes,
+  getLog,
+
+  // timeout
+  timeouts,
+  getTimeouts,
+  setImplicitWait,
+  setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
+  implicitWaitForCondition,
+  parseTimeoutArgument,
+});

@@ -1,0 +1,255 @@
+/**
+ * Functions for running `mike`
+ *
+ * @module
+ */
+
+import path from 'node:path';
+
+import type {TeenProcessExecOptions} from 'teen_process';
+
+import {
+  DEFAULT_DEPLOY_ALIAS_TYPE,
+  DEFAULT_DEPLOY_BRANCH,
+  DEFAULT_DEPLOY_REMOTE,
+  DEFAULT_SERVE_HOST,
+  DEFAULT_SERVE_PORT,
+  NAME_BIN,
+  NAME_MIKE,
+  NAME_MKDOCS_YML,
+} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {findMike, findMkDocsYml, isMkDocsInstalled, readPackageJson, requirePython} from '../fs.js';
+import {getLogger} from '../logger.js';
+import type {SpawnBackgroundProcessOpts} from '../utils/index.js';
+import {argify, execWithErrorHandling, spawnBackgroundProcess, stopwatch} from '../utils/index.js';
+
+const log = getLogger('builder:deploy');
+
+/**
+ * Options for {@linkcode deploy}.
+ */
+export interface DeployOpts {
+  /**
+   * Path to `mike.yml`
+   */
+  mkdocsYml?: string;
+
+  /**
+   * Current working directory
+   * @defaultValue `process.cwd()`
+   */
+  cwd?: string;
+
+  /**
+   * Path to `package.json`
+   *
+   * Used to find `mike.yml` if unspecified.
+   */
+  packageJson?: string;
+
+  /**
+   * If `true`, run `mike serve` instead of `mike build`
+   */
+  serve?: boolean;
+
+  /**
+   * If `true`, push `branch` to `remote`
+   */
+  push?: boolean;
+  /**
+   * Branch to commit to
+   * @defaultValue gh-pages
+   */
+  branch?: string;
+  /**
+   * Remote to push to
+   * @defaultValue origin
+   */
+  remote?: string;
+  /**
+   * Subdirectory within `branch` to deploy to
+   */
+  deployPrefix?: string;
+  /**
+   * Commit message
+   */
+  message?: string;
+  /**
+   * Version (dir) to deploy build to. If omitted, the version number is extracted from the
+   * `package.json` file.
+   */
+  deployVersion?: string;
+  /**
+   * If `true`, when extracting the deployment version from `package.json`, always use a
+   * v-prefixed major version number (e.g. `6.3.2` -> `v6`).
+   * Ignored if `deployVersion` is specified.
+   */
+  usePrefixedMajorDeployVersion?: boolean;
+  /**
+   * Alias for the build (e.g., `latest`); triggers alias update
+   */
+  alias?: string;
+  /**
+   * The approach for creating build alias (`symlink`, `redirect` or `copy`)
+   */
+  aliasType?: string;
+  /**
+   * Port to serve on
+   * @defaultValue 8000
+   */
+  port?: number;
+  /**
+   * Host to serve on
+   * @defaultValue localhost
+   */
+  host?: string;
+
+  /**
+   * Extra options for {@linkcode teen_process.exec}
+   */
+  execOpts?: TeenProcessExecOptions;
+
+  /**
+   * Extra options for {@linkcode spawnBackgroundProcess}
+   */
+  serveOpts?: SpawnBackgroundProcessOpts;
+}
+
+/**
+ * Runs `mike build` or `mike serve`
+ * @param opts Options
+ */
+export async function deploy({
+  mkdocsYml: mkDocsYmlPath,
+  packageJson: packageJsonPath,
+  deployVersion: version,
+  usePrefixedMajorDeployVersion: usePrefixedMajorVersion,
+  cwd = process.cwd(),
+  serve = false,
+  push = false,
+  branch = DEFAULT_DEPLOY_BRANCH,
+  remote = DEFAULT_DEPLOY_REMOTE,
+  deployPrefix,
+  message,
+  alias,
+  aliasType = DEFAULT_DEPLOY_ALIAS_TYPE,
+  port = DEFAULT_SERVE_PORT,
+  host = DEFAULT_SERVE_HOST,
+  serveOpts,
+  execOpts,
+}: DeployOpts = {}) {
+  const stop = stopwatch('deploy');
+
+  await requirePython();
+
+  const mkdocsInstalled = await isMkDocsInstalled();
+  if (!mkdocsInstalled) {
+    throw new DocutilsError(`Could not find MkDocs executable; please run "${NAME_BIN} init"`);
+  }
+
+  mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
+  if (!mkDocsYmlPath) {
+    throw new DocutilsError(`Could not find ${NAME_MKDOCS_YML} from ${cwd}; please run "${NAME_BIN} init"`);
+  }
+  version = version ?? (await findDeployVersion(packageJsonPath, usePrefixedMajorVersion, cwd));
+
+  // substitute %s in message with version
+  message = message?.replace('%s', version);
+
+  const mikeOpts = {
+    'config-file': mkDocsYmlPath,
+    push,
+    remote,
+    branch,
+    'deploy-prefix': deployPrefix,
+    message,
+    port,
+    host,
+  };
+
+  const mikePath = await findMike();
+  if (!mikePath) {
+    throw new DocutilsError(`Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`);
+  }
+  if (serve) {
+    const mikeArgs = [
+      ...argify(
+        Object.fromEntries(Object.entries(mikeOpts).filter(([, value]) => typeof value === 'number' || Boolean(value))),
+      ),
+    ];
+    stop(); // discard
+    // unsure about how SIGHUP is handled here
+    await doServe(mikePath, mikeArgs, serveOpts);
+  } else {
+    log.info('Deploying into branch %s', branch);
+    const mikeArgs = [
+      ...argify(
+        Object.fromEntries(
+          Object.entries(mikeOpts).filter(
+            ([key, value]) => !['port', 'host'].includes(key) && (typeof value === 'number' || Boolean(value)),
+          ),
+        ),
+      ),
+    ];
+    if (alias) {
+      mikeArgs.push('--update-aliases', '--alias-type', aliasType);
+      mikeArgs.push(version, alias);
+    } else {
+      mikeArgs.push(version);
+    }
+    await doDeploy(mikePath, mikeArgs, execOpts);
+
+    log.success('Finished deployment into branch %s (%dms)', branch, stop());
+  }
+}
+
+/**
+ * Derives a deployment version from `package.json`
+ * @param packageJsonPath Path to `package.json` if known
+ * @param usePrefixedMajorVersion Whether to extract a v-prefixed major version
+ * @param cwd Current working directory
+ */
+export async function findDeployVersion(
+  packageJsonPath?: string,
+  usePrefixedMajorVersion?: boolean,
+  cwd = process.cwd(),
+): Promise<string> {
+  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const version = pkg.version;
+  if (!version) {
+    throw new DocutilsError('No "version" field found in package.json; please add one or specify a version to deploy');
+  }
+
+  // If a minor version can be extracted, use MAJOR.MINOR as the deploy version, otherwise use MAJOR.
+  // If usePrefixedMajorVersion is true, always use vMAJOR
+  const versionParts = version.split('.');
+  if (versionParts.length === 1) {
+    return usePrefixedMajorVersion ? `v${version}` : version;
+  }
+  return usePrefixedMajorVersion ? `v${versionParts[0]}` : `${versionParts[0]}.${versionParts[1]}`;
+}
+
+/**
+ * Runs `mike serve`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options for `teen_process.Subprocess.start`
+ */
+async function doServe(mikePath: string, args: string[] = [], opts: SpawnBackgroundProcessOpts = {}) {
+  const finalArgs = ['serve', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return spawnBackgroundProcess(mikePath, finalArgs, opts);
+}
+
+/**
+ * Runs `mike build`
+ * @param mikePath Path to `mike` executable
+ * @param args Extra args to `mike build`
+ * @param opts Extra options to `teen_process.exec`
+ */
+async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
+  const finalArgs = ['deploy', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return await execWithErrorHandling(mikePath, finalArgs, opts);
+}

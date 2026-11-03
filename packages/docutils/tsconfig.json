@@ -1,0 +1,18 @@
+{
+  "extends": "@appium/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "paths": {
+      "@appium/support": ["../support"],
+      "@appium/types": ["../types"]
+    },
+    "strict": true
+  },
+  "include": ["./lib/**/*", "./test/**/*"],
+  "references": [{"path": "../types"}, {"path": "../support"}]
+}

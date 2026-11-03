@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "files": [],
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
+  },
+  "references": [
+    {
+      "path": "packages/appium"
+    },
+    {
+      "path": "packages/driver-test-support"
+    },
+    {
+      "path": "packages/plugin-test-support"
+    },
+    {
+      "path": "packages/schema"
+    },
+    {
+      "path": "packages/types"
+    },
+    {
+      "path": "packages/support"
+    },
+    {
+      "path": "packages/base-driver"
+    },
+    {
+      "path": "packages/base-plugin"
+    },
+    {
+      "path": "packages/fake-plugin"
+    },
+    {
+      "path": "packages/images-plugin"
+    },
+    {
+      "path": "packages/relaxed-caps-plugin"
+    },
+    {
+      "path": "packages/universal-xml-plugin"
+    },
+    {
+      "path": "packages/opencv"
+    },
+    {
+      "path": "packages/execute-driver-plugin"
+    },
+    {
+      "path": "packages/docutils"
+    },
+    {
+      "path": "packages/fake-driver"
+    },
+    {
+      "path": "packages/http-server"
+    },
+    {
+      "path": "packages/strongbox"
+    },
+    {
+      "path": "packages/logger"
+    },
+    {
+      "path": "packages/storage-plugin"
+    }
+  ]
+}

@@ -1,0 +1,637 @@
+import {createRequire} from 'node:module';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+
+import {fs, util} from '@appium/support';
+import type {ExtensionType, StringRecord} from '@appium/types';
+import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
+import {satisfies} from 'semver';
+
+import type {
+  ExtensionList,
+  ExtensionListData,
+  InstalledExtensionListData,
+  ExtensionCliCommand,
+} from '../cli/extension-command.js';
+import {APPIUM_VER} from '../helpers/build.js';
+import {log} from '../logger.js';
+import type {SchemaObject} from '../schema/ajv.js';
+import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
+import {capitalize, resolveFrom} from '../utils/index.js';
+import {INSTALL_TYPES, manifestValidator} from './manifest/index.js';
+import type {ExtManifestProblem, Manifest} from './manifest/index.js';
+
+const DEFAULT_ENTRY_POINT = 'index.js';
+// Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
+// reloads happen within the same millisecond, which would serve the stale cached module.
+let reloadCounter = 0;
+
+export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
+  schema: NonNullable<ExtManifest<E>['schema']>;
+};
+
+export type ExtensionConfigMutationOpts = {write?: boolean};
+
+/**
+ * Results of the most recent {@linkcode ExtensionConfig.validate} call, not yet rendered anywhere.
+ * `validate()` only computes this; call {@linkcode ExtensionConfig.printValidationSummary} to display it,
+ * so the caller can pick a sink appropriate to its own output context (e.g. a JSON-mode-aware CLI
+ * console, or the server's Winston-backed logger).
+ */
+interface ExtensionValidationSummary {
+  /** Number of extensions considered; used only for pluralizing the summary's lead-in line. */
+  checkedCount: number;
+  errorSummaries: string[];
+  warningSummaries: string[];
+}
+
+/** Minimal logger shape needed to render a {@linkcode ExtensionValidationSummary}. */
+export type ValidationSummarySink = {
+  warn(message?: string, ...args: any[]): void;
+  error(message?: string, ...args: any[]): void;
+};
+
+const EMPTY_VALIDATION_SUMMARY: ExtensionValidationSummary = {
+  checkedCount: 0,
+  errorSummaries: [],
+  warningSummaries: [],
+};
+
+/**
+ * Shared configuration and validation for installed Appium extensions (drivers or plugins).
+ * Subclasses fix the extension kind; do not instantiate this class directly.
+ */
+export abstract class ExtensionConfig<ExtType extends ExtensionType> {
+  readonly extensionType: ExtType;
+  readonly manifest: Manifest;
+  /** Populated by {@linkcode ExtensionConfig.validate}; see {@linkcode ExtensionValidationSummary}. */
+  private validationSummary: ExtensionValidationSummary = EMPTY_VALIDATION_SUMMARY;
+  private listDataCache: ExtensionList<ExtType> | undefined;
+
+  protected constructor(extensionType: ExtType, manifest: Manifest) {
+    this.extensionType = extensionType;
+    this.manifest = manifest;
+  }
+
+  /**
+   * Live installed-extension map for this extension kind (same object the manifest holds).
+   * Recomputed on every access so it stays in sync across a {@link Manifest.read} reload.
+   */
+  get installedExtensions(): ExtRecord<ExtType> {
+    return this.manifest.getExtensionData(this.extensionType);
+  }
+
+  /** Path to `extensions.yaml` after the manifest has been read; otherwise undefined. */
+  get manifestPath(): string | undefined {
+    return this.manifest.manifestPath;
+  }
+
+  /** `APPIUM_HOME` directory this config is tied to. */
+  get appiumHome(): string {
+    return this.manifest.appiumHome;
+  }
+
+  /**
+   * Type guard: manifest entry includes a `schema` path or inline schema object.
+   *
+   * @param extManifest - Parsed extension metadata
+   */
+  static extDataHasSchema<E extends ExtensionType>(
+    extManifest: ExtManifest<E>,
+  ): extManifest is ExtManifestWithSchema<E> {
+    return (
+      typeof extManifest?.schema === 'string' ||
+      (extManifest?.schema !== null && typeof extManifest?.schema === 'object')
+    );
+  }
+
+  private static async _readExtensionSchema<E extends ExtensionType>(
+    appiumHome: string,
+    extType: E,
+    extName: string,
+    extManifest: ExtManifestWithSchema<E>,
+  ): Promise<SchemaObject | undefined> {
+    const {pkgName, schema: argSchemaPath} = extManifest;
+    if (!argSchemaPath) {
+      throw new TypeError(
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
+      );
+    }
+    let moduleObject: any;
+    if (typeof argSchemaPath === 'string') {
+      const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      if (path.extname(schemaPath) === '.json') {
+        // `import()` of JSON needs an import attribute Node versions disagree on the
+        // syntax for; parsing directly avoids that entirely.
+        moduleObject = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
+      } else {
+        // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+        // POSIX paths also need URL escaping for characters such as '#' and '%'.
+        const importPath = pathToFileURL(schemaPath).href;
+        const mod = (await import(importPath)) as Record<string, any>;
+        moduleObject = 'default' in mod ? mod.default : mod;
+      }
+    } else {
+      moduleObject = argSchemaPath;
+    }
+    // this sucks. default exports should be destroyed
+    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
+    await registerSchema(extType, extName, schema as SchemaObject);
+    return schema;
+  }
+
+  /**
+   * Collects blocking validation issues for one extension (generic fields, type-specific rules, and schema).
+   *
+   * @param extName - Extension key as stored in the manifest
+   * @param extManifest - Manifest entry for that extension
+   */
+  async getProblems(extName: string, extManifest: ExtManifest<ExtType>): Promise<ExtManifestProblem[]> {
+    return [
+      ...this.getGenericConfigProblems(extManifest, extName),
+      ...this.getConfigProblems(extManifest, extName),
+      ...(await this.getSchemaProblems(extManifest, extName)),
+    ];
+  }
+
+  /**
+   * Collects non-fatal issues for one extension (e.g. manifest quirks, peer dependency mismatches).
+   * Warnings do not by themselves prevent loading.
+   *
+   * @param extName - Extension key as stored in the manifest
+   * @param extManifest - Manifest entry for that extension
+   */
+  async getWarnings(extName: string, extManifest: ExtManifest<ExtType>): Promise<string[]> {
+    const [genericConfigWarnings, configWarnings] = await Promise.all([
+      this.getGenericConfigWarnings(extManifest, extName),
+      this.getConfigWarnings(extManifest, extName),
+    ]);
+
+    return [...genericConfigWarnings, ...configWarnings];
+  }
+
+  /**
+   * Turns per-extension errors and warnings into human-readable log lines for console output.
+   *
+   * @param errorMap - Extension name to list of blocking problems
+   * @param warningMap - Extension name to list of warning strings
+   */
+  getValidationResultSummaries(
+    errorMap: Map<string, ExtManifestProblem[]> = new Map(),
+    warningMap: Map<string, string[]> = new Map(),
+  ): {errorSummaries: string[]; warningSummaries: string[]} {
+    const errorSummaries: string[] = [];
+    for (const [extName, problems] of errorMap.entries()) {
+      if (util.isEmpty(problems)) {
+        continue;
+      }
+      // remove this extension from the list since it's not valid
+      errorSummaries.push(
+        `${this.extensionType} "${extName}" had ${util.pluralize('error', problems.length)} and will not be available:`,
+      );
+      for (const problem of problems) {
+        errorSummaries.push(`  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`);
+      }
+    }
+    const warningSummaries: string[] = [];
+    for (const [extName, warnings] of warningMap.entries()) {
+      if (util.isEmpty(warnings)) {
+        continue;
+      }
+      const extTypeText = capitalize(this.extensionType);
+      const problemEnumerationText = util.pluralize('potential problem', warnings.length, true);
+      warningSummaries.push(`${extTypeText} "${extName}" has ${problemEnumerationText}: `);
+      for (const warning of warnings) {
+        warningSummaries.push(`  - ${warning}`);
+      }
+    }
+
+    return {errorSummaries, warningSummaries};
+  }
+
+  /**
+   * Records a new installed extension in the manifest and optionally persists immediately.
+   *
+   * @param extName - Manifest key for the extension
+   * @param extManifest - Full manifest payload
+   *
+   * Pass `{ write: false }` to defer flushing until a later manifest write.
+   */
+  async addExtension(
+    extName: string,
+    extManifest: ExtManifest<ExtType>,
+    {write = true}: ExtensionConfigMutationOpts = {},
+  ): Promise<void> {
+    this.manifest.setExtension(this.extensionType, extName, extManifest);
+    if (write) {
+      await this.manifest.write();
+    }
+  }
+
+  /**
+   * Merges new metadata into an existing extension entry and optionally writes the manifest.
+   *
+   * @param extName - Installed extension to update
+   * @param extManifest - Fields to merge over the current entry
+   *
+   * Pass `{ write: false }` to defer flushing until a later manifest write.
+   */
+  async updateExtension(
+    extName: ExtName<ExtType>,
+    extManifest: ExtManifest<ExtType>,
+    {write = true}: ExtensionConfigMutationOpts = {},
+  ): Promise<void> {
+    const existing = this.installedExtensions[extName];
+    this.manifest.setExtension(this.extensionType, extName as string, {
+      ...existing,
+      ...extManifest,
+    });
+    if (write) {
+      await this.manifest.write();
+    }
+  }
+
+  /**
+   * Drops an extension from the manifest and optionally persists immediately.
+   *
+   * @param extName - Installed extension to remove
+   *
+   * Pass `{ write: false }` to defer flushing until a later manifest write.
+   */
+  async removeExtension(extName: ExtName<ExtType>, {write = true}: ExtensionConfigMutationOpts = {}): Promise<void> {
+    this.manifest.deleteExtension(this.extensionType, extName);
+    if (write) {
+      await this.manifest.write();
+    }
+  }
+
+  /**
+   * Logs installed extensions to the console. Subclasses may use `activeNames` to annotate active plugins.
+   */
+  print(_activeNames?: ExtName<ExtType>[]): void {
+    void _activeNames;
+    if (util.isEmpty(this.installedExtensions)) {
+      log.info(
+        `No ${this.extensionType}s have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
+          'command to install the one(s) you want to use.',
+      );
+      return;
+    }
+
+    log.info(`Available ${this.extensionType}s:`);
+    for (const [extName, extManifest] of Object.entries(this.installedExtensions) as Array<
+      [string, ExtManifest<ExtType>]
+    >) {
+      log.info(`  - ${this.extensionDesc(extName, extManifest)}`);
+    }
+  }
+
+  /**
+   * Root directory of an installed extension, preferring `installPath` and falling back to `node_modules/<pkgName>`.
+   *
+   * @param extName - Installed extension key
+   */
+  getInstallPath(extName: keyof ExtRecord<ExtType>): string {
+    return (
+      this.installedExtensions[extName]?.installPath ??
+      path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName)
+    );
+  }
+
+  /**
+   * Dynamically imports the extension entry point and returns the exported main class constructor.
+   *
+   * @param extName - Installed extension to load
+   */
+  async requireAsync(extName: ExtName<ExtType>): Promise<ExtClass<ExtType>> {
+    const [reqPath, mainClass] = await this._resolveExtension(extName);
+    log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
+    // Windows still requires a file URL (https://github.com/nodejs/node/issues/31710).
+    // POSIX paths also need URL escaping for characters such as '#' and '%'.
+    let importPath = pathToFileURL(reqPath).href;
+    // note: this will only reload the entry point, not files it imports internally
+    if (process.env.APPIUM_RELOAD_EXTENSIONS) {
+      // For a CJS extension, `import()` delegates to Node's CJS loader, which caches by
+      // resolved filename and ignores the query string appended below — evict it from
+      // `require.cache` directly so it's actually re-evaluated. (No-op for a genuinely ESM
+      // extension, since it was never in `require.cache` to begin with.)
+      const req = createRequire(import.meta.url);
+      const realEntryPath = await fs.realpath(reqPath);
+      if (req.cache[realEntryPath]) {
+        delete req.cache[realEntryPath];
+      }
+      // For an ESM extension, there's no public API to evict a module from ESM's registry, so
+      // force a fresh copy via a unique specifier instead.
+      importPath += `?reload=${reloadCounter++}`;
+      log.debug(`Reloading ${this.extensionType} at ${reqPath}`);
+    }
+    const mod = (await import(importPath)) as Record<string, ExtClass<ExtType>>;
+    const MainClass = mod[mainClass];
+    if (!MainClass) {
+      throw new ReferenceError(
+        `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`,
+      );
+    }
+    return MainClass;
+  }
+
+  /** Whether the manifest lists an extension under the given name. */
+  isInstalled(extName: string): boolean {
+    return extName in this.installedExtensions;
+  }
+
+  /**
+   * Loads the extension’s config schema from disk or inline JSON and registers it for CLI/config validation.
+   *
+   * @param extName - Extension key
+   * @param extManifest - Manifest entry that includes `schema`
+   */
+  async readExtensionSchema(
+    extName: string,
+    extManifest: ExtManifestWithSchema<ExtType>,
+  ): Promise<SchemaObject | undefined> {
+    return await ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extManifest);
+  }
+
+  /** Optional async warnings for this extension kind; override in subclasses when needed. */
+  protected async getConfigWarnings(_extManifest: ExtManifest<ExtType>, _extName: string): Promise<string[]> {
+    void _extManifest;
+    void _extName;
+    return [];
+  }
+
+  /**
+   * Validates all entries in `exts`, records a summary (see {@linkcode ExtensionConfig.printValidationSummary}),
+   * and removes keys that have blocking errors. Intended for subclasses’ `validate` implementation.
+   */
+  protected async _validate(exts: ExtRecord<ExtType>): Promise<ExtRecord<ExtType>> {
+    const errorMap = new Map<string, ExtManifestProblem[]>();
+    const warningMap = new Map<string, string[]>();
+
+    for (const [extName, extManifest] of Object.entries(exts)) {
+      const [errors, warnings] = await Promise.all([
+        this.getProblems(extName, extManifest),
+        this.getWarnings(extName, extManifest),
+      ]);
+      if (errors.length) {
+        delete exts[extName];
+      }
+      errorMap.set(extName, errors);
+      warningMap.set(extName, warnings);
+    }
+
+    const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(errorMap, warningMap);
+    this.validationSummary = {checkedCount: errorMap.size, errorSummaries, warningSummaries};
+    return exts;
+  }
+
+  /**
+   * Renders the summary from the most recent {@linkcode ExtensionConfig.validate} call via `sink`,
+   * then clears it so a later call doesn't re-print the same summary. Errors take precedence:
+   * warnings are only shown when there were no errors. No-op if there's nothing to report.
+   *
+   * @param sink - Where to write the summary; e.g. a JSON-mode-aware CLI console for extension
+   * subcommands, or the server's own (by then Winston-backed) logger once it has taken over.
+   */
+  printValidationSummary(sink: ValidationSummarySink): void {
+    const {checkedCount, errorSummaries, warningSummaries} = this.validationSummary;
+    this.validationSummary = EMPTY_VALIDATION_SUMMARY;
+
+    if (!util.isEmpty(errorSummaries)) {
+      sink.error(
+        `Appium encountered ${util.pluralize(
+          'error',
+          checkedCount,
+          true,
+        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
+      );
+      for (const summary of errorSummaries) {
+        sink.error(summary);
+      }
+    } else if (!util.isEmpty(warningSummaries)) {
+      // only display warnings if there are no errors!
+      sink.warn(
+        `Appium encountered ${util.pluralize(
+          'warning',
+          checkedCount,
+          true,
+        )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`,
+      );
+      for (const summary of warningSummaries) {
+        sink.warn(summary);
+      }
+    }
+  }
+
+  /**
+   * Fetches `appium driver|plugin list`-style data via the CLI command class; result is cached.
+   */
+  protected async getListData(): Promise<ExtensionList<ExtType>> {
+    if (this.listDataCache) {
+      return this.listDataCache;
+    }
+    // Import here to avoid circular dependency with cli/extension
+    const {commandClasses} = await import('../cli/extension.js');
+    const CommandClass = (commandClasses as StringRecord)[this.extensionType];
+    const cmd = new CommandClass({config: this, json: true}) as ExtensionCliCommand<ExtType>;
+    const listData = await cmd.list({showInstalled: true, showUpdates: true});
+    this.listDataCache = listData;
+    return listData;
+  }
+
+  /**
+   * Warnings about manifest install fields and Appium peer dependency compatibility for one extension.
+   */
+  protected async getGenericConfigWarnings(extManifest: ExtManifest<ExtType>, extName: string): Promise<string[]> {
+    const {appiumVersion, installSpec, installType, pkgName} = extManifest;
+    const warnings: string[] = [];
+
+    const invalidFields: string[] = [];
+    if (typeof installSpec !== 'string') {
+      invalidFields.push('installSpec');
+    }
+
+    if (!INSTALL_TYPES.has(installType)) {
+      invalidFields.push('installType');
+    }
+
+    const extTypeText = capitalize(this.extensionType);
+
+    if (invalidFields.length) {
+      const invalidFieldsEnumerationText = util.pluralize('invalid or missing field', invalidFields.length, true);
+      const invalidFieldsText = invalidFields.map((field) => `"${field}"`).join(', ');
+
+      warnings.push(
+        `${extTypeText} "${extName}" (package \`${pkgName}\`) has ${invalidFieldsEnumerationText} (${invalidFieldsText}) in \`extensions.yaml\`; ` +
+          `this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ` +
+          `${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`,
+      );
+    }
+
+    const createPeerWarning = (reason: string): string =>
+      `${extTypeText} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to ${reason}`;
+
+    if (typeof appiumVersion === 'string' && !satisfies(APPIUM_VER, appiumVersion, {includePrerelease: true})) {
+      const listData = await this.getListData();
+      const extListData = listData[extName] as ExtensionListData<ExtType> | undefined;
+      if (extListData?.installed) {
+        const {updateVersion, upToDate} = extListData;
+        if (!upToDate && updateVersion) {
+          warnings.push(
+            createPeerWarning(
+              `its peer dependency on Appium ${appiumVersion}. Try to upgrade \`${pkgName}\` to v${updateVersion} or newer.`,
+            ),
+          );
+        } else {
+          warnings.push(
+            createPeerWarning(
+              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${extTypeText.toLowerCase()}.`,
+            ),
+          );
+        }
+      }
+    } else if (typeof appiumVersion !== 'string') {
+      const listData = await this.getListData();
+      const extListData = listData[extName] as InstalledExtensionListData<ExtType> | undefined;
+      if (!extListData?.upToDate && extListData?.updateVersion) {
+        warnings.push(
+          createPeerWarning(
+            `an invalid or missing peer dependency on Appium. A newer version of \`${pkgName}\` is available; ` +
+              `please attempt to upgrade "${extName}" to v${extListData.updateVersion} or newer.`,
+          ),
+        );
+      } else {
+        warnings.push(
+          createPeerWarning(
+            `an invalid or missing peer dependency on Appium. ` +
+              `Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
+          ),
+        );
+      }
+    }
+    return warnings;
+  }
+
+  /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
+  protected async getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): Promise<ExtManifestProblem[]> {
+    const problems: ExtManifestProblem[] = [];
+    const {schema: argSchemaPath} = extManifest;
+    if (ExtensionConfig.extDataHasSchema(extManifest)) {
+      if (typeof argSchemaPath === 'string') {
+        if (isAllowedSchemaFileExtension(argSchemaPath)) {
+          try {
+            await this.readExtensionSchema(extName, extManifest);
+          } catch (err: any) {
+            problems.push({
+              err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
+              val: argSchemaPath,
+            });
+          }
+        } else {
+          problems.push({
+            err: `Schema file has unsupported extension. Allowed: ${[...ALLOWED_SCHEMA_EXTENSIONS].join(', ')}`,
+            val: argSchemaPath,
+          });
+        }
+      } else if (util.isPlainObject(argSchemaPath)) {
+        try {
+          await this.readExtensionSchema(extName, extManifest);
+        } catch (err: any) {
+          problems.push({
+            err: `Unable to register embedded schema; ${err.message}`,
+            val: argSchemaPath,
+          });
+        }
+      } else {
+        problems.push({
+          err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
+          val: argSchemaPath,
+        });
+      }
+    }
+    return problems;
+  }
+
+  /** Blocking issues for required manifest fields shared by all extensions (version, package name, main class). */
+  protected getGenericConfigProblems(extManifest: ExtManifest<ExtType>, extName: string): ExtManifestProblem[] {
+    void extName;
+    return manifestValidator.getCommonManifestProblems(extManifest);
+  }
+
+  /** Driver- or plugin-specific blocking validation; override in subclasses when needed. */
+  protected getConfigProblems(_extManifest: ExtManifest<ExtType>, _extName: string): ExtManifestProblem[] {
+    void _extManifest;
+    void _extName;
+    return [];
+  }
+
+  private async _resolveExtension(extName: ExtName<ExtType>): Promise<[string, string]> {
+    const {mainClass} = this.installedExtensions[extName];
+    const moduleRoot = this.getInstallPath(extName);
+    const packageJsonPath = path.join(moduleRoot, 'package.json');
+    let extensionManifest: Record<string, any>;
+    try {
+      extensionManifest = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'));
+    } catch (e: any) {
+      throw new ReferenceError(
+        `Could not read the ${this.extensionType} manifest at ${packageJsonPath}: ${e.message}`,
+        {cause: e},
+      );
+    }
+    let entryPointRelativePath: string | undefined;
+    try {
+      if (extensionManifest.type === 'module' && extensionManifest.exports) {
+        entryPointRelativePath = resolveEsmEntryPoint(extensionManifest.exports);
+      }
+      entryPointRelativePath = entryPointRelativePath ?? extensionManifest.main ?? DEFAULT_ENTRY_POINT;
+    } catch (e: any) {
+      throw new ReferenceError(`Could not find the ${this.extensionType} installed at ${moduleRoot}: ${e.message}`, {
+        cause: e,
+      });
+    }
+    const entryPointFullPath = path.resolve(moduleRoot, entryPointRelativePath as string);
+    if (!(await fs.exists(entryPointFullPath))) {
+      throw new ReferenceError(
+        `Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'. ` +
+          `Assumed entry point: '${entryPointFullPath}'`,
+      );
+    }
+    return [entryPointFullPath, mainClass];
+  }
+
+  /**
+   * One-line human description for list output; implemented per extension kind.
+   *
+   * @param extName - Manifest key
+   * @param extManifest - Entry used for version and kind-specific labels
+   */
+  public abstract extensionDesc(extName: ExtName<ExtType>, extManifest: ExtManifest<ExtType>): string;
+}
+
+/**
+ * Resolves a package `exports` field (string, `"."`, `"import"`, or `"default"`) to an ESM entry path.
+ *
+ * @param exportsValue - `package.json` `exports` value or nested fragment
+ */
+export function resolveEsmEntryPoint(exportsValue: unknown): string | undefined {
+  if (typeof exportsValue === 'string' && exportsValue) {
+    return exportsValue;
+  }
+  if (!util.isPlainObject(exportsValue)) {
+    return;
+  }
+
+  const obj = exportsValue as Record<string, unknown>;
+  if ('.' in obj) {
+    return resolveEsmEntryPoint(obj['.']);
+  }
+  // Matching conditions are evaluated in package.json order, including an early default.
+  for (const [condition, target] of Object.entries(obj)) {
+    if (condition === 'import' || condition === 'default') {
+      const entryPoint = resolveEsmEntryPoint(target);
+      if (entryPoint) {
+        return entryPoint;
+      }
+    }
+  }
+}

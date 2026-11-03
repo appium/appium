@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
+      "label": "npm: dev",
+      "detail": "npm run dev",
+      "isBackground": true
+    }
+  ]
+}

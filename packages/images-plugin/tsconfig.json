@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "checkJs": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "@appium/opencv": ["../opencv"],
+      "appium": ["../appium"],
+      "appium/driver.js": ["../appium/driver.d.ts"],
+      "appium/plugin.js": ["../appium/plugin.d.ts"],
+      "appium/support.js": ["../appium/support.d.ts"]
+    },
+    "types": ["node"]
+  },
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
+  "include": ["lib", "test"],
+  "references": [
+    {"path": "../opencv"},
+    {"path": "../base-plugin"},
+    {"path": "../logger"},
+    {"path": "../support"},
+    {"path": "../types"},
+    {"path": "../plugin-test-support"}
+  ]
+}

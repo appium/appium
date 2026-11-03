@@ -1,0 +1,92 @@
+INHERIT: ./base-mkdocs.yml
+site_url: https://appium.io/docs/ja
+edit_uri: edit/master/packages/appium/docs/ja
+site_description: Appium 自動化プロジェクトのドキュメント
+docs_dir: ja
+site_dir: site/docs/ja
+theme:
+  language: ja
+nav:
+  - ようこそ: index.md
+  - ブログ: blog/index.md
+  - はじめに:
+      - intro/index.md
+      - 背景:
+          - intro/appium.md
+          - intro/drivers.md
+          - intro/clients.md
+          - intro/history.md
+  - クイックスタート:
+      - quickstart/index.md
+      - quickstart/requirements.md
+      - quickstart/install.md
+      - quickstart/uiauto2-driver.md
+      - テストを書く:
+          - quickstart/test-js.md
+          - quickstart/test-py.md
+          - quickstart/test-java.md
+          - quickstart/test-rb.md
+          - quickstart/test-dotnet.md
+      - quickstart/next-steps.md
+  - エコシステム:
+      - ecosystem/index.md
+      - ecosystem/drivers.md
+      - ecosystem/clients.md
+      - ecosystem/plugins.md
+      - ecosystem/tools.md
+  - Reference:
+      - reference/index.md
+      - Command Line Interface:
+          - reference/cli/index.md
+          - reference/cli/server.md
+          - reference/cli/extensions.md
+          - reference/cli/setup.md
+          - reference/cli/env-vars.md
+          - reference/cli/insecure-features.md
+      - Session Properties:
+          - reference/session/index.md
+          - reference/session/caps.md
+      - API Endpoints:
+          - reference/api/index.md
+          - reference/api/webdriver.md
+          - reference/api/bidi.md
+          - reference/api/jsonwp.md
+          - reference/api/mjsonwp.md
+          - reference/api/appium.md
+          - reference/api/others.md
+          - reference/api/plugins.md
+  - ガイド:
+      - 移行:
+          - guides/migrating-2-to-3.md
+          - guides/migrating-1-to-2.md
+      - サーバ/ドライバの設定:
+          - guides/managing-exts.md
+          - guides/branch-testing.md
+          - guides/config.md
+          - guides/security.md
+          - guides/log-filters.md
+          - guides/headers.md
+          - guides/grid.md
+          - guides/caching.md
+          - guides/tls.md
+      - セッションに関わる設定:
+          - guides/caps.md
+          - guides/settings.md
+          - guides/execute-methods.md
+          - guides/context.md
+          - guides/event-timing.md
+  - More Resources:
+      - resources/index.md
+  - 開発:
+      - developing/index.md
+      - developing/build-drivers.md
+      - developing/build-plugins.md
+      - developing/build-docs.md
+      - developing/build-doctor-checks.md
+      - developing/sensitive.md
+      - 開発者リファレンス:
+          - developing/config-system.md
+  - Contributing:
+      - contributing/index.md
+  - Sponsors:
+      - sponsors/index.md

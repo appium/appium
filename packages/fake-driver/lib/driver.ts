@@ -1,0 +1,325 @@
+import type {Server as HttpServer} from 'node:http';
+
+import type {IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
+import {BaseDriver, runWithCommandTimeout} from 'appium/driver.js';
+import {sleep} from 'asyncbox';
+import type {Express, Request, Response} from 'express';
+
+import {EXECUTE_METHOD_MAP} from './command-maps/execute-method-map.js';
+import {NEW_BIDI_COMMANDS} from './command-maps/new-bidi-commands.js';
+import {NEW_METHOD_MAP} from './command-maps/new-method-map.js';
+import * as alertCommands from './commands/alert.js';
+import * as contextsCommands from './commands/contexts.js';
+import * as elementCommands from './commands/element.js';
+import * as findCommands from './commands/find.js';
+import * as generalCommands from './commands/general.js';
+import {desiredCapConstraints} from './desired-caps.js';
+import type {FakeDriverConstraints} from './desired-caps.js';
+import {FakeApp} from './fake-app.js';
+import type {FakeElement} from './fake-element.js';
+import type {FakeDriverCaps, W3CFakeDriverCaps} from './types.js';
+
+export type {FakeDriverConstraints};
+export type {Orientation} from '@appium/types';
+export type ClockStatus = {running: boolean};
+
+/** Driver supporting a generic "fake thing" value (getFakeThing / setFakeThing). */
+export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDriverConstraints> {
+  static newBidiCommands = NEW_BIDI_COMMANDS;
+  static newMethodMap = NEW_METHOD_MAP;
+  static executeMethodMap = EXECUTE_METHOD_MAP;
+
+  readonly desiredCapConstraints = desiredCapConstraints;
+
+  /** Registers 'actions' with the base driver's generic getLogTypes/getLog commands. */
+  readonly supportedLogTypes = {
+    actions: {
+      description: 'Log of all actions performed against the driver in this session',
+      getter: () => this.appModel.actionLog,
+    },
+  };
+
+  curContext: string;
+  readonly appModel: FakeApp;
+  _proxyActive: boolean;
+  shook: boolean;
+  focusedElId: string | null;
+  fakeThing: Thing | null;
+  /** Next numeric id for new elements; keys in elMap are stringified. */
+  maxElId: number;
+  /** Map of element id (string) to FakeElement for this session. */
+  elMap: Record<string, FakeElement>;
+  /** Current document URL; set by bidiNavigate, returned by getUrl. */
+  url: string = '';
+
+  ipcClock?: IIpcSubscription<ClockStatus>;
+
+  // Alert commands
+  assertNoAlert = alertCommands.assertNoAlert;
+  assertAlert = alertCommands.assertAlert;
+  getAlertText = alertCommands.getAlertText;
+  setAlertText = alertCommands.setAlertText;
+  postAcceptAlert = alertCommands.postAcceptAlert;
+  postDismissAlert = alertCommands.postDismissAlert;
+
+  // Context commands
+  getRawContexts = contextsCommands.getRawContexts;
+  assertWebviewContext = contextsCommands.assertWebviewContext;
+  getCurrentContext = contextsCommands.getCurrentContext;
+  getContexts = contextsCommands.getContexts;
+  setContext = contextsCommands.setContext;
+  setFrame = contextsCommands.setFrame;
+
+  // Element commands
+  getElements = elementCommands.getElements;
+  getElement = elementCommands.getElement;
+  getName = elementCommands.getName;
+  elementDisplayed = elementCommands.elementDisplayed;
+  elementEnabled = elementCommands.elementEnabled;
+  elementSelected = elementCommands.elementSelected;
+  setValue = elementCommands.setValue;
+  getText = elementCommands.getText;
+  clear = elementCommands.clear;
+  click = elementCommands.click;
+  getAttribute = elementCommands.getAttribute;
+  getElementRect = elementCommands.getElementRect;
+  getSize = elementCommands.getSize;
+  equalsElement = elementCommands.equalsElement;
+  getCssProperty = elementCommands.getCssProperty;
+  getLocation = elementCommands.getLocation;
+  getLocationInView = elementCommands.getLocationInView;
+
+  // Find commands
+  getExistingElementForNode = findCommands.getExistingElementForNode;
+  wrapNewEl = findCommands.wrapNewEl;
+  findElOrEls = findCommands.findElOrEls;
+  findElement = findCommands.findElement;
+  findElements = findCommands.findElements;
+  findElementFromElement = findCommands.findElementFromElement;
+  findElementsFromElement = findCommands.findElementsFromElement;
+
+  // General commands
+  title = generalCommands.title;
+  keys = generalCommands.keys;
+  getPageSource = generalCommands.getPageSource;
+  getOrientation = generalCommands.getOrientation;
+  setOrientation = generalCommands.setOrientation;
+  getScreenshot = generalCommands.getScreenshot;
+  getWindowSize = generalCommands.getWindowSize;
+  getWindowRect = generalCommands.getWindowRect;
+  performActions = generalCommands.performActions;
+  releaseActions = generalCommands.releaseActions;
+  mobileShake = generalCommands.mobileShake;
+  doubleClick = generalCommands.doubleClick;
+  execute = generalCommands.execute;
+  fakeAddition = generalCommands.fakeAddition;
+  getUrl = generalCommands.getUrl;
+  bidiNavigate = generalCommands.bidiNavigate;
+  getLastPluginMath = generalCommands.getLastPluginMath;
+
+  protected lastPluginMath: {pluginName: string; result: number} | null;
+
+  /** If set, Bidi connections are proxied to this URL instead of handling locally. */
+  private _bidiProxyUrl: string | null;
+  private _clockRunning = false;
+  private ipcFakeThing?: IIpcSubscription<Thing>;
+  private readonly deprecatedCommandsCalled: string[] = [];
+
+  constructor(opts: InitialOpts = {} as InitialOpts, shouldValidateCaps = true) {
+    super(opts, shouldValidateCaps);
+    this.curContext = 'NATIVE_APP';
+    this.elMap = {};
+    this.focusedElId = null;
+    this.maxElId = 0;
+    this.fakeThing = null;
+    this._proxyActive = false;
+    this.shook = false;
+    this.appModel = new FakeApp();
+    this._bidiProxyUrl = null;
+    this.lastPluginMath = null;
+  }
+
+  get bidiProxyUrl(): string | null {
+    return this._bidiProxyUrl;
+  }
+
+  static fakeRoute(_req: Request, res: Response): void {
+    res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
+  }
+
+  static async updateServer(
+    expressApp: Express,
+    _httpServer: HttpServer,
+    cliArgs: Record<string, unknown>,
+  ): Promise<void> {
+    expressApp.all('/fakedriver', FakeDriver.fakeRoute);
+    expressApp.all('/fakedriverCliArgs', (_req: Request, res: Response) => {
+      res.send(JSON.stringify(cliArgs));
+    });
+  }
+
+  override async onIpcInit(): Promise<void> {
+    const fakeMathSub = this.ipcSubscribe<number>('pluginMath');
+    fakeMathSub.on('message', (message: IpcMessage<number>) => {
+      this.log.info(`A connected plugin did some math with result ${message.data}`);
+      this.lastPluginMath = {pluginName: message.publisher, result: message.data};
+    });
+    this.ipcFakeThing = this.ipcSubscribe('fakeThing');
+    this.ipcClock = this.ipcSubscribe('clockLifecycle');
+    await this.publishClockStatus();
+  }
+
+  override proxyActive(sessionId?: string): boolean {
+    void sessionId;
+    return this._proxyActive;
+  }
+
+  override canProxy(sessionId?: string): boolean {
+    void sessionId;
+    return true;
+  }
+
+  proxyReqRes(req: Request, res: Response): void {
+    res.set('content-type', 'application/json');
+    const resBodyObj: {value: string; sessionId: string | null} = {
+      value: 'proxied via proxyReqRes',
+      sessionId: null,
+    };
+    const match = req.originalUrl.match(/\/session\/([^/]+)/);
+    resBodyObj.sessionId = match ? match[1] : null;
+    res.status(200).send(JSON.stringify(resBodyObj));
+  }
+
+  async proxyCommand<T = unknown>(): Promise<T> {
+    return 'proxied via proxyCommand' as T;
+  }
+
+  /**
+   * Create session and load fake app XML from caps.app.
+   * Starts clock event emitter if caps.runClock is true.
+   */
+  override async createSession(w3cCapabilities: W3CFakeDriverCaps): Promise<[string, FakeDriverCaps]> {
+    const [sessionId, caps] = (await super.createSession(w3cCapabilities)) as [string, FakeDriverCaps];
+    this.caps = caps;
+    await this.appModel.loadApp(caps.app);
+    if (this.caps.runClock) {
+      void this.startClock();
+    }
+    return [sessionId, caps];
+  }
+
+  override async deleteSession(sessionId?: string): Promise<void> {
+    await this.stopClock();
+    return await super.deleteSession(sessionId);
+  }
+
+  async getWindowHandle(): Promise<string> {
+    return '1';
+  }
+
+  /**
+   * Example custom entry point called directly, outside Appium's command dispatcher.
+   * Protect both the queued command and asynchronous work after executeCommand returns.
+   * Idle expiry resumes after the whole operation finishes, including when postProcess throws.
+   * Normal commands using BaseDriver.executeCommand need no additional wrapper. The helper tracks
+   * activity; it does not create a queue or guard arbitrary custom timers. This example uses the
+   * standard BaseDriver.startNewCommandTimeout implementation.
+   *
+   * @example
+   * const handle = await driver.getWindowHandleWithPostProcessing(async (handle) => {
+   *   await saveHandle(handle); // Application-specific asynchronous work
+   * });
+   *
+   * @see ../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
+   */
+  async getWindowHandleWithPostProcessing(postProcess: (handle: string) => Promise<void>): Promise<string> {
+    return await runWithCommandTimeout(this, async () => {
+      const handle = await this.executeCommand<string>('getWindowHandle');
+      await postProcess(handle);
+      return handle;
+    });
+  }
+
+  async getWindowHandles(): Promise<string[]> {
+    return ['1'];
+  }
+
+  async getFakeThing(): Promise<Thing | null> {
+    await sleep(1);
+    return this.fakeThing;
+  }
+
+  async setFakeThing(thing: Thing): Promise<null> {
+    await sleep(1);
+    this.fakeThing = thing;
+    if (this.ipcFakeThing) {
+      await this.ipcFakeThing.publish(thing);
+    }
+    return null;
+  }
+
+  async getFakeDriverArgs(): Promise<typeof this.cliArgs> {
+    await sleep(1);
+    return this.cliArgs;
+  }
+
+  async getDeprecatedCommandsCalled(): Promise<string[]> {
+    await sleep(1);
+    return this.deprecatedCommandsCalled;
+  }
+
+  async callDeprecatedCommand(): Promise<void> {
+    await sleep(1);
+    this.deprecatedCommandsCalled.push(this.callDeprecatedCommand.name);
+  }
+
+  async doSomeMath(num1: number, num2: number): Promise<number> {
+    await sleep(1);
+    return num1 + num2;
+  }
+
+  async doSomeMath2(num1: number, num2: number): Promise<number> {
+    await sleep(1);
+    return num1 + num2;
+  }
+
+  async fakeStartClock(): Promise<void> {
+    void this.startClock();
+  }
+
+  async fakeStopClock(): Promise<void> {
+    await this.stopClock();
+  }
+
+  private async startClock(): Promise<void> {
+    this._clockRunning = true;
+    try {
+      await this.publishClockStatus();
+    } catch (e) {
+      this.log.error(e);
+    }
+    while (this._clockRunning) {
+      await sleep(500);
+      try {
+        this.eventEmitter.emit('bidiEvent', {
+          method: 'appium:clock.currentTime',
+          params: {time: Date.now()},
+        });
+      } catch (e) {
+        this.log.error(e);
+      }
+    }
+  }
+
+  private async stopClock(): Promise<void> {
+    this._clockRunning = false;
+    await this.publishClockStatus();
+  }
+
+  private async publishClockStatus(): Promise<void> {
+    if (!this.ipcClock) {
+      return;
+    }
+    await this.ipcClock.publish({running: this._clockRunning});
+  }
+}

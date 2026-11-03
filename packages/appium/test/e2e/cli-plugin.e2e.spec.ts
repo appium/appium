@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import {describe, it, before, after} from 'node:test';
+
+import {fs, tempDir} from '@appium/support';
+
+import {EXT_SUBCOMMAND_RUN as RUN, PLUGIN_TYPE} from '../../lib/constants.js';
+import {FAKE_PLUGIN_DIR} from '../helpers.js';
+import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
+
+describe('Plugin CLI', function () {
+  let appiumHome: string;
+  let runRun: (args: string[]) => Promise<{output: string; error?: string}>;
+
+  before(async function () {
+    appiumHome = await tempDir.openDir();
+    const run = runAppiumJson(appiumHome);
+    runRun = (args) => run([PLUGIN_TYPE, RUN, ...args]) as Promise<{output: string; error?: string}>;
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+  });
+
+  describe('run', function () {
+    before(async function () {
+      await installLocalExtension(appiumHome, PLUGIN_TYPE, FAKE_PLUGIN_DIR);
+    });
+
+    it('should run a valid plugin, valid script, and result in success', async function () {
+      const pluginName = 'fake';
+      const scriptName = 'fake-success';
+      const out = await runRun([pluginName, scriptName, '--json']);
+      assert.ok(!Object.hasOwn(out, 'error'));
+    });
+
+    it('should run a valid plugin, valid error prone script, and throw error', async function () {
+      const pluginName = 'fake';
+      await assert.rejects(runRun([pluginName, 'fake-error', '--json']), Error);
+    });
+
+    it('should take a valid plugin, invalid script, and throw an error', async function () {
+      const pluginName = 'fake';
+      await assert.rejects(runRun([pluginName, 'foo', '--json']), Error);
+    });
+
+    it('should take an invalid plugin, invalid script, and throw an error', async function () {
+      await assert.rejects(runRun(['foo', 'bar', '--json']), Error);
+    });
+  });
+});

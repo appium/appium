@@ -1,0 +1,154 @@
+version: v1
+
+labels:
+  - label: 'Enhancement'
+    sync: true
+    matcher:
+      commits: '^feat.*?:'
+      title: '^feat.*?:'
+
+  - label: 'Bug'
+    sync: true
+    matcher:
+      commits: '^fix.*?:'
+      title: '^fix.*?:'
+
+  - label: 'Documentation'
+    sync: true
+    matcher:
+      commits: '^docs.*?:'
+      title: '^docs.*?:'
+      files: ['packages/docutils/**', 'packages/appium/docs/**', '**/*.md']
+
+  - label: 'chore'
+    sync: true
+    matcher:
+      commits: '^chore.*?:'
+      title: '^chore.*?:'
+      files: ['.github/**', '.husky/**', '.vscode/**', './.*', './*.js', '**/test/**']
+
+  - label: 'SemVer:Breaking'
+    sync: true
+    matcher:
+      commits: '(^(.+?)!:)|(BREAKING CHANGE:)'
+
+  - label: 'Dependencies'
+    sync: true
+    matcher:
+      files: ['**/package.json', 'package-lock.json', '**/requirements.txt']
+      author: 'renovate'
+
+  - label: 'appium core'
+    sync: true
+    matcher:
+      files: ['packages/appium/**']
+
+  - label: '@appium/http-server'
+    sync: true
+    matcher:
+      files: ['packages/http-server/**']
+
+  - label: '@appium/base-driver'
+    sync: true
+    matcher:
+      files: ['packages/base-driver/**']
+
+  - label: '@appium/base-plugin'
+    sync: true
+    matcher:
+      files: ['packages/base-plugin/**']
+
+  - label: '@appium/storage-plugin'
+    sync: true
+    matcher:
+      files: ['packages/storage-plugin/**']
+
+  - label: '@appium/docutils'
+    sync: true
+    matcher:
+      files: ['packages/docutils/**']
+
+  - label: '@appium/driver-test-support'
+    sync: true
+    matcher:
+      files: ['packages/driver-test-support/**']
+
+  - label: '@appium/oxc-config'
+    sync: true
+    matcher:
+      files: ['packages/oxc-config/**']
+
+  - label: '@appium/execute-driver-plugin'
+    sync: true
+    matcher:
+      files: ['packages/execute-driver-plugin/**']
+
+  - label: '@appium/fake-driver'
+    sync: true
+    matcher:
+      files: ['packages/fake-driver/**']
+
+  - label: '@appium/fake-plugin'
+    sync: true
+    matcher:
+      files: ['packages/fake-plugin/**']
+
+  - label: '@appium/images-plugin'
+    sync: true
+    matcher:
+      files: ['packages/images-plugin/**']
+
+  - label: '@appium/logger'
+    sync: true
+    matcher:
+      files: ['packages/logger/**']
+
+  - label: '@appium/opencv'
+    sync: true
+    matcher:
+      files: ['packages/opencv/**']
+
+  - label: '@appium/plugin-test-support'
+    sync: true
+    matcher:
+      files: ['packages/plugin-test-support/**']
+
+  - label: '@appium/relaxed-caps-plugin'
+    sync: true
+    matcher:
+      files: ['packages/relaxed-caps-plugin/**']
+
+  - label: '@appium/schema'
+    sync: true
+    matcher:
+      files: ['packages/schema/**']
+
+  - label: '@appium/semantic-release-config'
+    sync: true
+    matcher:
+      files: ['packages/semantic-release-config/**']
+
+  - label: '@appium/support'
+    sync: true
+    matcher:
+      files: ['packages/support/**']
+
+  - label: '@appium/strongbox'
+    sync: true
+    matcher:
+      files: ['packages/strongbox/**']
+
+  - label: '@appium/tsconfig'
+    sync: true
+    matcher:
+      files: ['packages/tsconfig/**']
+
+  - label: '@appium/types'
+    sync: true
+    matcher:
+      files: ['packages/types/**']
+
+  - label: '@appium/universal-xml-plugin'
+    sync: true
+    matcher:
+      files: ['packages/universal-xml-plugin/**']

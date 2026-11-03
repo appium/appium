@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+// @ts-check
+/* eslint-disable no-console */
+
+/**
+ * This script takes the JSON schema `.js` artifact and converts it to JSON proper,
+ * then outputs the result.
+ */
+
+import {mkdir, writeFile} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath, pathToFileURL} from 'node:url';
+const info = 'ℹ';
+const success = '✔';
+const error = '✖';
+
+/**
+ * `@appium/schema` package root.
+ */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const SCHEMA_ROOT = path.join(__dirname, '..');
+
+/**
+ * Dir which will contain output `.json`
+ */
+const OUTPUT_DIR = path.join(SCHEMA_ROOT, 'lib');
+
+/**
+ * Basename of exported `.json` file.
+ */
+const JSON_FILENAME = 'appium-config.schema.json';
+
+/**
+ * Path to the schema artifact.
+ */
+const SCHEMA_SRC = path.join(SCHEMA_ROOT, 'build', 'lib', 'appium-config-schema.js');
+
+/**
+ * Full path to output `.json`
+ */
+const OUTPUT_PATH = path.join(OUTPUT_DIR, JSON_FILENAME);
+
+async function write() {
+  /** @type {typeof import('../lib/appium-config-schema.js').AppiumConfigJsonSchema} */
+  let schema;
+  try {
+    ({AppiumConfigJsonSchema: schema} = await import(pathToFileURL(SCHEMA_SRC).href));
+  } catch (e) {
+    throw new Error(`${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`, {cause: e});
+  }
+
+  const json = `${JSON.stringify(schema, null, 2)}\n`;
+
+  try {
+    await mkdir(OUTPUT_DIR, {recursive: true});
+    await writeFile(OUTPUT_PATH, json);
+    console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${message}`, {
+      cause: err,
+    });
+  }
+}
+
+async function main() {
+  try {
+    await write();
+  } catch (err) {
+    console.log(err);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`${success} Done.`);
+}
+
+// Check if this module is being run directly
+if (import.meta.main) {
+  void main();
+}

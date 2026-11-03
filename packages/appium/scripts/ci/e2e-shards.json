@@ -1,0 +1,17 @@
+{
+  "driver-install-npm": ["cli-driver-install-npm"],
+  "driver-install-npm-extra": ["cli-driver-install-npm-extra"],
+  "driver-local": ["cli-driver-install-other", "cli-driver-lifecycle", "local", "cli-driver-install-npm-version"],
+  "misc-cli": [
+    "args",
+    "bin-symlink",
+    "cli-driver-list",
+    "cli-plugin",
+    "config-file",
+    "config",
+    "env",
+    "npm",
+    "npm-arguments"
+  ],
+  "misc-server": ["driver", "local-npm", "manifest", "navigation-proxy", "plugin", "schema"]
+}

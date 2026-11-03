@@ -1,0 +1,391 @@
+import assert from 'node:assert/strict';
+import {Stream} from 'node:stream';
+import {describe, it, beforeEach} from 'node:test';
+
+/* eslint-disable no-console */
+import {Log, markSensitive} from '../../lib/log.js';
+import type {Log as LogType} from '../../lib/log.js';
+
+describe('basic', function () {
+  let log: LogType;
+
+  describe('logging', function () {
+    let s: InstanceType<typeof Stream> & {
+      write: (m: string) => void;
+      writable: boolean;
+      isTTY: boolean;
+      end: () => void;
+    };
+    let result: string[] = [];
+    let logEvents: Array<{
+      id: number;
+      level: string;
+      prefix: string;
+      message: string;
+      timestamp?: unknown;
+    }> = [];
+    let logInfoEvents: typeof logEvents = [];
+    let logPrefixEvents: typeof logEvents = [];
+    const resultExpect = [
+      '\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[7msill\u001b[0m \u001b[0m\u001b[35msilly prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mverb\u001b[0m \u001b[0m\u001b[35mverbose prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32minfo\u001b[0m \u001b[0m\u001b[35minfo prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mtiming\u001b[0m \u001b[0m\u001b[35mtiming prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mhttp\u001b[0m \u001b[0m\u001b[35mhttp prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mnotice\u001b[0m \u001b[0m\u001b[35mnotice prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[30;43mWARN\u001b[0m \u001b[0m\u001b[35mwarn prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35merror prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32minfo\u001b[0m \u001b[0m\u001b[35minfo prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mtiming\u001b[0m \u001b[0m\u001b[35mtiming prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mhttp\u001b[0m \u001b[0m\u001b[35mhttp prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mnotice\u001b[0m \u001b[0m\u001b[35mnotice prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[30;43mWARN\u001b[0m \u001b[0m\u001b[35mwarn prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35merror prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m This is a longer\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m message, with some details\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m and maybe a stack.\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m \n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u0007noise\u001b[0m\u001b[35m\u001b[0m LOUD NOISES\n',
+      '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u0007noise\u001b[0m \u001b[0m\u001b[35merror\u001b[0m erroring\n',
+      '\u001b[0m',
+    ];
+    const logPrefixEventsExpect = [
+      {id: 2, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 11, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 20, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+    ];
+    const logInfoEventsExpect = logPrefixEventsExpect;
+    const logEventsExpect = [
+      {id: 0, level: 'silly', prefix: 'silly prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 1, level: 'verbose', prefix: 'verbose prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 2, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 3, level: 'timing', prefix: 'timing prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 4, level: 'http', prefix: 'http prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 5, level: 'notice', prefix: 'notice prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 6, level: 'warn', prefix: 'warn prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 7, level: 'error', prefix: 'error prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 8, level: 'silent', prefix: 'silent prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 9, level: 'silly', prefix: 'silly prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 10, level: 'verbose', prefix: 'verbose prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 11, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 12, level: 'timing', prefix: 'timing prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 13, level: 'http', prefix: 'http prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 14, level: 'notice', prefix: 'notice prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 15, level: 'warn', prefix: 'warn prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 16, level: 'error', prefix: 'error prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 17, level: 'silent', prefix: 'silent prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 18, level: 'silly', prefix: 'silly prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 19, level: 'verbose', prefix: 'verbose prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 20, level: 'info', prefix: 'info prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 21, level: 'timing', prefix: 'timing prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 22, level: 'http', prefix: 'http prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 23, level: 'notice', prefix: 'notice prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 24, level: 'warn', prefix: 'warn prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 25, level: 'error', prefix: 'error prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {id: 26, level: 'silent', prefix: 'silent prefix', message: 'x = {"foo":{"bar":"baz"}}'},
+      {
+        id: 27,
+        level: 'error',
+        prefix: '404',
+        message: 'This is a longer\nmessage, with some details\nand maybe a stack.\n',
+      },
+      {id: 28, level: 'noise', prefix: '', message: 'LOUD NOISES'},
+      {id: 29, level: 'noise', prefix: 'error', message: 'erroring'},
+    ];
+
+    beforeEach(function () {
+      result = [];
+      logEvents = [];
+      logInfoEvents = [];
+      logPrefixEvents = [];
+
+      log = new Log();
+      s = Object.assign(new Stream(), {
+        write: (m: string) => result.push(m),
+        writable: true,
+        isTTY: true,
+        end: () => {},
+      }) as typeof s;
+      log.stream = s as any;
+      log.errorStream = s as any;
+      log.heading = 'npm';
+    });
+
+    it('should work', function () {
+      assert.strictEqual(log.stream, s);
+      log.on('log', logEvents.push.bind(logEvents) as any);
+      log.on('log.info', logInfoEvents.push.bind(logInfoEvents) as any);
+      log.on('info prefix', logPrefixEvents.push.bind(logPrefixEvents) as any);
+
+      console.error('log.level=silly');
+      log.level = 'silly';
+      log.silly('silly prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.verbose('verbose prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.info('info prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.timing('timing prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.http('http prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.notice('notice prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.warn('warn prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.error('error prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.silent('silent prefix', 'x = %j', {foo: {bar: 'baz'}});
+
+      console.error('log.level=silent');
+      log.level = 'silent';
+      log.silly('silly prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.verbose('verbose prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.info('info prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.timing('timing prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.http('http prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.notice('notice prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.warn('warn prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.error('error prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.silent('silent prefix', 'x = %j', {foo: {bar: 'baz'}});
+
+      console.error('log.level=info');
+      log.level = 'info';
+      log.silly('silly prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.verbose('verbose prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.info('info prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.timing('timing prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.http('http prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.notice('notice prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.warn('warn prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.error('error prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.silent('silent prefix', 'x = %j', {foo: {bar: 'baz'}});
+      log.error('404', 'This is a longer\nmessage, with some details\nand maybe a stack.\n');
+      log.addLevel('noise', 10000, {bell: true});
+      (log as any).noise(false, 'LOUD NOISES');
+      (log as any).noise('error', 'erroring');
+
+      assert.strictEqual(result.join('').trim(), resultExpect.join('').trim());
+      const withoutTimestamps = (x: typeof logEvents) =>
+        x.map((m) => {
+          assert.strictEqual(Boolean((m as any).timestamp), true);
+          const copy = JSON.parse(JSON.stringify(m));
+          delete copy.timestamp;
+          return copy;
+        });
+      assert.deepStrictEqual(withoutTimestamps(log.record as any), logEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logEvents), logEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logInfoEvents), logInfoEventsExpect);
+      assert.deepStrictEqual(withoutTimestamps(logPrefixEvents), logPrefixEventsExpect);
+    });
+  });
+
+  describe('utils', function () {
+    it('enableColor', function () {
+      log.enableColor();
+      assert.ok((log as any)._format(log.stream, 'x', {fg: 'red'}).includes('\u001b'));
+    });
+
+    it('disableColor', function () {
+      log.disableColor();
+      assert.strictEqual((log as any)._format(log.stream, 'x', {fg: 'red'}), 'x');
+    });
+
+    it('_buffer while paused', function () {
+      log.pause();
+      log.log('verbose', 'test', 'test log');
+      assert.strictEqual((log as any)._buffer.length, 1);
+      log.resume();
+      assert.strictEqual((log as any)._buffer.length, 0);
+    });
+  });
+
+  describe('log.log', function () {
+    beforeEach(function () {
+      log = new Log();
+    });
+
+    it('emits error on bad loglevel', async function () {
+      await new Promise<void>((resolve, reject) => {
+        log.once('error', (err: Error) => {
+          assert.strictEqual(/Undefined log level: "asdf"/.test(String(err)), true);
+          resolve();
+        });
+        log.log('asdf', '', 'bad loglevel');
+        setTimeout(() => reject(new Error('timeout')), 1000);
+      });
+    });
+
+    it('resolves stack traces to a plain string', async function () {
+      await new Promise<void>((resolve, reject) => {
+        log.once('log', (m: {message: string}) => {
+          assert.strictEqual(/Error: with a stack trace/.test(m.message), true);
+          assert.strictEqual(/at Test/.test(m.message), true);
+          resolve();
+        });
+        const err = new Error('with a stack trace');
+        log.log('verbose', 'oops', err);
+        setTimeout(() => reject(new Error('timeout')), 1000);
+      });
+    });
+
+    it('replaces sensitive messages', async function () {
+      log.updateAsyncStorage({isSensitive: true}, true);
+      log.log('verbose', 'test', markSensitive('log 1'));
+      assert.strictEqual(log.record.at(-1)!.message, '**SECURE**');
+      log.updateAsyncStorage({isSensitive: false}, true);
+      log.log('verbose', 'test', markSensitive('log 1'));
+      assert.strictEqual(log.record.at(-1)!.message, 'log 1');
+    });
+
+    it('max record size', function () {
+      log.maxRecordSize = 3;
+      log.log('verbose', 'test', 'log 1');
+      log.log('verbose', 'test', 'log 2');
+      log.log('verbose', 'test', 'log 3');
+      log.log('verbose', 'test', 'log 4');
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 2', 'log 3', 'log 4'],
+      );
+      log.maxRecordSize = 2;
+      log.log('verbose', 'test', 'log 5');
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 4', 'log 5'],
+      );
+      log.maxRecordSize = 3;
+      log.log('verbose', 'test', 'log 6');
+      assert.deepStrictEqual(
+        log.record.map(({message}) => message),
+        ['log 4', 'log 5', 'log 6'],
+      );
+    });
+  });
+
+  describe('stream', function () {
+    beforeEach(function () {
+      log = new Log();
+    });
+
+    it('write with no stream', function () {
+      (log as any).write(null, 'message');
+    });
+
+    it('defaults stream and errorStream to stderr, and stderrLevel to error', function () {
+      assert.strictEqual(log.stream, process.stderr);
+      assert.strictEqual(log.errorStream, process.stderr);
+      assert.strictEqual(log.stderrLevel, 'error');
+    });
+
+    describe('routing by severity', function () {
+      function createFakeStream() {
+        const chunks: string[] = [];
+        const stream = Object.assign(new Stream(), {
+          write: (m: string) => {
+            chunks.push(m);
+            return true;
+          },
+          writable: true,
+          isTTY: false,
+          end: () => {},
+        });
+        return {stream, chunks};
+      }
+
+      let out: ReturnType<typeof createFakeStream>;
+      let err: ReturnType<typeof createFakeStream>;
+
+      beforeEach(function () {
+        out = createFakeStream();
+        err = createFakeStream();
+        log.stream = out.stream as any;
+        log.errorStream = err.stream as any;
+        log.level = 'silly';
+      });
+
+      it('routes levels below stderrLevel to stream only', function () {
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.deepStrictEqual(err.chunks, []);
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(out.chunks.join('').includes('warn message'));
+      });
+
+      it('routes the error level to errorStream only', function () {
+        log.error('t', 'error message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
+
+      it('routes a custom level with a higher severity than error to errorStream', function () {
+        log.addLevel('fatal', 6000, {fg: 'red'}, 'FATAL');
+        (log as any).fatal('t', 'fatal message');
+        assert.deepStrictEqual(out.chunks, []);
+        assert.ok(err.chunks.join('').includes('fatal message'));
+      });
+
+      it('respects a reconfigured stderrLevel threshold', function () {
+        log.stderrLevel = 'warn';
+        log.info('t', 'info message');
+        log.warn('t', 'warn message');
+        assert.ok(out.chunks.join('').includes('info message'));
+        assert.ok(err.chunks.join('').includes('warn message'));
+        assert.ok(!out.chunks.join('').includes('warn message'));
+      });
+
+      it('drops error output when errorStream is null without affecting stream', function () {
+        log.errorStream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(err.chunks.length, 0);
+        assert.ok(out.chunks.join('').includes('info message'));
+      });
+
+      it('drops non-error output when stream is null without affecting errorStream', function () {
+        log.stream = null;
+        log.info('t', 'info message');
+        log.error('t', 'error message');
+        assert.strictEqual(out.chunks.length, 0);
+        assert.ok(err.chunks.join('').includes('error message'));
+      });
+    });
+  });
+
+  describe('emitLog', function () {
+    beforeEach(function () {
+      log = new Log();
+    });
+
+    it('to nonexistent level', function () {
+      (log as any).emitLog({prefix: 'test', level: 'asdf'});
+    });
+  });
+
+  describe('format', function () {
+    beforeEach(function () {
+      log = new Log();
+    });
+
+    it('with nonexistent stream', function () {
+      assert.strictEqual((log as any)._format(null, 'message'), undefined);
+    });
+    it('fg', function () {
+      log.enableColor();
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'blue'});
+      assert.ok(o.includes('\u001b[44mtest message\u001b[0m'));
+    });
+    it('bg', function () {
+      log.enableColor();
+      const o = (log as any)._format(log.stream, 'test message', {bg: 'white'});
+      assert.ok(o.includes('\u001b[47mtest message\u001b[0m'));
+    });
+    it('bold', function () {
+      log.enableColor();
+      const o = (log as any)._format(log.stream, 'test message', {bold: true});
+      assert.ok(o.includes('\u001b[1mtest message\u001b[0m'));
+    });
+    it('underline', function () {
+      log.enableColor();
+      const o = (log as any)._format(log.stream, 'test message', {underline: true});
+      assert.ok(o.includes('\u001b[4mtest message\u001b[0m'));
+    });
+    it('inverse', function () {
+      log.enableColor();
+      const o = (log as any)._format(log.stream, 'test message', {inverse: true});
+      assert.ok(o.includes('\u001b[7mtest message\u001b[0m'));
+    });
+  });
+});

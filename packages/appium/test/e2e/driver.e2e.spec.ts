@@ -1,0 +1,821 @@
+import assert from 'node:assert/strict';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
+
+import {BaseDriver} from '@appium/base-driver';
+import {httpDelete, httpGet, httpPost} from '@appium/driver-test-support';
+import {fs, tempDir} from '@appium/support';
+import type {AppiumServer, DriverClass} from '@appium/types';
+import type {ParsedArgs} from 'appium/types/index.js';
+import {sleep} from 'asyncbox';
+import {createSandbox} from 'sinon';
+import type {SinonSandbox} from 'sinon';
+import {exec} from 'teen_process';
+import type {Browser} from 'webdriverio';
+import {remote as wdio} from 'webdriverio';
+
+import {runExtensionCommand} from '../../lib/cli/extension.js';
+import {DRIVER_TYPE} from '../../lib/constants.js';
+import {loadExtensions} from '../../lib/extension/index.js';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/manifest/index.js';
+import {removeAppiumPrefixes} from '../../lib/helpers/capability.js';
+import {main as appiumServer} from '../../lib/main.js';
+import {FAKE_DRIVER_DIR, getTestPort, TEST_FAKE_APP, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';
+
+let testServerBaseUrl: string;
+let port: number;
+
+const sillyWebServerPort = 1234;
+const sillyWebServerHost = 'hey';
+const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
+const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
+const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
+/** Cast for webdriverio capabilities typing (RequestedStandaloneCapabilities) */
+const caps = W3C_PREFIXED_CAPS as any;
+
+type AppiumTestBrowser = Browser & {
+  listCommands(): Promise<any>;
+  listExtensions(): Promise<any>;
+};
+
+const wdOpts: {
+  hostname: string;
+  port?: number;
+  connectionRetryCount?: number;
+  capabilities?: object;
+  path?: string;
+  protocol?: string;
+  strictSSL?: boolean;
+} = {
+  hostname: TEST_HOST,
+  connectionRetryCount: 0,
+};
+
+async function initFakeDriver(appiumHome: string) {
+  const {driverConfig} = await loadExtensions(appiumHome);
+  const driverList = await runExtensionCommand(
+    {
+      driverCommand: 'list',
+      subcommand: DRIVER_TYPE,
+      suppressOutput: true,
+      showInstalled: true,
+    },
+    driverConfig,
+  );
+  if (!('fake' in driverList)) {
+    await runExtensionCommand(
+      {
+        driverCommand: 'install',
+        driver: FAKE_DRIVER_DIR,
+        installType: INSTALL_TYPE_LOCAL,
+        subcommand: DRIVER_TYPE,
+      },
+      driverConfig,
+    );
+  }
+
+  return await driverConfig.requireAsync('fake');
+}
+
+describe('FakeDriver via HTTP', function () {
+  let appiumHome: string;
+  let FakeDriver: DriverClass;
+  let testServerBaseSessionUrl: string;
+  let sandbox: SinonSandbox;
+
+  before(async function () {
+    sandbox = createSandbox();
+    appiumHome = await tempDir.openDir();
+    wdOpts.port = port = await getTestPort();
+    testServerBaseUrl = `http://${TEST_HOST}:${port}`;
+    testServerBaseSessionUrl = `${testServerBaseUrl}/session`;
+    FakeDriver = await initFakeDriver(appiumHome);
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+    sandbox.restore();
+  });
+
+  function createServer(): {
+    setup: (args?: Partial<ParsedArgs>) => Promise<void>;
+    teardown: () => Promise<void>;
+  } {
+    let server: AppiumServer | void;
+    return {
+      setup: async (args?: Partial<ParsedArgs>) => {
+        const merged = {...args, appiumHome, port, address: TEST_HOST};
+        if (shouldStartServer) {
+          server = await appiumServer(merged);
+        }
+      },
+      teardown: async () => {
+        await server?.close();
+      },
+    };
+  }
+
+  describe('server updating', function () {
+    const {setup, teardown} = createServer();
+
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    it('should allow drivers to update the server in arbitrary ways', async function () {
+      const {data} = await httpGet(`${testServerBaseUrl}/fakedriver`);
+      assert.deepStrictEqual(data, {fakedriver: 'fakeResponse'});
+    });
+    it('should update the server with cliArgs', async function () {
+      // we don't need to check the entire object, since it's large, but we can ensure an
+      // arg got through.
+      assert.strictEqual((await httpPost(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data.appiumHome, appiumHome);
+    });
+  });
+
+  describe('cli args handling for empty args', function () {
+    const {setup, teardown} = createServer();
+
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    it('should not receive user cli args if none passed in', async function () {
+      const driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        const {data} = await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
+        assert.ok(!data.value.sillyWebServerPort);
+        assert.ok(!data.value.sillyWebServerHost);
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+
+  describe('cli args handling for passed in args', function () {
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup(FAKE_DRIVER_ARGS);
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    it('should receive user cli args from a driver if arguments were passed in', async function () {
+      const driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        const {data} = await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
+        assert.strictEqual(data.value.sillyWebServerPort, sillyWebServerPort);
+        assert.strictEqual(data.value.sillyWebServerHost, sillyWebServerHost);
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+
+  describe('default capabilities via cli', function () {
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup({
+        defaultCapabilities: {
+          'appium:options': {
+            automationName: 'Fake',
+            deviceName: 'Fake',
+            app: TEST_FAKE_APP,
+          },
+          platformName: 'Fake',
+        },
+      });
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function () {
+      const appiumOptsCaps = {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [{}],
+        },
+      };
+
+      // Create the session
+      const {value} = (await httpPost(testServerBaseSessionUrl, appiumOptsCaps)).data;
+      try {
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
+          automationName: 'Fake',
+          platformName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        });
+      } finally {
+        // End session
+        await httpDelete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+  });
+
+  describe('inspector commands', function () {
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    let driver: AppiumTestBrowser;
+
+    beforeEach(async function () {
+      driver = (await wdio({...wdOpts, capabilities: caps})) as AppiumTestBrowser;
+    });
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+        driver = null as unknown as AppiumTestBrowser;
+      }
+    });
+
+    it('should list available driver commands', async function () {
+      driver.addCommand(
+        'listCommands',
+        async () => (await httpGet(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/commands`)).data.value,
+      );
+
+      const commands = await driver.listCommands();
+
+      assert.strictEqual(
+        JSON.stringify(commands.rest.base['/session/:sessionId/frame']),
+        JSON.stringify({POST: {command: 'setFrame', params: [{name: 'id', required: true}]}}),
+      );
+      assert.ok(Object.keys(commands.rest.driver).length > 1);
+
+      assert.strictEqual(
+        JSON.stringify(commands.bidi.base.session.subscribe),
+        JSON.stringify({
+          command: 'bidiSubscribe',
+          params: [
+            {
+              name: 'events',
+              required: true,
+            },
+            {
+              name: 'contexts',
+              required: false,
+            },
+            {
+              name: 'userContexts',
+              required: false,
+            },
+          ],
+        }),
+      );
+      assert.ok(Object.keys(commands.bidi.base).length > 1);
+      assert.ok(Object.keys(commands.bidi.driver).length > 0);
+    });
+
+    it('should list available driver extensions', async function () {
+      driver.addCommand(
+        'listExtensions',
+        async () => (await httpGet(`${testServerBaseSessionUrl}/${driver.sessionId}/appium/extensions`)).data.value,
+      );
+
+      const extensions = await driver.listExtensions();
+      assert.strictEqual(
+        JSON.stringify(extensions.rest.driver['fake: setThing']),
+        JSON.stringify({
+          command: 'setFakeThing',
+          params: [
+            {
+              name: 'thing',
+              required: true,
+            },
+          ],
+        }),
+      );
+      assert.ok(Object.keys(extensions.rest.driver).length > 1);
+    });
+  });
+
+  describe('session handling', function () {
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    it('should start and stop a session and not allow commands after session stopped', async function () {
+      const driver = await wdio({...wdOpts, capabilities: caps});
+      assert.ok(driver.sessionId);
+      assert.strictEqual(typeof driver.sessionId, 'string');
+      await driver.deleteSession();
+      await assert.rejects(driver.getTitle());
+    });
+
+    it('should be able to run two FakeDriver sessions simultaneously', async function () {
+      const driver1 = await wdio({...wdOpts, capabilities: caps});
+      assert.ok(driver1.sessionId);
+      assert.strictEqual(typeof driver1.sessionId, 'string');
+      const driver2 = await wdio({...wdOpts, capabilities: caps});
+      assert.ok(driver2.sessionId);
+      assert.strictEqual(typeof driver2.sessionId, 'string');
+      assert.notStrictEqual(driver2.sessionId, driver1.sessionId);
+      await driver1.deleteSession();
+      await driver2.deleteSession();
+    });
+
+    it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
+      const localCaps = {
+        'appium:newCommandTimeout': 0.25,
+        ...caps,
+      };
+      const driver = await wdio({...wdOpts, capabilities: localCaps});
+      assert.ok(driver.sessionId);
+
+      await sleep(250);
+      await assert.rejects(driver.getPageSource(), /terminated/);
+    });
+
+    it('should not allow umbrella commands to prevent newCommandTimeout on inner driver', async function () {
+      const localCaps = {
+        'appium:newCommandTimeout': 0.25,
+        ...caps,
+      };
+      const driver = await wdio({...wdOpts, capabilities: localCaps});
+      assert.ok(driver.sessionId);
+      driver.addCommand('getStatus', async () => (await httpGet(`${testServerBaseUrl}/status`)).data.value);
+
+      // get the session list 6 times over 300ms. each request will be below the new command
+      // timeout but since they are not received by the driver the session should still time out
+      for (let i = 0; i < 6; i++) {
+        await (driver as any).getStatus();
+        await sleep(50);
+      }
+      await assert.rejects(driver.getPageSource(), /terminated/);
+    });
+
+    it('should accept valid W3C capabilities and start a W3C session', async function () {
+      // Try with valid capabilities and check that it returns a session ID
+      const w3cCaps = {
+        capabilities: {
+          alwaysMatch: {'appium:automationName': 'Fake', platformName: 'Fake'},
+          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
+        },
+      };
+
+      // Create the session
+      const {status, value, sessionId} = (await httpPost(testServerBaseSessionUrl, w3cCaps)).data;
+      try {
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
+          automationName: 'Fake',
+          platformName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        });
+
+        // Now use that sessionId to call /screenshot
+        const {status: screenshotStatus, value: screenshotValue} = (
+          await httpGet(`${testServerBaseSessionUrl}/${value.sessionId}/screenshot`)
+        ).data;
+        assert.ok(!screenshotStatus);
+        assert.match(screenshotValue, /^iVBOR/); // should be a png
+
+        // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
+        await assert.rejects(
+          httpPost(`${testServerBaseSessionUrl}/${value.sessionId}/execute/async`, {
+            script: '',
+            args: ['a'],
+          }),
+          /405/,
+        );
+      } finally {
+        // End session
+        await httpDelete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+
+    it('should allow appium-prefixed caps sent via appium:options', async function () {
+      // Try with valid capabilities and check that it returns a session ID
+      const appiumOptsCaps = {
+        capabilities: {
+          alwaysMatch: {
+            'appium:options': {
+              automationName: 'Fake',
+              deviceName: 'Fake',
+              app: TEST_FAKE_APP,
+            },
+            platformName: 'Fake',
+          },
+          firstMatch: [{}],
+        },
+      };
+
+      // Create the session
+      const {status, value, sessionId} = (await httpPost(testServerBaseSessionUrl, appiumOptsCaps)).data;
+      try {
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.strictEqual(typeof value.sessionId, 'string');
+        assert.ok(value);
+        assert.deepStrictEqual(value.capabilities, {
+          automationName: 'Fake',
+          platformName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        });
+      } finally {
+        // End session
+        await httpDelete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+
+    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
+      const badW3Ccaps = {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
+        },
+      };
+
+      await assert.rejects(httpPost(testServerBaseSessionUrl, badW3Ccaps), /400/);
+    });
+
+    it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
+      const combinedCaps = {
+        desiredCapabilities: {
+          ...caps,
+          jsonwpParam: 'jsonwpParam',
+        },
+        capabilities: {
+          alwaysMatch: {...caps},
+          firstMatch: [
+            {
+              'appium:w3cParam': 'w3cParam',
+            },
+          ],
+        },
+      };
+
+      const {status, value, sessionId} = (await httpPost(testServerBaseSessionUrl, combinedCaps)).data;
+      try {
+        assert.ok(!status);
+        assert.ok(!sessionId);
+        assert.ok(value.sessionId);
+        assert.deepStrictEqual(value.capabilities, {
+          ...removeAppiumPrefixes(caps),
+          w3cParam: 'w3cParam',
+        });
+      } finally {
+        // End session
+        await httpDelete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+
+    it('should reject bad automation name with an appropriate error', async function () {
+      const w3cCaps = {
+        capabilities: {
+          alwaysMatch: {
+            ...caps,
+            'appium:automationName': 'BadAutomationName',
+          },
+        },
+      };
+      await assert.rejects(httpPost(testServerBaseSessionUrl, w3cCaps), /500/);
+    });
+
+    it('should accept capabilities that are provided in the firstMatch array', async function () {
+      const w3cCaps = {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [
+            {},
+            {
+              ...caps,
+            },
+          ],
+        },
+      };
+      const {value, sessionId, status} = (await httpPost(testServerBaseSessionUrl, w3cCaps)).data;
+      try {
+        assert.ok(!status); // Test that it's a W3C session
+        assert.ok(!sessionId);
+        assert.deepStrictEqual(value.capabilities, removeAppiumPrefixes(caps));
+      } finally {
+        // End session
+        await httpDelete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+
+    it('should not fall back to MJSONWP if w3c caps are invalid', async function () {
+      const combinedCaps = {
+        desiredCapabilities: {
+          ...caps,
+        },
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [
+            {},
+            {
+              ...caps,
+              platformName: null,
+              'appium:automationName': null,
+              'appium:deviceName': null,
+            },
+          ],
+        },
+      };
+      const res = await httpPost(testServerBaseSessionUrl, combinedCaps, {
+        throwOnError: false,
+      });
+      assert.strictEqual(res.status, 400);
+      assert.match(res.data.value.error, /invalid argument/);
+    });
+
+    it('should not fall back to MJSONWP even if Inner Driver is not ready for W3C', async function () {
+      const combinedCaps = {
+        desiredCapabilities: {
+          ...caps,
+        },
+        capabilities: {
+          alwaysMatch: {
+            ...caps,
+            'appium:deviceName': 'Fake',
+          },
+        },
+      };
+      const session = {sessionId: null as string | null};
+      const createSessionStub = sandbox.stub(FakeDriver.prototype, 'createSession').callsFake(async function (
+        this: InstanceType<DriverClass>,
+        caps,
+      ) {
+        const res = await BaseDriver.prototype.createSession.call(this, caps);
+        session.sessionId = res[0];
+        assert.strictEqual(this.protocol, 'W3C');
+        return res;
+      });
+      try {
+        const res = await httpPost(testServerBaseSessionUrl, combinedCaps, {
+          throwOnError: false,
+        });
+        const {status} = res;
+        assert.strictEqual(status, 200);
+      } finally {
+        if (session.sessionId) {
+          await httpDelete(`${testServerBaseSessionUrl}/${session.sessionId}`);
+        }
+        createSessionStub.restore();
+      }
+    });
+
+    it('should allow drivers to update the method map with new routes and commands', async function () {
+      const driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        await httpPost(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {
+          thing: {yes: 'lolno'},
+        });
+        assert.deepStrictEqual((await httpGet(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value, {
+          yes: 'lolno',
+        });
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+
+  describe('Bidi protocol', function () {
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup();
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    let driver: AppiumTestBrowser;
+
+    beforeEach(async function () {
+      driver = (await wdio({...wdOpts, capabilities})) as AppiumTestBrowser;
+    });
+
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    it('should respond with bidi specific capability when a driver supports it', async function () {
+      assert.ok(driver.capabilities.webSocketUrl);
+    });
+
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
+      assert.ok(!(await driver.getUrl()));
+
+      await driver.browsingContextNavigate({
+        context: 'foo',
+        url: 'https://appium.io',
+        wait: 'complete',
+      });
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
+    });
+
+    it('should be able to subscribe and unsubscribe to bidi events', async function () {
+      const collectedEvents: number[] = [];
+      (driver as any).on('appium:clock.currentTime', (ev: {time: number}) => {
+        collectedEvents.push(ev.time);
+      });
+
+      // wait for some time to be sure clock events have happened, and assert we don't receive
+      // any yet
+      await sleep(750);
+      assert.strictEqual(collectedEvents.length, 0);
+
+      // now subscribe and wait and assert that some events have been collected
+      await driver.sessionSubscribe({events: ['appium:clock.currentTime']});
+      await sleep(750);
+      assert.notStrictEqual(collectedEvents.length, 0);
+
+      // finally  unsubscribe and wait and assert that some events have been collected
+      await driver.sessionUnsubscribe({events: ['appium:clock.currentTime']});
+      collectedEvents.length = 0;
+      await sleep(750);
+      assert.strictEqual(collectedEvents.length, 0);
+    });
+
+    it('should allow custom bidi commands', async function () {
+      let {result} = await driver.send({
+        method: 'appium:fake.getFakeThing',
+        params: {},
+      } as any);
+      assert.strictEqual(result, null);
+      await driver.send({
+        method: 'appium:fake.setFakeThing',
+        params: {thing: 'this is from bidi'},
+      } as any);
+      ({result} = await driver.send({
+        method: 'appium:fake.getFakeThing',
+        params: {},
+      } as any));
+      assert.strictEqual(result, 'this is from bidi');
+    });
+  });
+
+  describe('Bidi protocol with base path', function () {
+    const basePath = '/wd/hub';
+    const {setup, teardown} = createServer();
+    before(async function () {
+      await setup({basePath});
+    });
+    after(async function () {
+      await teardown();
+    });
+
+    const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    let driver: AppiumTestBrowser;
+
+    beforeEach(async function () {
+      driver = (await wdio({...wdOpts, path: basePath, capabilities})) as AppiumTestBrowser;
+    });
+
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    it('should respond with bidi specific capability when a driver supports it', async function () {
+      assert.ok(driver.capabilities.webSocketUrl);
+    });
+
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
+      assert.ok(!(await driver.getUrl()));
+
+      await driver.browsingContextNavigate({
+        context: 'foo',
+        url: 'https://appium.io',
+        wait: 'complete',
+      });
+      assert.strictEqual(await driver.getUrl(), 'https://appium.io');
+    });
+  });
+});
+
+describe('Bidi over SSL', function () {
+  async function generateCertificate(certPath: string, keyPath: string) {
+    await exec('openssl', [
+      'req',
+      '-nodes',
+      '-new',
+      '-x509',
+      '-keyout',
+      keyPath,
+      '-out',
+      certPath,
+      '-subj',
+      '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
+    ]);
+  }
+
+  let server: AppiumServer;
+  let appiumHome: string;
+  let driver: Browser;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let FakeDriver: DriverClass;
+  const certPath = 'certificate.cert';
+  const keyPath = 'certificate.key';
+  const capabilities = {...caps, webSocketUrl: true};
+  let previousEnvValue: string | undefined;
+
+  before(async function () {
+    await generateCertificate(certPath, keyPath);
+    appiumHome = await tempDir.openDir();
+    wdOpts.port = port = await getTestPort();
+    testServerBaseUrl = `https://${TEST_HOST}:${port}`;
+    FakeDriver = await initFakeDriver(appiumHome);
+    server = await appiumServer({
+      address: TEST_HOST,
+      port,
+      appiumHome,
+      sslCertificatePath: certPath,
+      sslKeyPath: keyPath,
+    });
+  });
+
+  after(async function () {
+    if (server) {
+      await fs.rimraf(appiumHome);
+      await server.close();
+    }
+  });
+
+  beforeEach(async function () {
+    previousEnvValue = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    driver = await wdio({...wdOpts, protocol: 'https', strictSSL: false, capabilities});
+  });
+
+  afterEach(async function () {
+    try {
+      await driver?.deleteSession();
+    } finally {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = previousEnvValue;
+    }
+  });
+
+  it('should still run bidi over ssl', async function () {
+    assert.ok(!(await driver.getUrl()));
+
+    await driver.browsingContextNavigate({
+      context: 'foo',
+      url: 'https://appium.io',
+      wait: 'complete',
+    });
+    assert.strictEqual(await driver.getUrl(), 'https://appium.io');
+  });
+});
+
+describe('Logsink', function () {
+  let server: Awaited<ReturnType<typeof appiumServer>> | null = null;
+  const logs: [string, string][] = [];
+  const logHandler = function (level: string, message: string) {
+    logs.push([level, message]);
+  };
+  const args = {
+    port,
+    address: TEST_HOST,
+    logHandler,
+  };
+
+  before(async function () {
+    server = await appiumServer(args);
+  });
+
+  after(async function () {
+    if (server) {
+      await server.close();
+    }
+  });
+
+  it('should send logs to a logHandler passed in by a parent package', function () {
+    assert.ok(logs.length > 1);
+    const welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
+    assert.strictEqual(logs[welcomeIndex].length, 2);
+    assert.ok(logs[welcomeIndex][1].includes('Welcome to Appium'));
+  });
+});

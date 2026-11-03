@@ -1,0 +1,275 @@
+import {createHash} from 'node:crypto';
+import {EventEmitter} from 'node:events';
+
+import {fs, logger, tempDir, util} from '@appium/support';
+import type {AppiumServer} from '@appium/types';
+import {getResponseForW3CError} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
+import {AsyncLock} from 'asyncbox';
+import type {Express, Request, Response} from 'express';
+import {LRUCache} from 'lru-cache';
+import {WebSocketServer} from 'ws';
+import type WebSocket from 'ws';
+
+import {requireValidItemOptions, Storage, StorageArgumentError, validateStorageItemName} from './storage.js';
+import type {AddRequestResult, ItemOptions, StorageItem} from './types.js';
+
+const log = logger.getLogger('StoragePlugin');
+
+let SHARED_STORAGE: Storage | null = null;
+const STORAGE_PREFIX = '/appium/storage';
+/**
+ * @deprecated Use `STORAGE_PREFIX` (`/appium/storage`) instead. This alias only exists for
+ * backward compatibility and will be removed in a future version of the storage plugin.
+ */
+const DEPRECATED_STORAGE_PREFIX = '/storage';
+const WS_TTL_MS = 5 * 60 * 1000;
+const STORAGE_HANDLERS: Record<string, (req: Request, httpServer?: AppiumServer, basePath?: string) => Promise<any>> =
+  {};
+const deprecatedRoutesLogged: Set<string> = new Set();
+const pendingUploads = new WeakMap<AppiumServer, {lock: AsyncLock; cache: LRUCache<string, () => void>}>();
+
+export class StoragePlugin extends BasePlugin {
+  static async updateServer(expressApp: Express, httpServer: AppiumServer): Promise<void> {
+    const serverBasePath = httpServer.basePath;
+    const buildHandler =
+      (methodName: string, prefix: string, endpoint: string, isDeprecated: boolean) =>
+      async (req: Request, res: Response) => {
+        // the server base path is intentionally omitted from the log message
+        const routePath = `${prefix}${endpoint}`;
+        if (isDeprecated && !deprecatedRoutesLogged.has(routePath)) {
+          deprecatedRoutesLogged.add(routePath);
+          log.warn(
+            `The '${routePath}' endpoint has been deprecated and will be removed in a future version ` +
+              `of the storage plugin. Please use '${STORAGE_PREFIX}${endpoint}' instead`,
+          );
+        }
+
+        let status = 200;
+        let body: any;
+        try {
+          const value = await STORAGE_HANDLERS[methodName](req, httpServer, `${serverBasePath}${prefix}`);
+          body = {value: value ?? null};
+        } catch (e) {
+          [status, body] = getResponseForW3CError(e);
+        }
+        log.debug(
+          'Responding to %s with %s',
+          methodName,
+          logger.markSensitive(util.truncateString(JSON.stringify(body.value), {length: 200})),
+        );
+        res.set('content-type', 'application/json; charset=utf-8');
+        res.status(status).send(body);
+      };
+
+    for (const [prefix, isDeprecated] of [
+      [STORAGE_PREFIX, false],
+      [DEPRECATED_STORAGE_PREFIX, true],
+    ] as const) {
+      for (const [method, endpoint, handlerName] of [
+        ['post', '/add', STORAGE_HANDLERS.addStorageItem.name],
+        ['get', '/list', STORAGE_HANDLERS.listStorageItems.name],
+        ['post', '/reset', STORAGE_HANDLERS.resetStorage.name],
+        ['post', '/delete', STORAGE_HANDLERS.deleteStorageItem.name],
+      ] as const) {
+        expressApp[method](
+          `${serverBasePath}${prefix}${endpoint}`,
+          buildHandler(handlerName, prefix, endpoint, isDeprecated),
+        );
+      }
+    }
+  }
+}
+
+STORAGE_HANDLERS.addStorageItem = async function addStorageItem(
+  req: Request,
+  httpServer?: AppiumServer,
+  basePath: string = STORAGE_PREFIX,
+): Promise<AddRequestResult> {
+  if (!httpServer) {
+    throw new Error('httpServer is required to add a storage item');
+  }
+  const itemOptions = requireValidItemOptions(parseRequestArgs(req, ['name', 'sha1']) as ItemOptions);
+  const uploadId = createHash('sha1')
+    .update(JSON.stringify([itemOptions.name, itemOptions.sha1.toLowerCase()]))
+    .digest('hex');
+  const commonPathname = `${basePath}/add/${uploadId}`;
+  const {lock} = getPendingUploads(httpServer);
+  const [stream, events] = await lock.acquire(commonPathname, () =>
+    prepareWebSockets(httpServer, itemOptions, commonPathname),
+  );
+  return {
+    ws: {
+      stream,
+      events,
+    },
+    ttlMs: WS_TTL_MS,
+  };
+};
+
+STORAGE_HANDLERS.listStorageItems = async function listStorageItems(): Promise<StorageItem[]> {
+  return await executeStorageMethod(async (storage: Storage) => await storage.list());
+};
+
+STORAGE_HANDLERS.deleteStorageItem = async function deleteStorageItem(req: Request): Promise<boolean> {
+  let name: string;
+  try {
+    name = parseRequestArgs(req, ['name']).name;
+    validateStorageItemName(name);
+  } catch (e) {
+    log.error(`Failed to parse the request body for deleting a storage item: ${(e as Error).message}`);
+    return false;
+  }
+  return await executeStorageMethod(async (storage: Storage) => await storage.delete(name));
+};
+
+STORAGE_HANDLERS.resetStorage = async function resetStorage(): Promise<void> {
+  await executeStorageMethod(async (storage: Storage) => await storage.reset());
+};
+
+async function executeStorageMethod<T>(method: (storage: Storage) => Promise<T>): Promise<T> {
+  const storage = await getStorageSingleton();
+  return await method(storage);
+}
+
+function parseRequestArgs(req: Request, requiredKeys: string[]): Record<string, any> {
+  if (!util.isPlainObject(req.body)) {
+    throw new StorageArgumentError(`The request body must be a valid JSON object`);
+  }
+  for (const key of requiredKeys) {
+    if (!Object.hasOwn(req.body, key)) {
+      throw new StorageArgumentError(
+        `The required argument '${key}' is missing (expected ${JSON.stringify(requiredKeys)})`,
+      );
+    }
+  }
+  return req.body;
+}
+
+async function prepareWebSockets(
+  httpServer: AppiumServer,
+  itemOptions: ItemOptions,
+  commonPathname: string,
+): Promise<[string, string]> {
+  const streamPathname = `${commonPathname}/stream`;
+  const eventsPathname = `${commonPathname}/events`;
+  const {cache} = getPendingUploads(httpServer);
+  if (
+    Object.hasOwn(await httpServer.getWebSocketHandlers(streamPathname), streamPathname) &&
+    cache.get(commonPathname, {updateAgeOnGet: true})
+  ) {
+    return [streamPathname, eventsPathname];
+  }
+
+  const streamServer = new WebSocketServer({
+    noServer: true,
+  });
+  const eventsServer = new WebSocketServer({
+    noServer: true,
+  });
+  const signaler = new EventEmitter();
+  const streamDoneCallback = () => {
+    log.debug(`Unmounting stream and events web sockets at ${commonPathname}`);
+    void httpServer.removeWebSocketHandler(streamPathname);
+    void httpServer.removeWebSocketHandler(eventsPathname);
+    setTimeout(() => {
+      streamServer.close();
+      eventsServer.close();
+      signaler.removeAllListeners();
+    }, 100);
+  };
+  cache.set(commonPathname, streamDoneCallback);
+  eventsServer.on('connection', (wsUpstream: WebSocket) => {
+    // Server errors do not include errors emitted by individual connections.
+    wsUpstream.on('error', (e) => {
+      log.info(`The ${eventsPathname} web socket connection has notified about an error: ${e.message}`);
+    });
+    signaler.on('status', (value) => wsUpstream.send(JSON.stringify(value)));
+  });
+  eventsServer.on('error', (e) => {
+    log.info(`The ${eventsPathname} web socket server has notified about an error: ${e.message}`);
+  });
+  streamServer.on('connection', async (wsUpstream: WebSocket) => {
+    log.info(`Starting a new server storage upload of '${itemOptions.name}' at ${streamPathname}`);
+    const storage = await getStorageSingleton();
+    try {
+      await storage.add(itemOptions, wsUpstream);
+      const successEvent = {
+        value: {
+          success: true,
+          ...itemOptions,
+        },
+      };
+      log.debug(`Notifying about the successful addition of '${itemOptions.name}' to the server storage`);
+      signaler.emit('status', successEvent);
+      cache.delete(commonPathname);
+    } catch (e) {
+      log.debug(`Notifying about a failure while adding '${itemOptions.name}' to the server storage`);
+      // in case of a failure we do not want to close the server yet
+      // in anticipation of a retry
+      log.error(e);
+      const [, errorBody] = getResponseForW3CError(e);
+      signaler.emit('status', errorBody);
+    }
+  });
+  streamServer.on('error', (e) => {
+    log.info(`The ${streamPathname} web socket server has notified about an error: ${e.message}`);
+  });
+  await Promise.all([
+    httpServer.addWebSocketHandler(streamPathname, streamServer),
+    httpServer.addWebSocketHandler(eventsPathname, eventsServer),
+  ]);
+
+  return [streamPathname, eventsPathname];
+}
+
+function getPendingUploads(httpServer: AppiumServer) {
+  let pending = pendingUploads.get(httpServer);
+  if (!pending) {
+    pending = {
+      lock: new AsyncLock(),
+      cache: new LRUCache<string, () => void>({
+        max: 20,
+        ttl: WS_TTL_MS,
+        ttlAutopurge: true,
+        dispose: (cleanup) => cleanup(),
+      }),
+    };
+    pendingUploads.set(httpServer, pending);
+  }
+  return pending;
+}
+
+const getStorageSingleton = util.memoize(async () => {
+  let storageRoot: string;
+  let shouldPreserveRoot = false;
+  let shouldPreserveFiles = false;
+  if (process.env.APPIUM_STORAGE_ROOT) {
+    storageRoot = process.env.APPIUM_STORAGE_ROOT;
+    shouldPreserveRoot = shouldPreserveFiles = await fs.exists(storageRoot);
+    log.info(`Set '${storageRoot}' as the server storage root folder`);
+  } else {
+    storageRoot = await tempDir.openDir();
+    log.info(`Created '${storageRoot}' as the temporary server storage root folder`);
+  }
+  if (process.env.APPIUM_STORAGE_KEEP_ALL) {
+    shouldPreserveFiles = ['true', '1', 'yes'].includes((process.env.APPIUM_STORAGE_KEEP_ALL ?? '').toLowerCase());
+  }
+  if (shouldPreserveFiles) {
+    log.info(`All server storage items will be always preserved unless deleted explicitly`);
+  } else {
+    log.info(
+      `All server storage items will be cleaned up automatically from '${storageRoot}' after ` +
+        `Appium server termination`,
+    );
+  }
+  SHARED_STORAGE = new Storage(storageRoot, shouldPreserveRoot, shouldPreserveFiles, log);
+  await SHARED_STORAGE.reset();
+  return SHARED_STORAGE;
+});
+
+process.once('exit', () => {
+  SHARED_STORAGE?.cleanupSync();
+});
+
+export default StoragePlugin;

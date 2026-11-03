@@ -1,0 +1,15 @@
+name: Disallow "On Hold" PRs
+on:
+  pull_request_target:
+    types: [opened, labeled, unlabeled, synchronize]
+    branches: [master]
+
+jobs:
+  label-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for "On Hold" label
+        uses: egmacke/action-check-label@v5
+        with:
+          label: On Hold
+          state: absent

@@ -1,0 +1,394 @@
+import crypto from 'node:crypto';
+import {
+  close,
+  constants,
+  type CopyOptions,
+  createReadStream,
+  createWriteStream,
+  type Dirent,
+  type MakeDirectoryOptions,
+  open,
+  type PathLike,
+  promises as fsPromises,
+  read,
+  type RmOptions,
+  rmSync,
+  write,
+} from 'node:fs';
+import path from 'node:path';
+import {promisify} from 'node:util';
+
+import sanitize from 'sanitize-filename';
+import which from 'which';
+
+import {
+  MoveOperation,
+  type MvOptions,
+  pluralize,
+  walk,
+  type Walker,
+  type WalkItem,
+  type WalkOptions,
+} from './internal/index.js';
+import log from './logger.js';
+import {isWindows} from './system.js';
+import {Timer} from './timing.js';
+
+/**
+ * Options for {@linkcode fs.copyFile}.
+ *
+ * Compatible with legacy `ncp.Options`. Supported fields are forwarded to
+ * `fs.cp` ({@link https://nodejs.org/api/fs.html#fscpsrc-dest-options-callback CopyOptions}).
+ */
+export interface CopyFileOptions {
+  /**
+   * Set to false to throw if the destination already exists.
+   * Maps to `force` / `errorOnExist`.
+   */
+  clobber?: boolean;
+  /**
+   * Include only matching paths when copying directories.
+   * Maps to `filter`; `RegExp` and single-argument functions receive the source path only (ncp semantics).
+   */
+  filter?: RegExp | ((filename: string) => boolean);
+  /** Follow symlinks instead of copying them. Maps to `dereference`. */
+  dereference?: boolean;
+}
+
+export type {MvOptions};
+
+/** Options for {@linkcode fs.rimraf} and {@linkcode fs.rimrafSync}; recursive and force removal are always enabled. */
+export type RimrafOptions = Omit<RmOptions, 'recursive' | 'force'>;
+
+/**
+ * Callback used during directory walking in {@linkcode fs.walkDir}.
+ * Return true to stop walking.
+ */
+export type WalkDirCallback = (itemPath: string, isDirectory: boolean) => boolean | void | Promise<boolean | void>;
+
+/** Options for {@linkcode fs.glob}. Deliberately narrower than `node:fs`'s own `GlobOptions` so callers are insulated from its shape. */
+export interface GlobOptions {
+  /**
+   * Current working directory to resolve `pattern` and results against.
+   * @default process.cwd()
+   */
+  cwd?: string;
+  /** Yield `Dirent`s instead of path strings. */
+  withFileTypes?: boolean;
+  /** Yield absolute paths instead of paths relative to `cwd`. Ignored when `withFileTypes` is set (a `Dirent`'s location is already recoverable via `parentPath`). */
+  absolute?: boolean;
+  /** Return an async generator that yields matches lazily instead of resolving to an array of all of them. */
+  lazy?: boolean;
+}
+
+/**
+ * Overloaded call signature for {@linkcode fs.glob}, narrowing its return type based on
+ * `withFileTypes`/`lazy`. Omitting both (or passing them as literal `false`) resolves to
+ * `Promise<string[]>`. When either flag is a non-literal `boolean` (e.g. a `GlobOptions`
+ * variable), the return type widens to a union instead of picking a single (possibly wrong) shape.
+ */
+export interface GlobFn {
+  (
+    pattern: string | readonly string[],
+    options: GlobOptions & {withFileTypes: true; lazy: true},
+  ): AsyncGenerator<Dirent>;
+  (pattern: string | readonly string[], options: GlobOptions & {withFileTypes: true; lazy?: false}): Promise<Dirent[]>;
+  (
+    pattern: string | readonly string[],
+    options: GlobOptions & {withFileTypes: true},
+  ): Promise<Dirent[]> | AsyncGenerator<Dirent>;
+  (pattern: string | readonly string[], options: GlobOptions & {lazy: true}): AsyncGenerator<string>;
+  (
+    pattern: string | readonly string[],
+    options?: GlobOptions & {withFileTypes?: false; lazy?: false},
+  ): Promise<string[]>;
+  (
+    pattern: string | readonly string[],
+    options?: GlobOptions,
+  ): Promise<string[]> | Promise<Dirent[]> | AsyncGenerator<string> | AsyncGenerator<Dirent>;
+}
+
+/**
+ * Maps {@link CopyFileOptions} (including legacy `ncp` fields) to `fs.cp` options.
+ */
+export function toCpOptions(opts: CopyFileOptions = {}): CopyOptions {
+  const {clobber = true, dereference, filter} = opts;
+  let cpFilter: CopyOptions['filter'];
+  if (filter !== undefined) {
+    cpFilter = filter instanceof RegExp ? (source) => filter.test(source) : (source) => filter(source);
+  }
+  return {
+    recursive: true,
+    force: clobber,
+    errorOnExist: !clobber,
+    ...(dereference !== undefined && {dereference}),
+    ...(cpFilter !== undefined && {filter: cpFilter}),
+  };
+}
+
+export const fs = {
+  /**
+   * Resolves `true` if `path` is _readable_.
+   * On Windows, ACLs are not supported, so this becomes a simple check for existence.
+   * This function will never reject.
+   */
+  async hasAccess(filePath: PathLike): Promise<boolean> {
+    try {
+      await fsPromises.access(filePath, constants.R_OK);
+    } catch {
+      return false;
+    }
+    return true;
+  },
+
+  /**
+   * Resolves `true` if `path` is executable; `false` otherwise.
+   * On Windows, delegates to {@linkcode fs.hasAccess}.
+   * This function will never reject.
+   */
+  async isExecutable(filePath: PathLike): Promise<boolean> {
+    try {
+      if (isWindows()) {
+        return await fs.hasAccess(filePath);
+      }
+      await fsPromises.access(filePath, constants.R_OK | constants.X_OK);
+    } catch {
+      return false;
+    }
+    return true;
+  },
+
+  /** Alias for {@linkcode fs.hasAccess} */
+  async exists(filePath: PathLike): Promise<boolean> {
+    return await fs.hasAccess(filePath);
+  },
+
+  /**
+   * Remove a directory and all its contents, recursively.
+   * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
+   * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
+   */
+  async rimraf(filepath: PathLike, opts: RimrafOptions = {}): Promise<void> {
+    return await fsPromises.rm(filepath, {...opts, recursive: true, force: true});
+  },
+
+  /**
+   * Remove a directory and all its contents, recursively (sync).
+   * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
+   * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
+   */
+  rimrafSync(filepath: PathLike, opts: RimrafOptions = {}): void {
+    return rmSync(filepath, {...opts, recursive: true, force: true});
+  },
+
+  /**
+   * Like Node.js `fsPromises.mkdir()`, but will not reject if the directory already exists.
+   * @see https://nodejs.org/api/fs.html#fspromisesmkdirpath-options
+   */
+  async mkdir(filepath: string | Buffer | URL, opts: MakeDirectoryOptions = {}): Promise<string | undefined> {
+    try {
+      return await fsPromises.mkdir(filepath, opts);
+    } catch (err) {
+      if (isErrnoException(err) && err.code !== 'EEXIST') {
+        throw err;
+      }
+    }
+  },
+
+  /**
+   * Copies files and entire directories.
+   */
+  async copyFile(source: string, destination: string, opts: CopyFileOptions = {}): Promise<void> {
+    if (!(await fs.hasAccess(source))) {
+      throw new Error(`The file at '${source}' does not exist or is not accessible`);
+    }
+    await fsPromises.cp(source, destination, toCpOptions(opts));
+  },
+
+  /** Create an MD5 hash of a file. */
+  async md5(filePath: PathLike): Promise<string> {
+    return await fs.hash(filePath, 'md5');
+  },
+
+  /**
+   * Move a file or a folder.
+   */
+  async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
+    await new MoveOperation(from, to, opts, fs).move();
+  },
+
+  /** Find path to an executable in system `PATH`. @see https://github.com/npm/node-which */
+  which,
+
+  /**
+   * Given a glob pattern, resolves to an array of matching paths (or `Dirent`s if `withFileTypes` is set).
+   * Pass `lazy: true` to get an async generator that yields matches one at a time instead.
+   *
+   * Unlike the `glob` npm package, this does NOT follow symlinks when expanding wildcard path
+   * segments. Prefer a manual `readdir`-based walk over a glob pattern for callers that must
+   * traverse through symlinks.
+   */
+  glob: ((pattern: string | readonly string[], options?: GlobOptions) => {
+    const {cwd, withFileTypes, absolute, lazy} = options ?? {};
+    async function* generate(): AsyncGenerator<string | Dirent> {
+      for await (const entry of fsPromises.glob(pattern, {cwd, withFileTypes})) {
+        yield absolute && !withFileTypes ? path.resolve(cwd ?? process.cwd(), entry as string) : entry;
+      }
+    }
+    if (lazy) {
+      return generate();
+    }
+    return (async () => {
+      const items: (string | Dirent)[] = [];
+      for await (const item of generate()) {
+        items.push(item);
+      }
+      return items;
+    })();
+  }) as GlobFn,
+
+  /** Sanitize a filename. @see https://github.com/parshap/node-sanitize-filename */
+  sanitizeName: sanitize,
+
+  /** Create a hex digest of some file at `filePath`. */
+  async hash(filePath: PathLike, algorithm: string = 'sha1'): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+      const fileHash = crypto.createHash(algorithm);
+      const readStream = createReadStream(filePath);
+      readStream.on('error', (e: Error) =>
+        reject(
+          new Error(`Cannot calculate ${algorithm} hash for '${filePath.toString()}'. Original error: ${e.message}`),
+        ),
+      );
+      readStream.on('data', (chunk: Buffer | string) => fileHash.update(chunk));
+      readStream.on('end', () => resolve(fileHash.digest('hex')));
+    });
+  },
+
+  /** Returns a Walker instance (readable stream / async iterator). */
+  walk(dir: string, opts?: WalkOptions): Walker {
+    return walk(dir, opts);
+  },
+
+  /** Recursively create a directory. */
+  async mkdirp(dir: PathLike): Promise<string | undefined> {
+    return await fs.mkdir(dir, {recursive: true});
+  },
+
+  /**
+   * Walks a directory; callback is invoked with path joined with dir.
+   * @param dir - Directory path to start walking
+   * @param recursive - If true, walk subdirectories
+   * @param callback - Called for each path; return true to stop
+   * @returns The found path or null if not found
+   */
+  /* eslint-disable promise/prefer-await-to-callbacks -- walkDir uses callback + stream .on() + Promise executor */
+  async walkDir(dir: string, recursive: boolean, callback: WalkDirCallback): Promise<string | null> {
+    let isValidRoot = false;
+    let errMsg: string | null = null;
+    try {
+      isValidRoot = (await fs.stat(dir)).isDirectory();
+    } catch (e) {
+      errMsg = e instanceof Error ? e.message : String(e);
+    }
+    if (!isValidRoot) {
+      throw new Error(`'${dir}' is not a valid root directory` + (errMsg ? `. Original error: ${errMsg}` : ''));
+    }
+
+    let walker: Walker | undefined;
+    let fileCount = 0;
+    let directoryCount = 0;
+    const timer = new Timer().start();
+    return await new Promise<string | null>(function (resolve, reject) {
+      let lastFileProcessed: Promise<string | undefined> = Promise.resolve(undefined);
+      walker = walk(dir, {
+        depthLimit: recursive ? -1 : 0,
+      });
+      walker
+        .on('data', function (item: WalkItem) {
+          if (walker) {
+            walker.pause();
+          }
+
+          if (!item.stats.isDirectory()) {
+            fileCount++;
+          } else {
+            directoryCount++;
+          }
+
+          lastFileProcessed = (async () => {
+            try {
+              const done = await callback(item.path, item.stats.isDirectory());
+              if (done) {
+                resolve(item.path);
+                return item.path;
+              }
+              if (walker) {
+                walker.resume();
+              }
+            } catch (err) {
+              reject(err);
+            }
+          })();
+        })
+        .on('error', function (err: Error, item?: {path: string}) {
+          log.warn(`Got an error while walking '${item?.path ?? 'unknown'}': ${err.message}`);
+          if (isErrnoException(err) && err.code === 'ENOENT') {
+            log.warn('All files may not have been accessed');
+            reject(err);
+          }
+        })
+        .on('end', async function () {
+          try {
+            const file = await lastFileProcessed;
+            resolve(file ?? null);
+          } catch (err) {
+            log.warn(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`);
+            reject(err);
+          }
+        });
+    }).finally(function () {
+      log.debug(
+        `Traversed ${pluralize('directory', directoryCount, true)} ` +
+          `and ${pluralize('file', fileCount, true)} ` +
+          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`,
+      );
+      if (walker) {
+        walker.destroy();
+      }
+    });
+    /* eslint-enable promise/prefer-await-to-callbacks */
+  },
+
+  access: fsPromises.access,
+  appendFile: fsPromises.appendFile,
+  chmod: fsPromises.chmod,
+  close: promisify(close),
+  constants,
+  createWriteStream,
+  createReadStream,
+  lstat: fsPromises.lstat,
+  /**
+   * Promisified fs.open. Resolves with a file descriptor (not FileHandle).
+   * Use fs.openFile for a FileHandle.
+   */
+  open: promisify(open),
+  openFile: fsPromises.open,
+  readdir: fsPromises.readdir,
+  read: promisify(read),
+  readFile: fsPromises.readFile,
+  readlink: fsPromises.readlink,
+  realpath: fsPromises.realpath,
+  rename: fsPromises.rename,
+  stat: fsPromises.stat,
+  symlink: fsPromises.symlink,
+  unlink: fsPromises.unlink,
+  write: promisify(write),
+  writeFile: fsPromises.writeFile,
+};
+
+export default fs;
+
+function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
+  return err instanceof Error && 'code' in err;
+}

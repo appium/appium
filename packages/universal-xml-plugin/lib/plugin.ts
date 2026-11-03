@@ -1,0 +1,188 @@
+import type {Element, ExecuteMethodMap, ExternalDriver, NextPluginCallback} from '@appium/types';
+import {errors} from 'appium/driver.js';
+import {BasePlugin} from 'appium/plugin.js';
+
+import {transformSourceXml} from './source.js';
+import type {TransformMetadata} from './types.js';
+import {transformQuery} from './xpath.js';
+
+export class UniversalXMLPlugin extends BasePlugin {
+  static executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
+    'universalXml: setEnabled': {
+      command: 'setTranslationEnabled',
+      params: {required: ['enabled']},
+    },
+    'universalXml: isEnabled': {
+      command: 'isTranslationEnabled',
+    },
+  };
+
+  /**
+   * Whether page source and XPath queries are translated in this session. Plugin instances are
+   * created per session, so this is per-session state.
+   */
+  private translationEnabled = true;
+
+  /**
+   * Handles the plugin's execute methods (`universalXml: setEnabled`, `universalXml: isEnabled`)
+   * and passes any other script on to the next handler.
+   */
+  async execute(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    script: string,
+    args: readonly unknown[],
+  ): Promise<unknown> {
+    return await this.executeMethod(next, driver, script, args);
+  }
+
+  /**
+   * Turns translation on or off for the current session. While it's off, page source and
+   * `findElement(s)` are passed on unchanged.
+   */
+  async setTranslationEnabled(next: NextPluginCallback, driver: ExternalDriver, enabled: boolean): Promise<void> {
+    void next;
+    void driver;
+    if (typeof enabled !== 'boolean') {
+      throw new errors.InvalidArgumentError(`'enabled' must be a boolean, got ${JSON.stringify(enabled)}`);
+    }
+    this.translationEnabled = enabled;
+    this.log.info(`Universal XML translation is now ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * Returns whether translation is currently enabled for this session.
+   */
+  async isTranslationEnabled(): Promise<boolean> {
+    return this.translationEnabled;
+  }
+
+  /**
+   * Returns the page source, translated to universal XML when translation is enabled.
+   * `addIndexPath` adds an index path attribute to every node, which the XPath transformer uses.
+   */
+  async getPageSource(
+    next: NextPluginCallback | null,
+    driver: ExternalDriver,
+    sessId?: any,
+    addIndexPath: boolean = false,
+  ): Promise<string> {
+    void sessId;
+    const source = (next ? await next() : await driver.getPageSource()) as string;
+    if (
+      !this.translationEnabled ||
+      typeof driver.getCurrentContext !== 'function' ||
+      (await driver.getCurrentContext()) !== 'NATIVE_APP'
+    ) {
+      return source;
+    }
+    const metadata: TransformMetadata = {};
+    const platformName = getPlatformName(driver);
+    if (platformName.toLowerCase() === 'android') {
+      metadata.appPackage = (driver.opts as Record<string, unknown>)?.appPackage as string;
+    }
+    const {xml, unknowns} = await transformSourceXml(source, platformName.toLowerCase(), {
+      metadata,
+      addIndexPath,
+    });
+    if (unknowns.nodes.length) {
+      this.log.warn(
+        `The XML mapper found ${unknowns.nodes.length} node(s) / ` +
+          `tag name(s) that it didn't know about. These should be ` +
+          `reported to improve the quality of the plugin: ` +
+          unknowns.nodes.join(', '),
+      );
+    }
+    if (unknowns.attrs.length) {
+      this.log.warn(
+        `The XML mapper found ${unknowns.attrs.length} attributes ` +
+          `that it didn't know about. These should be reported to ` +
+          `improve the quality of the plugin: ` +
+          unknowns.attrs.join(', '),
+      );
+    }
+    return xml;
+  }
+
+  /**
+   * Finds an element. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
+  async findElement(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string,
+  ): Promise<Element> {
+    return (await this._find(false, next, driver, strategy, selector)) as Element;
+  }
+
+  /**
+   * Finds elements. XPath queries are translated against the universal XML source when
+   * translation is enabled; other strategies are passed on unchanged.
+   */
+  async findElements(
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string,
+  ): Promise<Element[]> {
+    return (await this._find(true, next, driver, strategy, selector)) as Element[];
+  }
+
+  private async _find(
+    multiple: false,
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string,
+  ): Promise<Element>;
+  private async _find(
+    multiple: true,
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string,
+  ): Promise<Element[]>;
+  private async _find(
+    multiple: boolean,
+    next: NextPluginCallback,
+    driver: ExternalDriver,
+    strategy: string,
+    selector: string,
+  ): Promise<Element | Element[]> {
+    if (
+      !this.translationEnabled ||
+      strategy.toLowerCase() !== 'xpath' ||
+      !driver.getCurrentContext ||
+      (await driver.getCurrentContext()) !== 'NATIVE_APP'
+    ) {
+      return (await next()) as Element | Element[];
+    }
+    const xml = await this.getPageSource(null, driver, null, true);
+    const newSelector = transformQuery(selector, xml, multiple);
+
+    // if the selector was not able to be transformed, that means no elements were found that
+    // matched, so do the appropriate thing based on element vs elements
+    if (newSelector === null) {
+      this.log.warn(
+        `Selector was not able to be translated to underlying XML. Either the requested ` +
+          `element does not exist or there was an error in translation`,
+      );
+      if (multiple) {
+        return [];
+      }
+      throw new errors.NoSuchElementError();
+    }
+
+    this.log.info(`Selector was translated to: ${newSelector}`);
+
+    // otherwise just run the transformed query!
+    const finder = multiple ? 'findElements' : 'findElement';
+    return (await driver[finder](strategy, newSelector)) as Element | Element[];
+  }
+}
+
+function getPlatformName(driver: ExternalDriver): string {
+  return ((driver.caps as Record<string, unknown>)?.platformName as string) || '';
+}

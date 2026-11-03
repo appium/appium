@@ -1,0 +1,121 @@
+---
+title: Mobile JSON Wire Protocol
+---
+<style>
+  ul[data-md-component="toc"] .md-nav {
+    display: none;
+  }
+</style>
+
+The following is a list of legacy [Mobile JSON Wire Protocol (MJSONWP)](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)
+endpoints supported in Appium.
+
+### getRotation
+
+```
+GET /session/:sessionId/rotation
+```
+
+> MJSONWP documentation: [Device Rotation](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation)
+
+Retrieves the current spatial orientation of the device under test.
+
+!!! warning "Deprecated"
+
+    Please use [`getAppiumRotation`](./appium.md#getappiumrotation) instead
+
+#### Response
+
+`Rotation` - an object with the following properties:
+
+|Name|Description|Type|
+|--|--|--|
+|`x`|Degrees by which the device is rotated on its X axis|number|
+|`y`|Degrees by which the device is rotated on its Y axis|number|
+|`z`|Degrees by which the device is rotated on its Z axis|number|
+
+### setRotation
+
+```
+POST /session/:sessionId/rotation
+```
+
+> MJSONWP documentation: [Device Rotation](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-rotation)
+
+Sets the spatial orientation of the device under test.
+
+!!! warning "Deprecated"
+
+    Please use [`setAppiumRotation`](./appium.md#setappiumrotation) instead
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`x`|Degrees by which the device is rotated on its X axis|number|
+|`y`|Degrees by which the device is rotated on its Y axis|number|
+|`z`|Degrees by which the device is rotated on its Z axis|number|
+
+#### Response
+
+`null`
+
+### getCurrentContext
+
+```
+GET /session/:sessionId/context
+```
+
+> MJSONWP documentation: [Webviews and Other Contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)
+
+Retrieves the active application context.
+
+!!! warning "Deprecated"
+
+    Please use [`getCurrentAppiumContext`](./appium.md#getcurrentappiumcontext) instead
+
+#### Response
+
+`string` - the name of the active context
+
+### setContext
+
+```
+POST /session/:sessionId/context
+```
+
+> MJSONWP documentation: [Webviews and Other Contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)
+
+Sets an application context as the active context.
+
+!!! warning "Deprecated"
+
+    Please use [`setAppiumContext`](./appium.md#setappiumcontext) instead
+
+#### Parameters
+
+|Name|Description|Type|
+|--|--|--|
+|`name`|Name of the context to set as the active one|string|
+
+#### Response
+
+`null`
+
+### getContexts
+
+```
+GET /session/:sessionId/contexts
+```
+
+> MJSONWP documentation: [Webviews and Other Contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)
+
+Retrieves all available application contexts.
+
+!!! warning "Deprecated"
+
+    Please use [`getAppiumContexts`](./appium.md#getappiumcontexts) instead
+
+#### Response
+
+`string[]` - the names of available contexts

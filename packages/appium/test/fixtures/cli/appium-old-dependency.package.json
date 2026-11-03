@@ -1,0 +1,6 @@
+{
+  "name": "my-project",
+  "dependencies": {
+    "appium": "next"
+  }
+}

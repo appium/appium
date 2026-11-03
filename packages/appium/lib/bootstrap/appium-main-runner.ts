@@ -1,0 +1,130 @@
+import type {ServerOpts} from '@appium/http-server';
+import {util} from '@appium/support';
+import type {AppiumServer} from '@appium/types';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+} from 'appium/types/index.js';
+
+import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import type {InitResult, ServerInitData} from './init-types.js';
+import {buildServerOpts, createAppiumServer, determineAppiumHomeSource, logStartupInfo} from './main-helpers.js';
+
+const MAX_SERVER_PROCESS_LISTENERS = 100;
+
+/**
+ * Starts the Appium HTTP server after {@link AppiumInitializer.init}: loads drivers/plugins, binds, signals.
+ */
+export class AppiumMainRunner {
+  /**
+   * For server init: builds listeners and returns the server.
+   * For non-server commands, `initResult` is empty and this resolves to `undefined`.
+   *
+   * @param initResult - Output of {@link AppiumInitializer.init}
+   * @param args - Original args (used to describe `appiumHome` source in logs)
+   */
+  async run<
+    Cmd extends CliCommand = CliCommandServer,
+    SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
+  >(
+    initResult: InitResult<Cmd>,
+    args?: Args<Cmd, SubCmd>,
+  ): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
+    if (util.isEmpty(initResult)) {
+      return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
+    }
+
+    const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} = initResult as ServerInitData;
+
+    const pluginClasses = await getActivePlugins(
+      pluginConfig,
+      parsedArgs.pluginsImportChunkSize,
+      parsedArgs.usePlugins,
+    );
+    for (const [pluginClass, name] of pluginClasses) {
+      appiumDriver.pluginClasses.set(pluginClass, name);
+    }
+
+    await logStartupInfo(parsedArgs);
+
+    appiumDriver.configureGlobalFeatures();
+    // the rules are enforced by the shared app download helper of every driver
+    appiumDriver.helpers.setAppUrlRules(parsedArgs.appUrlRules);
+
+    const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
+    logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);
+
+    const driverClasses = await getActiveDrivers(
+      driverConfig,
+      parsedArgs.driversImportChunkSize,
+      parsedArgs.useDrivers,
+    );
+    const {serverOpts, normalizedBasePath} = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
+
+    const server = await this.startHttpServer(serverOpts, appiumDriver, normalizedBasePath);
+    if (!server) {
+      return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
+    }
+
+    this.warnIfCorsEnabled(serverOpts);
+    appiumDriver.server = server;
+
+    this.attachSignalHandlers(appiumDriver, server);
+
+    driverConfig.print();
+    pluginConfig.print([...pluginClasses.values()]);
+
+    return server as Cmd extends CliCommandServer ? AppiumServer : void;
+  }
+
+  private async startHttpServer(
+    serverOpts: ServerOpts,
+    appiumDriver: ServerInitData['appiumDriver'],
+    normalizedBasePath: string,
+  ): Promise<AppiumServer | undefined> {
+    try {
+      return await createAppiumServer(serverOpts, appiumDriver, normalizedBasePath);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack : undefined;
+      logger.error(
+        `Could not configure Appium server. It's possible that a driver or plugin tried ` +
+          `to update the server and failed. Original error: ${message}`,
+      );
+      logger.debug(stack);
+      process.exit(1);
+      return undefined;
+    }
+  }
+
+  private warnIfCorsEnabled(serverOpts: ServerOpts): void {
+    if (serverOpts.allowCors) {
+      logger.warn(
+        'You have enabled CORS requests from any host. Be careful not ' +
+          'to visit sites which could maliciously try to start Appium ' +
+          'sessions on your machine',
+      );
+    }
+  }
+
+  private attachSignalHandlers(appiumDriver: ServerInitData['appiumDriver'], server: AppiumServer): void {
+    process.setMaxListeners(MAX_SERVER_PROCESS_LISTENERS);
+    for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+      process.once(signal, async function onSignal() {
+        logger.info(`Received ${signal} - shutting down`);
+        try {
+          await appiumDriver.shutdown(`The process has received ${signal} signal`);
+          await server.close();
+          process.exit(0);
+        } catch (e: unknown) {
+          logger.warn(e);
+          process.exit(1);
+        }
+      });
+    }
+  }
+}

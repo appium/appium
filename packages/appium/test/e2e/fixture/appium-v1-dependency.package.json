@@ -1,0 +1,6 @@
+{
+  "name": "my-project",
+  "dependencies": {
+    "appium": "1.0.0"
+  }
+}

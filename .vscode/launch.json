@@ -1,0 +1,50 @@
+{
+  "configurations": [
+    {
+      "args": [
+        "--log-level=debug"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "_FORCE_LOGS": "1"
+      },
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Run Appium",
+      "program": "${workspaceFolder}/node_modules/.bin/appium",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "sourceMaps": true,
+      "type": "node"
+    },
+    {
+      "args": [
+        "--colors",
+        "--no-timeout",
+        "${file}"
+      ],
+      "autoAttachChildProcesses": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Test Current File w/ Mocha",
+      "program": "${workspaceFolder}/node_modules/.bin/mocha",
+      "request": "launch",
+      "runtimeArgs": [
+        "--require",
+        "ts-node/register"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/mocha/**",
+        "**/node_modules/lodash/**",
+        "**/node_modules/ts-node/**"
+      ],
+      "sourceMaps": true,
+      "type": "node"
+    }
+  ],
+  "version": "0.2.0"
+}

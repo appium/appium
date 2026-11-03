@@ -1,0 +1,120 @@
+import type {Position, Rect, Size} from '@appium/types';
+import {errors} from 'appium/driver.js';
+
+import type {FakeDriver} from '../driver.js';
+import type {FakeElement} from '../fake-element.js';
+
+/** Resolve element ids to FakeElements; throws StaleElementReferenceError if any id is missing. */
+export function getElements(this: FakeDriver, elementIds: string[]): FakeElement[] {
+  for (const elId of elementIds) {
+    if (!(elId in this.elMap)) {
+      throw new errors.StaleElementReferenceError();
+    }
+  }
+  return elementIds.map((e) => this.elMap[e]);
+}
+
+/** getElement. */
+export function getElement(this: FakeDriver, elementId: string): FakeElement {
+  return this.getElements([elementId])[0];
+}
+
+/** getName. */
+export async function getName(this: FakeDriver, elementId: string): Promise<string> {
+  const el = this.getElement(elementId);
+  return el.tagName;
+}
+
+/** elementDisplayed. */
+export async function elementDisplayed(this: FakeDriver, elementId: string): Promise<boolean> {
+  const el = this.getElement(elementId);
+  return el.isVisible();
+}
+
+/** elementEnabled. */
+export async function elementEnabled(this: FakeDriver, elementId: string): Promise<boolean> {
+  const el = this.getElement(elementId);
+  return el.isEnabled();
+}
+
+/** elementSelected. */
+export async function elementSelected(this: FakeDriver, elementId: string): Promise<boolean> {
+  const el = this.getElement(elementId);
+  return el.isSelected();
+}
+
+/** setValue. */
+export async function setValue(this: FakeDriver, keys: string | string[], elementId: string): Promise<void> {
+  const value = Array.isArray(keys) ? keys.join('') : keys;
+  const el = this.getElement(elementId);
+  // Only MockInputField supports value in the fake app XML.
+  if (el.type !== 'MockInputField') {
+    throw new errors.InvalidElementStateError();
+  }
+  el.setAttr('value', value);
+}
+
+/** getText. */
+export async function getText(this: FakeDriver, elementId: string): Promise<string> {
+  const el = this.getElement(elementId);
+  return el.getAttr('value');
+}
+
+/** clear. */
+export async function clear(this: FakeDriver, elementId: string): Promise<void> {
+  await this.setValue('', elementId);
+}
+
+/** click. */
+export async function click(this: FakeDriver, elementId: string): Promise<void> {
+  this.assertNoAlert();
+  const el = this.getElement(elementId);
+  if (!el.isVisible()) {
+    throw new errors.InvalidElementStateError();
+  }
+  el.click();
+  this.focusedElId = elementId;
+}
+
+/** Protocol order: attribute name, then element id (from route /attribute/:name). */
+export async function getAttribute(this: FakeDriver, attributeName: string, elementId: string): Promise<string> {
+  const el = this.getElement(elementId);
+  return el.getAttr(attributeName);
+}
+
+/** getElementRect. */
+export async function getElementRect(this: FakeDriver, elementId: string): Promise<Rect> {
+  const el = this.getElement(elementId);
+  return el.getElementRect();
+}
+
+/** getSize. */
+export async function getSize(this: FakeDriver, elementId: string): Promise<Size> {
+  const el = this.getElement(elementId);
+  return el.getSize();
+}
+
+/** equalsElement. */
+export async function equalsElement(this: FakeDriver, elementIdA: string, elementIdB: string): Promise<boolean> {
+  const el1 = this.getElement(elementIdA);
+  const el2 = this.getElement(elementIdB);
+  return el1.equals(el2);
+}
+
+/** Protocol order: property name, then element id. Requires webview context. */
+export async function getCssProperty(this: FakeDriver, propertyName: string, elementId: string): Promise<string> {
+  this.assertWebviewContext();
+  const el = this.getElement(elementId);
+  return el.getCss(propertyName) ?? '';
+}
+
+/** getLocation. */
+export async function getLocation(this: FakeDriver, elementId: string): Promise<Position> {
+  const el = this.getElement(elementId);
+  return el.getLocation();
+}
+
+/** getLocationInView. */
+export async function getLocationInView(this: FakeDriver, elementId: string): Promise<Position> {
+  return this.getLocation(elementId);
+}

@@ -1,0 +1,71 @@
+{
+  "name": "@appium/relaxed-caps-plugin",
+  "version": "4.0.0-beta.6",
+  "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
+  "description": "An Appium plugin that loosens requirements for vendor prefixes on caps",
+  "keywords": [
+    "android",
+    "automation",
+    "firefoxos",
+    "ios",
+    "javascript",
+    "selenium",
+    "testing",
+    "webdriver"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/relaxed-caps-plugin"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "build/lib",
+    "lib",
+    "tsconfig.json"
+  ],
+  "type": "module",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:smoke": "node ./build/lib/index.js --smoke-test",
+    "test:unit": "node --test --enable-source-maps \"./build/test/unit/**/*.spec.*js\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@appium/types": "2.0.0-beta.5"
+  },
+  "peerDependencies": {
+    "appium": "^4.0.0-beta.0"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
+    "npm": ">=10"
+  },
+  "appium": {
+    "pluginName": "relaxed-caps",
+    "mainClass": "RelaxedCapsPlugin"
+  },
+  "tags": [
+    "appium"
+  ]
+}

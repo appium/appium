@@ -1,0 +1,232 @@
+import type {WriteStream} from 'node:fs';
+import {isIPv6} from 'node:net';
+import type {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
+
+import type {HTTPHeaders} from '@appium/types';
+import axios, {type Method, type RawAxiosRequestConfig} from 'axios';
+
+import {fs} from './fs.js';
+import {
+  closeStream,
+  DEFAULT_FILE_FIELD_NAME,
+  DEFAULT_TIMEOUT_MS,
+  toAxiosAuth,
+  uploadFileToHttp,
+} from './internal/index.js';
+import log from './logger.js';
+import {Timer} from './timing.js';
+import {isPlainObject, toReadableSizeString} from './util.js';
+
+/**
+ * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
+ * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number).
+ * RESERVED, NO_STATUS_RECEIVED, ABNORMAL_CLOSURE and TLS_HANDSHAKE are reported by close events
+ * but must not be sent in a close frame.
+ */
+export const WebSocketCloseCode = {
+  NORMAL_CLOSURE: 1000,
+  GOING_AWAY: 1001,
+  PROTOCOL_ERROR: 1002,
+  UNSUPPORTED_DATA: 1003,
+  RESERVED: 1004,
+  NO_STATUS_RECEIVED: 1005,
+  ABNORMAL_CLOSURE: 1006,
+  INVALID_PAYLOAD: 1007,
+  POLICY_VIOLATION: 1008,
+  MESSAGE_TOO_BIG: 1009,
+  MANDATORY_EXTENSION: 1010,
+  INTERNAL_ERROR: 1011,
+  SERVICE_RESTART: 1012,
+  TRY_AGAIN_LATER: 1013,
+  BAD_GATEWAY: 1014,
+  TLS_HANDSHAKE: 1015,
+} as const;
+// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+export const MIN_APPLICATION_CLOSE_CODE = 3000;
+export const MAX_APPLICATION_CLOSE_CODE = 4999;
+
+/** Common options for {@linkcode uploadFile} and {@linkcode downloadFile}. */
+export interface NetOptions {
+  /** Whether to log the actual download performance (e.g. timings and speed). Defaults to true. */
+  isMetered?: boolean;
+  /** Authentication credentials */
+  auth?: AuthCredentials;
+}
+
+/** Basic auth credentials; used by {@linkcode NetOptions}. */
+export interface AuthCredentials {
+  /** Non-empty user name (or use `username` for axios-style) */
+  user?: string;
+  /** Non-empty password (or use `password` for axios-style) */
+  pass?: string;
+  username?: string;
+  password?: string;
+}
+
+/** Specific options for {@linkcode downloadFile}. */
+export interface DownloadOptions extends NetOptions {
+  /** Request timeout in milliseconds; defaults to {@linkcode DEFAULT_TIMEOUT_MS} */
+  timeout?: number;
+  /** Request headers mapping */
+  headers?: Record<string, unknown>;
+}
+
+/** Options for {@linkcode uploadFile} when the remote uses the `http(s)` protocol. */
+export interface HttpUploadOptions extends NetOptions {
+  /** Additional request headers */
+  headers?: HTTPHeaders;
+  /** HTTP method for file upload. Defaults to 'POST'. */
+  method?: Method;
+  /** Request timeout in milliseconds; defaults to {@linkcode DEFAULT_TIMEOUT_MS} */
+  timeout?: number;
+  /**
+   * Name of the form field containing the file. Any falsy value uses non-multipart upload.
+   * Defaults to 'file'.
+   */
+  fileFieldName?: string;
+  /**
+   * Additional form fields. Only considered if `fileFieldName` is set.
+   * `Buffer` values are not supported - native FormData always sends a `Blob`/`Buffer` value
+   * as a file attachment, not a plain field; pass a `string` instead, or a `Blob` if a file
+   * attachment is actually intended.
+   */
+  formFields?: Record<string, unknown> | [string, unknown][];
+}
+
+type HttpRemoteUri = `http://${string}` | `https://${string}`;
+
+/**
+ * Formats a hostname for interpolation into a URL authority.
+ *
+ * Brackets bare IPv6 literals; leaves IPv4 addresses, DNS names, and already-bracketed
+ * hosts unchanged. This does not validate or normalize the hostname or a complete URL.
+ *
+ * @param hostname - Hostname without a scheme, port, or path
+ * @returns Hostname with brackets if it is a bare IPv6 literal
+ */
+export function formatHostnameForUrl(hostname: string): string {
+  return isIPv6(hostname) ? `[${hostname}]` : hostname;
+}
+
+/** Uploads the given file to a remote location via HTTP(S). */
+export async function uploadFile(
+  localPath: string,
+  remoteUri: HttpRemoteUri,
+  uploadOptions?: HttpUploadOptions,
+): Promise<void>;
+export async function uploadFile(
+  localPath: string,
+  remoteUri: string,
+  uploadOptions?: HttpUploadOptions,
+): Promise<void>;
+export async function uploadFile(
+  localPath: string,
+  remoteUri: string,
+  uploadOptions: HttpUploadOptions = {},
+): Promise<void> {
+  if (!(await fs.exists(localPath))) {
+    throw new Error(`'${localPath}' does not exist or is not accessible`);
+  }
+
+  const {isMetered = true} = uploadOptions;
+  const url = new URL(remoteUri);
+  const {size} = await fs.stat(localPath);
+  if (isMetered) {
+    log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
+  }
+  const timer = new Timer().start();
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error(
+      `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
+        `Unsupported remote protocol '${url.protocol}'. ` +
+        `Only http/https protocols are supported.`,
+    );
+  }
+  // Matches uploadFileToHttp()'s own default: only an absent name becomes the multipart default,
+  // so an explicitly falsy one (e.g. `null`) still means a raw body that needs Content-Length.
+  const fileFieldName =
+    uploadOptions.fileFieldName === undefined ? DEFAULT_FILE_FIELD_NAME : uploadOptions.fileFieldName;
+  if (!fileFieldName) {
+    uploadOptions.headers = {
+      ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
+      'Content-Length': size,
+    };
+  }
+  await uploadFileToHttp({localPath, url, options: uploadOptions, log});
+  if (isMetered) {
+    log.info(
+      `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
+        `${timer.getDuration().asSeconds.toFixed(3)}s`,
+    );
+  }
+}
+
+/**
+ * Downloads the given file via HTTP(S).
+ *
+ * @throws {Error} If download operation fails
+ */
+export async function downloadFile(
+  remoteUrl: string,
+  dstPath: string,
+  downloadOptions: DownloadOptions = {},
+): Promise<void> {
+  const {isMetered = true, auth, timeout = DEFAULT_TIMEOUT_MS, headers} = downloadOptions;
+
+  const requestOpts: RawAxiosRequestConfig = {
+    url: remoteUrl,
+    responseType: 'stream',
+    timeout,
+  };
+  const axiosAuth = toAxiosAuth(auth);
+  if (axiosAuth) {
+    requestOpts.auth = axiosAuth;
+  }
+  if (isPlainObject(headers)) {
+    requestOpts.headers = headers as RawAxiosRequestConfig['headers'];
+  }
+
+  const timer = new Timer().start();
+  let responseStream: Readable | undefined;
+  let writer: WriteStream | undefined;
+  let destinationOpened = false;
+  try {
+    const response = await axios(requestOpts);
+    responseStream = response.data as Readable;
+    // opening the file first would leave an empty destination behind when the request fails
+    writer = fs.createWriteStream(dstPath);
+    writer.once('open', () => {
+      destinationOpened = true;
+    });
+    // The HTTP stream detects truncated transfers. Axios may decompress the body,
+    // so the saved size cannot be compared with the wire Content-Length.
+    await pipeline(responseStream, writer);
+  } catch (err) {
+    if (writer) {
+      responseStream?.destroy();
+      await closeStream(writer);
+      if (destinationOpened) {
+        // Never recursively remove a caller-supplied path, including one that failed to open.
+        await fs.unlink(dstPath).catch((cleanupError) => {
+          log.warn(`Cannot remove incomplete download at '${dstPath}': ${cleanupError}`);
+        });
+      }
+    }
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
+  }
+
+  const {size} = await fs.stat(dstPath);
+  if (isMetered) {
+    const secondsElapsed = timer.getDuration().asSeconds;
+    log.debug(
+      `${remoteUrl} (${toReadableSizeString(size)}) ` +
+        `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`,
+    );
+    if (secondsElapsed >= 2) {
+      const bytesPerSec = Math.floor(size / secondsElapsed);
+      log.debug(`Approximate download speed: ${toReadableSizeString(bytesPerSec)}/s`);
+    }
+  }
+}

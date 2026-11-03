@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "rootDir": ".",
+    "outDir": "build",
+    "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "paths": {
+      "appium": ["../appium"],
+      "appium/driver.js": ["../appium/driver.d.ts"],
+      "appium/plugin.js": ["../appium/plugin.d.ts"]
+    }
+  },
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
+  "include": ["lib", "test"],
+  "references": [
+    {"path": "../base-plugin"},
+    {"path": "../driver-test-support"},
+    {"path": "../logger"},
+    {"path": "../support"},
+    {"path": "../types"},
+    {"path": "../plugin-test-support"}
+  ]
+}

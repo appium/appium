@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import {after, before, describe, it} from 'node:test';
+
+import {assertOutputContains, getDynamicLogger, restoreWriters, setupWriters} from './helpers.js';
+
+describe('logger with force log', function () {
+  let writers: ReturnType<typeof setupWriters>;
+  let log: ReturnType<typeof getDynamicLogger>;
+
+  before(function () {
+    writers = setupWriters();
+    log = getDynamicLogger(true, true);
+    log.level = 'silly';
+  });
+
+  after(function () {
+    restoreWriters(writers);
+  });
+
+  it('should not rewrite log levels even during testing', function () {
+    log.silly('silly');
+    assertOutputContains(writers, 'silly');
+    log.verbose('verbose');
+    assertOutputContains(writers, 'verbose');
+    log.verbose('debug');
+    assertOutputContains(writers, 'debug');
+    log.info('info');
+    assertOutputContains(writers, 'info');
+    log.http('http');
+    assertOutputContains(writers, 'http');
+    log.warn('warn');
+    assertOutputContains(writers, 'warn');
+    log.error('error');
+    assertOutputContains(writers, 'error');
+    assert.throws(() => {
+      throw log.errorWithException('msg');
+    }, /msg/);
+    assertOutputContains(writers, 'error');
+    assertOutputContains(writers, 'msg');
+  });
+});

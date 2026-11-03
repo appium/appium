@@ -1,0 +1,285 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [3.0.0-beta.7](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.6...@appium/storage-plugin@3.0.0-beta.7) (2026-10-31)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [3.0.0-beta.6](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.5...@appium/storage-plugin@3.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+
+### Bug Fixes
+
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+
+
+## [3.0.0-beta.5](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.4...@appium/storage-plugin@3.0.0-beta.5) (2026-10-18)
+
+### Bug Fixes
+
+* **storage-plugin:** contain upload event socket errors ([#22963](https://github.com/appium/appium/issues/22963)) ([139f086](https://github.com/appium/appium/commit/139f086941acb06a189892887e829639e525fee8))
+* **storage-plugin:** preserve pending upload sockets across retries ([#22948](https://github.com/appium/appium/issues/22948)) ([d8fff40](https://github.com/appium/appium/commit/d8fff407cfa8a005de0dfe65df6c6ed8e715245e))
+* **storage-plugin:** reject concurrent WebSocket uploads ([#22962](https://github.com/appium/appium/issues/22962)) ([9940156](https://github.com/appium/appium/commit/9940156d1a316619d2709c91d216e1cb3e81ef43))
+* **storage-plugin:** reject reserved partial-file names ([#22959](https://github.com/appium/appium/issues/22959)) ([ef5468c](https://github.com/appium/appium/commit/ef5468ceac8dec3c26748211a21dc52dbd007037))
+
+
+## [3.0.0-beta.4](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.3...@appium/storage-plugin@3.0.0-beta.4) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **storage-plugin:** the storage routes (and the stream/events websocket paths) were always mounted at the server root, ignoring --base-path. They are now prefixed with the base path, e.g. /wd/hub/appium/storage/add.
+
+### Bug Fixes
+
+* **storage-plugin:** mount routes under the server base path ([#22906](https://github.com/appium/appium/issues/22906)) ([8297d31](https://github.com/appium/appium/commit/8297d31fb18b4d0b9e2b377332cfc680281ec6ed))
+
+
+## [3.0.0-beta.3](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.2...@appium/storage-plugin@3.0.0-beta.3) (2026-10-05)
+
+### Bug Fixes
+
+* **storage-plugin:** reject storage file names that start with a dot ([#22863](https://github.com/appium/appium/issues/22863)) ([1b85255](https://github.com/appium/appium/commit/1b852557a3cdcdcad1444fbf4ade7f108904973e))
+
+
+## [3.0.0-beta.2](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.1...@appium/storage-plugin@3.0.0-beta.2) (2026-09-27)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [3.0.0-beta.1](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.0...@appium/storage-plugin@3.0.0-beta.1) (2026-09-19)
+
+### Bug Fixes
+
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([b09efc3](https://github.com/appium/appium/commit/b09efc31c6967bbcf2c4314db9d2a0b6454fa8fb))
+
+
+## [3.0.0-beta.0](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.0...@appium/storage-plugin@3.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** @appium/support&#x27;s fs.glob option shape changed from the glob package&#x27;s GlobOptions to a smaller, @appium/support-owned GlobOptions interface. Supported fields: cwd, withFileTypes, absolute, lazy. Options like nodir/ignore/nocase are no longer supported directly — callers needing directory filtering can pass withFileTypes: true and filter on .isFile()/.isDirectory(); callers needing path exclusion can filter the returned array by pattern.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* backport diff from master ([#22749](https://github.com/appium/appium/issues/22749)) ([6323df1](https://github.com/appium/appium/commit/6323df1d7354f85cc631508f5cb6a3e35270d4bd))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+
+### Bug Fixes
+
+* address code review cleanups (plist, env memoize, test reuse) ([#22740](https://github.com/appium/appium/issues/22740)) ([0df8834](https://github.com/appium/appium/commit/0df883463812d57d44a0d6d80e9b88f124361934))
+* Address several TODOs ([#22762](https://github.com/appium/appium/issues/22762)) ([d6ef7e3](https://github.com/appium/appium/commit/d6ef7e3f1240f161df622c850aea06637f9d1078))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([bcf1c57](https://github.com/appium/appium/commit/bcf1c579997b8dbb8292b1a77583aeef40b11ba4))
+
+### Code Refactoring
+
+* **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+
+
+## [2.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.8...@appium/storage-plugin@2.0.0) (2026-08-24)
+
+### ⚠ BREAKING CHANGES
+
+* **storage-plugin:** @appium/storage-plugin is now an ESM-only package. It can no longer be loaded via CommonJS require(); consumers must use import or dynamic import(). Deep imports into the package&#x27;s internals are no longer possible — only the public entry point is exposed via exports.
+
+### Features
+
+* **storage-plugin:** Add route aliases ([#22558](https://github.com/appium/appium/issues/22558)) ([a551c38](https://github.com/appium/appium/commit/a551c3817156bbc7e06793227643a2d11c0c0259))
+* **storage-plugin:** Migrate to ESM ([#22590](https://github.com/appium/appium/issues/22590)) ([af8efc0](https://github.com/appium/appium/commit/af8efc0882b33e93d4188f4bd8f984da68ca5f2a))
+
+### Bug Fixes
+
+* **base-driver,storage-plugin:** redact sensitive payloads in debug logs ([#22549](https://github.com/appium/appium/issues/22549)) ([281e61c](https://github.com/appium/appium/commit/281e61c297f89e50a016051066cfcf808af9aaf2))
+
+
+## [1.1.8](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.7...@appium/storage-plugin@1.1.8) (2026-07-25)
+
+
+### Bug Fixes
+
+* typescript config ([#22540](https://github.com/appium/appium/issues/22540)) ([ea6a2e1](https://github.com/appium/appium/commit/ea6a2e117f56c1d7ff459378700494407c51608e))
+* Typescript references ([#22458](https://github.com/appium/appium/issues/22458)) ([fd70da7](https://github.com/appium/appium/commit/fd70da7ab407bf1f6fec8a3576b9a33f0aef9b69))
+
+
+
+## [1.1.7](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.6...@appium/storage-plugin@1.1.7) (2026-06-18)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.1.6](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.5...@appium/storage-plugin@1.1.6) (2026-06-18)
+
+
+### Bug Fixes
+
+* **storage-plugin:** add fs.sanitizeName for the delete request as well ([#22362](https://github.com/appium/appium/issues/22362)) ([5fee017](https://github.com/appium/appium/commit/5fee01752f2782e96fbe64fd13520b433d4a7535))
+
+
+
+## [1.1.5](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.4...@appium/storage-plugin@1.1.5) (2026-05-31)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.1.4](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.3...@appium/storage-plugin@1.1.4) (2026-05-07)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.1.3](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.2...@appium/storage-plugin@1.1.3) (2026-05-06)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.1.2](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.1...@appium/storage-plugin@1.1.2) (2026-05-06)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.1.1](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.0...@appium/storage-plugin@1.1.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* All the rest of linter warnings ([#22183](https://github.com/appium/appium/issues/22183)) ([efe167f](https://github.com/appium/appium/commit/efe167f59a0a19515b78a53346e5d0b3fc4c744c))
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.6...@appium/storage-plugin@1.1.0) (2026-04-09)
+
+
+### Features
+
+* use exact version for dependencies in monorepo packages instead of ^ ([#22090](https://github.com/appium/appium/issues/22090)) ([86c8f23](https://github.com/appium/appium/commit/86c8f23a670d0bbc2d359a8235828606bd36e6aa))
+
+
+
+## [1.0.6](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.5...@appium/storage-plugin@1.0.6) (2026-03-08)
+
+
+### Bug Fixes
+
+* Type imports ([#22025](https://github.com/appium/appium/issues/22025)) ([2f27425](https://github.com/appium/appium/commit/2f27425ea300ca1af1c1da6e4be68d48e7a94346))
+
+
+
+## [1.0.5](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.4...@appium/storage-plugin@1.0.5) (2026-01-26)
+
+
+### Bug Fixes
+
+* apply npm run lint:fix ([#21867](https://github.com/appium/appium/issues/21867)) ([5e28714](https://github.com/appium/appium/commit/5e28714442cf59ee35b085e01e82c3f5483891fd))
+
+
+
+## [1.0.4](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.3...@appium/storage-plugin@1.0.4) (2025-12-04)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.0.3](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.2...@appium/storage-plugin@1.0.3) (2025-11-12)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.0.2](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.1...@appium/storage-plugin@1.0.2) (2025-10-08)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.0.1](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.0...@appium/storage-plugin@1.0.1) (2025-09-09)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [1.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.0.0-rc.1...@appium/storage-plugin@1.0.0) (2025-08-18)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## 1.0.0-rc.1 (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
+## [0.1.3](https://github.com/appium/appium/compare/@appium/storage-plugin@0.1.2...@appium/storage-plugin@0.1.3) (2025-06-01)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [0.1.2](https://github.com/appium/appium/compare/@appium/storage-plugin@0.1.1...@appium/storage-plugin@0.1.2) (2025-04-25)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [0.1.1](https://github.com/appium/appium/compare/@appium/storage-plugin@0.1.0...@appium/storage-plugin@0.1.1) (2025-03-17)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## 0.1.0 (2025-03-11)
+
+
+### Features
+
+* Add storage plugin ([#21075](https://github.com/appium/appium/issues/21075)) ([ba4aa39](https://github.com/appium/appium/commit/ba4aa394d1b6676cc29644e7faa3b0590552f303))
+* **storage-plugin:** Tune the files keeping behaviour ([#21086](https://github.com/appium/appium/issues/21086)) ([15280b8](https://github.com/appium/appium/commit/15280b80d2af6b3bdf6bf2905472b05b7bca1c1d))

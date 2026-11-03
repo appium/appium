@@ -1,0 +1,108 @@
+import {readFileSync, statSync} from 'node:fs';
+
+import {ArgumentTypeError} from 'argparse';
+
+/**
+ * This module provides transformer functions for CLI arguments.
+ *
+ * Use case: config schemas can accept richer types (arrays/objects), but CLI
+ * values are strings. Transformers convert string input into those richer types.
+ */
+
+/**
+ * Splits a CSV string into an array
+ */
+export function parseCsvLine(value: string): string[] {
+  return value
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
+export const transformers = {
+  /**
+   * Given a CSV-style string or pathname, parse it into an array.
+   * The file can also be split on newlines.
+   */
+  csv: (csvOrPath: string): string[] => {
+    let csv = csvOrPath;
+    let loadedFromFile = false;
+    // Value could be a single CSV token or a filepath; attempt file first.
+    if (isRegularFile(csvOrPath)) {
+      try {
+        csv = readFileSync(csvOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${(err as Error).message}`);
+      }
+      loadedFromFile = true;
+    }
+    try {
+      return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
+    } catch (err) {
+      const msg = loadedFromFile
+        ? `The provided value of '${csvOrPath}' must be a valid CSV`
+        : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
+      throw new TypeError(`${msg}. Original error: ${(err as Error).message}`, {cause: err});
+    }
+  },
+
+  /**
+   * Parse a string which could be a path to a JSON file or a JSON string.
+   */
+  json: (jsonOrPath: string): Record<string, any> => {
+    let json = jsonOrPath;
+    let loadedFromFile = false;
+    if (isRegularFile(jsonOrPath)) {
+      try {
+        // Intentionally sync: argparse type hooks are synchronous.
+        json = readFileSync(jsonOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file '${jsonOrPath}': ${(err as Error).message}`);
+      }
+      loadedFromFile = true;
+    }
+    try {
+      return JSON.parse(json);
+    } catch (e) {
+      const msg = loadedFromFile ? `'${jsonOrPath}' must be a valid JSON` : `The provided value must be a valid JSON`;
+      throw new TypeError(`${msg}. Original error: ${(e as Error).message}`, {cause: e});
+    }
+  },
+} as const;
+
+export type AppiumCliTransformerName = keyof typeof transformers;
+
+export interface AppiumJSONSchemaKeywords {
+  appiumCliDest?: string;
+  appiumCliDescription?: string;
+  appiumCliAliases?: string[];
+  appiumCliIgnored?: boolean;
+  appiumCliTransformer?: AppiumCliTransformerName;
+  appiumDeprecated?: boolean;
+}
+
+/**
+ * Whether `filepath` is an existing regular file.
+ *
+ * Directories are not files: `--allow-insecure adb_shell` names a feature, not the `./adb_shell`
+ * folder. Any other stat failure means "not a file" too, since these values are usually not paths
+ * at all (a long JSON blob fails with ENAMETOOLONG, not ENOENT).
+ */
+function isRegularFile(filepath: string): boolean {
+  try {
+    return statSync(filepath).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Split a file by newline then calls {@link parseCsvLine} on each line.
+ */
+function parseCsvFile(value: string): string[] {
+  return value
+    .split(/\r?\n/)
+    .map((v) => v.trim())
+    .filter(Boolean)
+    .flatMap(parseCsvLine);
+}

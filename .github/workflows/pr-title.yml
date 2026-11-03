@@ -1,0 +1,10 @@
+name: Conventional Commits
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  lint:
+    uses: appium/appium-workflows/.github/workflows/pr-title.yml@main
+    with:
+      config-preset: angular

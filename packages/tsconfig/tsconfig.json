@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "stripInternal": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "strict": false,
+    "types": ["node"]
+  }
+}

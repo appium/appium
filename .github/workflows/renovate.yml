@@ -1,0 +1,28 @@
+name: Validate Renovate Configs
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/renovate.yml' # this file
+      - '.renovaterc.json'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/renovate.yml' # this file
+      - '.renovaterc.json'
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    name: Check Renovate Configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Validate Renovate Config
+        uses: rinchsan/renovate-config-validator@v0.2.1
+        with:
+          pattern: '.renovaterc.json'

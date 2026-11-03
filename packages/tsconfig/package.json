@@ -1,0 +1,46 @@
+{
+  "name": "@appium/tsconfig",
+  "version": "2.0.0-beta.1",
+  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
+  "description": "Shared TypeScript Config for Appium",
+  "keywords": [
+    "android",
+    "automation",
+    "firefoxos",
+    "ios",
+    "javascript",
+    "selenium",
+    "testing",
+    "webdriver"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/tsconfig"
+  },
+  "files": [
+    "tsconfig*.json"
+  ],
+  "type": "module",
+  "main": "tsconfig.json",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test:smoke": "node -e \"require('./tsconfig.json'); require('./tsconfig.plugin.json')\""
+  },
+  "dependencies": {
+    "@tsconfig/node22": "^22.0.0",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
+    "npm": ">=10"
+  }
+}

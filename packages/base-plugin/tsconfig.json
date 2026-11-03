@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "rootDir": ".",
+    "outDir": "build",
+    "types": ["node"]
+  },
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
+  "include": ["lib", "test"],
+  "references": [{"path": "../base-driver"}, {"path": "../logger"}, {"path": "../support"}, {"path": "../types"}]
+}

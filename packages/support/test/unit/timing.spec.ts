@@ -1,0 +1,80 @@
+import assert from 'node:assert/strict';
+import {afterEach, beforeEach, describe, it} from 'node:test';
+
+import {createSandbox} from 'sinon';
+
+import {timing} from '../../lib/index.js';
+
+describe('timing', function () {
+  let processMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;
+  let sandbox: ReturnType<typeof createSandbox>;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    if (processMock) {
+      processMock.verify();
+    }
+    sandbox.restore();
+  });
+
+  describe('bigint', {skip: typeof process.hrtime.bigint !== 'function'}, function () {
+    beforeEach(function () {
+      processMock = sandbox.mock(process.hrtime);
+    });
+
+    function setupMocks(once = false) {
+      if (once) {
+        processMock.expects('bigint').once().onFirstCall().returns(BigInt(1172941153404030));
+      } else {
+        processMock
+          .expects('bigint')
+          .twice()
+          .onFirstCall()
+          .returns(BigInt(1172941153404030))
+          .onSecondCall()
+          .returns(BigInt(1172951164887132));
+      }
+    }
+
+    it('should get a duration', function () {
+      setupMocks();
+
+      const timer = new timing.Timer().start();
+      const duration = timer.getDuration();
+      assert.strictEqual(typeof duration.nanos, 'number');
+    });
+    it('should get correct seconds', function () {
+      setupMocks();
+
+      const timer = new timing.Timer().start();
+      const duration = timer.getDuration();
+      assert.strictEqual(duration.asSeconds, 10.011483102);
+    });
+    it('should get correct milliseconds', function () {
+      setupMocks();
+
+      const timer = new timing.Timer().start();
+      const duration = timer.getDuration();
+      assert.strictEqual(duration.asMilliSeconds, 10011.483102);
+    });
+    it('should get correct nanoseconds', function () {
+      setupMocks();
+
+      const timer = new timing.Timer().start();
+      const duration = timer.getDuration();
+      assert.strictEqual(duration.asNanoSeconds, 10011483102);
+    });
+    it('should error if the timer was not started', function () {
+      const timer = new timing.Timer();
+      assert.throws(() => timer.getDuration(), /Unable to get duration/);
+    });
+    it('should error if passing in a non-bigint', function () {
+      const timer = new timing.Timer();
+      (timer as any)._startTime = 12345;
+      assert.throws(() => timer.getDuration(), /Unable to get duration/);
+    });
+  });
+});

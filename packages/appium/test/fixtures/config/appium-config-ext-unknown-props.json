@@ -1,0 +1,10 @@
+{
+  "server": {
+    "driver": {
+      "fake": {
+        "answer": 24,
+        "bubb": "rubb"
+      }
+    }
+  }
+}

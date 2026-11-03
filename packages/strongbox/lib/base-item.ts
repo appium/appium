@@ -1,0 +1,107 @@
+import {mkdir, readFile, unlink, writeFile} from 'node:fs/promises';
+import path from 'node:path';
+
+import type {Item, ItemEncoding, Strongbox, Value} from './index.js';
+import {slugify} from './util.js';
+
+/**
+ * Base item implementation
+ *
+ * @remarks This class is not intended to be instantiated directly
+ * @typeParam T - Type of data stored in the `Item`
+ */
+export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implements Item<T> {
+  /**
+   * Parent Strongbox instance
+   */
+  public readonly container: string;
+  /**
+   * Unique slugified identifier
+   */
+  public readonly id: string;
+  /**
+   * {@inheritdoc Item.value}
+   */
+  public readonly value: T | undefined;
+
+  /**
+   * {@inheritdoc Item.value}
+   */
+  protected _value?: T;
+
+  /**
+   * Slugifies the name
+   * @param name Name of instance
+   * @param parent Parent Strongbox
+   * @param encoding Defaults to `utf8`
+   */
+  constructor(
+    public readonly name: string,
+    parent: U,
+    public readonly encoding: ItemEncoding = 'utf8',
+  ) {
+    this.container = parent.container;
+    this.id = BaseItem.toFilePath(this.container, name);
+    Object.defineProperties(this, {
+      value: {
+        get() {
+          return this._value;
+        },
+        enumerable: true,
+      },
+      _value: {
+        enumerable: false,
+        writable: true,
+      },
+    });
+  }
+
+  /**
+   * Absolute filesystem path of the file backing an item: `container` + slugified `name`.
+   * Also used to convert a `name` to an `id`.
+   */
+  public static toFilePath(container: string, name: string): string {
+    return path.join(container, slugify(name));
+  }
+
+  /**
+   * {@inheritdoc Item.clear}
+   */
+  public async clear(): Promise<void> {
+    try {
+      await unlink(this.id);
+      this._value = undefined;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc Item.read}
+   */
+  public async read(): Promise<T | undefined> {
+    try {
+      this._value = (await readFile(this.id, {
+        encoding: this.encoding,
+      })) as T;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw e;
+      }
+    }
+    return this._value;
+  }
+
+  /**
+   * {@inheritdoc Item.write}
+   */
+  public async write(value: T): Promise<void> {
+    if (this._value !== value) {
+      await mkdir(path.dirname(this.id), {recursive: true});
+      await writeFile(this.id, value, this.encoding);
+      this._value = value;
+    }
+  }
+}

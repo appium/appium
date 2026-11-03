@@ -1,0 +1,22 @@
+server:
+  address: '0.0.0.0'
+  port: 31337
+  allow-insecure: []
+  base-path: /
+  log-level: info
+  log-timestamp: false
+  default-capabilities: {}
+  deny-insecure: []
+  keep-alive-timeout: 600
+  local-timezone: false
+  log: /tmp/appium.log
+  log-no-colors: false
+  long-stacktrace: false
+  no-perms-check: false
+  relaxed-security: true # not default
+  session-override: false
+  tmp: /tmp
+  use-drivers: []
+  use-plugins:
+    - all
+  webhook: 'http://0.0.0.0/hook'

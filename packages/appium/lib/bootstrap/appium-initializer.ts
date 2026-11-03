@@ -1,0 +1,233 @@
+import {console as supportConsole, util} from '@appium/support';
+import type {DriverOpts} from '@appium/types';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+  ParsedArgs,
+} from 'appium/types/index.js';
+
+import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
+import {injectAppiumSymlinks} from '../cli/extension-command.js';
+import {runExtensionCommand} from '../cli/extension.js';
+import {ArgParser, getParser} from '../cli/parser.js';
+import {runSetupCommand} from '../cli/setup-command.js';
+import {SERVER_SUBCOMMAND} from '../constants.js';
+import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import {init as logsinkInit} from '../logsink.js';
+import type {ErrorObject} from '../schema/ajv.js';
+import {
+  isDriverCommandArgs,
+  isExtensionCommandArgs,
+  isPluginCommandArgs,
+  isServerCommandArgs,
+  isSetupCommandArgs,
+} from '../schema/cli-args-guards.js';
+import {getDefaultsForSchema} from '../schema/schema.js';
+import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
+import {readConfigFile} from './config-file.js';
+import type {InitResult, PreConfigArgs} from './init-types.js';
+import {determineAppiumHomeSource, preflightChecks} from './main-helpers.js';
+import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers.js';
+import {getNonDefaultServerArgs, showConfig} from './startup-config.js';
+
+/**
+ * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.
+ */
+export class AppiumInitializer {
+  private throwInsteadOfExit = false;
+
+  /**
+   * Resolves Appium home, loads config, and either returns server-ready state for the server subcommand
+   * or performs setup/extension CLI work and returns an empty result.
+   *
+   * @param args - Optional programmatic args; when omitted, parses `process.argv`
+   */
+  async init<
+    Cmd extends CliCommand = CliCommandServer,
+    SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
+  >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
+    this.throwInsteadOfExit = false;
+
+    const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+    const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
+    await requireDir(appiumHome, false, appiumHomeSourceName);
+
+    adjustNodePath();
+
+    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+
+    const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
+    this.throwInsteadOfExit = throwInsteadOfExit;
+
+    const configResult = await readConfigFile(preConfigArgs.configFile);
+    this.assertConfigFileOk(configResult);
+
+    if (isServerCommandArgs(preConfigArgs)) {
+      return this.finishServerInit(
+        preConfigArgs,
+        configResult,
+        driverConfig,
+        pluginConfig,
+        appiumHome,
+        appiumHomeSourceName,
+      );
+    }
+
+    if (isSetupCommandArgs(preConfigArgs)) {
+      this.printValidationSummaries(driverConfig, pluginConfig);
+      await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
+      return {} as InitResult<Cmd>;
+    }
+
+    await requireDir(appiumHome, true, appiumHomeSourceName);
+    await this.runExtensionCliIfNeeded(preConfigArgs, driverConfig, pluginConfig);
+    return {} as InitResult<Cmd>;
+  }
+
+  private async parsePreConfigArgs<
+    Cmd extends CliCommand,
+    SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
+  >(args?: Args<Cmd, SubCmd>): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
+    const parser = await getParser();
+    let throwInsteadOfExit = false;
+
+    if (args) {
+      if (args.throwInsteadOfExit) {
+        throwInsteadOfExit = true;
+        delete args.throwInsteadOfExit;
+      }
+      const preConfigArgs = {
+        ...args,
+        subcommand: args.subcommand ?? SERVER_SUBCOMMAND,
+      } as PreConfigArgs;
+      ArgParser.normalizeServerArgs(preConfigArgs);
+      return {preConfigArgs, throwInsteadOfExit};
+    }
+
+    return {preConfigArgs: parser.parseArgs() as PreConfigArgs, throwInsteadOfExit};
+  }
+
+  private assertConfigFileOk(configResult: Awaited<ReturnType<typeof readConfigFile>>): void {
+    if (!util.isEmpty(configResult.errors)) {
+      let errorsListString: string;
+      if (configResult.reason) {
+        errorsListString =
+          typeof configResult.reason !== 'string'
+            ? configResult.reason.map((r) => r.error).join(', ')
+            : configResult.reason;
+      } else {
+        errorsListString = (configResult.errors as ErrorObject[])?.map((e) => e.message).join(', ');
+      }
+      throw new Error(`Errors in config file ${configResult.filepath}:\n ${errorsListString}`);
+    }
+  }
+
+  private async finishServerInit<Cmd extends CliCommand>(
+    preConfigArgs: PreConfigArgs,
+    configResult: Awaited<ReturnType<typeof readConfigFile>>,
+    driverConfig: ExtensionConfigs['driverConfig'],
+    pluginConfig: ExtensionConfigs['pluginConfig'],
+    appiumHome: string,
+    appiumHomeSourceName: string,
+  ): Promise<InitResult<Cmd>> {
+    const defaults = getDefaultsForSchema(false);
+    const serverArgs = defaultsDeep(
+      {},
+      preConfigArgs as Record<string, unknown>,
+      configResult.config?.server as Record<string, unknown> | undefined,
+      defaults as Record<string, unknown>,
+    ) as unknown as ParsedArgs<CliCommandServer>;
+
+    if (preConfigArgs.showConfig) {
+      showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
+      this.printValidationSummaries(driverConfig, pluginConfig);
+      return {} as InitResult<Cmd>;
+    }
+
+    if (preConfigArgs.showDebugInfo) {
+      await showDebugInfo({
+        driverConfig,
+        pluginConfig,
+        appiumHome,
+      });
+      this.printValidationSummaries(driverConfig, pluginConfig);
+      return {} as InitResult<Cmd>;
+    }
+
+    await logsinkInit(serverArgs);
+    // Deferred from loadExtensions() so these render through the now-active (Winston-backed) logger.
+    this.printValidationSummaries(driverConfig, pluginConfig);
+    await this.applyLogFilters(serverArgs);
+
+    if (!serverArgs.noPermsCheck) {
+      await requireDir(appiumHome, true, appiumHomeSourceName);
+    }
+
+    const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>);
+    appiumDriver.driverConfig = driverConfig;
+    await preflightChecks(serverArgs, this.throwInsteadOfExit);
+
+    return {
+      appiumDriver,
+      parsedArgs: serverArgs,
+      driverConfig,
+      pluginConfig,
+      appiumHome,
+    } as InitResult<Cmd>;
+  }
+
+  /** Renders each config's pending `loadExtensions()`-time validation summary via the raw logger. */
+  private printValidationSummaries(
+    driverConfig: ExtensionConfigs['driverConfig'],
+    pluginConfig: ExtensionConfigs['pluginConfig'],
+  ): void {
+    driverConfig.printValidationSummary(logger);
+    pluginConfig.printValidationSummary(logger);
+  }
+
+  private async applyLogFilters(serverArgs: ParsedArgs<CliCommandServer>): Promise<void> {
+    if (!serverArgs.logFilters) {
+      return;
+    }
+    const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(serverArgs.logFilters);
+    const argToLog = util.truncateString(JSON.stringify(serverArgs.logFilters), {length: 150});
+    if (!util.isEmpty(issues)) {
+      throw new Error(`The log filtering rules config ${argToLog} has issues: ` + JSON.stringify(issues, null, 2));
+    }
+    if (util.isEmpty(rules)) {
+      logger.warn(`Found no log filtering rules in the ${argToLog} config. ` + `Is that expected?`);
+    } else {
+      logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)}`);
+    }
+  }
+
+  private async runExtensionCliIfNeeded(
+    preConfigArgs: PreConfigArgs,
+    driverConfig: ExtensionConfigs['driverConfig'],
+    pluginConfig: ExtensionConfigs['pluginConfig'],
+  ): Promise<void> {
+    if (!isExtensionCommandArgs(preConfigArgs)) {
+      return;
+    }
+    if (isDriverCommandArgs(preConfigArgs)) {
+      await runExtensionCommand(preConfigArgs, driverConfig);
+    }
+    if (isPluginCommandArgs(preConfigArgs)) {
+      await runExtensionCommand(preConfigArgs, pluginConfig);
+    }
+
+    if (isDriverCommandArgs(preConfigArgs) || isPluginCommandArgs(preConfigArgs)) {
+      const cmd = isDriverCommandArgs(preConfigArgs) ? preConfigArgs.driverCommand : preConfigArgs.pluginCommand;
+      if (cmd === 'install') {
+        // Match the same command's own console so a non-fatal symlink error never lands on
+        // STDOUT under `--json` (unlike the raw npmlog logger, which isn't JSON-mode-aware).
+        const symlinkLog = new supportConsole.CliConsole({jsonMode: Boolean(preConfigArgs.json)});
+        await injectAppiumSymlinks(driverConfig, pluginConfig, symlinkLog);
+      }
+    }
+  }
+}

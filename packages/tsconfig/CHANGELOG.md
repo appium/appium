@@ -1,0 +1,193 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/tsconfig@2.0.0-beta.0...@appium/tsconfig@2.0.0-beta.1) (2026-10-05)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [2.0.0-beta.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.2.1...@appium/tsconfig@2.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([3516e50](https://github.com/appium/appium/commit/3516e50ce6d022f4c0dc539071c593bf2983325f))
+
+
+## [1.2.1](https://github.com/appium/appium/compare/@appium/tsconfig@1.2.0...@appium/tsconfig@1.2.1) (2026-08-24)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [1.2.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.1.2...@appium/tsconfig@1.2.0) (2026-07-25)
+
+
+### Features
+
+* **tsconfig:** hoist typescript version ([#22533](https://github.com/appium/appium/issues/22533)) ([f4d14c1](https://github.com/appium/appium/commit/f4d14c1969a61a77ca0184c53ee6ad7025cc845c))
+
+
+
+## [1.1.2](https://github.com/appium/appium/compare/@appium/tsconfig@1.1.1...@appium/tsconfig@1.1.2) (2026-03-08)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [1.1.1](https://github.com/appium/appium/compare/@appium/tsconfig@1.1.0...@appium/tsconfig@1.1.1) (2025-12-04)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [1.1.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.0.0...@appium/tsconfig@1.1.0) (2025-09-09)
+
+
+### Features
+
+* **tsconfig:** update base to Node20 ([#21505](https://github.com/appium/appium/issues/21505)) ([2d1af2b](https://github.com/appium/appium/commit/2d1af2bd67b2fdf5df1d2f8fa795270cc5ec06a7))
+
+
+
+## [1.0.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.0.0-rc.1...@appium/tsconfig@1.0.0) (2025-08-18)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [1.0.0-rc.1](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.4...@appium/tsconfig@1.0.0-rc.1) (2025-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* set minimum Node.js version to v20.19.0 (#21394)
+
+### Miscellaneous Chores
+
+* set minimum Node.js version to v20.19.0 ([#21394](https://github.com/appium/appium/issues/21394)) ([37e22c4](https://github.com/appium/appium/commit/37e22c4f9c9920cea3f340841ab1b7c60e3147e9))
+
+
+
+## [0.3.5](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.4...@appium/tsconfig@0.3.5) (2025-03-11)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [0.3.4](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.3...@appium/tsconfig@0.3.4) (2025-02-20)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [0.3.3](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.2...@appium/tsconfig@0.3.3) (2024-04-08)
+
+
+### Bug Fixes
+
+* **tsconfig:** update dependency @tsconfig/node14 to v14.1.1 ([de057fa](https://github.com/appium/appium/commit/de057fa8b043a26f4854c930df5a560d89808ca6))
+* **tsconfig:** update dependency @tsconfig/node14 to v14.1.2 ([66626d2](https://github.com/appium/appium/commit/66626d26e52b6241b5618dc1052c86d48230d15e))
+
+
+
+## [0.3.2](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.1...@appium/tsconfig@0.3.2) (2023-10-18)
+
+
+### Bug Fixes
+
+* **tsconfig:** update dependency @tsconfig/node14 to v14 ([#19082](https://github.com/appium/appium/issues/19082)) ([65b3787](https://github.com/appium/appium/commit/65b3787912a4948fb1ed48e8095299bc9ba95844))
+
+
+
+## [0.3.1](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.0...@appium/tsconfig@0.3.1) (2023-08-22)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8 ([#18095](https://github.com/appium/appium/issues/18095)) ([b608db9](https://github.com/appium/appium/commit/b608db91a8ef0e3cad43ce3e14b625bf9234d383))
+
+
+
+# [0.3.0](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.4...@appium/tsconfig@0.3.0) (2023-04-10)
+
+
+### Features
+
+* **strongbox:** create @appium/strongbox ([fd91234](https://github.com/appium/appium/commit/fd912346fade8f29f5b4d1458828ea677d7e9fcc))
+
+
+
+
+
+## [0.2.4](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.3...@appium/tsconfig@0.2.4) (2023-02-09)
+
+
+### Bug Fixes
+
+* **tsconfig:** remove test-related types from shared tsconfig ([94940b2](https://github.com/appium/appium/commit/94940b274f27153851e97973d94c240f0089c0ea))
+
+
+
+
+
+## [0.2.3](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.2...@appium/tsconfig@0.2.3) (2023-01-13)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [0.2.2](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.1...@appium/tsconfig@0.2.2) (2023-01-13)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [0.2.1](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.0...@appium/tsconfig@0.2.1) (2023-01-13)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+# 0.2.0 (2023-01-13)
+
+
+### Features
+
+* create @appium/tsconfig ([7d7b510](https://github.com/appium/appium/commit/7d7b510a03afb1f103be783e7696e7faec0b296a))

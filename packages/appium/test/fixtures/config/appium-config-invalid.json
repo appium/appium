@@ -1,0 +1,24 @@
+{
+  "server": {
+    "address": "0.0.0.0",
+    "port": 31337,
+    "allow-insecure": [],
+    "base-path": "/",
+    "log-level": "info",
+    "log-timestamp": false,
+    "default-capabilities": {},
+    "deny-insecure": [],
+    "drivers": [],
+    "keep-alive-timeout": 600,
+    "local-timezone": false,
+    "log": "/tmp/appium.log",
+    "log-no-colors": false,
+    "long-stacktrace": false,
+    "no-perms-check": false,
+    "plugins": "all",
+    "relaxed-security": false,
+    "session-override": false,
+    "tmp": '/tmp',
+    "webhook": "http://0.0.0.0/hook"
+  }
+}

@@ -1,0 +1,57 @@
+name: Build Docs
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '**/tsconfig*.json'
+      - '**/package*.json'
+      - '**/*mkdocs*.ya?ml'
+      - 'packages/docutils/requirements.txt'
+      - 'packages/*/README.md'
+      - 'packages/*/docs/**'
+      - 'packages/*/**/*.ts'
+      - 'packages/*/**/*.js'
+      - '.github/workflows/docs.yml' # this file
+      - '!**/test/**'
+      - '!**/sample-code/**'
+  push:
+    branches:
+      - master
+    paths:
+      - '**/tsconfig*.json'
+      - '**/package*.json'
+      - '**/*mkdocs*.ya?ml'
+      - 'packages/docutils/requirements.txt'
+      - 'packages/*/README.md'
+      - 'packages/*/docs/**'
+      - 'packages/*/**/*.ts'
+      - 'packages/*/**/*.js'
+      - '.github/workflows/docs.yml' # this file
+      - '!**/test/**'
+      - '!**/sample-code/**'
+
+jobs:
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Install dependencies (Node.js)
+        uses: bahmutov/npm-install@v1.12.1
+        with:
+          useRollingCache: true
+          install-command: npm ci
+      - name: Install dependencies (Python)
+        run: PIP_BREAK_SYSTEM_PACKAGES=1 pip install -r packages/docutils/requirements.txt
+      - name: Configure Git User
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: Check llms.txt
+        run: npm run docs:check-llmstxt
+      - name: Build Docs
+        run: npm run docs:preview
+      - name: Verify llms.txt was published to the site
+        run: test -s packages/appium/docs/site/en/llms.txt

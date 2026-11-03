@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Handle as a text file but merge as binary.
+package-lock.json merge=binary

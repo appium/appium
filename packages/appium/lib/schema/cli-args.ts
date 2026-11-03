@@ -1,0 +1,180 @@
+import {util} from '@appium/support';
+import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
+import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
+
+import {kebabCase} from '../utils/index.js';
+import type {ArgSpec} from './arg-spec.js';
+import {
+  parseCsvLine,
+  transformers,
+  type AppiumCliTransformerName,
+  type AppiumJSONSchemaKeywords,
+} from './cli-transformers.js';
+import {formatErrors} from './format-errors.js';
+import {flattenSchema, validate} from './schema.js';
+
+export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
+
+type AppiumJSONSchema = AppiumJSONSchemaKeywords & JSONSchema7;
+type ArgDef = [[string] | [string, string], ArgumentOptions];
+
+const TYPENAMES: Readonly<Record<string, JSONSchema7TypeName>> = Object.freeze({
+  ARRAY: 'array',
+  OBJECT: 'object',
+  BOOLEAN: 'boolean',
+  INTEGER: 'integer',
+  NUMBER: 'number',
+  NULL: 'null',
+  STRING: 'string',
+});
+
+const SHORT_ARG_CUTOFF = 3;
+
+/**
+ * Converts the finalized, flattened schema representation into
+ * `ArgumentDefinitions` for handoff to `argparse`.
+ */
+export function toParserArgs(): ArgumentDefinitions {
+  const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
+  return new Map(flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)));
+}
+
+/**
+ * Convert an alias (`foo`) to a flag (`--foo`) or short flag (`-f`).
+ */
+function aliasToFlag(argSpec: ArgSpec, alias?: string): string {
+  const {extType, extName, name} = argSpec;
+  const arg = alias ?? name;
+  const isShort = arg.length < SHORT_ARG_CUTOFF;
+  if (extType && extName) {
+    return isShort
+      ? `--${extType}-${kebabCase(extName)}-${arg}`
+      : `--${extType}-${kebabCase(extName)}-${kebabCase(arg)}`;
+  }
+  return isShort ? `-${arg}` : `--${kebabCase(arg)}`;
+}
+
+const screamingSnakeCase = (s: string) => kebabCase(s).replace(/-/g, '_').toUpperCase();
+
+/**
+ * Given an argument spec, return a validator/coercer function backed by schema validation.
+ */
+function getSchemaValidator<Coerced>(
+  {ref: schemaId}: ArgSpec,
+  coerce: (value: string) => Coerced = (value) => value as Coerced,
+): (value: string) => Coerced {
+  return (value) => {
+    const coerced = coerce(value);
+    const errors = validate(coerced, schemaId);
+    if (util.isEmpty(errors)) {
+      return coerced;
+    }
+    // the error formatter needs the parsed data (not the raw string) to locate errors inside objects
+    const data = util.isPlainObject(coerced) ? coerced : value;
+    const formattedErrors = formatErrors(errors, data, {schemaId});
+    const formattedErrorsStr =
+      typeof formattedErrors === 'string' ? formattedErrors : formattedErrors.map((e) => e.error).join(', ');
+    throw new ArgumentTypeError('\n\n' + formattedErrorsStr);
+  };
+}
+
+function makeDescription(schema: AppiumJSONSchema): string {
+  const {appiumCliDescription, description = '', appiumDeprecated} = schema;
+  let desc = appiumCliDescription ?? description;
+  if (appiumDeprecated) {
+    desc = `[DEPRECATED] ${desc}`;
+  }
+  return desc;
+}
+
+function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDef {
+  const {type, appiumCliAliases, appiumCliTransformer, enum: enumValues} = subSchema;
+  const {name, arg} = argSpec;
+
+  const aliases = [
+    aliasToFlag(argSpec),
+    ...((appiumCliAliases ?? []) as string[]).map((alias) => aliasToFlag(argSpec, alias)),
+  ];
+
+  const argOpts: ArgumentOptions = {
+    required: false,
+    help: makeDescription(subSchema),
+  };
+
+  if (!argSpec.extType) {
+    argOpts.dest = argSpec.rawDest;
+  }
+
+  let argTypeFunction: ((value: string) => unknown) | undefined;
+
+  switch (type) {
+    case TYPENAMES.BOOLEAN: {
+      argOpts.action = 'store_const';
+      argOpts.const = true;
+      break;
+    }
+    case TYPENAMES.OBJECT: {
+      argTypeFunction = getSchemaValidator(argSpec, (value: string) => {
+        const o = transformers.json(value);
+        if (!util.isPlainObject(o)) {
+          throw new ArgumentTypeError(
+            `'${util.truncateString(JSON.stringify(o), {length: 100})}' must be a plain object`,
+          );
+        }
+        return o;
+      });
+      break;
+    }
+    case TYPENAMES.ARRAY: {
+      argTypeFunction = parseCsvLine;
+      break;
+    }
+    case TYPENAMES.NUMBER: {
+      argTypeFunction = getSchemaValidator(argSpec, parseFloat);
+      break;
+    }
+    case TYPENAMES.INTEGER: {
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseInt(v, 10));
+      break;
+    }
+    case TYPENAMES.STRING: {
+      argTypeFunction = getSchemaValidator(argSpec);
+      break;
+    }
+    case TYPENAMES.NULL:
+    default: {
+      throw new TypeError(`Schema property "${arg}": \`${JSON.stringify(type)}\` type unknown or disallowed`);
+    }
+  }
+
+  if (type !== TYPENAMES.BOOLEAN) {
+    argOpts.metavar = screamingSnakeCase(name);
+  }
+
+  if (appiumCliTransformer && transformers[appiumCliTransformer as AppiumCliTransformerName]) {
+    if (type === TYPENAMES.ARRAY) {
+      const csvTransformer = argTypeFunction as (x: string) => string[];
+      argTypeFunction = (val) =>
+        csvTransformer(val).flatMap((item) => transformers[appiumCliTransformer as AppiumCliTransformerName](item));
+    } else {
+      const baseFn = argTypeFunction ?? ((value: string) => value);
+      const transformer = transformers[appiumCliTransformer as AppiumCliTransformerName];
+      argTypeFunction = (value: string) => transformer(baseFn(value) as string);
+    }
+  }
+
+  if (argTypeFunction) {
+    argOpts.type = argTypeFunction;
+  }
+
+  if (enumValues && !util.isEmpty(enumValues)) {
+    if (type === TYPENAMES.STRING) {
+      argOpts.choices = enumValues.map(String);
+    } else {
+      throw new TypeError(`Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``);
+    }
+  }
+
+  const finalAliases = aliases as [string] | [string, string];
+  return [finalAliases, argOpts];
+}

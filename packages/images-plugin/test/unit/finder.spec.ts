@@ -84,7 +84,7 @@ describe('finding elements by image', function () {
     const rect = {x: 10, y: 20, width: 30, height: 40};
     const score = 0.9;
     const size = {width: 100, height: 200};
-    const screenshot = Buffer.from('iVBORfoo', 'base64');
+    const screenshot = TINY_PNG_BUF;
     const template = Buffer.from('iVBORbar', 'base64');
     let d: PluginDriver;
     let f: TImageElementFinder;
@@ -135,6 +135,19 @@ describe('finding elements by image', function () {
         els.map((el) => f.getImageElement(util.unwrapElement(el))!.rect),
         rects,
       );
+    });
+    it('should find an image element inside the container when a better match is outside of it', async function () {
+      const fullScreen = await sharp({create: {width: 100, height: 200, channels: 3, background: '#fff'}})
+        .png()
+        .toBuffer();
+      (f.getScreenshotForImageFind as any).returns({screenshot: fullScreen});
+      const containerRect = {x: 0, y: 100, width: 100, height: 100};
+      compareStub.callsFake(async (...args: any[]) => {
+        const {height} = await sharp(args[1]).metadata();
+        return height === 200 ? {rect, score: 0.99} : {rect: {...rect, x: 40}, score: 0.8};
+      });
+      const el = (await f.findByImage(template, d as any, {multiple: false, containerRect})) as Element;
+      assert.deepStrictEqual(f.getImageElement(util.unwrapElement(el))!.rect, {...rect, x: 40, y: rect.y + 100});
     });
     it('should return every matched image element inside the container', async function () {
       const containerRect = {x: 0, y: 0, width: 100, height: 100};

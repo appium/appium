@@ -434,12 +434,17 @@ export class ImageElementFinder {
           comparisonOpts.method = settings.imageMatchMethod;
         }
 
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
+        // the best match on the whole screen may be outside the container, so only search inside it
+        const area = containerRect ? await this.cropScreenshot(screenshot, containerRect) : null;
+        if (containerRect && !area) {
+          return false;
+        }
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, area?.image ?? screenshot, template, comparisonOpts);
         const candidates = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
         let found = false;
         for (const el of candidates) {
           const result: OccurrenceResultWithVisualization = {
-            rect: el.rect,
+            rect: area ? {...el.rect, x: el.rect.x + area.x, y: el.rect.y + area.y} : el.rect,
             score: el.score,
             visualization: el.visualization,
           };
@@ -513,5 +518,24 @@ export class ImageElementFinder {
 
     const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
     return multiple ? registeredElements : registeredElements[0];
+  }
+
+  /**
+   * Cuts the part of the screenshot that is inside the given rectangle.
+   *
+   * @returns The cropped image and its offset in the screenshot, or `null` if the rectangle is off screen
+   */
+  private async cropScreenshot(screenshot: Buffer, rect: Rect): Promise<{image: Buffer; x: number; y: number} | null> {
+    const imgObj = sharp(screenshot);
+    const {width = 0, height = 0} = await imgObj.metadata();
+    const x = Math.max(0, Math.trunc(rect.x));
+    const y = Math.max(0, Math.trunc(rect.y));
+    const right = Math.min(width, Math.trunc(rect.x + rect.width));
+    const bottom = Math.min(height, Math.trunc(rect.y + rect.height));
+    if (right <= x || bottom <= y) {
+      return null;
+    }
+    const image = await imgObj.extract({left: x, top: y, width: right - x, height: bottom - y}).toBuffer();
+    return {image, x, y};
   }
 }

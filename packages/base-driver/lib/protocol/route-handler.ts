@@ -339,7 +339,9 @@ async function runDriverCommand(
 
   // A marked envelope, or `{protocol, error}` when `error` is an Error.
   // `{protocol: 'W3C', value}` is command data.
-  if (isProtocolResponseEnvelope(driverRes)) {
+  const isEnvelope = isProtocolResponseEnvelope(driverRes);
+  const isProtocolData = !isEnvelope && util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol');
+  if (isEnvelope) {
     if (driverRes.error) {
       throw driverRes.error;
     }
@@ -368,7 +370,7 @@ async function runDriverCommand(
     driverRes = null;
   }
 
-  if (util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
+  if (!isProtocolData && util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
     throw errorFromW3CJsonCode(
       driverRes.value.error,
       driverRes.value.message,

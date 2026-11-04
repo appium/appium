@@ -303,6 +303,19 @@ describe('Protocol', function () {
       assert.deepStrictEqual(data.value, result);
     });
 
+    it('should return a command result whose protocol value looks like an error', async function () {
+      const result = {protocol: 'W3C', value: {error: 'no such element', message: 'ordinary script data'}};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return arguments[0]',
+        args: [result],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, result);
+    });
+
     it('should return an error from an MJSONWP response envelope', async function () {
       sandbox.stub(driver, 'executeCommand').resolves({
         protocol: 'MJSONWP',

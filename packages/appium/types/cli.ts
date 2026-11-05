@@ -72,6 +72,11 @@ export interface MoreArgs {
    * If true, open a REPL
    */
   shell?: boolean;
+
+  /**
+   * Directory containing the package.json whose dependencies should be searched for extensions.
+   */
+  extSearchRoot?: string;
 }
 
 /**

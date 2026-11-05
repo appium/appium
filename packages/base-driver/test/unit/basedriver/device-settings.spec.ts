@@ -113,3 +113,28 @@ describe('DeviceSettings', function () {
     });
   });
 });
+
+// #region prototype-key rejection
+describe('prototype-key rejection', function () {
+  let sandbox: sinon.SinonSandbox;
+  beforeEach(function () {
+    sandbox = sinon.createSandbox();
+  });
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  for (const key of ['__proto__', 'constructor', 'prototype']) {
+    it(`should reject the '${key}' key`, async function () {
+      const deviceSettings = new DeviceSettings();
+      const newSettings = JSON.parse(`{"${key}": {"polluted": true}}`);
+      await assert.rejects(deviceSettings.update(newSettings), {
+        name: 'InvalidArgumentError',
+        message: new RegExp(key),
+      });
+      assert.deepStrictEqual(deviceSettings.getSettings(), {});
+      assert.strictEqual(({} as Record<string, unknown>).polluted, undefined);
+    });
+  }
+});
+// #endregion

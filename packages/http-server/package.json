@@ -55,7 +55,7 @@
     "@appium/support": "~8.0.0-beta.6",
     "@appium/types": "~2.0.0-beta.5",
     "@types/express": "^5.0.6",
-    "body-parser": "^2.3.0",
+    "body-parser": "^2.4.0",
     "express": "^5.2.1",
     "method-override": "^3.0.0",
     "morgan": "^1.12.1",

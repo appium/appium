@@ -31,6 +31,7 @@ import {
   handleIdempotency,
   handleLogContext,
   handleUpgrade,
+  rejectForeignHosts,
   tryHandleWebSocketUpgrade,
 } from './middleware';
 import {
@@ -74,6 +75,8 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
+  /** Hostnames the server expects to be addressed by; accepted in addition to IPs and loopback names. */
+  allowedHostnames?: string[];
   /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
 }
@@ -146,6 +149,9 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           app,
           addRoutes: routeConfiguringFunction,
           allowCors,
+          allowedHostnames: [hostname, cliArgs.address].filter(
+            (h): h is string => typeof h === 'string' && h.length > 0 && h !== '0.0.0.0',
+          ),
           basePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
@@ -193,6 +199,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
     extraMethodMap = {},
     webSocketsMapping = {},
     useLegacyUpgradeHandler = true,
+    allowedHostnames = [],
     frontRouter,
   } = opts;
   const {registerTestPages} = opts as ConfigureServerInternalOpts;
@@ -200,6 +207,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  app.use(rejectForeignHosts(allowedHostnames));
 
   if (registerTestPages) {
     registerTestPages(app, {basePath});

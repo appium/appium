@@ -249,7 +249,10 @@ function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
 function unwrapIfProxy<T>(value: T): T {
   if (isOurProxy(value)) {
     const target = proxyToTarget.get(value) as T;
-    if (typeof target === 'function' && vmFnToHostWrapper.get(target as unknown as HostCallable) === (value as unknown)) {
+    if (
+      typeof target === 'function' &&
+      vmFnToHostWrapper.get(target as unknown as HostCallable) === (value as unknown)
+    ) {
       return value;
     }
     return target;

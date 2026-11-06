@@ -44,7 +44,7 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
 }
 
 const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
-const CONDITION_UNMET_PATTERN = /Condition unmet/;
+const CONDITION_UNMET_CODE = 'ERR_ASYNCBOX_CONDITION_UNMET';
 
 type ImageMatchOptions = {
   multiple: boolean;
@@ -469,13 +469,9 @@ export class ImageElementFinder {
     try {
       await driver.implicitWaitForCondition(performLookup);
     } catch (err: any) {
-      // this `implicitWaitForCondition` method will throw a 'Condition unmet'
-      // error if an element is not found eventually. In that case, we will
-      // handle the element not found response below. In the case where get some
-      // _other_ kind of error, it means something blew up totally apart from the
-      // implicit wait timeout. We should not mask that error and instead throw
-      // it straightaway
-      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
+      // `ConditionUnmetError` means nothing was found in time (handled below);
+      // rethrow anything else. Matched by `code` since asyncbox may be another copy.
+      if (err.code !== CONDITION_UNMET_CODE) {
         throw err;
       }
     }

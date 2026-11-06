@@ -45,6 +45,8 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
   );
 }
 
+const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
+
 type ImageMatchOptions = {
   multiple: boolean;
   containerRect: Rect | null;
@@ -469,8 +471,8 @@ export class ImageElementFinder {
       await driver.implicitWaitForCondition(performLookup);
     } catch (err: any) {
       // `ConditionUnmetError` means nothing was found in time (handled below);
-      // rethrow anything else.
-      if (!(err instanceof ConditionUnmetError)) {
+      // the message fallback covers asyncbox < 6.6.0. Rethrow anything else.
+      if (!(err instanceof ConditionUnmetError || LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
         throw err;
       }
     }

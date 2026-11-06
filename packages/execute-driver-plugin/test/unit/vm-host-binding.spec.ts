@@ -785,4 +785,67 @@ describe('wrapHostBindingForVmContext', function () {
       ),
     );
   });
+
+  it('should keep VM functions on VM receivers, resync preventExtensions deletions, and wrap null-proto chains', function () {
+    const nonExtHost: Record<string, unknown> = Object.preventExtensions({a: 1, b: 2});
+    const nullProtoBase = Object.create(null);
+    nullProtoBase.fn = function () {
+      return 'from-null-proto';
+    };
+    const nullProtoChild = Object.create(nullProtoBase);
+    class HostFoo {}
+    const d = wrapHostBindingForVmContext({
+      x: 1,
+      Foo: HostFoo,
+      nonExtHost,
+      nullProtoChild,
+      echo(v: unknown) {
+        return v;
+      },
+      deleteHostA() {
+        delete nonExtHost.a;
+      },
+    });
+
+    const res = JSON.parse(
+      vm.runInNewContext(
+        `const o = Object.create(d);
+         const fn = function () {};
+         o.cb = fn;
+         class X extends d.Foo {}
+         const x = new X();
+         x.cb = fn;
+         const keysBefore = Object.keys(d.nonExtHost);
+         d.deleteHostA();
+         const keysAfter = Object.keys(d.nonExtHost);
+         const vmNullBase = Object.create(null);
+         const vmNullChild = Object.create(vmNullBase);
+         JSON.stringify({
+           oCbSame: o.cb === fn,
+           oCbProcessType: o.cb.constructor.constructor('return typeof process')(),
+           xCbSame: x.cb === fn,
+           xCbProcessType: x.cb.constructor.constructor('return typeof process')(),
+           keysBefore,
+           keysAfter,
+           nullProtoFnVal: d.nullProtoChild.fn(),
+           nullProtoFnCtorProto: Object.getPrototypeOf(d.nullProtoChild.fn.constructor),
+           vmNullChildRoundTrip: d.echo(vmNullChild) === vmNullChild,
+         })`,
+        {d},
+        {timeout: 500},
+      ) as string,
+    );
+
+    assert.deepEqual(res, {
+      oCbSame: true,
+      oCbProcessType: 'undefined',
+      xCbSame: true,
+      xCbProcessType: 'undefined',
+      keysBefore: ['a', 'b'],
+      keysAfter: ['b'],
+      nullProtoFnVal: 'from-null-proto',
+      nullProtoFnCtorProto: null,
+      vmNullChildRoundTrip: true,
+    });
+  });
 });

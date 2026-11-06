@@ -119,7 +119,12 @@ function isHostRealmObject(value: unknown): boolean {
   }
   let proto = Reflect.getPrototypeOf(value);
   while (proto !== null) {
-    if (proto === Object.prototype || proto === Function.prototype || proto === SAFE_LOOKUP_TARGET) {
+    if (
+      proto === Object.prototype ||
+      proto === Function.prototype ||
+      proto === SAFE_LOOKUP_TARGET ||
+      targetToProxy.has(proto)
+    ) {
       return true;
     }
     if (isOurProxy(proto)) {
@@ -128,6 +133,19 @@ function isHostRealmObject(value: unknown): boolean {
     proto = Reflect.getPrototypeOf(proto);
   }
   return false;
+}
+
+function isVmRealmRootPrototype(rootProto: object): boolean {
+  if (rootProto === Object.prototype || rootProto === SAFE_LOOKUP_TARGET || targetToProxy.has(rootProto)) {
+    return false;
+  }
+  const ctorDesc = Reflect.getOwnPropertyDescriptor(rootProto, 'constructor');
+  const ctor = ctorDesc && 'value' in ctorDesc ? ctorDesc.value : undefined;
+  if (typeof ctor !== 'function') {
+    return false;
+  }
+  const fnProto = Reflect.getPrototypeOf(ctor);
+  return fnProto !== null && fnProto !== Function.prototype && Reflect.getPrototypeOf(fnProto) === rootProto;
 }
 
 function isVmRealmValue(value: unknown): boolean {
@@ -140,17 +158,37 @@ function isVmRealmValue(value: unknown): boolean {
   if (vmObjects.has(value)) {
     return true;
   }
-  return Reflect.getPrototypeOf(value) !== null && !isHostRealmObject(value);
+  let proto = Reflect.getPrototypeOf(value);
+  let rootProto: object | null = null;
+  while (proto !== null) {
+    if (
+      proto === Object.prototype ||
+      proto === Function.prototype ||
+      proto === SAFE_LOOKUP_TARGET ||
+      targetToProxy.has(proto)
+    ) {
+      return false;
+    }
+    if (isOurProxy(proto)) {
+      return true;
+    }
+    rootProto = proto;
+    proto = Reflect.getPrototypeOf(proto);
+  }
+  return rootProto !== null && isVmRealmRootPrototype(rootProto);
 }
 
 function recordVmValue(value: unknown): void {
-  if (
-    value !== null &&
-    (typeof value === 'object' || typeof value === 'function') &&
-    !isOurProxy(value) &&
-    !isHostRealmObject(value)
-  ) {
-    vmObjects.add(value);
+  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
+    return;
+  }
+  if (isOurProxy(value) || targetToProxy.has(value) || isHostRealmObject(value)) {
+    return;
+  }
+  let current: object | null = value;
+  while (current !== null && !isOurProxy(current) && !targetToProxy.has(current) && !isHostRealmObject(current)) {
+    vmObjects.add(current);
+    current = Reflect.getPrototypeOf(current);
   }
 }
 
@@ -425,10 +463,10 @@ function syncShadowProperty(
 
 /**
  * Synchronizes all own properties and non-extensibility from `hostTarget` onto `shadowTarget`.
- * Returns early once `shadowTarget` is already non-extensible.
+ * Returns early once `shadowTarget` is already frozen, or sealed while `hostTarget` is not frozen.
  */
 function syncShadowExtensibility(shadowTarget: HostTarget, hostTarget: HostTarget): void {
-  if (!Reflect.isExtensible(shadowTarget)) {
+  if (Object.isFrozen(shadowTarget) || (Object.isSealed(shadowTarget) && !Object.isFrozen(hostTarget))) {
     return;
   }
   const hostKeys = Reflect.ownKeys(hostTarget).filter((key) => !isBlockedPrototypeKey(key));
@@ -450,6 +488,18 @@ function syncShadowExtensibility(shadowTarget: HostTarget, hostTarget: HostTarge
   if (!Reflect.isExtensible(hostTarget)) {
     Reflect.preventExtensions(shadowTarget);
   }
+}
+
+function findPropertyDescriptor(target: object, prop: string | symbol): PropertyDescriptor | undefined {
+  let current: object | null = target;
+  while (current !== null) {
+    const desc = Reflect.getOwnPropertyDescriptor(current, prop);
+    if (desc) {
+      return desc;
+    }
+    current = Reflect.getPrototypeOf(current);
+  }
+  return undefined;
 }
 
 /**
@@ -585,7 +635,7 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
         return undefined;
       }
       const hostTarget = resolveHostTarget(shadowTarget);
-      if (!Reflect.isExtensible(hostTarget) && Reflect.isExtensible(shadowTarget)) {
+      if (!Reflect.isExtensible(hostTarget)) {
         syncShadowExtensibility(shadowTarget, hostTarget);
       }
       return syncShadowProperty(shadowTarget, hostTarget, prop);
@@ -613,7 +663,7 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
   isExtensible(shadowTarget: HostTarget): boolean {
     return runTrapSafely(() => {
       const hostTarget = resolveHostTarget(shadowTarget);
-      if (!Reflect.isExtensible(hostTarget) && Reflect.isExtensible(shadowTarget)) {
+      if (!Reflect.isExtensible(hostTarget)) {
         syncShadowExtensibility(shadowTarget, hostTarget);
       }
       return Reflect.isExtensible(shadowTarget);
@@ -624,9 +674,7 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
     return runTrapSafely(() => {
       const hostTarget = resolveHostTarget(shadowTarget);
       if (!Reflect.isExtensible(hostTarget)) {
-        if (Reflect.isExtensible(shadowTarget)) {
-          syncShadowExtensibility(shadowTarget, hostTarget);
-        }
+        syncShadowExtensibility(shadowTarget, hostTarget);
       } else if (Array.isArray(hostTarget)) {
         syncShadowProperty(shadowTarget, hostTarget, 'length');
       }
@@ -661,8 +709,26 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
         return false;
       }
       const hostTarget = resolveHostTarget(shadowTarget);
-      const updated = Reflect.set(hostTarget, prop, unwrapIfProxy(value), reflectReceiver(receiver));
-      if (updated && Reflect.getOwnPropertyDescriptor(shadowTarget, prop) !== undefined) {
+      const actualReceiver = reflectReceiver(receiver);
+      const desc = findPropertyDescriptor(hostTarget, prop);
+      const invokesHostSetter = Boolean(desc && 'set' in desc && typeof desc.set === 'function');
+      const writesToHost =
+        actualReceiver === hostTarget ||
+        invokesHostSetter ||
+        (actualReceiver !== null &&
+          (typeof actualReceiver === 'object' || typeof actualReceiver === 'function') &&
+          !isVmRealmValue(actualReceiver));
+      const valueToSet = writesToHost ? unwrapIfProxy(value) : value;
+      if (!writesToHost) {
+        recordVmValue(actualReceiver);
+        recordVmValue(value);
+      }
+      const updated = Reflect.set(hostTarget, prop, valueToSet, actualReceiver);
+      if (
+        updated &&
+        actualReceiver === hostTarget &&
+        Reflect.getOwnPropertyDescriptor(shadowTarget, prop) !== undefined
+      ) {
         syncShadowProperty(shadowTarget, hostTarget, prop);
       }
       return updated;

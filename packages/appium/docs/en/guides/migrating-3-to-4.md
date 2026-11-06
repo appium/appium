@@ -80,8 +80,10 @@ Library callers of `@appium/http-server`'s `server()` and `configureServer()` no
 The following server arguments had no effect for a long time and have been removed, together with
 their `server.*` config file properties:
 
-* `--callback-address` (`-ca`) and `--callback-port` (`-cp`)
+* `--callback-address` (`-ca`)
+* `--callback-port` (`-cp`)
 * `--debug-log-spacing`
+* `--shell`
 * `--strict-caps`
 * `--trace-dir`
 

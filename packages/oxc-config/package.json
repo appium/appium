@@ -36,8 +36,8 @@
     "test:smoke": "node scripts/test-smoke.mjs"
   },
   "dependencies": {
-    "oxfmt": "^0.71.0",
-    "oxlint": "~1.86.0",
+    "oxfmt": "^0.74.0",
+    "oxlint": "~1.89.0",
     "oxlint-tsgolint": "^7.0.2001"
   },
   "engines": {

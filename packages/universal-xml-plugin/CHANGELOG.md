@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.6...@appium/universal-xml-plugin@4.0.0-beta.7) (2026-10-31)
+
+### Bug Fixes
+
+* **universal-xml-plugin:** report a malformed XPath as invalid selector ([#23108](https://github.com/appium/appium/issues/23108)) ([bb93a07](https://github.com/appium/appium/commit/bb93a07c1ce384f2073978898aa4640cd7708b90))
+* **universal-xml-plugin:** skip XML transformation when context is not NATIVE_APP ([#23095](https://github.com/appium/appium/issues/23095)) ([84ad401](https://github.com/appium/appium/commit/84ad4014ba83481fa8a9d5eb78fef6ef58eed0d3))
+
+
 ## [4.0.0-beta.6](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.5...@appium/universal-xml-plugin@4.0.0-beta.6) (2026-10-26)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin

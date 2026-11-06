@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {fs, node} from '@appium/support';
 
 import {getImageOccurrence, getImagesMatches, getImagesSimilarity} from '../../lib/index.js';
+import type {Point, Rect} from '../../lib/types.js';
 
 const FIXTURES_ROOT = path.resolve(
   node.getModuleRootSync('@appium/opencv', fileURLToPath(import.meta.url))!,
@@ -13,6 +14,15 @@ const FIXTURES_ROOT = path.resolve(
   'e2e',
   'images',
 );
+
+function assertRectContainsPoints(rect: Rect, points: Point[]): void {
+  for (const point of points) {
+    assert.ok(
+      point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height,
+      `point (${point.x}, ${point.y}) is outside ${JSON.stringify(rect)}`,
+    );
+  }
+}
 
 describe('OpenCV helpers', {timeout: 120000}, () => {
   let imgFixture: Buffer;
@@ -67,6 +77,8 @@ describe('OpenCV helpers', {timeout: 120000}, () => {
       assert.ok(rect2.y > 0);
       assert.ok(rect2.width > 0);
       assert.ok(rect2.height > 0);
+      assertRectContainsPoints(rect1, points1);
+      assertRectContainsPoints(rect2, points2);
     });
   });
 

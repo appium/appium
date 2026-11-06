@@ -1,5 +1,7 @@
+import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
+import {ConditionUnmetError} from 'asyncbox';
 import {LRUCache} from 'lru-cache';
 import sharp from 'sharp';
 
@@ -42,9 +44,6 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
     rect.height <= templateRect.y + templateRect.height - rect.y
   );
 }
-
-const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
-const CONDITION_UNMET_CODE = 'ERR_ASYNCBOX_CONDITION_UNMET';
 
 type ImageMatchOptions = {
   multiple: boolean;
@@ -459,7 +458,7 @@ export class ImageElementFinder {
         // retry, so trap that and just return false to trigger the next round of
         // implicitly waiting. For other errors, throw them to get out of the
         // implicit wait loop
-        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
+        if (err instanceof NoImageOccurrencesError) {
           return false;
         }
         throw err;
@@ -470,8 +469,8 @@ export class ImageElementFinder {
       await driver.implicitWaitForCondition(performLookup);
     } catch (err: any) {
       // `ConditionUnmetError` means nothing was found in time (handled below);
-      // rethrow anything else. Matched by `code` since asyncbox may be another copy.
-      if (err.code !== CONDITION_UNMET_CODE) {
+      // rethrow anything else.
+      if (!(err instanceof ConditionUnmetError)) {
         throw err;
       }
     }

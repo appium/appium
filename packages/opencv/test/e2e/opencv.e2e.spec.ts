@@ -5,7 +5,13 @@ import {fileURLToPath} from 'node:url';
 
 import {fs, node} from '@appium/support';
 
-import {getImageOccurrence, getImagesMatches, getImagesSimilarity, NoImageOccurrencesError} from '../../lib/index.js';
+import {
+  getImageOccurrence,
+  getImagesMatches,
+  getImagesSimilarity,
+  InvalidArgumentError,
+  NoImageOccurrencesError,
+} from '../../lib/index.js';
 import type {Point, Rect} from '../../lib/types.js';
 
 const FIXTURES_ROOT = path.resolve(
@@ -112,6 +118,13 @@ describe('OpenCV helpers', {timeout: 120000}, () => {
           threshold: 1.0,
         }),
         (err: unknown) => err instanceof NoImageOccurrencesError && /threshold/.test((err as Error).message),
+      );
+    });
+
+    it('should reject an unsupported matching method as an invalid argument', async function () {
+      await assert.rejects(
+        getImageOccurrence(fullImage!, partialImage!, {method: 'UNKNOWN' as any}),
+        (err: unknown) => err instanceof InvalidArgumentError && !(err instanceof NoImageOccurrencesError),
       );
     });
 

@@ -339,14 +339,15 @@ async function runDriverCommand(
 
   // A marked envelope, or `{protocol, error}` when `error` is an Error.
   // `{protocol: 'W3C', value}` is command data.
-  const isEnvelope = isProtocolResponseEnvelope(driverRes);
-  const isProtocolData = !isEnvelope && util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol');
-  if (isEnvelope) {
+  if (isProtocolResponseEnvelope(driverRes)) {
     if (driverRes.error) {
       throw driverRes.error;
     }
     driverRes = driverRes.value;
   }
+
+  // a protocol field on the unwrapped value means it is command data
+  const isProtocolData = util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol');
 
   let newSessionId: string | undefined;
   // unpack createSession response

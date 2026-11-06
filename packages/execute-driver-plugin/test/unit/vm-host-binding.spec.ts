@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
+import {types} from 'node:util';
 import vm from 'node:vm';
 
 import {wrapHostBindingForVmContext} from '../../lib/vm-host-binding.js';
@@ -658,6 +659,97 @@ describe('wrapHostBindingForVmContext', function () {
       {timeout: 500},
     );
     assert.strictEqual(result, 42);
+  });
+
+  it('should preserve VM-originated error identity and instanceof when thrown through a host trap', function () {
+    const d = wrapHostBindingForVmContext({arr: [1]});
+    const ok = vm.runInNewContext(
+      `class MyError extends Error {}
+       const original = new MyError('x');
+       let caught;
+       try {
+         d.arr.forEach(() => {
+           throw original;
+         });
+       } catch (e) {
+         caught = e;
+       }
+       caught === original && caught instanceof MyError;`,
+      {d},
+      {timeout: 500},
+    );
+    assert.strictEqual(ok, true);
+  });
+
+  it('should preserve constructibility, async branding, name, length, static receiver, and wrapper identity for VM callables', async function () {
+    let seenWrapper1: unknown;
+    let seenWrapper2: unknown;
+    const host = {
+      Base: class Base {
+        static get who() {
+          return this;
+        }
+      },
+      instantiate(Ctor: new (v: number) => {val: number}, v: number) {
+        return new Ctor(v);
+      },
+      inspectAsync(fn: (...args: unknown[]) => unknown) {
+        return {
+          isAsync: types.isAsyncFunction(fn),
+          name: fn.name,
+          length: fn.length,
+        };
+      },
+      rememberFirst(fn: unknown) {
+        seenWrapper1 = fn;
+        return fn;
+      },
+      rememberSecond(fn: unknown) {
+        seenWrapper2 = fn;
+      },
+    };
+    const d = wrapHostBindingForVmContext(host);
+
+    const res = JSON.parse(
+      vm.runInNewContext(
+        `class Foo {
+           constructor(v) {
+             this.val = v * 3;
+           }
+         }
+         class Sub extends d.Base {}
+         async function myTask(a, b) {
+           return a + b;
+         }
+         const cb = function onEvent(x) { return x; };
+         const echoed = d.rememberFirst(cb);
+         d.rememberSecond(echoed);
+         const inst = d.instantiate(Foo, 7);
+         const meta = d.inspectAsync(myTask);
+         JSON.stringify({
+           isFoo: inst instanceof Foo,
+           val: inst.val,
+           subReceiverMatches: Sub.who === Sub,
+           echoedMatchesCb: echoed === cb,
+           meta,
+         });`,
+        {d},
+        {timeout: 500},
+      ) as string,
+    );
+
+    assert.deepEqual(res, {
+      isFoo: true,
+      val: 21,
+      subReceiverMatches: true,
+      echoedMatchesCb: true,
+      meta: {
+        isAsync: true,
+        name: 'myTask',
+        length: 2,
+      },
+    });
+    assert.strictEqual(seenWrapper1, seenWrapper2);
   });
 
   it('should not double-wrap function proxies', function () {

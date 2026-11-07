@@ -59,6 +59,11 @@ type CreateImageElementsOptions = ImageMatchOptions & {
   shouldCheckStaleness: boolean;
 };
 
+type ScreenshotForImageFind = Screenshot & {
+  scale?: ScreenshotScale;
+  crop?: Rect | null;
+};
+
 export class ImageElementFinder {
   private _imgElCache: LRUCache<string, ImageElement>;
 
@@ -196,7 +201,7 @@ export class ImageElementFinder {
     driver: ExternalDriver,
     screenSize: Size,
     containerRect?: Rect | null,
-  ): Promise<Screenshot & {scale?: ScreenshotScale; crop?: Rect | null}> {
+  ): Promise<ScreenshotForImageFind> {
     if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
@@ -208,8 +213,8 @@ export class ImageElementFinder {
       image: Buffer,
       scale?: ScreenshotScale,
       source?: {img: Sharp; size: Size},
-    ): Promise<Screenshot & {scale?: ScreenshotScale; crop?: Rect | null}> => {
-      const out: Screenshot & {scale?: ScreenshotScale; crop?: Rect | null} = {screenshot: image};
+    ): Promise<ScreenshotForImageFind> => {
+      const out: ScreenshotForImageFind = {screenshot: image};
       if (scale) {
         out.scale = scale;
       }
@@ -246,7 +251,7 @@ export class ImageElementFinder {
 
     if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
       if (containerRect) {
-        throw new Error('Screenshot width/height cannot be determined. Is it a valid image?');
+        throw new errors.UnknownError('Screenshot width/height cannot be determined. Is it a valid image?');
       }
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
@@ -562,7 +567,7 @@ export class ImageElementFinder {
       ({width, height} = await imgObj.metadata());
     }
     if (!width || !height) {
-      throw new Error('Screenshot width/height cannot be determined. Is it a valid image?');
+      throw new errors.UnknownError('Screenshot width/height cannot be determined. Is it a valid image?');
     }
     // Round the crop outward so containsRect checks the same pixels OpenCV searched.
     const x = Math.max(0, Math.floor(rect.x));

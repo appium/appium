@@ -237,7 +237,7 @@ describe('finding elements by image', function () {
       compareStub.callsFake(async (...args: any[]) => {
         const {width = 0, height = 0} = await sharp(args[1]).metadata();
         if (width < rect.width || height < rect.height) {
-          throw new Error('Cannot find any occurrences of the partial image in the full image');
+          throw new NoImageOccurrencesError('Cannot find any occurrences of the partial image in the full image');
         }
         return {rect, score};
       });
@@ -254,7 +254,7 @@ describe('finding elements by image', function () {
       compareStub.callsFake(async (...args: any[]) => {
         const {width = 0, height = 0} = await sharp(args[1]).metadata();
         if (width < rect.width || height < rect.height) {
-          throw new Error('Cannot find any occurrences of the partial image in the full image');
+          throw new NoImageOccurrencesError('Cannot find any occurrences of the partial image in the full image');
         }
         return [{rect, score}];
       });

@@ -233,13 +233,7 @@ describe('finding elements by image', function () {
     });
     it('should find nothing when the template is larger than the container', async function () {
       useScreenshot(await screenImage());
-      compareStub.callsFake(async (...args: any[]) => {
-        const {width = 0, height = 0} = await sharp(args[1]).metadata();
-        if (width < rect.width || height < rect.height) {
-          throw new Error('Cannot find any occurrences of the partial image in the full image');
-        }
-        return {rect, score};
-      });
+      compareStub.rejects(new Error('Cannot find any occurrences'));
       await assert.rejects(
         f.findByImage(template, d as any, {
           multiple: false,
@@ -250,13 +244,7 @@ describe('finding elements by image', function () {
     });
     it('should return no elements when the template is larger than the container', async function () {
       useScreenshot(await screenImage());
-      compareStub.callsFake(async (...args: any[]) => {
-        const {width = 0, height = 0} = await sharp(args[1]).metadata();
-        if (width < rect.width || height < rect.height) {
-          throw new Error('Cannot find any occurrences of the partial image in the full image');
-        }
-        return [{rect, score}];
-      });
+      compareStub.rejects(new Error('Cannot find any occurrences'));
       assert.deepStrictEqual(
         await f.findByImage(template, d as any, {
           multiple: true,

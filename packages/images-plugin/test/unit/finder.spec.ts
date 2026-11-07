@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
+import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Constraints, Element} from '@appium/types';
 import {BaseDriver} from 'appium/driver.js';
 import {util} from 'appium/support.js';
@@ -189,11 +190,11 @@ describe('finding elements by image', function () {
     });
 
     it('should throw an error if template match fails', async function () {
-      compareStub.rejects(new Error('Cannot find any occurrences'));
+      compareStub.rejects(new NoImageOccurrencesError('Cannot find any occurrences'));
       await assert.rejects(f.findByImage(template, d as any, {multiple: false}), /element could not be located/);
     });
     it('should return empty array for multiple elements if template match fails', async function () {
-      compareStub.rejects(new Error('Cannot find any occurrences'));
+      compareStub.rejects(new NoImageOccurrencesError('Cannot find any occurrences'));
       assert.deepStrictEqual(await f.findByImage(template, d as any, {multiple: true}), []);
     });
     it('should respect implicit wait', async function () {
@@ -202,7 +203,7 @@ describe('finding elements by image', function () {
       (d as any).setImplicitWait(2000);
       compareStub.resetHistory();
       compareStub.returns({rect, score});
-      compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));
+      compareStub.onFirstCall().throws(new NoImageOccurrencesError('Cannot find any occurrences'));
       const imgElProto = await f.findByImage(template, d as any, {multiple: false});
       basicImgElVerify(imgElProto, f);
       assert.strictEqual(compareStub.calledTwice, true);

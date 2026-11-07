@@ -26,7 +26,7 @@ export class InvalidArgumentError extends OpenCvError {
 
 /** Thrown by {@link getImagesMatches} when no feature matches are found between the images. */
 export class NoImageMatchesError extends OpenCvError {
-  constructor(message: string, options?: ErrorOptions) {
+  constructor(message: string = '', options?: ErrorOptions) {
     super(message, {...options, code: 'APPIUMERR_NO_IMAGE_MATCHES'});
   }
 }

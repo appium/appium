@@ -1,5 +1,7 @@
+import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
+import {ConditionUnmetError} from 'asyncbox';
 import {LRUCache} from 'lru-cache';
 import sharp, {type Sharp} from 'sharp';
 
@@ -43,8 +45,7 @@ function containsRect(templateRect: Rect, rect: Rect): boolean {
   );
 }
 
-const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
-const CONDITION_UNMET_PATTERN = /Condition unmet/;
+const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 type ImageMatchOptions = {
   multiple: boolean;
@@ -499,7 +500,7 @@ export class ImageElementFinder {
         // retry, so trap that and just return false to trigger the next round of
         // implicitly waiting. For other errors, throw them to get out of the
         // implicit wait loop
-        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
+        if (err instanceof NoImageOccurrencesError) {
           return false;
         }
         throw err;
@@ -509,13 +510,9 @@ export class ImageElementFinder {
     try {
       await driver.implicitWaitForCondition(performLookup);
     } catch (err: any) {
-      // this `implicitWaitForCondition` method will throw a 'Condition unmet'
-      // error if an element is not found eventually. In that case, we will
-      // handle the element not found response below. In the case where get some
-      // _other_ kind of error, it means something blew up totally apart from the
-      // implicit wait timeout. We should not mask that error and instead throw
-      // it straightaway
-      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
+      // `ConditionUnmetError` means nothing was found in time (handled below);
+      // the message fallback covers asyncbox < 6.6.0. Rethrow anything else.
+      if (!(err instanceof ConditionUnmetError || LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
         throw err;
       }
     }

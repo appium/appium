@@ -121,7 +121,7 @@ execute methods:
 * `GET /session/:sessionId/element/:elementId`
     * :octicons-no-entry-24: JSONWP protocol command stub with no direct replacement
 
-#### Retained Endpoints
+#### Remaining Deprecations
 
 There are 7 more deprecated endpoints that are intentionally _not_ removed in Appium 4. They are
 the last remaining  JSONWP/MJSONWP endpoints supported by Appium, and are listed in the

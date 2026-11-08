@@ -1,84 +1,226 @@
 ---
 title: Migrating to Appium 4
 ---
-<style>
-    .md-typeset .grid {
-        grid-template-columns: repeat(auto-fit,minmax(min(100%,11rem),1fr));
-    }
-</style>
 
 This document is a guide for those who are using Appium 3 and would like to upgrade to Appium 4.
-It contains a list of breaking changes, as well as suggestions for handling them.
-The [behavior fixes](#behavior-fixes) section also highlights corrections that can affect existing
-tests, client error handling, and server integrations.
+It contains a list of breaking changes (including behavioral fixes), as well as suggestions for
+handling them.
 
-Appium 4 focuses on modernizing the codebase (Node.js requirements, ESM-only packages, dropping
-long-deprecated protocol support and APIs) rather than introducing a large number of new
-user-facing features. Appium users should check the [Node.js version](#node-2222-required),
-[timeout inputs](#timeouts-endpoint-aligned-with-w3c-standard), and
-[capability validation](#stricter-capability-validation). The other breaking changes mostly affect
-driver and plugin developers, or users of specific removed flags/endpoints.
+Appium 3 was largely focused on cleaning up old endpoints, whereas Appium 4 includes a wider range
+of changes, including closer alignment to W3C WebDriver protocol requirements, removal of
+deprecated items not limited to endpoints, and general modernizing of the codebase. 
 
 ## Installation
 
-Appium 4 is currently only available as a beta release, published under the `beta` npm dist-tag.
-The installation method otherwise remains the same as for Appium 3. If you want to upgrade, you
+The installation method for Appium 4 remains the same as for Appium 3. If you want to upgrade, you
 can simply install Appium 4 on top of your existing installation:
 
 ```bash
 # optional: `appium setup reset`
-npm install -g appium@beta
+npm install -g appium
 ```
 
 ## Breaking Changes
 
 ### Node 22.22+ Required
 
-Appium 3 required Node `^20.19.0 || ^22.12.0 || >=24.0.0`. Appium 4 drops Node 20 support and
-bumps the minimum required version to `^22.22.2 || ^24.15.0 || >=26.0.0`.
+Appium 3 required a Node.js version in the range `^20.19.0 || ^22.12.0 || >=24.0.0`. Appium 4 drops
+support for Node 20 and bumps the required range to `^22.22.2 || ^24.15.0 || >=26.0.0`. The minimum
+`npm` version remains unchanged.
 
 !!! info "Actions Needed"
 
-    Upgrade Node.js to `v22.22.2`/`v24.15.0` or newer
+    Upgrade Node.js to `v22.22.2` or newer
 
-### All Packages Are Now ESM-Only
+### ESM-Only
 
-Every `@appium/*` package (and `appium` itself) is now published as `"type": "module"` with no
-CommonJS build. `require()` no longer works for these packages. This affects anyone importing
-Appium or a driver/plugin package directly from Node.js code, not just driver/plugin developers.
+Every package in the Appium monorepo (`appium` and its dependents) is now published as ESM-only,
+with no CommonJS build. `require()` no longer works for these packages.
 
 !!! info "Actions Needed"
 
-    Import Appium packages with ESM `import` syntax, or use dynamic `import()` from CommonJS code
+    Import Appium packages using ESM `import` syntax, or use dynamic `import()` from CommonJS code
 
-### `--nodeconfig` Flag Removed
+### JSONWP/MJSONWP Support Fully Removed
 
-Support for registering with a legacy Selenium Grid 3 hub has been removed, along with the
-`--nodeconfig` server argument and the `server.nodeconfig` config file property.
+The release of Appium 2 removed general support for the obsolete JSONWP and MJSONWP protocols,
+though some Appium-related packages using JSONWP/MJSONWP under the hood could still continue to
+function.
+
+Appium 4 removes all of the remaining internal code that supported these protocols, which means
+that drivers that still relied on these protocols are no longer compatible with Appium 4. Most
+notably, this includes the Windows driver ([see dedicated section below](#windows-driver-replaced-by-wincore-driver)).
+
+Despite this, Appium 4 does retain temporary support for a select few JSONWP/MJSONWP endpoints (see
+[Deprecated Endpoints Removed](#deprecated-endpoints-removed)).
+
+!!! info "Actions Needed"
+
+    Migrate to drivers that support the W3C WebDriver protocol
+
+### Windows Driver Replaced by WinCore Driver
+
+As part of [dropping support for the deprecated JSONWP and MJSONWP protocols](#jsonwpmjsonwp-support-fully-removed),
+Appium 4 is no longer compatible with the Windows driver ([`appium-windows-driver`](https://github.com/appium/appium-windows-driver)),
+since the driver cannot support the standard W3C WebDriver protocol. As a result, the
+`appium driver install windows` CLI command also no longer works.
+
+Instead, support has been added for the WinCore driver ([`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver)),
+which can be installed using the new `appium driver install wincore` command. Since the WinCore
+driver is also compatible with Appium 3, you can safely migrate from the Windows driver while
+remaining on Appium 3 - though note that the installation shortcut is only available since Appium 4.
+
+!!! info "Actions Needed"
+
+    If you currently use the Windows driver with Appium 3, you can migrate as follows:
+
+    1. Install `appium-wincore-driver` v3: `appium driver install --source=npm appium-wincore-driver@3`
+    2. Migrate your tests to use the WinCore driver
+    3. Uninstall the Windows driver: `appium driver uninstall windows`
+    4. Upgrade to Appium 4
+    5. Update the WinCore driver to its Appium 4 version: `appium driver update wincore --unsafe`
+
+### Deprecated Endpoints Removed
+
+Similarly to Appium 3, Appium 4 also removes several previously deprecated server endpoints, all of
+which belong to the obsolete JSONWP/MJSONWP protocols. Notably, the number of removed endpoints is
+a lot smaller (12, compared to 98 for Appium 3).
+
+All removed endpoints are listed below, along with their replacement endpoints or driver-specific
+execute methods:
+
+* `GET /session/:sessionId`
+    * :octicons-arrow-right-24: [`GET /session/:sessionId/appium/capabilities`](../reference/api/appium.md#getappiumsessioncapabilities) (for capabilities)
+    * :octicons-arrow-right-24: [`GET /session/:sessionId/appium/events`](../reference/api/appium.md#getlogevents) (for event timings)
+* `POST /session/:sessionId/ime/activate`
+    * :octicons-check-24: Moved to [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/)/[Espresso](https://appium.github.io/appium-espresso-driver/) drivers
+* `GET /session/:sessionId/ime/activated`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+* `GET /session/:sessionId/ime/active_engine`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+* `GET /session/:sessionId/ime/available_engines`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+* `POST /session/:sessionId/ime/deactivate`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+* `GET /session/:sessionId/location`
+    * :octicons-check-24: Moved to [XCUITest](https://appium.github.io/appium-xcuitest-driver/) driver
+    * :octicons-arrow-right-24: `mobile: getGeolocation` (UiAutomator2/Espresso drivers)
+    * :octicons-arrow-right-24: `mobile: getSimulatedLocation` (XCUITest driver)
+* `POST /session/:sessionId/location`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso/XCUITest drivers
+    * :octicons-arrow-right-24: `mobile: setGeolocation` (UiAutomator2/Espresso drivers)
+    * :octicons-arrow-right-24: `mobile: setSimulatedLocation` (XCUITest driver)
+* `GET /session/:sessionId/network_connection`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+    * :octicons-arrow-right-24: `mobile: getConnectivity` (UiAutomator2/Espresso drivers)
+* `POST /session/:sessionId/network_connection`
+    * :octicons-check-24: Moved to UiAutomator2/Espresso drivers
+    * :octicons-arrow-right-24: `mobile: setConnectivity` (UiAutomator2/Espresso drivers)
+* `POST /session/:sessionId/receive_async_response`
+    * :octicons-arrow-right-24: [`POST /session/:sessionId/execute/async`](../reference/api/webdriver.md#executeasync)
+* `GET /session/:sessionId/element/:elementId`
+    * :octicons-no-entry-24: JSONWP protocol command stub with no direct replacement
+
+There are 7 more deprecated endpoints that were intentionally _not_ removed in Appium 4. They are
+the last remaining  JSONWP/MJSONWP endpoints supported by Appium, and are listed in the
+[JSONWP](../reference/api/jsonwp.md) and [MJSONWP](../reference/api/mjsonwp.md) reference pages.
+These endpoints were kept due to their common usage (for context management), and their deprecation
+being somewhat recent. All of them are therefore planned to be removed in the next major Appium
+version, in order to give users time to migrate to their replacements.
+
+!!! info "Actions Needed"
+
+    Check your Appium client documentation for the affected methods, and adjust your code to use
+    their replacements
+
+### `--allow-cors` Flag Renamed
+
+In Appium 3, the `--allow-cors` server argument was the only feature flag not integrated with
+Appium's default [insecure feature flag mechanism](./security.md). Appium 4 removes this argument
+and replaces it with the `cors` insecure feature name. This allows the feature to be controlled
+using the `--allow-insecure`, `--deny-insecure` and `--relaxed-security` flags.
+
+Similarly to the `session_discovery` feature, the `cors` feature must also be prefixed with the
+wildcard (`*`) symbol.
+
+!!! info "Actions Needed"
+
+    Replace `--allow-cors` with `--allow-insecure=*:cors` or `--relaxed-security`
+
+### Default Log Level Set to Info
+
+The default logging level for server logs has been changed from `debug` to `info`. Debug-level
+logging is very verbose and mostly only useful for troubleshooting.
+
+!!! info "Actions Needed"
+
+    Pass `--log-level debug` explicitly if you rely on the previous verbosity
+
+### CLI Command Output Streams Split
+
+In Appium 3, all non-JSON output of Appium's CLI commands (`driver`/`plugin`/`setup`, but not
+`server`) was written to `stderr`. Appium 4 now writes `log`/`ok`/`info`/`warn` level messages of
+these commands to `stdout`, while `error` level output remains in `stderr`.
+
+The log output of the server itself (the `server` command) is unaffected, since it already split
+streams this way.
+
+!!! info "Actions Needed"
+
+    If you use scripts that capture non-JSON output of `driver`/`plugin`/`setup` commands, make
+    sure they read from the correct stream
+
+### SPDY/HTTP2 No Longer Supported
+
+In Appium 3, the server could be launched with SSL/TLS, which enabled support for the SPDY and
+HTTP/2 protocols. This functionality relied on the unmaintained `spdy` package. Appium 4 replaces
+this package with Node's native `https` module, which only supports plain HTTPS (HTTP/1.1).
+
+!!! info "Actions Needed"
+
+    Clients relying on SPDY or HTTP/2 multiplexing against Appium's TLS listener must switch to
+    plain HTTPS (HTTP/1.1)
+
+### Selenium Grid 3 Support Removed
+
+Support for registering with a Selenium Grid 3 hub has been removed, along with its `--nodeconfig`
+server argument/config file property. Selenium Grid 4 remains supported. 
 
 !!! info "Actions Needed"
 
     If you relied on Grid 3 registration, use the [Selenium Grid 4 relay feature](./grid.md) instead
 
-### `--allow-cors` Flag Removed
+### Post-Install Script Removed
 
-CORS is now gated behind the same [insecure feature](./security.md) mechanism used for other
-server-level features (e.g. `session_discovery`), instead of its own dedicated flag.
-Without CORS enabled, state-changing HTTP requests carrying an `Origin` header and WebSocket
-upgrades carrying that header now receive HTTP `403`. Ordinary `GET`, `HEAD`, and `OPTIONS`
-requests are exempt from the HTTP check; requests without `Origin` are unaffected.
-Library callers of `@appium/http-server`'s `server()` and `configureServer()` now default to
-`allowCors: false` ([#22990](https://github.com/appium/appium/pull/22990)).
+Appium 2 and 3 supported a postinstall hook that allowed for installation of drivers/plugins
+together with the Appium server itself:
+```
+npm install -g appium --drivers=... --plugins=...
+```
+Since postinstall hooks are a supply-chain security risk, and newer versions of `npm` disable them
+by default, this hook has been removed.
 
 !!! info "Actions Needed"
 
-    Replace `--allow-cors` with `--allow-insecure=*:cors` (or enable it via `--relaxed-security`)
-    for browser clients. Library callers that need CORS must explicitly pass `allowCors: true`
+    If you install drivers/plugins using the postinstall hook, migrate to Appium's
+    [`install`](../reference/cli/extensions.md#install) command, or declare extensions in your
+    project's `package.json` file
+
+### Event Timings Capability Removed
+
+In Appium 3, the `appium:eventTimings` capability could be set to `true` in order to include event
+timing information in the response of the `GET /session/:sessionId` endpoint. Since Appium 4
+removes this endpoint (see [Deprecated Endpoints Removed](#deprecated-endpoints-removed)), the
+capability became obsolete, and has also been removed.
+
+!!! info "Actions Needed"
+
+    Remove any instances of the `appium:eventTimings` capability, and instead use the [getLogEvents](../reference/api/appium.md#getlogevents) endpoint to retrieve event timings
 
 ### Unused Server Arguments Removed
 
-The following server arguments had no effect for a long time and have been removed, together with
-their `server.*` config file properties:
+The following server arguments have had no effect for a long time and have been removed, along with
+their equivalents in the configuration file:
 
 * `--callback-address` (`-ca`)
 * `--callback-port` (`-cp`)
@@ -95,89 +237,62 @@ fail schema validation.
 
     Remove these arguments from startup scripts and config files
 
-### Extension Auto-Install on `npm install` Removed
+### Status Endpoint Ignores Commands Queue
 
-The `npm install -g appium --drivers=... --plugins=...` postinstall hook that automatically
-installed extensions has been removed, since npm postinstall hooks are a supply-chain security
-risk and newer npm versions no longer support passing custom arguments to them.
+The standard [Status](../reference/api/webdriver.md#getstatus) endpoint is now exempt from the
+driver commands queue by default, so it can be answered while a long-running command is still in
+progress. The idle timer (set by `appium:newCommandTimeout`) is now only restarted once no commands
+are executing.
 
-!!! info "Actions Needed"
-
-    Use `appium driver install`/`appium plugin install`, or declare extensions in your project's
-    `package.json`, instead of `--drivers`/`--plugins` install-time arguments
-
-### Local Extension Installs No Longer Create Global npm Links
-
-`appium driver install --source=local` and `appium plugin install --source=local` now install
-directly from the supplied local directory, without first creating an intermediate global npm
-link. Local installs still link to the source directory, so source changes do not require
-reinstalling the extension (rebuild the extension first if its source needs compilation).
+Driver developers can also customize the list of exempt commands by overriding the new
+`queueExemptCommands` getter.
 
 !!! info "Actions Needed"
 
-    Keep using `--source=local` with the extension's directory for local development. If other
-    tooling relied on the package being linked in npm's global prefix, manage that global link
-    separately; Appium no longer creates it as a side effect of a local extension install.
+    None, unless your script (or extension) relies on Status being serialized with other commands
 
-### `windows` Driver Shortcut Replaced by `wincore`
+## Behavior Fixes
 
-The `windows` shortcut for `appium driver install` has been removed, and the new `wincore` shortcut
-resolves to [`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver). The old
-`appium-windows-driver` depends on WinAppDriver, which has not been maintained since 2022 and only
-speaks the legacy JSONWP protocol, so it does not work with Appium 4.
+These fixes are relevant when upgrading from Appium 3, even though they do not remove APIs.
+Most require no changes unless your tests or integrations depend on the previous behavior.
 
-!!! info "Actions Needed"
+### HTTP Responses and WebDriver Errors
 
-    1. While Appium 3 is still installed, install `appium-wincore-driver` v3 next to the legacy
-       driver and verify that your Windows tests pass with it. The `wincore` shortcut is not
-       available in Appium 3, so the package must be specified explicitly:
-       `appium driver install --source=npm appium-wincore-driver@^3.0.0`
-    2. After upgrading to Appium 4, update to the Appium 4 compatible driver release,
-       since v3 of the driver only works with Appium 3:
-       `appium driver update wincore --unsafe`
-    3. Uninstall the legacy driver, as it does not work with Appium 4:
-       `appium driver uninstall appium-windows-driver`
-
-### Default Log Level Changed to `info`
-
-The default `--log-level` changed from `debug` to `info`. Debug-level logging is very verbose and
-mostly only useful for troubleshooting.
-
-!!! info "Actions Needed"
-
-    Pass `--log-level debug` explicitly if you rely on the previous verbosity
-
-### CLI Output Streams Split
-
-Appium's CLI commands (`driver`/`plugin install|list|update`, `doctor`, etc.) used to write all
-non-JSON output to `STDERR`. Human-readable output (`log`/`ok`/`info`/`warn`) now goes to
-`STDOUT`; only `error` output still goes to `STDERR`. The main server's log output (Winston-based)
-is unaffected, since it already split streams this way.
-
-!!! info "Actions Needed"
-
-    If you have scripts that capture Appium CLI output, make sure they read from the correct stream
-
-### TLS Server No Longer Negotiates SPDY/HTTP2
-
-Appium's TLS-enabled server used the unmaintained `spdy` package, which allowed negotiating
-SPDY/HTTP2 over ALPN. It has been replaced with Node's native `https` module, which only serves
-plain HTTPS (HTTP/1.1).
+* `HEAD` requests to GET command URLs now return HTTP `405` without executing the GET command.
+  Explicit extension HEAD handlers and custom server routes retain their behavior. Use `GET /status`
+  for health checks ([#22992](https://github.com/appium/appium/pull/22992)).
+* `TimeoutError` and `ScriptTimeoutError` now map to HTTP `500` instead of `408`
+  ([#22686](https://github.com/appium/appium/pull/22686))
+* Unsupported log types and unknown legacy timeout `type` values now return HTTP `400` /
+  `invalid argument` instead of HTTP `500` / `unknown error`
+  ([#22986](https://github.com/appium/appium/pull/22986),
+  [#22987](https://github.com/appium/appium/pull/22987)).
+* WebDriver HTTP responses now include `Cache-Control: no-cache`, including successful responses,
+  errors, and responses reconstructed by `WebDriverProxy`
+  ([#22971](https://github.com/appium/appium/pull/22971)). Caches must revalidate these responses
+  before reusing them; this header does not mean `no-store`.
+* When no installed driver matches the requested platform/automation combination, or the matching
+  driver cannot be loaded or does not export its class, New Session now returns `session not created`
+  instead of `unknown error`. The HTTP status remains `500`, and the diagnostic message is preserved.
+  Validation of missing `platformName`/`appium:automationName` is unchanged
+  ([#22970](https://github.com/appium/appium/pull/22970)).
+* A downstream `detached shadow root` error is now preserved as HTTP `404` with that WebDriver
+  error code instead of being converted to `unknown error` with HTTP `500`
+  ([#22968](https://github.com/appium/appium/pull/22968)).
+* Supplied WebDriver error `data` (e.g. alert text) is preserved in driver and proxy responses;
+  absent data remains omitted
+  ([#22974](https://github.com/appium/appium/pull/22974)).
+* With an empty base path, an unregistered `GET /` now returns a WebDriver JSON `unknown command`
+  response with HTTP `404` instead of Express's HTML 404 page. Extensions can still register their
+  own root route ([#22969](https://github.com/appium/appium/pull/22969)).
+* Driver commands rejecting with `null` or `undefined` now produce a WebDriver `unknown error`
+  response instead of causing the error handler itself to fail
+  ([#22869](https://github.com/appium/appium/pull/22869)).
 
 !!! info "Actions Needed"
 
-    Clients relying on SPDY or HTTP/2 multiplexing against Appium's TLS listener must switch to
-    plain HTTPS (HTTP/1.1)
-
-### Timeout Errors Now Return HTTP 500
-
-Per the W3C WebDriver standard, `TimeoutError` and `ScriptTimeoutError` now map to HTTP `500`
-instead of `408`. The stale `408` mapping could cause keep-alive clients/proxies to auto-retry an
-already-executed timed-out command.
-
-!!! info "Actions Needed"
-
-    None, unless your code inspects the raw HTTP status code of a timeout response
+    Update assertions or retry logic that inspect raw error codes, HTTP status codes, response
+    headers, or root-path response bodies. Use `GET /status` for server health checks
 
 ### Timeouts Endpoint Aligned With W3C Standard
 
@@ -228,24 +343,7 @@ A request with no body, or a body that is a JSON array such as `[]`, returns HTT
     Send `{}` instead of an empty body. Clients that already send a JSON object, including the
     Appium clients, need no change
 
-### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
-
-When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
-server, Appium no longer validates required payload fields or command arguments before calling
-the plugin. This matches direct proxying, where the downstream remote end already owns those
-checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
-Appium to validate these arguments can now receive missing or invalid values.
-
-!!! info "Actions Needed"
-
-    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
-    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
-    The downstream driver's validation responsibility is unchanged.
-
-Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
-JSON-object request-body checks also remain in place before the plugin is called.
-
-### BiDi Commands No Longer Accept Stray `sessionId`/`id` Params
+### BiDi Commands No Longer Accept `sessionId`/`id`
 
 Unlike HTTP endpoints, WebDriver BiDi commands have no URL-derived session/element id, so a stray
 `sessionId` or `id` key inside BiDi command params is no longer silently accepted; it is now
@@ -254,17 +352,6 @@ validated like any other unknown parameter.
 !!! info "Actions Needed"
 
     Remove `sessionId`/`id` from the parameters of any custom BiDi command invocation
-
-### `getStatus` No Longer Waits In the Commands Queue
-
-`GET /status` is now exempt from the driver commands queue by default, so it can be answered while
-a long-running command is still in progress. The new-command idle timer is now only restarted once
-no commands are executing. Drivers can customize the exemption list by overriding the new
-`queueExemptCommands` getter.
-
-!!! info "Actions Needed"
-
-    None, unless your driver relied on `getStatus` being serialized with other commands
 
 ### Stricter Capability Validation
 
@@ -297,21 +384,18 @@ missing required driver capabilities and unsupported platforms still allow match
 
 ### Default Capabilities Apply to Every Candidate
 
-`--default-capabilities` now fills missing keys in each `firstMatch` candidate independently.
-Client values in `alwaysMatch` or the current candidate take precedence; a value in another
-candidate does not suppress the default. Duplicate keys between `alwaysMatch` and `firstMatch`
-are still rejected. This is Appium-specific defaulting behavior
-([#22988](https://github.com/appium/appium/pull/22988)); see
+The `--default-capabilities` server argument now correctly handles multiple `firstMatch` candidates, and applies to each candidate separately. Values set in `alwaysMatch` or the current candidate still take precedence, and duplicate keys between `alwaysMatch` and `firstMatch` are still rejected ([#22988](https://github.com/appium/appium/pull/22988)) See
 [Default Capabilities](../reference/cli/server.md#default-capabilities) for an example.
 
 !!! info "Actions Needed"
 
     Check defaults when sending multiple candidates: later candidates now receive missing defaults too
 
-### Storage Plugin Routes Respect `--base-path`
+### Storage Plugin Respects Server Base Path
 
-The [storage plugin](https://github.com/appium/appium/tree/master/packages/storage-plugin) HTTP
-routes and stream/events WebSocket paths used to be mounted at the server root, ignoring `--base-path`.
+For users of the [`storage`](https://github.com/appium/appium/tree/master/packages/storage-plugin)
+plugin, its [endpoints](../reference/api/plugins.md#storage-plugin) and stream/events WebSocket
+paths used to be mounted at the Appium server root, ignoring any custom `--base-path` values.
 They are now prefixed with the base path, e.g. `/wd/hub/appium/storage/add`. Also, storage file names
 starting with a dot, reserved partial-file names, and concurrent WebSocket uploads of the same file
 are now rejected.
@@ -325,47 +409,6 @@ are now rejected.
 
 Pending upload WebSocket routes are also preserved across retries,
 and errors on upload event sockets are logged instead of potentially terminating the server.
-
-## Behavior Fixes
-
-These fixes are relevant when upgrading from Appium 3, even though they do not remove APIs.
-Most require no changes unless your tests or integrations depend on the previous behavior.
-
-### HTTP Responses and WebDriver Errors
-
-* `HEAD` requests to GET command URLs now return HTTP `405` without executing the GET command.
-  Explicit extension HEAD handlers and custom server routes retain their behavior. Use `GET /status`
-  for health checks ([#22992](https://github.com/appium/appium/pull/22992)).
-* Unsupported log types and unknown legacy timeout `type` values now return HTTP `400` /
-  `invalid argument` instead of HTTP `500` / `unknown error`
-  ([#22986](https://github.com/appium/appium/pull/22986),
-  [#22987](https://github.com/appium/appium/pull/22987)).
-* WebDriver HTTP responses now include `Cache-Control: no-cache`, including successful responses,
-  errors, and responses reconstructed by `WebDriverProxy`
-  ([#22971](https://github.com/appium/appium/pull/22971)). Caches must revalidate these responses
-  before reusing them; this header does not mean `no-store`.
-* When no installed driver matches the requested platform/automation combination, or the matching
-  driver cannot be loaded or does not export its class, New Session now returns `session not created`
-  instead of `unknown error`. The HTTP status remains `500`, and the diagnostic message is preserved.
-  Validation of missing `platformName`/`appium:automationName` is unchanged
-  ([#22970](https://github.com/appium/appium/pull/22970)).
-* A downstream `detached shadow root` error is now preserved as HTTP `404` with that WebDriver
-  error code instead of being converted to `unknown error` with HTTP `500`
-  ([#22968](https://github.com/appium/appium/pull/22968)).
-* Supplied WebDriver error `data` (e.g. alert text) is preserved in driver and proxy responses;
-  absent data remains omitted
-  ([#22974](https://github.com/appium/appium/pull/22974)).
-* With an empty base path, an unregistered `GET /` now returns a WebDriver JSON `unknown command`
-  response with HTTP `404` instead of Express's HTML 404 page. Extensions can still register their
-  own root route ([#22969](https://github.com/appium/appium/pull/22969)).
-* Driver commands rejecting with `null` or `undefined` now produce a WebDriver `unknown error`
-  response instead of causing the error handler itself to fail
-  ([#22869](https://github.com/appium/appium/pull/22869)).
-
-!!! info "Actions Needed"
-
-    Update assertions or retry logic that inspect raw error codes, HTTP status codes, response
-    headers, or root-path response bodies. Use `GET /status` for server health checks
 
 ### Initial Settings and Session Lifecycle
 
@@ -423,24 +466,9 @@ URLs, including advertised BiDi WebSocket URLs and execute-driver plugin connect
 
     Remove any workarounds for literal percent escapes in download credentials or malformed IPv6 URLs
 
-## Endpoint Changes
+## Developer-Facing Changes
 
-The following endpoints have been removed:
-
-* `GET/POST /session/:sessionId/ime/*` (all IME endpoints, legacy JSONWP)
-* `GET /session/:sessionId/location`, `POST /session/:sessionId/location` (legacy geolocation, legacy JSONWP)
-* `GET /session/:sessionId/network_connection`, `POST /session/:sessionId/network_connection` (legacy MJSONWP)
-* `POST /session/:sessionId/receive_async_response` (legacy JSONWP)
-* `GET /session/:sessionId/element/:elementId` (undocumented legacy JSONWP stub)
-* `GET /session/:sessionId` (deprecated `getSession`; see [below](#getsession-command-removed) for
-  its replacement)
-
-The `orientation`, `context`/`contexts`, and `rotation` deprecated endpoints are unaffected and
-remain available.
-
-## Changes for Driver and Plugin Developers
-
-The following changes primarily affect authors of Appium drivers, plugins, or tools that import
+The following changes primarily affect developers of Appium clients, drivers, plugins, or tools that import
 Appium's internal packages directly (`@appium/base-driver`, `@appium/base-plugin`,
 `@appium/support`, `@appium/logger`). They do not affect most Appium end users.
 
@@ -477,6 +505,20 @@ been removed.
 
     Replace `import BaseDriver from '@appium/base-driver'` with `import {BaseDriver} from '@appium/base-driver'`
 
+### Requests With `Origin` Header Require CORS
+
+The CORS mechanism of Appium 3 did not prevent web pages from sending state-changing requests.
+Appium 4 changes this by returning HTTP `403` for state-changing HTTP requests with an `Origin`
+header, unless the CORS insecure feature is enabled.
+
+This does not affect requests without the `Origin` header, which includes most Appium clients.
+Ordinary `GET`, `HEAD`, and `OPTIONS` requests are also exempt from the HTTP check.
+
+!!! info "Actions Needed"
+
+    If your Appium client sends requests with the `Origin` header, remove it or instruct users to
+    enable the CORS insecure feature
+
 ### Drivers Must Support Shared Command Activity Tracking
 
 The idle timer stays suspended through HTTP/BiDi plugin chains, including work after `next()`,
@@ -502,6 +544,15 @@ or `StartServerOpts`, and no longer depends on `express` and related middleware 
 !!! info "Actions Needed"
 
     Import the server helpers from `@appium/http-server` instead
+
+### Server Configuration Disables CORS By Default
+
+The `server()` and `configureServer()` methods exported by `@appium/http-server` (formerly by
+`@appium/base-driver`) now default to `allowCors: false` ([#22990](https://github.com/appium/appium/pull/22990)).
+
+!!! info "Actions Needed"
+
+    If your extension relies on CORS, explicitly set `allowCors: true`
 
 ### Driver-Specific Capabilities Removed From Base Constraints
 
@@ -557,17 +608,6 @@ The deprecated `driverData` mechanism (`Core.driverData`, the `driverData` param
 
     Update any driver or plugin overriding `createSession` to use the single-argument signature
 
-### `getSession` Command Removed
-
-`BaseDriver.getSession` and `ISessionHandler.getSession` have been removed (see [Endpoint
-Changes](#endpoint-changes) for the removed route), along with the `appium:eventTimings`
-capability that controlled whether its response included event history.
-
-!!! info "Actions Needed"
-
-    Use `GET /session/:sessionId/appium/capabilities` to retrieve session capabilities, and
-    `POST /session/:sessionId/appium/events` to retrieve event history (now returned unconditionally)
-
 ### `@appium/support` Deprecated APIs Removed
 
 The following `@appium/support` exports have been removed: `process` (`getProcessIds`,
@@ -620,6 +660,36 @@ may collapse into the same one, so that entries overwrite each other.
     supported by Node.js can be selected via `fileNamesEncoding`. Archives with encrypted entries or
     other compression methods are rejected with `ZipStreamUnsupportedError`
 
+### Local Extension Installs No Longer Create Global npm Links
+
+When installing a locally available driver/plugin using Appium's CLI, via the `--source=local` flag
+of the `install` command, Appium now installs the extension directly from the supplied local
+directory, without first creating an intermediate global `npm` link. Local installs still link to
+the source directory, so source changes do not require reinstalling the extension.
+
+!!! info "Actions Needed"
+
+    Keep using `--source=local` with the extension's directory for local development. If other
+    tooling relied on the package being linked in `npm`'s global prefix, manage that global link
+    separately.
+
+### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
+
+When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
+server, Appium no longer validates required payload fields or command arguments before calling
+the plugin. This matches direct proxying, where the downstream remote end already owns those
+checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
+Appium to validate these arguments can now receive missing or invalid values.
+
+Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
+JSON-object request-body checks also remain in place before the plugin is called.
+
+!!! info "Actions Needed"
+
+    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
+    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
+    The downstream driver's validation responsibility is unchanged.
+
 ### Legacy Test Pages Removed From `@appium/base-driver`
 
 The built-in test fixture routes (`/welcome`, `/test/guinea-pig*`, `/produce_error`, `/crash`),
@@ -647,5 +717,5 @@ removed.
   confusing error
 * `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
   preventing concurrent processes from silently clobbering each other's changes
-* The `install` CLI command now attempts to search for and install the newest compatible extension
-  version, if the latest version has an incompatible Appium server requirement
+* The `update` CLI command now attempts to check the Appium server requirement of the latest
+  extension version, and no longer updates to versions with an incompatible server range

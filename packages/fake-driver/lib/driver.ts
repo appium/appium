@@ -29,10 +29,10 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   static newMethodMap = NEW_METHOD_MAP;
   static executeMethodMap = EXECUTE_METHOD_MAP;
 
-  readonly desiredCapConstraints = desiredCapConstraints;
+  override readonly desiredCapConstraints = desiredCapConstraints;
 
   /** Registers 'actions' with the base driver's generic getLogTypes/getLog commands. */
-  readonly supportedLogTypes = {
+  override readonly supportedLogTypes = {
     actions: {
       description: 'Log of all actions performed against the driver in this session',
       getter: () => this.appModel.actionLog,
@@ -92,16 +92,16 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   // Find commands
   getExistingElementForNode = findCommands.getExistingElementForNode;
   wrapNewEl = findCommands.wrapNewEl;
-  findElOrEls = findCommands.findElOrEls;
-  findElement = findCommands.findElement;
-  findElements = findCommands.findElements;
-  findElementFromElement = findCommands.findElementFromElement;
-  findElementsFromElement = findCommands.findElementsFromElement;
+  override findElOrEls = findCommands.findElOrEls;
+  override findElement = findCommands.findElement;
+  override findElements = findCommands.findElements;
+  override findElementFromElement = findCommands.findElementFromElement;
+  override findElementsFromElement = findCommands.findElementsFromElement;
 
   // General commands
   title = generalCommands.title;
   keys = generalCommands.keys;
-  getPageSource = generalCommands.getPageSource;
+  override getPageSource = generalCommands.getPageSource;
   getOrientation = generalCommands.getOrientation;
   setOrientation = generalCommands.setOrientation;
   getScreenshot = generalCommands.getScreenshot;
@@ -139,7 +139,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     this.lastPluginMath = null;
   }
 
-  get bidiProxyUrl(): string | null {
+  override get bidiProxyUrl(): string | null {
     return this._bidiProxyUrl;
   }
 

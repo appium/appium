@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
 import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Constraints, Element} from '@appium/types';
-import {BaseDriver} from 'appium/driver.js';
+import {BaseDriver, errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import sharp from 'sharp';
 import {createSandbox, type SinonSandbox} from 'sinon';
@@ -166,7 +166,11 @@ describe('finding elements by image', function () {
       useScreenshot(await screenImage());
       const containerRect = {x: 0, y: 0, width: 100, height: 100};
       const inside = [rect, {...rect, x: 50}];
-      compareStub.resolves([{rect: {...rect, y: 100}, score}, ...inside.map((r) => ({rect: r, score}))]);
+      compareStub.callsFake(async (...args: any[]) => {
+        const {width, height} = await sharp(args[1]).metadata();
+        assert.deepStrictEqual({width, height}, {width: containerRect.width, height: containerRect.height});
+        return inside.map((r) => ({rect: r, score}));
+      });
       const els = (await f.findByImage(template, d as any, {
         multiple: true,
         containerRect,
@@ -536,12 +540,23 @@ describe('finding elements by image', function () {
       });
       assert.strictEqual(crop, null);
     });
-    it('should reject a container crop when the screenshot is not an image', async function () {
+    it('should reject a container crop when the screenshot is not an image and verification is off', async function () {
       await (d as any).settings.update({fixImageFindScreenshotDims: false});
       (d.getScreenshot as any).resolves(Buffer.from('nope').toString('base64'));
       await assert.rejects(
         f.getScreenshotForImageFind(d as any, {width: 4, height: 4} as any, {x: 0, y: 0, width: 2, height: 2}),
-        /unsupported image format|Screenshot width\/height cannot be determined/,
+        (err: any) =>
+          err instanceof errors.InvalidElementStateError &&
+          /Screenshot width\/height cannot be determined/.test(err.message),
+      );
+    });
+    it('should reject a container crop when the screenshot is not an image and verification is on', async function () {
+      (d.getScreenshot as any).resolves(Buffer.from('nope').toString('base64'));
+      await assert.rejects(
+        f.getScreenshotForImageFind(d as any, {width: 4, height: 4} as any, {x: 0, y: 0, width: 2, height: 2}),
+        (err: any) =>
+          err instanceof errors.InvalidElementStateError &&
+          /Screenshot width\/height cannot be determined/.test(err.message),
       );
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {

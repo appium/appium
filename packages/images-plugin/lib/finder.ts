@@ -29,22 +29,6 @@ const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Checks if one rect fully contains another
- *
- * @param templateRect The bounding rect
- * @param rect The rect to be checked for containment
- * @returns True if templateRect contains rect
- */
-function containsRect(templateRect: Rect, rect: Rect): boolean {
-  return (
-    templateRect.x <= rect.x &&
-    templateRect.y <= rect.y &&
-    rect.width <= templateRect.x + templateRect.width - rect.x &&
-    rect.height <= templateRect.y + templateRect.height - rect.y
-  );
-}
-
 const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 type ImageMatchOptions = {
@@ -248,11 +232,20 @@ export class ImageElementFinder {
     log.info('Verifying screenshot size and aspect ratio');
 
     let imgObj = sharp(screenshot);
-    let {width: shotWidth, height: shotHeight} = await imgObj.metadata();
+    let shotWidth: number | undefined;
+    let shotHeight: number | undefined;
+    try {
+      ({width: shotWidth, height: shotHeight} = await imgObj.metadata());
+    } catch (err) {
+      if (!containerRect) {
+        throw err;
+      }
+      throw invalidScreenshotError(err);
+    }
 
     if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
       if (containerRect) {
-        throw new errors.UnknownError('Screenshot width/height cannot be determined. Is it a valid image?');
+        throw invalidScreenshotError();
       }
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
@@ -477,24 +470,14 @@ export class ImageElementFinder {
 
         const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
         const candidates = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
-        let found = false;
         for (const el of candidates) {
-          const result: OccurrenceResultWithVisualization = {
+          matches.push({
             rect: crop ? {...el.rect, x: el.rect.x + crop.x, y: el.rect.y + crop.y} : el.rect,
             score: el.score,
             visualization: el.visualization,
-          };
-          if (crop && !containsRect(crop, result.rect)) {
-            log.debug(
-              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
-                `inside of the bounding rectangle ${JSON.stringify(crop)}, thus rejected`,
-            );
-            continue;
-          }
-          matches.push(result);
-          found = true;
+          });
         }
-        return found;
+        return candidates.length > 0;
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of
@@ -561,12 +544,16 @@ export class ImageElementFinder {
     let width = size?.width;
     let height = size?.height;
     if (!width || !height) {
-      ({width, height} = await imgObj.metadata());
+      try {
+        ({width, height} = await imgObj.metadata());
+      } catch (err) {
+        throw invalidScreenshotError(err);
+      }
     }
     if (!width || !height) {
-      throw new errors.UnknownError('Screenshot width/height cannot be determined. Is it a valid image?');
+      throw invalidScreenshotError();
     }
-    // Round the crop outward so containsRect checks the same pixels OpenCV searched.
+    // Round outward so a fractional container edge is included.
     const x = Math.max(0, Math.floor(rect.x));
     const y = Math.max(0, Math.floor(rect.y));
     const right = Math.min(width, Math.ceil(rect.x + rect.width));
@@ -582,4 +569,11 @@ export class ImageElementFinder {
       .toBuffer();
     return {image, rect: cropped};
   }
+}
+
+function invalidScreenshotError(cause?: unknown) {
+  return new errors.InvalidElementStateError(
+    'Screenshot width/height cannot be determined. Is it a valid image?',
+    cause instanceof Error ? cause : undefined,
+  );
 }

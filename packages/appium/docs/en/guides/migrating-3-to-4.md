@@ -237,20 +237,6 @@ fail schema validation.
 
     Remove these arguments from startup scripts and config files
 
-### Status Endpoint Ignores Commands Queue
-
-The standard [Status](../reference/api/webdriver.md#getstatus) endpoint is now exempt from the
-driver commands queue by default, so it can be answered while a long-running command is still in
-progress. The idle timer (set by `appium:newCommandTimeout`) is now only restarted once no commands
-are executing.
-
-Driver developers can also customize the list of exempt commands by overriding the new
-`queueExemptCommands` getter.
-
-!!! info "Actions Needed"
-
-    None, unless your script (or extension) relies on Status being serialized with other commands
-
 ## Behavior Fixes
 
 These fixes are relevant when upgrading from Appium 3, even though they do not remove APIs.
@@ -702,20 +688,47 @@ removed.
 
 ## New Features
 
-* [`--app-url-rules`](./security.md#restricting-remote-app-urls) lets server operators restrict
-  which hosts/IPs an `appium:app` URL is allowed to be downloaded from (allow/deny lists, HTTPS-only,
-  credentials, redirect limits)
-* Definitions for all current [WebDriver BiDi](https://w3c.github.io/webdriver-bidi/) commands are
-  now included for introspection/validation purposes
-* `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
-  compile time, catching mismatched required/optional execute method parameters in driver code
-* The [Universal XML plugin](../reference/api/plugins.md) provides the `universalXml: setEnabled` and
-  `universalXml: isEnabled` execute methods to toggle the translation during a session, e.g. to
-  retrieve the original page source
+### App URL Rules
+
+The new `--app-url-rules` server CLI flag (and its equivalent configuration file property) allows
+server hosts to restrict the host/IP values allowed in capabilities like `appium:app`. Configurable
+properties includes allow/deny lists, HTTPS-only, credentials, and redirect limits. Refer to
+[the Security guide](./security.md#restricting-remote-app-urls) for more details.
+
+### CLI Update Command Checks Server Requirement
+
+As a follow-up to Appium 3.9, which changed the default behavior of the Appium CLI `install`
+command to install the newest extension version that is compatible with the current server (as
+opposed to throwing an error if the server requirement of the latest extension version is
+incompatible), Appium 4 adjusts the `update` command to now implement this behavior as well.
+
+This makes default usage of both `install` and `update` safe even when future major extension
+versions raise their server requirements.
+
+### Commands Can Bypass Queue
+
+Driver commands (endpoints) are now allowed to bypass the default command queue, which enables the
+command to execute while another long-running command is in progress.
+
+By default, only the standard [Status](../reference/api/webdriver.md#getstatus) endpoint is exempt
+from the queue, but driver developers can also customize the list of exempt commands by overriding
+the `queueExemptCommands` getter.
+
+The behavior of the idle timer (set by `appium:newCommandTimeout`) has also been adjusted to only
+reset once no commands are executing.
+
+### Universal XML Plugin Can Be Toggled
+
+The [Universal XML plugin](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin)
+now provides the [`universalXml: setEnabled` and `universalXml: isEnabled` execute methods](../reference/api/plugins.md#universal-xml-plugin),
+which allow toggling the translation during a session, e.g. to retrieve the original page source.
+
+### Further Validation and Safety
+
+* The `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
+  preventing any concurrent CLI commands from silently clobbering each other's changes
 * Extension manifests and `extensions.yaml` are now validated with `ajv`/JSON Schema; a corrupted
   `extensions.yaml` now resets to an empty manifest with a warning instead of crashing later with a
   confusing error
-* `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
-  preventing concurrent processes from silently clobbering each other's changes
-* The `update` CLI command now attempts to check the Appium server requirement of the latest
-  extension version, and no longer updates to versions with an incompatible server range
+* `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
+  compile time, catching mismatched required/optional execute method parameters in driver code

@@ -49,7 +49,7 @@ function.
 
 Appium 4 removes all of the remaining internal code that supported these protocols, which means
 that drivers that still relied on these protocols are no longer compatible with Appium 4. Most
-notably, this includes the Windows driver ([see dedicated section below](#windows-driver-replaced-by-wincore-driver)).
+notably, this includes the Windows driver ([see dedicated section below](#windows-driver-replaced-by-wincore-driver)). All other official drivers rely on the W3C protocol and are not affected by this change.
 
 Despite this, Appium 4 does retain temporary support for a select few JSONWP/MJSONWP endpoints (see
 [Deprecated Endpoints Removed](#deprecated-endpoints-removed)).
@@ -83,8 +83,8 @@ remaining on Appium 3 - though note that the installation shortcut is only avail
 ### Deprecated Endpoints Removed
 
 Similarly to Appium 3, Appium 4 also removes several previously deprecated server endpoints, all of
-which belong to the obsolete JSONWP/MJSONWP protocols. Notably, the number of removed endpoints is
-a lot smaller (12, compared to 98 for Appium 3).
+which belong to the obsolete JSONWP/MJSONWP protocols. Compared to Appium 3, this cleanup is much
+smaller (12 removed endpoints total, compared to 98 for Appium 3).
 
 All removed endpoints are listed below, along with their replacement endpoints or driver-specific
 execute methods:
@@ -121,10 +121,13 @@ execute methods:
 * `GET /session/:sessionId/element/:elementId`
     * :octicons-no-entry-24: JSONWP protocol command stub with no direct replacement
 
-There are 7 more deprecated endpoints that were intentionally _not_ removed in Appium 4. They are
+#### Retained Endpoints
+
+There are 7 more deprecated endpoints that are intentionally _not_ removed in Appium 4. They are
 the last remaining  JSONWP/MJSONWP endpoints supported by Appium, and are listed in the
 [JSONWP](../reference/api/jsonwp.md) and [MJSONWP](../reference/api/mjsonwp.md) reference pages.
-These endpoints were kept due to their common usage (for context management), and their deprecation
+
+These endpoints are kept due to their common usage (for context management), and their deprecation
 being somewhat recent. All of them are therefore planned to be removed in the next major Appium
 version, in order to give users time to migrate to their replacements.
 
@@ -137,7 +140,7 @@ version, in order to give users time to migrate to their replacements.
 
 In Appium 3, the `--allow-cors` server argument was the only feature flag not integrated with
 Appium's default [insecure feature flag mechanism](./security.md). Appium 4 removes this argument
-and replaces it with the `cors` insecure feature name. This allows the feature to be controlled
+and replaces it with the `cors` insecure feature name. This means the feature can now be controlled
 using the `--allow-insecure`, `--deny-insecure` and `--relaxed-security` flags.
 
 Similarly to the `session_discovery` feature, the `cors` feature must also be prefixed with the
@@ -198,7 +201,7 @@ together with the Appium server itself:
 npm install -g appium --drivers=... --plugins=...
 ```
 Since postinstall hooks are a supply-chain security risk, and newer versions of `npm` disable them
-by default, this hook has been removed.
+by default, this hook has been removed in Appium 4.
 
 !!! info "Actions Needed"
 
@@ -692,15 +695,17 @@ removed.
 
 The new `--app-url-rules` server CLI flag (and its equivalent configuration file property) allows
 server hosts to restrict the host/IP values allowed in capabilities like `appium:app`. Configurable
-properties includes allow/deny lists, HTTPS-only, credentials, and redirect limits. Refer to
-[the Security guide](./security.md#restricting-remote-app-urls) for more details.
+properties includes allow/deny lists, HTTPS-only, credentials, and redirect limits.
+
+Refer to [the Security guide](./security.md#restricting-remote-app-urls) for more details.
 
 ### CLI Update Command Checks Server Requirement
 
-As a follow-up to Appium 3.9, which changed the default behavior of the Appium CLI `install`
-command to install the newest extension version that is compatible with the current server (as
-opposed to throwing an error if the server requirement of the latest extension version is
-incompatible), Appium 4 adjusts the `update` command to now implement this behavior as well.
+As a follow-up to Appium 3.9, which changed the default behavior of the Appium CLI
+[`install`](../reference/cli/extensions.md#install) command to install the newest extension version
+that is compatible with the current server (as opposed to throwing an error if the server
+requirement of the latest extension version is incompatible), Appium 4 adjusts the
+[`update`](../reference/cli/extensions.md#update) command to now implement this behavior as well.
 
 This makes default usage of both `install` and `update` safe even when future major extension
 versions raise their server requirements.

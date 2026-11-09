@@ -2,7 +2,6 @@ import {logger} from '@appium/support';
 import type {AppiumLogger, Core} from '@appium/types';
 import type {Request} from 'express';
 
-import {PROTOCOLS} from '../constants.js';
 import {generateDriverLogPrefix} from '../helpers/log-prefix.js';
 import {NO_SESSION_ID_COMMANDS} from './routes/index.js';
 
@@ -41,25 +40,6 @@ export function getSessionId(driver: Core<any>, req: Request): string | undefine
  */
 export function isSessionCommand(command: string): boolean {
   return !NO_SESSION_ID_COMMANDS.includes(command);
-}
-
-/**
- * @param driver - Active driver, possibly an umbrella driver managing multiple sessions
- * @param sessionId - Id of the session to resolve the protocol for
- * @returns The active protocol for the given session
- */
-export function extractProtocol(driver: Core<any>, sessionId: string | null = null): keyof typeof PROTOCOLS {
-  const dstDriver =
-    typeof driver.driverForSession === 'function' && sessionId ? driver.driverForSession(sessionId) : driver;
-  if (dstDriver === driver) {
-    // Shortcircuit if the driver instance is not an umbrella driver
-    // or it is Fake driver instance, where `driver.driverForSession`
-    // always returns self instance
-    return driver.protocol ?? PROTOCOLS.W3C;
-  }
-
-  // Extract the protocol for the current session if the given driver is the umbrella one
-  return dstDriver?.protocol ?? PROTOCOLS.W3C;
 }
 
 /**

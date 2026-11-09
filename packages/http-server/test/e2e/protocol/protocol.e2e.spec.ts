@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {errors, WebDriverProxy} from '@appium/base-driver';
+import {errors, markResponseEnvelope, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import type {Application, Request, Response} from 'express';
@@ -261,6 +261,72 @@ describe('Protocol', function () {
       assert.strictEqual(data.value.error, 'unknown error');
       assert.strictEqual(data.value.message, 'Mishandled Driver Error');
       assert.ok(!data.sessionId);
+    });
+
+    it('should return a script result that contains a protocol field', async function () {
+      const location = {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'};
+      sandbox.stub(driver, 'executeCommand').resolves(location);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return window.location',
+        args: [],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, location);
+    });
+
+    it('should still unwrap a W3C protocol response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves(
+        markResponseEnvelope({
+          protocol: 'W3C',
+          value: {host: 'example.com'},
+        }),
+      );
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, {host: 'example.com'});
+    });
+
+    it('should return a command result whose protocol is W3C', async function () {
+      const result = {protocol: 'W3C', value: 5};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return {protocol: "W3C", value: 5}',
+        args: [],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, result);
+    });
+
+    it('should return a command result whose protocol value looks like an error', async function () {
+      const result = {protocol: 'W3C', value: {error: 'no such element', message: 'ordinary script data'}};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return arguments[0]',
+        args: [result],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, result);
+    });
+
+    it('should return an error from an MJSONWP response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves({
+        protocol: 'MJSONWP',
+        error: new Error('legacy session failed'),
+      });
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`, {throwOnError: false});
+
+      assert.strictEqual(status, 500);
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.match(data.value.message, /legacy session failed/);
     });
 
     for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
@@ -632,6 +698,24 @@ describe('Protocol', function () {
         });
       } finally {
         if (data.value.sessionId) {
+          await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
+        }
+      }
+    });
+
+    it('should return a W3C new session response when the driver protocol is MJSONWP', async function () {
+      driver.protocol = 'MJSONWP';
+      let data: any;
+      try {
+        ({data} = await httpPost(`${baseUrl}/session`, {
+          capabilities: {alwaysMatch: {}, firstMatch: [{}]},
+        }));
+        assert.strictEqual(data.value.sessionId.indexOf('fakeSession_'), 0);
+        assert.ok(!data.sessionId);
+        assert.ok(!Object.hasOwn(data, 'status'));
+      } finally {
+        driver.protocol = 'W3C';
+        if (data?.value?.sessionId) {
           await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
         }
       }

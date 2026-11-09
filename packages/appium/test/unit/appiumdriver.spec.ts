@@ -5,9 +5,11 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {BaseDriver, getResponseForW3CError, runWithProxyReq} from '@appium/base-driver';
+import {BaseDriver, getResponseForW3CError, routeConfiguringFunction, runWithProxyReq} from '@appium/base-driver';
 import {BasePlugin} from '@appium/base-plugin';
+import {getTestPort, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import {FakeDriver} from '@appium/fake-driver';
+import {server} from '@appium/http-server';
 import type {Capabilities, Constraints, DriverClass, NSCapabilities, W3CCapabilities} from '@appium/types';
 import {sleep} from 'asyncbox';
 import type {SinonMock, SinonSandbox, SinonStubbedMember} from 'sinon';
@@ -658,6 +660,44 @@ describe('AppiumDriver', function () {
           await fakeDriver.clearNewCommandTimeout();
         }
       });
+
+      it('should return a script result whose value looks like an error over http', async function () {
+        const scriptResult = {
+          protocol: 'W3C',
+          value: {error: 'no such element', message: 'ordinary script data'},
+        };
+        fakeDriver.sessionId = SESSION_ID;
+        sandbox.stub(fakeDriver, 'execute').resolves(scriptResult);
+        const port = await getTestPort();
+        const appiumServer = await server({routeConfiguringFunction: routeConfiguringFunction(appium), port});
+        try {
+          const {status, data} = await httpPost(`http://${TEST_HOST}:${port}/session/${SESSION_ID}/execute/sync`, {
+            script: 'return arguments[0]',
+            args: [scriptResult],
+          });
+          assert.equal(status, 200);
+          assert.deepStrictEqual(data.value, scriptResult);
+        } finally {
+          await fakeDriver.clearNewCommandTimeout();
+          await appiumServer.close();
+        }
+      });
+
+      for (const scriptResult of [
+        {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'},
+        {protocol: 'https:', value: 'https://example.com/home'},
+        {protocol: 'W3C', value: 5},
+      ]) {
+        it(`should return a script result with a protocol field: ${JSON.stringify(scriptResult)}`, async function () {
+          fakeDriver.protocol = 'W3C';
+          sandbox.stub(fakeDriver, 'execute').resolves(scriptResult);
+
+          const result = await appium.executeCommand('execute', 'return window.location', [], SESSION_ID);
+
+          assert.equal(result.protocol, 'W3C');
+          assert.deepStrictEqual(result.value, scriptResult);
+        });
+      }
 
       it('should not leak the ambient proxy request into a command a plugin re-enters via executeCommand', async function () {
         // a plugin handling the outer (proxy-deferred) command, which re-enters dispatch for an

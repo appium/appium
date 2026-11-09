@@ -284,16 +284,20 @@ any user action.
   Backend handling remains driver-specific ([#22983](https://github.com/appium/appium/pull/22983))
 * Setting both `appium:noReset` and `appium:fullReset` to `true` now returns HTTP `500` /
   `session not created` instead of a generic error, and no longer leaves partially initialized
-  session state behind
+  session state behind ([#22861](https://github.com/appium/appium/pull/22861),
+  [#22870](https://github.com/appium/appium/pull/22870))
 * Setting `appium:newCommandTimeout` to `null`, a blank string, or a non-finite numeric value is
   now ignored (keeping the default timeout value), instead of causing the timeout to be silently
-  disabled. Other invalid types, such as nonnumeric strings, still fail capability validation
+  disabled ([#22815](https://github.com/appium/appium/pull/22815),
+  [#23103](https://github.com/appium/appium/pull/23103)). Other invalid types, such as negative
+  numbers or nonnumeric strings, still fail capability validation
 * Percent-encoded credentials in `appium:app` URLs are now decoded once before Basic authentication,
   and complete HTTP-compressed downloads are no longer rejected if the decompressed file size
   differs from `Content-Length` ([#22887](https://github.com/appium/appium/pull/22887),
   [#22886](https://github.com/appium/appium/pull/22886))
 * Setting `firstMatch` to an empty array (`[]`) is now rejected with HTTP `400` /
   `invalid argument`, instead of being silently replaced with a single empty entry
+  ([#22860](https://github.com/appium/appium/pull/22860))
 * Every `firstMatch` candidate is now validated and merged before selection. Invalid supplied values
   or duplicate keys in any candidate reject the request, even if another candidate could match;
   missing required driver capabilities and unsupported platforms still allow matching to continue
@@ -306,8 +310,9 @@ any user action.
   being overridden by later unselected candidates. Defaults and `alwaysMatch` settings are still
   applied first ([#22882](https://github.com/appium/appium/pull/22882))
 * Values of the standard `timeouts` capability are now also validated in `alwaysMatch` and every
-  `firstMatch` candidate. A malformed timeout object or invalid standard timeout value is rejected
-  with HTTP `400` / `invalid argument`, even if an earlier `firstMatch` candidate could match. Top-level
+  `firstMatch` candidate ([#23062](https://github.com/appium/appium/pull/23062)). A malformed
+  timeout object or invalid standard timeout value is rejected with HTTP `400` /
+  `invalid argument`, even if an earlier `firstMatch` candidate could match. Top-level
   `timeouts: null` is still omitted, nested null timeout values are preserved, and unknown timeout
   properties are ignored for validation
 
@@ -319,9 +324,10 @@ any user action.
 * Any WebDriver error `data` (e.g. alert text) is now preserved in driver and proxy responses
   ([#22974](https://github.com/appium/appium/pull/22974))
 * The body of any `POST` command now has to be a JSON object; requests where the body is empty or
-  set to an empty JSON array (`[]`) return HTTP `400` with `invalid argument`. A value of `{}` is
-  still accepted, including commands that take no parameters. Routes that set `payloadParams.wrap`
-  may still accept an empty array
+  set to an empty JSON array (`[]`) return HTTP `400` with `invalid argument`
+  ([#23007](https://github.com/appium/appium/pull/23007)). A value of `{}` is still accepted,
+  including commands that take no parameters. Routes that set `payloadParams.wrap` may still accept
+  an empty array
 * `GET` requests to the server root route (e.g. `GET /` for a default server base path) now return
   HTTP `404` / `unknown command`, instead of Express's HTML 404 page. Extensions can still register
   their own root route ([#22969](https://github.com/appium/appium/pull/22969))
@@ -345,10 +351,12 @@ any user action.
   ([#22970](https://github.com/appium/appium/pull/22970))
 * [Get Timeouts](../reference/api/webdriver.md#gettimeouts): now returns `script` and `pageLoad` in
   addition to the existing `implicit` and Appium-specific `command` values
+  ([#22776](https://github.com/appium/appium/pull/22776))
 * [Set Timeouts](../reference/api/webdriver.md#timeouts): `script`, `pageLoad`, and `implicit` now
   only accept null or integer values; strings and fractions return HTTP `400` / `invalid argument`
   ([#22961](https://github.com/appium/appium/pull/22961))
 * Set Timeouts: `null` values now correctly disable the specified timeout
+  ([#22961](https://github.com/appium/appium/pull/22961))
 * Set Timeouts: omitting `script`, `pageLoad`, or `implicit` no longer fails: omitted fields keep their
   values and `{}` succeeds without changes. Invalid updates change no values
   ([#22960](https://github.com/appium/appium/pull/22960),
@@ -373,20 +381,28 @@ any user action.
   ([#22877](https://github.com/appium/appium/pull/22877)).
 * Any `sessionId` or `id` keys inside BiDi command parameters are now validated like any other
   unknown parameter, instead of being silently accepted
+  ([#22771](https://github.com/appium/appium/pull/22771))
 
 ### [Storage Plugin](https://github.com/appium/appium/tree/master/packages/storage-plugin)
 
 * All [endpoints](../reference/api/plugins.md#storage-plugin) and stream/events WebSocket paths now
   respect custom server `--base-path` values, instead of always being mounted at the server root
+  ([#22906](https://github.com/appium/appium/pull/22906))
 * File names starting with a dot or ending with `.filepart` are now rejected
+  ([#22863](https://github.com/appium/appium/pull/22863),
+  [#22959](https://github.com/appium/appium/pull/22959))
 * Concurrent WebSocket uploads of the same file are now rejected
+  ([#22962](https://github.com/appium/appium/pull/22962))
 * Pending upload WebSocket routes are now preserved across retries
+  ([#22948](https://github.com/appium/appium/pull/22948))
 * Errors on upload event sockets are now logged instead of potentially terminating the server
+  ([#22963](https://github.com/appium/appium/pull/22963))
 
 ### Other Fixes
 
 * The `appium driver`/`appium plugin` CLI commands now lock the extension manifest while running,
-  preventing any concurrent commands from silently clobbering each other's changes
+  preventing any concurrent CLI commands from silently clobbering each other's changes
+  ([#22767](https://github.com/appium/appium/pull/22767))
 * IPv6 literals are now correctly bracketed during URL assembly, including BiDi WebSocket URLs and
   [Execute Driver Plugin](https://github.com/appium/appium/tree/master/packages/execute-driver-plugin)
   connections ([#22872](https://github.com/appium/appium/pull/22872),

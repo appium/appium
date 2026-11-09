@@ -25,8 +25,8 @@ npm install -g appium
 ### Node 22.22+ Required
 
 Appium 3 required a Node.js version in the range `^20.19.0 || ^22.12.0 || >=24.0.0`. Appium 4 drops
-support for Node 20 and bumps the required range to `^22.22.2 || ^24.15.0 || >=26.0.0`. The minimum
-`npm` version remains unchanged.
+Node 20 and bumps the required range to `^22.22.2 || ^24.15.0 || >=26.0.0`. The minimum `npm`
+version remains unchanged.
 
 !!! info "Actions Needed"
 
@@ -41,13 +41,13 @@ with no CommonJS build. `require()` no longer works for these packages.
 
     Import Appium packages using ESM `import` syntax, or use dynamic `import()` from CommonJS code
 
-### JSONWP/MJSONWP Support Fully Removed
+### JSONWP/MJSONWP Internals Removed
 
 The release of Appium 2 removed general support for the obsolete JSONWP and MJSONWP protocols,
 though some Appium-related packages using JSONWP/MJSONWP under the hood could still continue to
 function.
 
-Appium 4 removes all of the remaining internal code that supported these protocols, which means
+Appium 4 removes most of the remaining internal code that supported these protocols, which means
 that drivers that still relied on these protocols are no longer compatible with Appium 4. Most
 notably, this includes the Windows driver ([see dedicated section below](#windows-driver-replaced-by-wincore-driver)). All other official drivers rely on the W3C protocol and are not affected by this change.
 
@@ -189,8 +189,8 @@ this package with Node's native `https` module, which only supports plain HTTPS 
 
 ### Selenium Grid 3 Support Removed
 
-Support for registering with a Selenium Grid 3 hub has been removed, along with its `--nodeconfig`
-server argument/config file property. Selenium Grid 4 remains supported. 
+Support for Selenium Grid 3 hub has been removed, along with its `--nodeconfig` server
+argument/config file property. Selenium Grid 4 remains supported. 
 
 !!! info "Actions Needed"
 
@@ -298,8 +298,8 @@ any user action.
   or duplicate keys in any candidate reject the request, even if another candidate could match;
   missing required driver capabilities and unsupported platforms still allow matching to continue
   ([#22982](https://github.com/appium/appium/pull/22982))
-* Default capabilities (which can be set using `--default-capabilities`) are now correctly applied
-  to each individual `firstMatch` candidate separately. Values set in `alwaysMatch` or the current
+* Default capabilities (which can be set using `--default-capabilities`) are now applied to each
+  individual `firstMatch` candidate separately. Values set in `alwaysMatch` or the current
   candidate still take precedence ([#22988](https://github.com/appium/appium/pull/22988)). See
   [Default Capabilities](../reference/cli/server.md#default-capabilities) for an example.
 * Session settings are now applied from the selected `firstMatch` candidate, instead of potentially
@@ -355,12 +355,10 @@ any user action.
   [#22961](https://github.com/appium/appium/pull/22961))
 * Set Timeouts: unknown values for the legacy `type` argument now return HTTP `400` /
   `invalid argument` instead of HTTP `500` / `unknown error`
-  ([#22986](https://github.com/appium/appium/pull/22986),
-  [#22987](https://github.com/appium/appium/pull/22987))
+  ([#22987](https://github.com/appium/appium/pull/22987))
 * [getLog](../reference/api/others.md#getlog): unsupported `type` values now return HTTP `400` /
   `invalid argument` instead of HTTP `500` / `unknown error`
-  ([#22986](https://github.com/appium/appium/pull/22986),
-  [#22987](https://github.com/appium/appium/pull/22987))
+  ([#22986](https://github.com/appium/appium/pull/22986))
 
 ### BiDi Protocol
 
@@ -425,9 +423,9 @@ that import Appium's internal packages directly. They do not affect most Appium 
 
 #### JSONWP/MJSONWP Removal
 
-As listed [in the Breaking Changes section above](#jsonwpmjsonwp-support-fully-removed), the
-internal code responsible for JSONWP/MJSONWP protocol support has been removed. This includes the
-following items:
+As listed [in the Breaking Changes section above](#jsonwpmjsonwp-internals-removed), the internal
+code responsible for JSONWP/MJSONWP protocol support has been removed. This includes the following
+items:
 
 * `ProtocolError` instances no longer carry a `jsonwpCode` property, and error responses no longer
   include a legacy numeric `status` code (`errorFromMJSONWPStatusCode`, aliased as `errorFromCode`,
@@ -460,7 +458,7 @@ If you use these items, import them from `@appium/http-server` instead.
 
 * The default class export has been removed. Use the named `{BaseDriver}` export instead
 * The default export of `basedriver/helpers.js` has been removed. Use named exports instead
-* Command-mixin machinery is no longer taken into account
+* `BaseDriver`'s constructor no longer takes command-mixin machinery into account
 * `createSession()` no longer accepts the legacy multi-argument form
   (`jwpCaps, reqCaps, w3cCaps`); only the single `w3cCapabilities` argument is supported now
 * The deprecated `driverData` mechanism (`Core.driverData`, the `driverData` parameter on
@@ -501,7 +499,7 @@ If you use these items, import them from `@appium/http-server` instead.
 
 ### `@appium/support`
 
-* `env`: the module has been moved to the `appium` package as internal helpers
+* `env`: the module has been integrated into the `appium` package as internal helpers
 * `imageUtil`: the module has been removed
 * `fs`: the following exports have been removed: `readPackageJsonFrom` and `findRoot` methods,
   `F_OK`/`R_OK`/`W_OK`/`X_OK` constants, `CopyFileDescriptor` and `ReadFn` types
@@ -513,11 +511,11 @@ If you use these items, import them from `@appium/http-server` instead.
   ([#22880](https://github.com/appium/appium/pull/22880),
   [#22954](https://github.com/appium/appium/pull/22954),
   [#22958](https://github.com/appium/appium/pull/22958))
-* `fs`: `write()` now relies on Node's `promisify`, which resolves to an object
-  (`{bytesWritten, buffer}`), instead of only `bytesWritten`
 * `fs`: `walkDir()` now continues after walker errors such as `EACCES` and `ELOOP` instead of
   hanging. These errors are logged and affected entries are skipped; `ENOENT` still rejects the
   returned promise ([#22956](https://github.com/appium/appium/pull/22956))
+* `fs`: `write()` now relies on Node's `promisify`, which resolves to an object
+  (`{bytesWritten, buffer}`), instead of only `bytesWritten`
 * `logger`: the default export has been removed. Use the named `{log}` export instead
 * `logger`: `errorAndThrow` has been removed in favor of `errorWithException`
 * `net`: support for FTP-based file uploads has been removed, along with the `FtpUploadOptions` and
@@ -525,7 +523,7 @@ If you use these items, import them from `@appium/http-server` instead.
 * `mjpeg`: the module has been removed
 * `mkdirp`: the module has been removed. Import `mkdirp()` from the `fs` module instead
 * `node`: `requirePackage()` has been removed
-* `npm`: the module has been moved to the `appium` package as internal helpers
+* `npm`: the module has been integrated into the `appium` package as internal helpers
 * `process`: the module has been removed
 * `system`: `macOsxVersion()` has been removed
 * `util`: the following methods have been removed: `uuidV1`, `uuidV3`, `uuidV5`, `localIp`,
@@ -587,8 +585,8 @@ reset once no commands are executing.
 
 The standard [Set Timeouts](../reference/api/webdriver.md#timeouts) endpoint has been extended to
 additionally accept the Appium-specific `command` parameter. This aligns its handling with
-[Get Timeouts](../reference/api/webdriver.md#gettimeouts), which also returns this parameter. The
-parameter itself is mapped to the `appium:newCommandTimeout` capability.
+[Get Timeouts](../reference/api/webdriver.md#gettimeouts), which already returned this parameter.
+The parameter itself is mapped to the `appium:newCommandTimeout` capability.
 
 The non-standard `type`/`ms` parameters, which were previously the only way to change this timeout
 mid-session, have been deprecated as a result.

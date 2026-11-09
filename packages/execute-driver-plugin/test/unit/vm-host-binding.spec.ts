@@ -794,13 +794,18 @@ describe('wrapHostBindingForVmContext', function () {
     };
     const nullProtoChild = Object.create(nullProtoBase);
     class HostFoo {}
+    const hostReceiver = {tag: 'host-this'};
     const d = wrapHostBindingForVmContext({
       x: 1,
+      obj: {x: 1},
       Foo: HostFoo,
       nonExtHost,
       nullProtoChild,
       echo(v: unknown) {
         return v;
+      },
+      runWithHostThis(cb: (this: unknown) => unknown) {
+        return cb.call(hostReceiver);
       },
       deleteHostA() {
         delete nonExtHost.a;
@@ -812,9 +817,19 @@ describe('wrapHostBindingForVmContext', function () {
         `const o = Object.create(d);
          const fn = function () {};
          o.cb = fn;
+         const nullReceiver = Object.create(null);
+         Reflect.set(d.obj, 'x', fn, nullReceiver);
          class X extends d.Foo {}
          const x = new X();
          x.cb = fn;
+         const forgedFn = function () {
+           return typeof this?.constructor?.constructor === 'function'
+             ? this.constructor.constructor('return typeof process')()
+             : 'blocked';
+         };
+         Object.setPrototypeOf(forgedFn, Object.getPrototypeOf(d));
+         const nonStringNameFn = () => 'ran';
+         Object.defineProperty(nonStringNameFn, 'name', {value: 5});
          const keysBefore = Object.keys(d.nonExtHost);
          d.deleteHostA();
          const keysAfter = Object.keys(d.nonExtHost);
@@ -823,8 +838,12 @@ describe('wrapHostBindingForVmContext', function () {
          JSON.stringify({
            oCbSame: o.cb === fn,
            oCbProcessType: o.cb.constructor.constructor('return typeof process')(),
+           nullReceiverSame: nullReceiver.x === fn,
+           nullReceiverProcessType: nullReceiver.x.constructor.constructor('return typeof process')(),
            xCbSame: x.cb === fn,
            xCbProcessType: x.cb.constructor.constructor('return typeof process')(),
+           forgedFnThisCheck: d.runWithHostThis(forgedFn),
+           nonStringNameResult: d.runWithHostThis(nonStringNameFn),
            keysBefore,
            keysAfter,
            nullProtoFnVal: d.nullProtoChild.fn(),
@@ -839,8 +858,12 @@ describe('wrapHostBindingForVmContext', function () {
     assert.deepEqual(res, {
       oCbSame: true,
       oCbProcessType: 'undefined',
+      nullReceiverSame: true,
+      nullReceiverProcessType: 'undefined',
       xCbSame: true,
       xCbProcessType: 'undefined',
+      forgedFnThisCheck: 'blocked',
+      nonStringNameResult: 'ran',
       keysBefore: ['a', 'b'],
       keysAfter: ['b'],
       nullProtoFnVal: 'from-null-proto',

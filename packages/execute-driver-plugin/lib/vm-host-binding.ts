@@ -105,104 +105,34 @@ function isOurProxy(value: unknown): value is HostTarget {
   return value !== null && (typeof value === 'object' || typeof value === 'function') && proxyToTarget.has(value);
 }
 
-function isHostRealmObject(value: unknown): boolean {
-  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
-    return false;
-  }
-  if (
-    value === Object.prototype ||
-    value === Function.prototype ||
-    value === SAFE_LOOKUP_TARGET ||
-    targetToProxy.has(value)
-  ) {
-    return true;
-  }
-  let proto = Reflect.getPrototypeOf(value);
-  while (proto !== null) {
-    if (
-      proto === Object.prototype ||
-      proto === Function.prototype ||
-      proto === SAFE_LOOKUP_TARGET ||
-      targetToProxy.has(proto)
-    ) {
-      return true;
-    }
-    if (isOurProxy(proto)) {
-      return false;
-    }
-    proto = Reflect.getPrototypeOf(proto);
-  }
-  return false;
-}
-
-function isVmRealmRootPrototype(rootProto: object): boolean {
-  if (rootProto === Object.prototype || rootProto === SAFE_LOOKUP_TARGET || targetToProxy.has(rootProto)) {
-    return false;
-  }
-  const ctorDesc = Reflect.getOwnPropertyDescriptor(rootProto, 'constructor');
-  const ctor = ctorDesc && 'value' in ctorDesc ? ctorDesc.value : undefined;
-  if (typeof ctor !== 'function') {
-    return false;
-  }
-  const fnProto = Reflect.getPrototypeOf(ctor);
-  return fnProto !== null && fnProto !== Function.prototype && Reflect.getPrototypeOf(fnProto) === rootProto;
-}
-
 function isVmRealmValue(value: unknown): boolean {
-  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
-    return false;
-  }
-  if (isOurProxy(value) || targetToProxy.has(value)) {
-    return false;
-  }
-  if (vmObjects.has(value)) {
-    return true;
-  }
-  let proto = Reflect.getPrototypeOf(value);
-  let rootProto: object | null = null;
-  while (proto !== null) {
-    if (
-      proto === Object.prototype ||
-      proto === Function.prototype ||
-      proto === SAFE_LOOKUP_TARGET ||
-      targetToProxy.has(proto)
-    ) {
-      return false;
-    }
-    if (isOurProxy(proto)) {
-      return true;
-    }
-    rootProto = proto;
-    proto = Reflect.getPrototypeOf(proto);
-  }
-  return rootProto !== null && isVmRealmRootPrototype(rootProto);
+  return value !== null && (typeof value === 'object' || typeof value === 'function') && vmObjects.has(value);
 }
 
 function recordVmValue(value: unknown): void {
   if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
     return;
   }
-  if (isOurProxy(value) || targetToProxy.has(value) || isHostRealmObject(value)) {
+  if (value === SAFE_LOOKUP_TARGET || isOurProxy(value) || targetToProxy.has(value)) {
     return;
   }
-  let current: object | null = value;
-  while (current !== null && !isOurProxy(current) && !targetToProxy.has(current) && !isHostRealmObject(current)) {
-    vmObjects.add(current);
-    current = Reflect.getPrototypeOf(current);
-  }
+  vmObjects.add(value);
 }
 
 function copyFunctionMetadata(vmFn: HostCallable, wrapped: HostCallable, includePrototype: boolean): void {
   for (const key of ['length', 'name'] as const) {
     const desc = Reflect.getOwnPropertyDescriptor(vmFn, key);
     if (desc) {
-      Reflect.defineProperty(wrapped, key, desc);
+      Reflect.defineProperty(wrapped, key, mapDescriptorForHost(desc));
     }
   }
   if (includePrototype) {
     const protoDesc = Reflect.getOwnPropertyDescriptor(vmFn, 'prototype');
-    if (protoDesc) {
-      Reflect.defineProperty(wrapped, 'prototype', protoDesc);
+    if (protoDesc && 'value' in protoDesc) {
+      Reflect.defineProperty(wrapped, 'prototype', {
+        value: unwrapIfProxy(protoDesc.value),
+        writable: Boolean(protoDesc.writable),
+      });
     }
   }
   Object.defineProperty(wrapped, 'toString', {
@@ -296,7 +226,7 @@ function unwrapIfProxy<T>(value: T): T {
     return target;
   }
   if (typeof value === 'function') {
-    if (isHostRealmObject(value)) {
+    if (targetToProxy.has(value)) {
       return value;
     }
     return wrapVmFunctionForHost(value as unknown as HostCallable) as unknown as T;
@@ -383,7 +313,9 @@ function isConstructibleFunction(fn: HostCallable): boolean {
   if ((fn as unknown) === Proxy || Reflect.getOwnPropertyDescriptor(fn, 'prototype') !== undefined) {
     return true;
   }
-  if (!types.isProxy(fn) && !fn.name.startsWith('bound ')) {
+  const nameDesc = Reflect.getOwnPropertyDescriptor(fn, 'name');
+  const fnName = nameDesc && 'value' in nameDesc ? nameDesc.value : undefined;
+  if (!types.isProxy(fn) && typeof fnName === 'string' && !fnName.startsWith('bound ')) {
     return false;
   }
   try {
@@ -534,7 +466,11 @@ function mapDescriptorForHost(descriptor: PropertyDescriptor): PropertyDescripto
  * VM subclass/object receivers without wrapping them as callback functions.
  */
 function reflectReceiver(receiver: unknown): unknown {
-  return isOurProxy(receiver) ? proxyToTarget.get(receiver) : receiver;
+  if (isOurProxy(receiver)) {
+    return proxyToTarget.get(receiver);
+  }
+  recordVmValue(receiver);
+  return receiver;
 }
 
 /**
@@ -542,7 +478,11 @@ function reflectReceiver(receiver: unknown): unknown {
  * Preserves VM-defined subclass constructors (`newTarget`) instead of wrapping them as callbacks.
  */
 function unwrapConstructor(newTarget: HostCallable): HostConstructor {
-  return (isOurProxy(newTarget) ? proxyToTarget.get(newTarget) : newTarget) as HostConstructor;
+  if (isOurProxy(newTarget)) {
+    return proxyToTarget.get(newTarget) as HostConstructor;
+  }
+  recordVmValue(newTarget);
+  return newTarget as unknown as HostConstructor;
 }
 
 /**
@@ -712,15 +652,9 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
       const actualReceiver = reflectReceiver(receiver);
       const desc = findPropertyDescriptor(hostTarget, prop);
       const invokesHostSetter = Boolean(desc && 'set' in desc && typeof desc.set === 'function');
-      const writesToHost =
-        actualReceiver === hostTarget ||
-        invokesHostSetter ||
-        (actualReceiver !== null &&
-          (typeof actualReceiver === 'object' || typeof actualReceiver === 'function') &&
-          !isVmRealmValue(actualReceiver));
+      const writesToHost = actualReceiver === hostTarget || isOurProxy(receiver) || invokesHostSetter;
       const valueToSet = writesToHost ? unwrapIfProxy(value) : value;
       if (!writesToHost) {
-        recordVmValue(actualReceiver);
         recordVmValue(value);
       }
       const updated = Reflect.set(hostTarget, prop, valueToSet, actualReceiver);

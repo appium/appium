@@ -19,7 +19,7 @@ If the image match is successful, Appium will cache information about the match 
 * `getLocationInView`
 * `getElementRect`
 * `getAttribute`
-    * `visual` returns matched image as base64 data if `getMatchedImageResult` is `true`
+    * `visual` returns matched image as base64 data if `getMatchedImageResult` is `true`. For a find inside an image element, this is the highlighted container crop.
     * `score` returns the similarity score as a float number in range `[0.0, 1.0]` sine Appium 1.18.0
 
 These actions are supported on "Image Elements" because they are the actions which involve only use of screen position for their functioning. Other actions (like `sendKeys`, for example) are not supported, because all Appium can know based on your template image is whether or not there is a screen region which visually matches it--Appium has no way of turning that information into a driver-specific UI element object, which would be necessary for the use of other actions.
@@ -42,13 +42,13 @@ To access these settings, you should use the Appium [Settings API](http://appium
 |checkForImageElementStaleness|It can happen that, in between the time you have matched an image element and the time you choose to tap on it, the element is no longer present. The only way for Appium to determine this is to attempt to re-match the template immediately before tapping. If that re-match fails, you will get a `StaleElementException`, as you would expect. Turn this to `false` to skip the check, potentially speeding things up, but potentially running into stale element issues without the benefit of an exception to let you know you did.|`true` or `false`|`true`|
 |autoUpdateImageElementPosition|It can happen that a matched image changes position in between the time it is found and the time you tap on it. As with the previous setting, Appium can automatically adjust its position if it determines in a re-match that the position changed.|`true` or `false`|`false`|
 |imageElementTapStrategy|In order to tap on a found image element, Appium has to use one of its touch action strategies. The available strategies are the W3C Actions API, or the older MJSONWP TouchActions API. Stick to the default unless the driver you are using does not support the W3C Actions API for some reason.|`"w3cActions"` or `"touchActions"`|`"w3cActions"`|
-|getMatchedImageResult| Appium does not store the matched image result. Although, storing the result in memory might help for debugging whether which area is matched by find by image. Appium returns the image against `attribute` API as `visual`. | `true` or `false` | `false` |
+|getMatchedImageResult| Appium does not store the matched image result. Although, storing the result in memory might help for debugging whether which area is matched by find by image. Appium returns the image against `attribute` API as `visual`. For a find inside an image element, that image is the highlighted container crop. | `true` or `false` | `false` |
 
 Note that each language-specific Appium client may make these settings available via special constants which could differ slightly from the exact setting names mentioned above.
 
 ### Debug
 
-The `getMatchedImageResult` setting might help for debugging if Appium found the provided image expectedly. The returned element will have a `visual` attribute which will make comparison image available as base64 data if `getMatchedImageResult` is `true`.
+The `getMatchedImageResult` setting might help for debugging if Appium found the provided image expectedly. The returned element will have a `visual` attribute which will make comparison image available as base64 data if `getMatchedImageResult` is `true`. For a find inside an image element, `visual` is the highlighted container crop.
 
 ```ruby
 # Ruby core

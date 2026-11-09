@@ -630,6 +630,18 @@ removed.
 
     Driver test suites that relied on these fixtures should host their own local test server
 
+### `noImplicitOverride` Enabled in `@appium/tsconfig`
+
+The shared `@appium/tsconfig` base config now sets `noImplicitOverride: true`. TypeScript drivers
+and plugins that extend it must mark every member overriding a base class member (for example
+`BaseDriver` or `BasePlugin` methods and `static` fields such as `newMethodMap`) with the
+`override` modifier. Otherwise `tsc` fails with error TS4114.
+
+!!! info "Actions Needed"
+
+    * Add the `override` modifier to overriding members, e.g. `override async createSession(...)`
+    * Alternatively, set `"noImplicitOverride": false` in your own `tsconfig.json` to opt out
+
 ## New Features
 
 * [`--app-url-rules`](./security.md#restricting-remote-app-urls) lets server operators restrict

@@ -54,6 +54,9 @@ notably, this includes the Windows driver ([see dedicated section below](#window
 Despite this, Appium 4 does retain temporary support for a select few JSONWP/MJSONWP endpoints (see
 [Deprecated Endpoints Removed](#deprecated-endpoints-removed)).
 
+For extension developers, a more detailed breakdown is available [in the Developer-Facing Changes
+section below](#jsonwpmjsonwp-removal).
+
 !!! info "Actions Needed"
 
     Migrate to drivers that support the W3C WebDriver protocol
@@ -394,14 +397,37 @@ any user action.
 
 ## Developer-Facing Changes
 
-The following changes primarily affect developers of Appium clients, drivers, plugins, or tools that import
-Appium's internal packages directly (`@appium/base-driver`, `@appium/base-plugin`,
-`@appium/support`, `@appium/logger`). They do not affect most Appium end users.
+The following changes primarily affect developers of Appium clients, drivers, plugins, or tools
+that import Appium's internal packages directly. They do not affect most Appium end users.
 
-### Remaining Legacy (M)JSONWP Support Removed From `@appium/base-driver`
+### Extension Development
 
-Beyond the removed endpoints above, the internal machinery that translated between the legacy
-(M)JSONWP protocol and W3C WebDriver has been removed:
+* When installing a locally available driver/plugin using Appium's CLI `install` command with the
+  `--source=local` flag, Appium now installs the extension directly from the supplied local
+  directory, without first creating an intermediate global `npm` link. Local installs still link to
+  the source directory, so source changes do not require reinstalling the extension. If you use
+  tooling that relies on the package being linked in `npm`'s global prefix, manage that global link
+  separately.
+* Extension manifests and `extensions.yaml` are now validated with `ajv`/JSON Schema; a corrupted
+  `extensions.yaml` now resets to an empty manifest with a warning, instead of crashing later with a
+  confusing error
+* `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
+  compile time, catching mismatched required/optional execute method parameters in driver code
+* When a plugin intercepts a command that would otherwise be proxied downstream, Appium no longer
+  validates its fields or values ([#23060](https://github.com/appium/appium/pull/23060)). This
+  matches direct proxying, where the downstream remote end owns these checks. Plugins that
+  previously relied on Appium to validate these arguments can now receive missing or invalid
+  values (JSON-object request-body checks still remain in place before the plugin is called). If
+  your plugin handles such a command without calling `next()`, validate the inputs it uses.
+  Pass-through plugins can still call `next()` and delegate validation to the downstream remote end.
+
+### `@appium/base-driver`
+
+#### JSONWP/MJSONWP Removal
+
+As listed [in the Breaking Changes section above](#jsonwpmjsonwp-support-fully-removed), the
+internal code responsible for JSONWP/MJSONWP protocol support has been removed. This includes the
+following items:
 
 * `ProtocolError` instances no longer carry a `jsonwpCode` property, and error responses no longer
   include a legacy numeric `status` code (`errorFromMJSONWPStatusCode`, aliased as `errorFromCode`,
@@ -412,242 +438,117 @@ Beyond the removed endpoints above, the internal machinery that translated betwe
   downstream automation server speaking legacy MJSONWP; downstream servers must speak W3C WebDriver
 * `determineProtocol`, `DriverCore#setProtocolMJSONWP()`, and `DriverCore#isMjsonwpProtocol()` have
   been removed; drivers can no longer produce the legacy `{sessionId, status, value}` response shape
-* `@appium/base-driver` no longer exports `statusCodes`/`getSummaryByCode` (the `jsonwp-status`
-  module was removed)
+* `statusCodes` and `getSummaryByCode` are no longer available (the `jsonwp-status` module has been
+  removed)
 * A command result shaped like `{protocol, value}` is no longer unwrapped. It is sent to the
   client as the command value, so a script returning `{protocol: 'W3C', value: 5}` gets that object
   back. A result of `{protocol, error}` whose `protocol` is `W3C` or `MJSONWP` and whose `error`
   is an `Error` is still thrown
 
-!!! info "Actions Needed"
+#### HTTP Server Moved to Separate Package
 
-    Ensure any downstream automation server a driver proxies to (via `WebDriverProxy`) speaks pure
-    W3C WebDriver; update code referencing the removed exports to their W3C equivalents. A driver
-    that returned `{protocol, value}` from `executeCommand` should return the value itself
+The HTTP/Express server code has been extracted from `@appium/base-driver` into the new
+`@appium/http-server` package. The following items are therefore no longer exported from
+`@appium/base-driver` or `appium/driver.js`:
 
-### `@appium/base-driver` Default Export Removed
+* Methods: `server`, `normalizeBasePath`, `configureServer`
+* Types: `ServerOpts`, `ConfigureServerOpts`, `ConfigureHttpOpts`, `StartServerOpts`
 
-`BaseDriver` is no longer exported as `@appium/base-driver`'s default export, and
-`basedriver/helpers.js`'s default export has been removed as well. `BaseDriver`'s constructor no
-longer takes command-mixin machinery into account, and the unused `BaseDriver.reset()` method has
-been removed.
+If you use these items, import them from `@appium/http-server` instead.
 
-!!! info "Actions Needed"
+#### Other Changes
 
-    Replace `import BaseDriver from '@appium/base-driver'` with `import {BaseDriver} from '@appium/base-driver'`
-
-### Requests With `Origin` Header Require CORS
-
-The CORS mechanism of Appium 3 did not prevent web pages from sending state-changing requests.
-Appium 4 changes this by returning HTTP `403` for state-changing HTTP requests with an `Origin`
-header, unless the CORS insecure feature is enabled.
-
-This does not affect requests without the `Origin` header, which includes most Appium clients.
-Ordinary `GET`, `HEAD`, and `OPTIONS` requests are also exempt from the HTTP check.
-
-!!! info "Actions Needed"
-
-    If your Appium client sends requests with the `Origin` header, remove it or instruct users to
-    enable the CORS insecure feature
-
-### Drivers Must Support Shared Command Activity Tracking
-
-The idle timer stays suspended through HTTP/BiDi plugin chains, including work after `next()`,
-and while proxied BiDi commands await a response. Drivers must use `@appium/base-driver` with
-shared command activity tracking; legacy timer implementations are no longer supported
-([#22946](https://github.com/appium/appium/pull/22946),
-[#22947](https://github.com/appium/appium/pull/22947)).
-
-!!! info "Actions Needed"
-
-    Custom `startNewCommandTimeout` implementations must delegate timer creation
-    to `super.startNewCommandTimeout()` so they respect shared activity. Custom command execution
-    must delegate to `super.executeCommand()` or wrap the full command in `runWithCommandTimeout`.
-
-### HTTP Server Extracted Into `@appium/http-server`
-
-The HTTP/Express server code was moved from `@appium/base-driver` into the new
-`@appium/http-server` package. `@appium/base-driver` no longer exports `server`,
-`normalizeBasePath`, `configureServer`, `ServerOpts`, `ConfigureServerOpts`, `ConfigureHttpOpts`,
-or `StartServerOpts`, and no longer depends on `express` and related middleware packages.
-`appium/driver.js` stopped re-exporting these symbols as well.
-
-!!! info "Actions Needed"
-
-    Import the server helpers from `@appium/http-server` instead
-
-### Server Configuration Disables CORS By Default
-
-The `server()` and `configureServer()` methods exported by `@appium/http-server` (formerly by
-`@appium/base-driver`) now default to `allowCors: false` ([#22990](https://github.com/appium/appium/pull/22990)).
-
-!!! info "Actions Needed"
-
-    If your extension relies on CORS, explicitly set `allowCors: true`
-
-### Driver-Specific Capabilities Removed From Base Constraints
-
-The `appium:locale`, `appium:language`, `appium:autoWebview`, `appium:orientation`, and
-`appium:udid` capabilities are no longer part of the standard capability constraints, since they
-are not generic enough. The deprecated `appium:autoLaunch` capability has been removed as well.
-The base driver no longer validates them.
-
-!!! info "Actions Needed"
-
-    Drivers that rely on these capabilities must declare them in their own `desiredCapConstraints`
-
-### `@appium/base-plugin` Default Export and Legacy Logger Removed
-
-`BasePlugin` is no longer the default export of `@appium/base-plugin`. `Plugin#logger` has been
-removed in favor of `Plugin#log`, and `Plugin#name`/`Plugin#cliArgs` are now read-only.
-
-!!! info "Actions Needed"
-
-    * Replace `import BasePlugin from '@appium/base-plugin'` with `import {BasePlugin} from '@appium/base-plugin'`
-    * Replace `this.logger` with `this.log` in plugin code
-
-### `@appium/logger` Default Export and Dead APIs Removed
-
-`@appium/logger` and `@appium/support` no longer export a default `log`. `AppiumLogger#errorAndThrow`
-has been removed in favor of `errorWithException`. The long-disabled, no-op progress/unicode
-methods (`enableProgress`, `disableProgress`, `progressEnabled`, `enableUnicode`, `disableUnicode`)
-have also been removed.
-
-!!! info "Actions Needed"
-
-    * Import the named `log` export instead of the default export
-    * Replace `errorAndThrow` calls with `errorWithException`
-
-### `driverData` Mechanism Removed
-
-The deprecated `driverData` mechanism (`Core.driverData`, the `driverData` parameter on
-`createSession`/`deleteSession`, and the `DriverData` type) has been removed, superseded by
-`IAppiumIpc`.
-
-!!! info "Actions Needed"
-
-    Drivers overriding `get driverData()` or relying on it for cross-session coordination need to
-    migrate to `IAppiumIpc`
-
-### `createSession` Multi-Argument Overload Removed
-
-`createSession` no longer accepts the legacy multi-argument form
-(`createSession(jwpCaps, reqCaps, w3cCaps)`), a holdover from JSONWP. Only the single
-`w3cCapabilities` argument is supported now.
-
-!!! info "Actions Needed"
-
-    Update any driver or plugin overriding `createSession` to use the single-argument signature
-
-### `@appium/support` Deprecated APIs Removed
-
-The following `@appium/support` exports have been removed: `process` (`getProcessIds`,
-`killProcess`), `mkdirp`, `imageUtil` (`requireSharp`, `cropBase64Image`), `mjpeg` (`MJpegStream`),
-`net`'s FTP upload support, `util`'s `uuidV1`/`uuidV3`/`uuidV5`/`localIp`/`cancellableDelay`/`multiResolve`,
-`fs`'s `readPackageJsonFrom`/`findRoot`/`F_OK`/`R_OK`/`W_OK`/`X_OK`, `npm`/`NPM` (moved into the
-`appium` package), and `env` (moved into the `appium` package). `node.requirePackage()` and
-`system.macOsxVersion()` have also been removed. `fs.glob()` is now backed by Node's native
-`fs.promises.glob` instead of the `glob` package, with a narrower `GlobOptions` shape.
-
-!!! info "Actions Needed"
-
-    None for typical drivers/plugins, which don't use these low-level helpers directly. If you do,
-    switch to the suggested replacement or a native Node.js API
-
-### Filesystem and IPC Fixes
-
-* `@appium/support`'s `fs.mv()` now preserves symlinks inside moved directories and moves source
-  symlinks themselves without moving their targets' contents. Dangling source links are supported,
-  and Windows case-only renames update the entry's spelling
-  ([#22880](https://github.com/appium/appium/pull/22880),
-  [#22954](https://github.com/appium/appium/pull/22954),
-  [#22958](https://github.com/appium/appium/pull/22958)).
-* `fs.walkDir()` now continues after walker errors such as `EACCES` and `ELOOP` instead of hanging.
-  These errors are logged and affected entries skipped; `ENOENT` still rejects the returned promise
-  ([#22956](https://github.com/appium/appium/pull/22956)).
-* Both `ipc.unsubscribe(topic, subscriber)` and `subscription.unsubscribe()` now finish waiting
+* The default class export has been removed. Use the named `{BaseDriver}` export instead
+* The default export of `basedriver/helpers.js` has been removed. Use named exports instead
+* Command-mixin machinery is no longer taken into account
+* `createSession()` no longer accepts the legacy multi-argument form
+  (`jwpCaps, reqCaps, w3cCaps`); only the single `w3cCapabilities` argument is supported now
+* The deprecated `driverData` mechanism (`Core.driverData`, the `driverData` parameter on
+  `createSession`/`deleteSession`, and the `DriverData` type) has been removed. Migrate to
+  `IAppiumIpc` instead
+* The `server()` and `configureServer()` methods (now exported by `@appium/http-server`) now
+  default to `allowCors: false` ([#22990](https://github.com/appium/appium/pull/22990))
+* Both `ipc.unsubscribe(topic, subscriber)` and `subscription.unsubscribe()` now finish waiting on
   async iterators and notify observers once. An observer that throws still propagates its error
   to the caller, but no longer prevents waiting iterators from finishing
-  ([#22955](https://github.com/appium/appium/pull/22955)).
+  ([#22955](https://github.com/appium/appium/pull/22955))
+* The unused `reset()` method has been removed
+* The new command idle timeout now stays suspended through HTTP/BiDi plugin chains, including work
+  after `next()`, and while proxied BiDi commands await a response
+  ([#22946](https://github.com/appium/appium/pull/22946),
+  [#22947](https://github.com/appium/appium/pull/22947)). Custom `startNewCommandTimeout`
+  implementations must delegate timer creation to `super.startNewCommandTimeout()` so they respect
+  shared activity, while custom command execution must delegate to `super.executeCommand()` or wrap
+  the full command in `runWithCommandTimeout`
+* The `appium:autoLaunch`, `appium:locale`, `appium:language`, `appium:autoWebview`,
+  `appium:orientation`, and `appium:udid` capabilities are no longer validated as part of the
+  standard capability constraints. If you use them, add them to your own driver constraints
+* The built-in test fixture routes (`/welcome`, `/test/guinea-pig*`, `/produce_error`, `/crash`),
+  the `STATIC_DIR` export, and the `APPIUM_ENABLE_LEGACY_TEST_PAGES` environment variable have been
+  removed. If you relied on these fixtures, migrate to use your own local test server
 
-!!! info "Actions Needed"
+### `@appium/base-plugin`
 
-    If you intend to move a symlink's target, resolve it explicitly before calling `fs.mv()`.
-    A completed directory walk may have skipped entries; check warnings if completeness matters.
-    Allow IPC consumers to finish when unsubscribed
+* The default class export has been removed. Use the named `{BasePlugin}` export instead
+* `Plugin#logger` has been removed in favor of `Plugin#log`
+* `Plugin#name` and `Plugin#cliArgs` are now read-only
 
-### System Unzip Removed From `@appium/support`
+### `@appium/logger`
 
-`extractAllTo()` always uses the built-in JS extractor now, so the `useSystemUnzip` option has been
-removed. The extractor supports only stored and deflate entries and verifies the CRC32 of every
-entry. File names that are not flagged as UTF-8 by the archive are decoded as `utf8` by default, and
-the legacy `cp437` decoding is no longer supported. Such names get corrupted, and different names
-may collapse into the same one, so that entries overwrite each other.
+* The default class export has been removed. Use the named `{log}` export instead
+* The long-disabled, no-op progress/unicode methods (`enableProgress`, `disableProgress`,
+  `progressEnabled`, `enableUnicode`, `disableUnicode`) have been removed
 
-!!! info "Actions Needed"
+### `@appium/support`
 
-    Remove `useSystemUnzip` from `extractAllTo()` calls. Archives with `cp437` file names must be
-    recreated with UTF-8 names (or converted) before extraction. Other single-byte encodings
-    supported by Node.js can be selected via `fileNamesEncoding`. Archives with encrypted entries or
-    other compression methods are rejected with `ZipStreamUnsupportedError`
+* `env`: the module has been moved to the `appium` package as internal helpers
+* `imageUtil`: the module has been removed
+* `fs`: the following exports have been removed: `readPackageJsonFrom` and `findRoot` methods,
+  `F_OK`/`R_OK`/`W_OK`/`X_OK` constants, `CopyFileDescriptor` and `ReadFn` types
+* `fs`: `glob()` now relies on Node's `fs.promises.glob` instead of the `glob` package, with a
+  narrower `GlobOptions` shape
+* `fs`: `mv()` now preserves symlinks inside moved directories and moves source symlinks themselves
+  without moving their targets' contents. Dangling source links are supported, and Windows
+  case-only renames update the entry's spelling
+  ([#22880](https://github.com/appium/appium/pull/22880),
+  [#22954](https://github.com/appium/appium/pull/22954),
+  [#22958](https://github.com/appium/appium/pull/22958))
+* `fs`: `write()` now relies on Node's `promisify`, which resolves to an object
+  (`{bytesWritten, buffer}`), instead of only `bytesWritten`
+* `fs`: `walkDir()` now continues after walker errors such as `EACCES` and `ELOOP` instead of
+  hanging. These errors are logged and affected entries are skipped; `ENOENT` still rejects the
+  returned promise ([#22956](https://github.com/appium/appium/pull/22956))
+* `logger`: the default export has been removed. Use the named `{log}` export instead
+* `logger`: `errorAndThrow` has been removed in favor of `errorWithException`
+* `net`: support for FTP-based file uploads has been removed, along with the `FtpUploadOptions` and
+  `NotHttpUploadOptions` types
+* `mjpeg`: the module has been removed
+* `mkdirp`: the module has been removed. Import `mkdirp()` from the `fs` module instead
+* `node`: `requirePackage()` has been removed
+* `npm`: the module has been moved to the `appium` package as internal helpers
+* `process`: the module has been removed
+* `system`: `macOsxVersion()` has been removed
+* `util`: the following methods have been removed: `uuidV1`, `uuidV3`, `uuidV5`, `localIp`,
+  `cancellableDelay`, and `multiResolve`
+* `zip`: `extractAllTo()` always uses the built-in JS extractor now, so the `useSystemUnzip` option
+  has been removed. The extractor supports only stored and deflate entries and verifies the CRC32
+  of every entry. File names that are not flagged as UTF-8 by the archive are decoded as `utf8` by
+  default, and the legacy `cp437` decoding is no longer supported. Other single-byte encodings
+  supported by Node.js can be selected via `fileNamesEncoding`. Archives with encrypted entries or
+  other compression methods are rejected with `ZipStreamUnsupportedError`
 
-### Local Extension Installs No Longer Create Global npm Links
+### `@appium/tsconfig`
 
-When installing a locally available driver/plugin using Appium's CLI, via the `--source=local` flag
-of the `install` command, Appium now installs the extension directly from the supplied local
-directory, without first creating an intermediate global `npm` link. Local installs still link to
-the source directory, so source changes do not require reinstalling the extension.
+* `noImplicitOverride` is now set to `true`, which means that TypeScript drivers and plugins that
+  extend the config must mark every member overriding a base class member (e.g. `BaseDriver` or
+  `BasePlugin` methods, and `static` fields such as `newMethodMap`) with the `override` modifier.
+  Opt-out is also possible by setting `noImplicitOverride` to `false` in your own `tsconfig.json`.
 
-!!! info "Actions Needed"
+### Client Development
 
-    Keep using `--source=local` with the extension's directory for local development. If other
-    tooling relied on the package being linked in `npm`'s global prefix, manage that global link
-    separately.
-
-### Plugins Intercepting Proxied Commands Receive Unvalidated Arguments
-
-When a plugin intercepts a command that would otherwise be proxied to a downstream WebDriver
-server, Appium no longer validates required payload fields or command arguments before calling
-the plugin. This matches direct proxying, where the downstream remote end already owns those
-checks ([#23060](https://github.com/appium/appium/pull/23060)). Plugins that previously relied on
-Appium to validate these arguments can now receive missing or invalid values.
-
-Local and proxy-avoided commands retain Appium's validation. Session-existence checks and
-JSON-object request-body checks also remain in place before the plugin is called.
-
-!!! info "Actions Needed"
-
-    If your plugin handles such a command without calling `next()`, validate the inputs it uses.
-    A pass-through plugin can call `next()` and delegate validation to the downstream remote end.
-    The downstream driver's validation responsibility is unchanged.
-
-### Legacy Test Pages Removed From `@appium/base-driver`
-
-The built-in test fixture routes (`/welcome`, `/test/guinea-pig*`, `/produce_error`, `/crash`),
-the `STATIC_DIR` export, and the `APPIUM_ENABLE_LEGACY_TEST_PAGES` environment variable have been
-removed.
-
-!!! info "Actions Needed"
-
-    Driver test suites that relied on these fixtures should host their own local test server
-
-### `noImplicitOverride` Enabled in `@appium/tsconfig`
-
-The shared `@appium/tsconfig` base config now sets `noImplicitOverride: true`. TypeScript drivers
-and plugins that extend it must mark every member overriding a base class member (for example
-`BaseDriver` or `BasePlugin` methods and `static` fields such as `newMethodMap`) with the
-`override` modifier. Otherwise `tsc` fails with error TS4114.
-
-!!! info "Actions Needed"
-
-    * Add the `override` modifier to overriding members, e.g. `override async createSession(...)`
-    * Alternatively, set `"noImplicitOverride": false` in your own `tsconfig.json` to opt out
-
-* Extension manifests and `extensions.yaml` are now validated with `ajv`/JSON Schema; a corrupted
-  `extensions.yaml` now resets to an empty manifest with a warning instead of crashing later with a
-  confusing error
-* `ExecuteMethodMap` type declarations now check `params` against the target method's signature at
-  compile time, catching mismatched required/optional execute method parameters in driver code
+* State-changing HTTP requests with an `Origin` header now return HTTP `403`, unless the CORS
+  insecure feature is enabled on the Appium server. Remove the `Origin` header or instruct users to
+  enable CORS.
 
 ## New Features
 

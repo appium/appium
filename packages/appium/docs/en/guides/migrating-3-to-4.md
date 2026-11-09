@@ -12,12 +12,13 @@ deprecated items not limited to endpoints, and general modernizing of the codeba
 
 ## Installation
 
-The installation method for Appium 4 remains the same as for Appium 3. If you want to upgrade, you
+Appium 4 is currently only available as a beta release, published under the `beta` npm dist-tag.
+The installation method otherwise remains the same as for Appium 3. If you want to upgrade, you
 can simply install Appium 4 on top of your existing installation:
 
 ```bash
 # optional: `appium setup reset`
-npm install -g appium
+npm install -g appium@beta
 ```
 
 ## Breaking Changes
@@ -68,7 +69,7 @@ Appium 4 is no longer compatible with the Windows driver ([`appium-windows-drive
 since the driver cannot support the standard W3C WebDriver protocol. As a result, the
 `appium driver install windows` CLI command also no longer works.
 
-Instead, support has been added for the WinCore driver ([`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver)),
+Its official replacement is the WinCore driver ([`appium-wincore-driver`](https://github.com/appium/appium-wincore-driver)),
 which can be installed using the new `appium driver install wincore` command. Since the WinCore
 driver is also compatible with Appium 3, you can safely migrate from the Windows driver while
 remaining on Appium 3 - though note that the installation shortcut is only available since Appium 4.
@@ -185,7 +186,7 @@ this package with Node's native `https` module, which only supports plain HTTPS 
 !!! info "Actions Needed"
 
     Clients relying on SPDY or HTTP/2 multiplexing against Appium's TLS listener must switch to
-    plain HTTPS (HTTP/1.1)
+    plain HTTPS (HTTP/1.1) or use a proxy
 
 ### Selenium Grid 3 Support Removed
 

@@ -10,6 +10,7 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
+    "noImplicitOverride": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "stripInternal": true,

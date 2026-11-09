@@ -18,7 +18,7 @@ export type DriverLike = ExternalDriver & {fakeSessionData?: unknown};
 type ClockStatus = {running: boolean};
 
 export class FakePlugin extends BasePlugin {
-  static newMethodMap: MethodMap<FakePlugin> = {
+  static override newMethodMap: MethodMap<FakePlugin> = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData', neverProxy: true},
       POST: {
@@ -58,7 +58,7 @@ export class FakePlugin extends BasePlugin {
     },
   };
 
-  static executeMethodMap: ExecuteMethodMap<FakePlugin> = {
+  static override executeMethodMap: ExecuteMethodMap<FakePlugin> = {
     'fake: getThing': {
       command: 'getFakeThing',
     },

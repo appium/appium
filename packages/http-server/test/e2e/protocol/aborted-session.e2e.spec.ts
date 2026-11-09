@@ -17,17 +17,17 @@ import {FakeDriver} from './fake-driver.js';
 class SessionDriver extends FakeDriver {
   readonly sessions = new Set<string>();
 
-  async createSession(...args: Parameters<FakeDriver['createSession']>) {
+  override async createSession(...args: Parameters<FakeDriver['createSession']>) {
     const result = await super.createSession(...args);
     this.sessions.add(result[0]);
     return result;
   }
 
-  sessionExists(sessionId?: string | null) {
+  override sessionExists(sessionId?: string | null) {
     return typeof sessionId === 'string' && this.sessions.has(sessionId);
   }
 
-  async deleteSession(sessionId = this.sessionId) {
+  override async deleteSession(sessionId = this.sessionId) {
     if (sessionId) {
       this.sessions.delete(sessionId);
     }

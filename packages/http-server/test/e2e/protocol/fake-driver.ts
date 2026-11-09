@@ -21,19 +21,21 @@ class FakeDriver extends BaseDriver<Constraints> {
     this.wdProxyActive = false;
   }
 
-  sessionExists(sessionId?: string | null): boolean {
+  override sessionExists(sessionId?: string | null): boolean {
     if (!sessionId) {
       return false;
     }
     return sessionId === this.sessionId;
   }
 
-  driverForSession(sessionId: string): FakeDriver | null {
+  override driverForSession(sessionId: string): FakeDriver | null {
     void sessionId;
     return this;
   }
 
-  async createSession(w3cCapabilities: W3CDriverCaps<Constraints>): Promise<DefaultCreateSessionResult<Constraints>> {
+  override async createSession(
+    w3cCapabilities: W3CDriverCaps<Constraints>,
+  ): Promise<DefaultCreateSessionResult<Constraints>> {
     if (!isW3cCaps(w3cCapabilities)) {
       throw new errors.SessionNotCreatedError('No capabilities provided');
     }
@@ -41,7 +43,7 @@ class FakeDriver extends BaseDriver<Constraints> {
     return [this.sessionId, w3cCapabilities] as unknown as DefaultCreateSessionResult<Constraints>;
   }
 
-  async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
+  override async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
     const method = (this as unknown as Record<string, (...a: any[]) => unknown>)[cmd];
     if (!method) {
       throw new errors.NotYetImplementedError();
@@ -49,12 +51,12 @@ class FakeDriver extends BaseDriver<Constraints> {
     return (await method.call(this, ...args)) as T;
   }
 
-  async deleteSession(): Promise<void> {
+  override async deleteSession(): Promise<void> {
     this.wdProxyActive = false;
     this.sessionId = null;
   }
 
-  async getStatus(): Promise<string> {
+  override async getStatus(): Promise<string> {
     return "I'm fine";
   }
 
@@ -112,21 +114,21 @@ class FakeDriver extends BaseDriver<Constraints> {
     return app;
   }
 
-  async getSettings(): Promise<{protocol: typeof PROTOCOLS.W3C; error: Error}> {
+  override async getSettings(): Promise<{protocol: typeof PROTOCOLS.W3C; error: Error}> {
     return {protocol: PROTOCOLS.W3C, error: new errors.UnknownError('Mishandled Driver Error')};
   }
 
-  proxyActive(sessionId?: string): boolean {
+  override proxyActive(sessionId?: string): boolean {
     void sessionId;
     return false;
   }
 
-  getProxyAvoidList(sessionId: string): RouteMatcher[] {
+  override getProxyAvoidList(sessionId: string): RouteMatcher[] {
     void sessionId;
     return [];
   }
 
-  canProxy(sessionId?: string): boolean {
+  override canProxy(sessionId?: string): boolean {
     void sessionId;
     return false;
   }

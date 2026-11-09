@@ -56,16 +56,17 @@ session.unsubscribe
 
 > WebDriver BiDi documentation: [session.unsubscribe](https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe)
 
-Unsubscribes using previously returned subscription IDs, or the legacy event/context form.
-Removing a subscription ID preserves any overlapping subscriptions.
+Unsubscribes from one or more BiDi events using subscription IDs or event names. Event names can
+also be scoped to contexts (legacy parameter). Removing a subscription ID preserves any overlapping
+subscriptions.
 
 #### Parameters
 
 |Name|Description|Type|Default|
 |--|--|--|--|
 |`subscriptions?`|Non-empty list of subscription IDs returned by `session.subscribe`. Cannot be combined with `events` or `contexts`.|string[]||
-|`contexts?`|Legacy form only: contexts in which to unsubscribe from the specified events. By default, the global scope is applied.|string[]|`['']`|
-|`events?`|Legacy form: non-empty list of event names to unsubscribe from. Required when `subscriptions` is omitted.|string[]||
+|`events?`|Non-empty list of event names to unsubscribe from. Required when `subscriptions` is omitted.|string[]||
+|`contexts?`|Legacy parameter: contexts in which to unsubscribe from events specified in `events`. By default, the global scope is applied.|string[]|`['']`|
 
 All subscription IDs must be known to the current session. An unknown ID causes an `invalid argument`
 error without removing any subscriptions. Subscription IDs are cleared when the session is deleted.

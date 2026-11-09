@@ -871,4 +871,93 @@ describe('wrapHostBindingForVmContext', function () {
       vmNullChildRoundTrip: true,
     });
   });
+
+  it('should wrap host RangeError on stack overflow across call, construct, and async VM wrappers and wrap host newTarget', async function () {
+    class HostSub {}
+    const d = wrapHostBindingForVmContext({
+      now(cb: () => unknown) {
+        return cb();
+      },
+      constructNow(Ctor: new () => object) {
+        return new Ctor();
+      },
+      constructWithHostNewTarget(Ctor: new () => object) {
+        return Reflect.construct(Ctor, [], HostSub);
+      },
+    });
+
+    const res = JSON.parse(
+      (await vm.runInNewContext(
+        `(async () => {
+           let callErr;
+           function goCall(n) {
+             try {
+               return d.now(function () {
+                 return goCall(n + 1);
+               });
+             } catch (e) {
+               callErr = e;
+               throw e;
+             }
+           }
+           try {
+             goCall(0);
+           } catch {}
+
+           let ctorErr;
+           function goCtor(n) {
+             try {
+               return d.constructNow(function () {
+                 return goCtor(n + 1);
+               });
+             } catch (e) {
+               ctorErr = e;
+               throw e;
+             }
+           }
+           try {
+             goCtor(0);
+           } catch {}
+
+           let asyncErr;
+           try {
+             await d.now(async function () {
+               function syncLoop(n) {
+                 return d.now(() => syncLoop(n + 1));
+               }
+               return syncLoop(0);
+             });
+           } catch (e) {
+             asyncErr = e;
+           }
+
+           let seenNewTarget;
+           d.constructWithHostNewTarget(function () {
+             seenNewTarget = new.target;
+           });
+
+           const checkEscape = (val) =>
+             typeof val?.constructor?.constructor === 'function'
+               ? val.constructor.constructor('return typeof process')()
+               : 'undefined';
+
+           return JSON.stringify({
+             callCheck: checkEscape(callErr),
+             ctorCheck: checkEscape(ctorErr),
+             asyncCheck: checkEscape(asyncErr),
+             newTargetCheck: checkEscape(seenNewTarget),
+           });
+         })()`,
+        {d},
+        {timeout: 2000},
+      )) as string,
+    );
+
+    assert.deepEqual(res, {
+      callCheck: 'undefined',
+      ctorCheck: 'undefined',
+      asyncCheck: 'undefined',
+      newTargetCheck: 'undefined',
+    });
+  });
 });

@@ -109,14 +109,47 @@ function isVmRealmValue(value: unknown): boolean {
   return value !== null && (typeof value === 'object' || typeof value === 'function') && vmObjects.has(value);
 }
 
+function hasHostPrototype(value: object): boolean {
+  let current: object | null = value;
+  for (let depth = 0; current !== null && depth < 64; depth++) {
+    if (current === Object.prototype || current === Function.prototype || current === Error.prototype) {
+      return true;
+    }
+    if (current === SAFE_LOOKUP_TARGET || isOurProxy(current) || shadowToHost.has(current)) {
+      return false;
+    }
+    try {
+      current = Reflect.getPrototypeOf(current);
+    } catch {
+      return true;
+    }
+  }
+  return current !== null;
+}
+
 function recordVmValue(value: unknown): void {
   if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
     return;
   }
-  if (value === SAFE_LOOKUP_TARGET || isOurProxy(value) || targetToProxy.has(value)) {
+  if (
+    value === SAFE_LOOKUP_TARGET ||
+    isOurProxy(value) ||
+    targetToProxy.has(value) ||
+    shadowToHost.has(value) ||
+    promiseToThenableHost.has(value as Promise<unknown>) ||
+    hasHostPrototype(value)
+  ) {
     return;
   }
   vmObjects.add(value);
+}
+
+function wrapErrorForVm(err: unknown): unknown {
+  try {
+    return wrapIfNeeded(err);
+  } catch {
+    return SAFE_LOOKUP_TARGET;
+  }
 }
 
 function copyFunctionMetadata(vmFn: HostCallable, wrapped: HostCallable, includePrototype: boolean): void {
@@ -147,18 +180,19 @@ function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
   if (cached) {
     return cached;
   }
-  vmObjects.add(vmFn);
+  recordVmValue(vmFn);
 
   const invokeCall = (thisArg: unknown, args: unknown[]): unknown => {
     const safeThis = wrapIfNeeded(thisArg);
     const safeArgs = args.map((arg) => wrapIfNeeded(arg));
+    let result: unknown;
     try {
-      const result = Reflect.apply(vmFn, safeThis, safeArgs);
-      return unwrapIfProxy(result);
+      result = Reflect.apply(vmFn, safeThis, safeArgs);
     } catch (err) {
       recordVmValue(err);
-      throw err;
+      throw wrapErrorForVm(err);
     }
+    return unwrapIfProxy(result);
   };
 
   let wrapped: HostCallable;
@@ -167,29 +201,29 @@ function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
     wrapped = async function (this: unknown, ...args: unknown[]): Promise<unknown> {
       const safeThis = wrapIfNeeded(this);
       const safeArgs = args.map((arg) => wrapIfNeeded(arg));
+      let result: unknown;
       try {
-        const result = await Reflect.apply(vmFn, safeThis, safeArgs);
-        return unwrapIfProxy(result);
+        result = await Reflect.apply(vmFn, safeThis, safeArgs);
       } catch (err) {
         recordVmValue(err);
-        throw err;
+        throw wrapErrorForVm(err);
       }
+      return unwrapIfProxy(result);
     };
   } else if (constructible) {
     wrapped = function (this: unknown, ...args: unknown[]): unknown {
       if (new.target) {
         const safeArgs = args.map((arg) => wrapIfNeeded(arg));
         const actualNewTarget =
-          new.target === wrapped
-            ? (vmFn as unknown as HostConstructor)
-            : unwrapConstructor(new.target as unknown as HostCallable);
+          new.target === wrapped ? (vmFn as unknown as HostConstructor) : (wrapIfNeeded(new.target) as HostConstructor);
+        let instance: unknown;
         try {
-          const instance = Reflect.construct(vmFn as unknown as HostConstructor, safeArgs, actualNewTarget);
-          return unwrapIfProxy(instance);
+          instance = Reflect.construct(vmFn as unknown as HostConstructor, safeArgs, actualNewTarget);
         } catch (err) {
           recordVmValue(err);
-          throw err;
+          throw wrapErrorForVm(err);
         }
+        return unwrapIfProxy(instance);
       }
       return invokeCall(this, args);
     };
@@ -253,7 +287,7 @@ function runTrapSafely<T>(fn: () => T): T {
   try {
     return fn();
   } catch (err) {
-    throw wrapIfNeeded(err);
+    throw wrapErrorForVm(err);
   }
 }
 

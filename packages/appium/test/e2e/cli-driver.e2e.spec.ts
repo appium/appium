@@ -165,7 +165,7 @@ describe('Driver CLI', {timeout: 90000}, function () {
       const ret = await runInstall(['uiautomator2']);
       assert.strictEqual(ret.uiautomator2.pkgName, 'appium-uiautomator2-driver');
       assert.strictEqual(ret.uiautomator2.installType, 'npm');
-      assert.match(ret.uiautomator2.installSpec, /^uiautomator2(@\d+\.\d+\.\d+)?$/);
+      assert.strictEqual(ret.uiautomator2.installSpec, 'uiautomator2');
       const list = await runList(['--installed']);
       const rest = omitKeys(list.uiautomator2 ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {

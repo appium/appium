@@ -477,11 +477,16 @@ Beyond the removed endpoints above, the internal machinery that translated betwe
   been removed; drivers can no longer produce the legacy `{sessionId, status, value}` response shape
 * `@appium/base-driver` no longer exports `statusCodes`/`getSummaryByCode` (the `jsonwp-status`
   module was removed)
+* A command result shaped like `{protocol, value}` is no longer unwrapped. It is sent to the
+  client as the command value, so a script returning `{protocol: 'W3C', value: 5}` gets that object
+  back. A result of `{protocol, error}` whose `protocol` is `W3C` or `MJSONWP` and whose `error`
+  is an `Error` is still thrown
 
 !!! info "Actions Needed"
 
     Ensure any downstream automation server a driver proxies to (via `WebDriverProxy`) speaks pure
-    W3C WebDriver; update code referencing the removed exports to their W3C equivalents
+    W3C WebDriver; update code referencing the removed exports to their W3C equivalents. A driver
+    that returned `{protocol, value}` from `executeCommand` should return the value itself
 
 ### `@appium/base-driver` Default Export Removed
 
@@ -688,6 +693,18 @@ removed.
 !!! info "Actions Needed"
 
     Driver test suites that relied on these fixtures should host their own local test server
+
+### `noImplicitOverride` Enabled in `@appium/tsconfig`
+
+The shared `@appium/tsconfig` base config now sets `noImplicitOverride: true`. TypeScript drivers
+and plugins that extend it must mark every member overriding a base class member (for example
+`BaseDriver` or `BasePlugin` methods and `static` fields such as `newMethodMap`) with the
+`override` modifier. Otherwise `tsc` fails with error TS4114.
+
+!!! info "Actions Needed"
+
+    * Add the `override` modifier to overriding members, e.g. `override async createSession(...)`
+    * Alternatively, set `"noImplicitOverride": false` in your own `tsconfig.json` to opt out
 
 ## New Features
 

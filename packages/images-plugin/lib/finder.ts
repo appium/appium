@@ -3,7 +3,7 @@ import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
 import {ConditionUnmetError} from 'asyncbox';
 import {LRUCache} from 'lru-cache';
-import sharp from 'sharp';
+import sharp, {type Sharp} from 'sharp';
 
 import {compareImages} from './compare.js';
 import {
@@ -29,22 +29,6 @@ const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Checks if one rect fully contains another
- *
- * @param templateRect The bounding rect
- * @param rect The rect to be checked for containment
- * @returns True if templateRect contains rect
- */
-function containsRect(templateRect: Rect, rect: Rect): boolean {
-  return (
-    templateRect.x <= rect.x &&
-    templateRect.y <= rect.y &&
-    rect.width <= templateRect.x + templateRect.width - rect.x &&
-    rect.height <= templateRect.y + templateRect.height - rect.y
-  );
-}
-
 const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 type ImageMatchOptions = {
@@ -58,6 +42,11 @@ type WaitForMatchesOptions = ImageMatchOptions & {
 
 type CreateImageElementsOptions = ImageMatchOptions & {
   shouldCheckStaleness: boolean;
+};
+
+type ScreenshotForImageFind = Screenshot & {
+  scale?: ScreenshotScale;
+  crop?: Rect | null;
 };
 
 export class ImageElementFinder {
@@ -189,13 +178,15 @@ export class ImageElementFinder {
    *
    * @param driver
    * @param screenSize - The original size of the screen
+   * @param containerRect - When set, the screenshot is cropped to this rectangle
    *
-   * @returns PNG screenshot and ScreenshotScale
+   * @returns PNG screenshot, its scale, and the cropped rectangle when `containerRect` is set
    */
   async getScreenshotForImageFind(
     driver: ExternalDriver,
     screenSize: Size,
-  ): Promise<Screenshot & {scale?: ScreenshotScale}> {
+    containerRect?: Rect | null,
+  ): Promise<ScreenshotForImageFind> {
     if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
@@ -203,12 +194,29 @@ export class ImageElementFinder {
     const {fixImageFindScreenshotDims} = settings;
 
     const screenshot = Buffer.from(await driver.getScreenshot(), 'base64');
+    const applyContainer = async (
+      image: Buffer,
+      scale?: ScreenshotScale,
+      source?: {img: Sharp; size: Size},
+    ): Promise<ScreenshotForImageFind> => {
+      const out: ScreenshotForImageFind = {screenshot: image};
+      if (scale) {
+        out.scale = scale;
+      }
+      if (!containerRect) {
+        return out;
+      }
+      const cropped = await this.cropScreenshot(source?.img ?? sharp(image), containerRect, source?.size);
+      out.screenshot = cropped?.image ?? image;
+      out.crop = cropped?.rect ?? null;
+      return out;
+    };
 
     // if the user has requested not to correct for aspect or size differences
     // between the screenshot and the screen, just return the screenshot now
     if (!fixImageFindScreenshotDims) {
       log.info(`Not verifying screenshot dimensions match screen`);
-      return {screenshot};
+      return await applyContainer(screenshot);
     }
 
     if (screenSize.width < 1 || screenSize.height < 1) {
@@ -216,7 +224,7 @@ export class ImageElementFinder {
         `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
           `not seem to be valid. No changes will be applied to the screenshot`,
       );
-      return {screenshot};
+      return await applyContainer(screenshot);
     }
 
     // otherwise, do some verification on the screenshot to make sure it matches
@@ -224,9 +232,21 @@ export class ImageElementFinder {
     log.info('Verifying screenshot size and aspect ratio');
 
     let imgObj = sharp(screenshot);
-    let {width: shotWidth, height: shotHeight} = await imgObj.metadata();
+    let shotWidth: number | undefined;
+    let shotHeight: number | undefined;
+    try {
+      ({width: shotWidth, height: shotHeight} = await imgObj.metadata());
+    } catch (err) {
+      if (!containerRect) {
+        throw err;
+      }
+      throw invalidScreenshotError(err);
+    }
 
     if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
+      if (containerRect) {
+        throw invalidScreenshotError();
+      }
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
           `not seem to be valid. No changes will be applied to the screenshot`,
@@ -238,7 +258,10 @@ export class ImageElementFinder {
       // the height and width of the screenshot and the device screen match, which
       // means we should be safe when doing template matches
       log.info('Screenshot size matched screen size');
-      return {screenshot};
+      return await applyContainer(screenshot, undefined, {
+        img: imgObj,
+        size: {width: shotWidth, height: shotHeight},
+      });
     }
 
     // otherwise, if they don't match, it could spell problems for the accuracy
@@ -316,10 +339,16 @@ export class ImageElementFinder {
       scale.yScale *= (1.0 * screenSize.height) / shotHeight;
     }
 
-    return {
-      screenshot: await imgObj.toBuffer(),
-      scale,
-    };
+    if (!containerRect) {
+      return {screenshot: await imgObj.toBuffer(), scale};
+    }
+    // sharp runs extract before resize, so crop the resized pixels without encoding them first
+    const {data, info} = await imgObj.raw().toBuffer({resolveWithObject: true});
+    const size = {width: info.width, height: info.height};
+    return await applyContainer(data, scale, {
+      img: sharp(data, {raw: {...size, channels: info.channels}}),
+      size,
+    });
   }
 
   /**
@@ -412,7 +441,11 @@ export class ImageElementFinder {
     let didFixTemplateImageScale = false;
     const performLookup = async (): Promise<boolean> => {
       try {
-        const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
+        // the best match on the whole screen may be outside the container, so only search inside it
+        const {screenshot, scale, crop} = await this.getScreenshotForImageFind(driver, screenSize, containerRect);
+        if (crop === null) {
+          return false;
+        }
 
         if (!didFixTemplateImageScale) {
           template = await this.fixImageTemplateScale(template, {
@@ -437,24 +470,14 @@ export class ImageElementFinder {
 
         const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
         const candidates = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
-        let found = false;
         for (const el of candidates) {
-          const result: OccurrenceResultWithVisualization = {
-            rect: el.rect,
+          matches.push({
+            rect: crop ? {...el.rect, x: el.rect.x + crop.x, y: el.rect.y + crop.y} : el.rect,
             score: el.score,
             visualization: el.visualization,
-          };
-          if (containerRect && !containsRect(containerRect, result.rect)) {
-            log.debug(
-              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
-                `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
-            );
-            continue;
-          }
-          matches.push(result);
-          found = true;
+          });
         }
-        return found;
+        return candidates.length > 0;
       } catch (err: any) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of
@@ -511,4 +534,46 @@ export class ImageElementFinder {
     const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
     return multiple ? registeredElements : registeredElements[0];
   }
+
+  /**
+   * Cuts the screenshot to the part inside the given rectangle.
+   *
+   * @returns The cropped image and the rectangle that was cut, or `null` when that rectangle is off screen
+   */
+  private async cropScreenshot(imgObj: Sharp, rect: Rect, size?: Size): Promise<{image: Buffer; rect: Rect} | null> {
+    let width = size?.width;
+    let height = size?.height;
+    if (!width || !height) {
+      try {
+        ({width, height} = await imgObj.metadata());
+      } catch (err) {
+        throw invalidScreenshotError(err);
+      }
+    }
+    if (!width || !height) {
+      throw invalidScreenshotError();
+    }
+    // Round outward so a fractional container edge is included.
+    const x = Math.max(0, Math.floor(rect.x));
+    const y = Math.max(0, Math.floor(rect.y));
+    const right = Math.min(width, Math.ceil(rect.x + rect.width));
+    const bottom = Math.min(height, Math.ceil(rect.y + rect.height));
+    if (right <= x || bottom <= y) {
+      log.debug(`The container rectangle ${JSON.stringify(rect)} is outside of the screenshot ${width}x${height}`);
+      return null;
+    }
+    const cropped = {x, y, width: right - x, height: bottom - y};
+    const image = await imgObj
+      .extract({left: x, top: y, width: cropped.width, height: cropped.height})
+      .png()
+      .toBuffer();
+    return {image, rect: cropped};
+  }
+}
+
+function invalidScreenshotError(cause?: unknown) {
+  return new errors.InvalidElementStateError(
+    'Screenshot width/height cannot be determined. Is it a valid image?',
+    cause instanceof Error ? cause : undefined,
+  );
 }

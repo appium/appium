@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, it, mock} from 'node:test';
 
 import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Constraints, Element} from '@appium/types';
-import {BaseDriver} from 'appium/driver.js';
+import {BaseDriver, errors} from 'appium/driver.js';
 import {util} from 'appium/support.js';
 import sharp from 'sharp';
 import {createSandbox, type SinonSandbox} from 'sinon';
@@ -41,10 +41,10 @@ class PluginDriver extends BaseDriver<Constraints> {
   }
   async getWindowRect(): Promise<any> {}
   async getScreenshot(): Promise<any> {}
-  findElement(strategy: string, selector: string) {
+  override findElement(strategy: string, selector: string) {
     return plugin.findElement(async () => {}, this as any, strategy, selector);
   }
-  findElements(strategy: string, selector: string) {
+  override findElements(strategy: string, selector: string) {
     return plugin.findElements(async () => {}, this as any, strategy, selector);
   }
 }
@@ -85,7 +85,7 @@ describe('finding elements by image', function () {
     const rect = {x: 10, y: 20, width: 30, height: 40};
     const score = 0.9;
     const size = {width: 100, height: 200};
-    const screenshot = Buffer.from('iVBORfoo', 'base64');
+    const screenshot = TINY_PNG_BUF;
     const template = Buffer.from('iVBORbar', 'base64');
     let d: PluginDriver;
     let f: TImageElementFinder;
@@ -98,6 +98,21 @@ describe('finding elements by image', function () {
       } as any);
       const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns({screenshot} as any);
       return {rectStub, screenStub};
+    }
+
+    function useScreenshot(image: Buffer) {
+      (f.getScreenshotForImageFind as any).callsFake(function (this: TImageElementFinder, ...args: any[]) {
+        return (ImageElementFinder.prototype.getScreenshotForImageFind as any).apply(this, args);
+      });
+      sandbox.stub(d, 'getScreenshot').resolves(image.toString('base64'));
+    }
+
+    async function screenImage() {
+      return await sharp({
+        create: {width: size.width, height: size.height, channels: 3, background: '#fff'},
+      })
+        .png()
+        .toBuffer();
     }
 
     function basicImgElVerify(imgElProto: any, finder: TImageElementFinder) {
@@ -137,10 +152,25 @@ describe('finding elements by image', function () {
         rects,
       );
     });
+    it('should find an image element inside the container when a better match is outside of it', async function () {
+      useScreenshot(await screenImage());
+      const containerRect = {x: 0, y: 100, width: 100, height: 100};
+      compareStub.callsFake(async (...args: any[]) => {
+        const {height} = await sharp(args[1]).metadata();
+        return height === size.height ? {rect, score: 0.99} : {rect: {...rect, x: 40}, score: 0.8};
+      });
+      const el = (await f.findByImage(template, d as any, {multiple: false, containerRect})) as Element;
+      assert.deepStrictEqual(f.getImageElement(util.unwrapElement(el))!.rect, {...rect, x: 40, y: rect.y + 100});
+    });
     it('should return every matched image element inside the container', async function () {
+      useScreenshot(await screenImage());
       const containerRect = {x: 0, y: 0, width: 100, height: 100};
       const inside = [rect, {...rect, x: 50}];
-      compareStub.resolves([{rect: {...rect, y: 100}, score}, ...inside.map((r) => ({rect: r, score}))]);
+      compareStub.callsFake(async (...args: any[]) => {
+        const {width, height} = await sharp(args[1]).metadata();
+        assert.deepStrictEqual({width, height}, {width: containerRect.width, height: containerRect.height});
+        return inside.map((r) => ({rect: r, score}));
+      });
       const els = (await f.findByImage(template, d as any, {
         multiple: true,
         containerRect,
@@ -148,6 +178,96 @@ describe('finding elements by image', function () {
       assert.deepStrictEqual(
         els.map((el) => f.getImageElement(util.unwrapElement(el))!.rect),
         inside,
+      );
+    });
+    it('should shift every match by the container crop', async function () {
+      useScreenshot(await screenImage());
+      const containerRect = {x: 10.6, y: 20.2, width: 50.6, height: 40.4};
+      const crop = {x: 10, y: 20, width: 52, height: 41};
+      const locals = [
+        {x: 0, y: 0, width: 3, height: 4},
+        {x: 4, y: 5, width: 3, height: 4},
+      ];
+      compareStub.callsFake(async (...args: any[]) => {
+        const {width, height} = await sharp(args[1]).metadata();
+        assert.deepStrictEqual({width, height}, {width: crop.width, height: crop.height});
+        return locals.map((r) => ({rect: r, score}));
+      });
+      const els = (await f.findByImage(template, d as any, {multiple: true, containerRect})) as Element[];
+      assert.deepStrictEqual(
+        els.map((el) => f.getImageElement(util.unwrapElement(el))!.rect),
+        locals.map((r) => ({...r, x: r.x + crop.x, y: r.y + crop.y})),
+      );
+    });
+    it('should keep the matched image from the container crop', async function () {
+      useScreenshot(await screenImage());
+      await (d as any).settings.update({getMatchedImageResult: true});
+      const visual = Buffer.from('crop-match').toString('base64');
+      const containerRect = {x: 0, y: 100, width: 100, height: 100};
+      compareStub.callsFake(async (...args: any[]) => {
+        const {height} = await sharp(args[1]).metadata();
+        assert.strictEqual(height, containerRect.height);
+        return {rect: {...rect, x: 0}, score, visualization: visual};
+      });
+      const el = (await f.findByImage(template, d as any, {multiple: false, containerRect})) as Element;
+      assert.strictEqual(f.getImageElement(util.unwrapElement(el))!.matchedImage, visual);
+    });
+    it('should find nothing when the container is outside the screenshot', async function () {
+      useScreenshot(await screenImage());
+      compareStub.resetHistory();
+      await assert.rejects(
+        f.findByImage(template, d as any, {
+          multiple: false,
+          containerRect: {x: 300, y: 0, width: 10, height: 10},
+        }),
+        /element could not be located/,
+      );
+      assert.strictEqual(compareStub.called, false);
+    });
+    it('should return no elements when the container is outside the screenshot', async function () {
+      useScreenshot(await screenImage());
+      compareStub.resetHistory();
+      assert.deepStrictEqual(
+        await f.findByImage(template, d as any, {
+          multiple: true,
+          containerRect: {x: 300, y: 0, width: 10, height: 10},
+        }),
+        [],
+      );
+      assert.strictEqual(compareStub.called, false);
+    });
+    it('should find nothing when the template is larger than the container', async function () {
+      useScreenshot(await screenImage());
+      compareStub.callsFake(async (...args: any[]) => {
+        const {width = 0, height = 0} = await sharp(args[1]).metadata();
+        if (width < rect.width || height < rect.height) {
+          throw new NoImageOccurrencesError('Cannot find any occurrences of the partial image in the full image');
+        }
+        return {rect, score};
+      });
+      await assert.rejects(
+        f.findByImage(template, d as any, {
+          multiple: false,
+          containerRect: {x: 0, y: 0, width: 10, height: 10},
+        }),
+        /element could not be located/,
+      );
+    });
+    it('should return no elements when the template is larger than the container', async function () {
+      useScreenshot(await screenImage());
+      compareStub.callsFake(async (...args: any[]) => {
+        const {width = 0, height = 0} = await sharp(args[1]).metadata();
+        if (width < rect.width || height < rect.height) {
+          throw new NoImageOccurrencesError('Cannot find any occurrences of the partial image in the full image');
+        }
+        return [{rect, score}];
+      });
+      assert.deepStrictEqual(
+        await f.findByImage(template, d as any, {
+          multiple: true,
+          containerRect: {x: 0, y: 0, width: 10, height: 10},
+        }),
+        [],
       );
     });
     it('should fail if driver does not support getWindowRect', async function () {
@@ -386,6 +506,58 @@ describe('finding elements by image', function () {
       const {screenshot, scale} = await f.getScreenshotForImageFind(d as any, {width, height} as any);
       assert.deepStrictEqual(screenshot, TINY_PNG_BUF);
       assert.strictEqual(scale, undefined);
+    });
+    it('should crop the screenshot to the container', async function () {
+      const containerRect = {x: 1.2, y: 0.4, width: 2.2, height: 3.6};
+      const {screenshot, crop} = await f.getScreenshotForImageFind(
+        d as any,
+        {width: 4, height: 4} as any,
+        containerRect,
+      );
+      const {width, height} = await sharp(screenshot).metadata();
+      assert.deepStrictEqual(crop, {x: 1, y: 0, width: 3, height: 4});
+      assert.strictEqual(width, 3);
+      assert.strictEqual(height, 4);
+    });
+    it('should crop the resized screenshot to the container', async function () {
+      const containerRect = {x: 2, y: 2, width: 4, height: 4};
+      const {screenshot, scale, crop} = await f.getScreenshotForImageFind(
+        d as any,
+        {width: 8, height: 8} as any,
+        containerRect,
+      );
+      const {width, height, format} = await sharp(screenshot).metadata();
+      assert.deepStrictEqual(crop, containerRect);
+      assert.deepStrictEqual({width, height, format}, {width: 4, height: 4, format: 'png'});
+      assert.deepStrictEqual(scale, {xScale: 2, yScale: 2});
+    });
+    it('should return no crop when the container is outside the screenshot', async function () {
+      const {crop} = await f.getScreenshotForImageFind(d as any, {width: 4, height: 4} as any, {
+        x: 8,
+        y: 0,
+        width: 2,
+        height: 2,
+      });
+      assert.strictEqual(crop, null);
+    });
+    it('should reject a container crop when the screenshot is not an image and verification is off', async function () {
+      await (d as any).settings.update({fixImageFindScreenshotDims: false});
+      (d.getScreenshot as any).resolves(Buffer.from('nope').toString('base64'));
+      await assert.rejects(
+        f.getScreenshotForImageFind(d as any, {width: 4, height: 4} as any, {x: 0, y: 0, width: 2, height: 2}),
+        (err: any) =>
+          err instanceof errors.InvalidElementStateError &&
+          /Screenshot width\/height cannot be determined/.test(err.message),
+      );
+    });
+    it('should reject a container crop when the screenshot is not an image and verification is on', async function () {
+      (d.getScreenshot as any).resolves(Buffer.from('nope').toString('base64'));
+      await assert.rejects(
+        f.getScreenshotForImageFind(d as any, {width: 4, height: 4} as any, {x: 0, y: 0, width: 2, height: 2}),
+        (err: any) =>
+          err instanceof errors.InvalidElementStateError &&
+          /Screenshot width\/height cannot be determined/.test(err.message),
+      );
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 1.5);

@@ -5,7 +5,7 @@ import {Agent, request, type ServerResponse} from 'node:http';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import {setImmediate as nextTurn} from 'node:timers/promises';
 
-import {BaseDriver, routeConfiguringFunction} from '@appium/base-driver';
+import {BaseDriver, markResponseEnvelope, routeConfiguringFunction} from '@appium/base-driver';
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 import type {AppiumServer, Constraints, Driver} from '@appium/types';
 import axios from 'axios';
@@ -17,17 +17,17 @@ import {FakeDriver} from './fake-driver.js';
 class SessionDriver extends FakeDriver {
   readonly sessions = new Set<string>();
 
-  async createSession(...args: Parameters<FakeDriver['createSession']>) {
+  override async createSession(...args: Parameters<FakeDriver['createSession']>) {
     const result = await super.createSession(...args);
     this.sessions.add(result[0]);
     return result;
   }
 
-  sessionExists(sessionId?: string | null) {
+  override sessionExists(sessionId?: string | null) {
     return typeof sessionId === 'string' && this.sessions.has(sessionId);
   }
 
-  async deleteSession(sessionId = this.sessionId) {
+  override async deleteSession(sessionId = this.sessionId) {
     if (sessionId) {
       this.sessions.delete(sessionId);
     }
@@ -358,9 +358,9 @@ describe('Aborted session creation', function () {
     const original = driver.executeCommand.bind(driver);
     sandbox.stub(driver, 'executeCommand').callsFake(async (command, ...args) => {
       if (command === 'deleteSession') {
-        return {protocol: 'W3C', error: new Error('Wrapped cleanup failure')};
+        return markResponseEnvelope({protocol: 'W3C', error: new Error('Wrapped cleanup failure')});
       }
-      return {protocol: 'W3C', value: await original(command, ...args)};
+      return markResponseEnvelope({protocol: 'W3C', value: await original(command, ...args)});
     });
     const warned = whenWarned();
     const creating = once(events, 'creating');

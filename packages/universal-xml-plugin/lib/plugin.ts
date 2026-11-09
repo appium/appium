@@ -7,7 +7,7 @@ import type {TransformMetadata} from './types.js';
 import {transformQuery} from './xpath.js';
 
 export class UniversalXMLPlugin extends BasePlugin {
-  static executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
+  static override executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
     'universalXml: setEnabled': {
       command: 'setTranslationEnabled',
       params: {required: ['enabled']},

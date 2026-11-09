@@ -6,10 +6,10 @@ import {HTTPStatusCodes} from '../helpers/http-status-codes.js';
 const w3cLog = logger.getLogger('W3C');
 
 class BaseError extends Error {
-  public cause: Error | undefined;
-  public message: string;
-  public name: string;
-  public stack: string | undefined;
+  public override cause: Error | undefined;
+  public override message: string;
+  public override name: string;
+  public override stack: string | undefined;
 
   constructor(message: string = '', cause?: Error) {
     super(message);

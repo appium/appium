@@ -41,10 +41,10 @@ class PluginDriver extends BaseDriver<Constraints> {
   }
   async getWindowRect(): Promise<any> {}
   async getScreenshot(): Promise<any> {}
-  findElement(strategy: string, selector: string) {
+  override findElement(strategy: string, selector: string) {
     return plugin.findElement(async () => {}, this as any, strategy, selector);
   }
-  findElements(strategy: string, selector: string) {
+  override findElements(strategy: string, selector: string) {
     return plugin.findElements(async () => {}, this as any, strategy, selector);
   }
 }

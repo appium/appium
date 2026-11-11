@@ -793,6 +793,11 @@ describe('wrapHostBindingForVmContext', function () {
       return 'from-null-proto';
     };
     const nullProtoChild = Object.create(nullProtoBase);
+    const hostNullWithFn = Object.assign(Object.create(null), {
+      fn() {
+        return 'host-null-fn';
+      },
+    });
     class HostFoo {}
     const hostReceiver = {tag: 'host-this'};
     const d = wrapHostBindingForVmContext({
@@ -804,6 +809,9 @@ describe('wrapHostBindingForVmContext', function () {
       echo(v: unknown) {
         return v;
       },
+      getHostNullWithFn() {
+        return hostNullWithFn;
+      },
       runWithHostThis(cb: (this: unknown) => unknown) {
         return cb.call(hostReceiver);
       },
@@ -811,6 +819,7 @@ describe('wrapHostBindingForVmContext', function () {
         delete nonExtHost.a;
       },
     });
+    d.echo(hostNullWithFn);
 
     const res = JSON.parse(
       vm.runInNewContext(
@@ -833,8 +842,11 @@ describe('wrapHostBindingForVmContext', function () {
          const keysBefore = Object.keys(d.nonExtHost);
          d.deleteHostA();
          const keysAfter = Object.keys(d.nonExtHost);
-         const vmNullBase = Object.create(null);
-         const vmNullChild = Object.create(vmNullBase);
+         const leakedNull = d.getHostNullWithFn();
+         const leakedNullEscape =
+           typeof leakedNull.fn?.constructor?.constructor === 'function'
+             ? leakedNull.fn.constructor.constructor('return typeof process')()
+             : 'blocked';
          JSON.stringify({
            oCbSame: o.cb === fn,
            oCbProcessType: o.cb.constructor.constructor('return typeof process')(),
@@ -848,7 +860,8 @@ describe('wrapHostBindingForVmContext', function () {
            keysAfter,
            nullProtoFnVal: d.nullProtoChild.fn(),
            nullProtoFnCtorProto: Object.getPrototypeOf(d.nullProtoChild.fn.constructor),
-           vmNullChildRoundTrip: d.echo(vmNullChild) === vmNullChild,
+           leakedNullFnVal: leakedNull.fn(),
+           leakedNullEscape,
          })`,
         {d},
         {timeout: 500},
@@ -868,7 +881,8 @@ describe('wrapHostBindingForVmContext', function () {
       keysAfter: ['b'],
       nullProtoFnVal: 'from-null-proto',
       nullProtoFnCtorProto: null,
-      vmNullChildRoundTrip: true,
+      leakedNullFnVal: 'host-null-fn',
+      leakedNullEscape: 'blocked',
     });
   });
 
@@ -936,12 +950,21 @@ describe('wrapHostBindingForVmContext', function () {
              seenNewTarget = new.target;
            });
 
-           const checkEscape = (val) =>
-             typeof val?.constructor?.constructor === 'function'
+           const isRangeErr = (val) => Boolean(val && typeof val === 'object' && val.name === 'RangeError');
+           const checkEscape = (val) => {
+             if (val === undefined || val === null) {
+               return 'missing';
+             }
+             return typeof val.constructor?.constructor === 'function'
                ? val.constructor.constructor('return typeof process')()
-               : 'undefined';
+               : 'blocked';
+           };
 
            return JSON.stringify({
+             callIsError: isRangeErr(callErr),
+             ctorIsError: isRangeErr(ctorErr),
+             asyncIsError: isRangeErr(asyncErr),
+             newTargetIsFn: typeof seenNewTarget === 'function',
              callCheck: checkEscape(callErr),
              ctorCheck: checkEscape(ctorErr),
              asyncCheck: checkEscape(asyncErr),
@@ -954,10 +977,14 @@ describe('wrapHostBindingForVmContext', function () {
     );
 
     assert.deepEqual(res, {
-      callCheck: 'undefined',
-      ctorCheck: 'undefined',
-      asyncCheck: 'undefined',
-      newTargetCheck: 'undefined',
+      callIsError: true,
+      ctorIsError: true,
+      asyncIsError: true,
+      newTargetIsFn: true,
+      callCheck: 'blocked',
+      ctorCheck: 'blocked',
+      asyncCheck: 'blocked',
+      newTargetCheck: 'blocked',
     });
   });
 });

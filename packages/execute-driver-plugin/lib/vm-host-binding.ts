@@ -1,55 +1,8 @@
 /**
- * @fileoverview Bridges host-realm (child process) objects into Node's `vm.runInNewContext` without
- * leaking main-realm prototype metadata that untrusted script could use to obtain the real
- * `Function` constructor and escape the VM (RCE on the Appium host).
- *
- * ## Why this exists
- *
- * `vm` isolates *globals* and bytecode, but any **host object** you inject still carries the
- * **main V8 realm's** prototypes.
- *
- * ## Strategy (high level)
- *
- * 1. **Deep `Proxy`**: Every host object/function exposed to the script is wrapped. Property
- *    reads (`get`), call results (`apply` / `construct`), and descriptor reflection
- *    (`getOwnPropertyDescriptor`) funnel return values through `wrapIfNeeded`, which recursively
- *    wraps objects and functions so nested references never surface as raw host callables.
- *    Host exceptions thrown across trap boundaries are also wrapped via `wrapIfNeeded`, and
- *    VM callbacks passed into host functions have their `this` receiver and arguments wrapped.
- *
- * 2. **Prototype-adjacent keys**: `constructor` and `__proto__` are not read from the target;
- *    the `get` trap returns a frozen null-prototype sentinel, `getPrototypeOf` always reports that
- *    sentinel (not the real prototype chain), `has` hides those keys, and `set`, `defineProperty`,
- *    `deleteProperty`, and `setPrototypeOf` reject mutations to them (causing strict-mode
- *    `TypeError` when scripts attempt to write or delete them)—closing `…constructor.constructor`
- *    escape chains.
- *
- * 3. **Identity**: `targetToProxy` is a `WeakMap` from each host object/function to its single
- *    proxy, so repeated reads (e.g. `driver.m === driver.m`) stay stable and cycles do not recurse
- *    forever. `proxyToTarget` reverses the mapping so traps can unwrap `this` and arguments, while
- *    `shadowToHost` maps each proxy's shadow target to its underlying host target so a single
- *    shared `ProxyHandler` can serve all proxies without per-instance handler closures.
- *
- * 4. **Promises**: A `Proxy` around a native `Promise` breaks V8's internal `then` branding
- *    (WebdriverIO breaks). Host promises are therefore surfaced as a **null-prototype thenable**
- *    that forwards to the real promise and runs `wrapIfNeeded` on fulfilled/rejected values before
- *    VM continuations run. One thenable object per promise lives in `promiseToThenableHost`.
- *
- * 5. **Descriptors & shadow targets**: Each proxy uses a shadow target matching the host value's
- *    structural kind (plain object, array, constructible function without fabricated own
- *    `prototype`, or non-constructible arrow function) while forwarding traps through the shared
- *    handler to the real host target. Non-configurable properties, `ownKeys`, and extensibility
- *    (`isExtensible` / `preventExtensions`) are synchronized onto the shadow target with wrapped
- *    descriptor values/accessors so V8 Proxy invariants are satisfied while preserving real
- *    `configurable`, `enumerable`, and `writable` attributes.
- *
- * 6. **`defineProperty` & `set`**: Incoming descriptors and property values from the VM may
- *    reference our proxies or VM callbacks; fields are unwrapped (or adapted for VM functions)
- *    before `Reflect.defineProperty` / `Reflect.set`, and `constructor` / `__proto__` writes are
- *    refused.
- *
- * This is defense in depth: Node documents that `vm` is not a full security boundary. Treat
- * `--allow-insecure=…:execute_driver_script` as highly privileged regardless of this module.
+ * @fileoverview Deep-proxy bridge for host objects exposed to `vm.runInNewContext`.
+ * Wraps nested return values, descriptors (via structural shadow targets), Promises,
+ * and VM callback boundaries while hiding `constructor` and `__proto__` prototype chains.
+ * Node's `vm` is not a full security boundary; keep `execute_driver_script` behind `--allow-insecure`.
  */
 
 import {types} from 'node:util';
@@ -109,22 +62,48 @@ function isVmRealmValue(value: unknown): boolean {
   return value !== null && (typeof value === 'object' || typeof value === 'function') && vmObjects.has(value);
 }
 
-function hasHostPrototype(value: object): boolean {
+function isVmObjectPrototype(proto: object): boolean {
+  if (proto === Object.prototype || proto === SAFE_LOOKUP_TARGET) {
+    return false;
+  }
+  try {
+    if (Reflect.getPrototypeOf(proto) !== null) {
+      return false;
+    }
+    const ctorDesc = Reflect.getOwnPropertyDescriptor(proto, 'constructor');
+    const ctor = ctorDesc && 'value' in ctorDesc ? ctorDesc.value : undefined;
+    if (typeof ctor !== 'function' || isOurProxy(ctor)) {
+      return false;
+    }
+    const fnProto = Reflect.getPrototypeOf(ctor);
+    return fnProto !== null && fnProto !== Function.prototype && Reflect.getPrototypeOf(fnProto) === proto;
+  } catch {
+    return false;
+  }
+}
+
+function hasVmRealmPrototype(value: object): boolean {
   let current: object | null = value;
   for (let depth = 0; current !== null && depth < 64; depth++) {
     if (current === Object.prototype || current === Function.prototype || current === Error.prototype) {
-      return true;
-    }
-    if (current === SAFE_LOOKUP_TARGET || isOurProxy(current) || shadowToHost.has(current)) {
       return false;
+    }
+    if (current === SAFE_LOOKUP_TARGET || shadowToHost.has(current)) {
+      return false;
+    }
+    if (isOurProxy(current)) {
+      return depth > 0;
+    }
+    if (isVmObjectPrototype(current)) {
+      return true;
     }
     try {
       current = Reflect.getPrototypeOf(current);
     } catch {
-      return true;
+      return false;
     }
   }
-  return current !== null;
+  return false;
 }
 
 function recordVmValue(value: unknown): void {
@@ -137,7 +116,7 @@ function recordVmValue(value: unknown): void {
     targetToProxy.has(value) ||
     shadowToHost.has(value) ||
     promiseToThenableHost.has(value as Promise<unknown>) ||
-    hasHostPrototype(value)
+    !hasVmRealmPrototype(value)
   ) {
     return;
   }
@@ -145,10 +124,13 @@ function recordVmValue(value: unknown): void {
 }
 
 function wrapErrorForVm(err: unknown): unknown {
+  if (isOurProxy(err) || isVmRealmValue(err)) {
+    return err;
+  }
   try {
     return wrapIfNeeded(err);
   } catch {
-    return SAFE_LOOKUP_TARGET;
+    return FALLBACK_WRAPPED_ERROR;
   }
 }
 
@@ -175,6 +157,30 @@ function copyFunctionMetadata(vmFn: HostCallable, wrapped: HostCallable, include
   });
 }
 
+function runVmCallback(
+  thisArg: unknown,
+  args: unknown[],
+  op: (safeThis: unknown, safeArgs: unknown[]) => unknown,
+  awaitResult = false,
+): unknown {
+  const safeThis = wrapIfNeeded(thisArg);
+  const safeArgs = args.map((arg) => wrapIfNeeded(arg));
+  try {
+    const raw = op(safeThis, safeArgs);
+    return awaitResult
+      ? Promise.resolve(raw)
+          .then((val) => unwrapIfProxy(val))
+          .catch((err: unknown) => {
+            recordVmValue(err);
+            throw wrapErrorForVm(err);
+          })
+      : unwrapIfProxy(raw);
+  } catch (err) {
+    recordVmValue(err);
+    throw wrapErrorForVm(err);
+  }
+}
+
 function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
   const cached = vmFnToHostWrapper.get(vmFn);
   if (cached) {
@@ -182,55 +188,28 @@ function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
   }
   recordVmValue(vmFn);
 
-  const invokeCall = (thisArg: unknown, args: unknown[]): unknown => {
-    const safeThis = wrapIfNeeded(thisArg);
-    const safeArgs = args.map((arg) => wrapIfNeeded(arg));
-    let result: unknown;
-    try {
-      result = Reflect.apply(vmFn, safeThis, safeArgs);
-    } catch (err) {
-      recordVmValue(err);
-      throw wrapErrorForVm(err);
-    }
-    return unwrapIfProxy(result);
-  };
-
-  let wrapped: HostCallable;
+  const applyVm = (safeThis: unknown, safeArgs: unknown[]): unknown => Reflect.apply(vmFn, safeThis, safeArgs);
   const constructible = isConstructibleFunction(vmFn);
+  let wrapped: HostCallable;
   if (types.isAsyncFunction(vmFn)) {
     wrapped = async function (this: unknown, ...args: unknown[]): Promise<unknown> {
-      const safeThis = wrapIfNeeded(this);
-      const safeArgs = args.map((arg) => wrapIfNeeded(arg));
-      let result: unknown;
-      try {
-        result = await Reflect.apply(vmFn, safeThis, safeArgs);
-      } catch (err) {
-        recordVmValue(err);
-        throw wrapErrorForVm(err);
-      }
-      return unwrapIfProxy(result);
+      return await (runVmCallback(this, args, applyVm, true) as Promise<unknown>);
     };
   } else if (constructible) {
     wrapped = function (this: unknown, ...args: unknown[]): unknown {
       if (new.target) {
-        const safeArgs = args.map((arg) => wrapIfNeeded(arg));
         const actualNewTarget =
           new.target === wrapped ? (vmFn as unknown as HostConstructor) : (wrapIfNeeded(new.target) as HostConstructor);
-        let instance: unknown;
-        try {
-          instance = Reflect.construct(vmFn as unknown as HostConstructor, safeArgs, actualNewTarget);
-        } catch (err) {
-          recordVmValue(err);
-          throw wrapErrorForVm(err);
-        }
-        return unwrapIfProxy(instance);
+        return runVmCallback(undefined, args, (_this, safeArgs) =>
+          Reflect.construct(vmFn as unknown as HostConstructor, safeArgs, actualNewTarget),
+        );
       }
-      return invokeCall(this, args);
+      return runVmCallback(this, args, applyVm);
     };
   } else {
     wrapped = {
       callVm(this: unknown, ...args: unknown[]): unknown {
-        return invokeCall(this, args);
+        return runVmCallback(this, args, applyVm);
       },
     }.callVm;
   }
@@ -756,3 +735,5 @@ function wrapIfNeeded(value: unknown): unknown {
   }
   return wrapDeep(value as HostTarget);
 }
+
+const FALLBACK_WRAPPED_ERROR: object = wrapDeep(new RangeError('Maximum call stack size exceeded'));

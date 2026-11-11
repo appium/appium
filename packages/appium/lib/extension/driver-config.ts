@@ -124,9 +124,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   addEmbeddedDriver(driver: DriverClass): string {
     const declaredAutomationName = (driver as DriverClass & {automationName?: unknown}).automationName;
     const automationName =
-      typeof declaredAutomationName === 'string'
-        ? declaredAutomationName
-        : driver.name.replace(/Driver$/, '');
+      typeof declaredAutomationName === 'string' ? declaredAutomationName : driver.name.replace(/Driver$/, '');
     if (!automationName) {
       throw new TypeError('An embedded Appium driver must have a class name or static automationName');
     }

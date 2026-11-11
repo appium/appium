@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
 import {describe, it, beforeEach, before, after, mock} from 'node:test';
 
-import type {DriverType, ExtensionType} from '@appium/types';
+import {BaseDriver, errors, getResponseForW3CError} from '@appium/base-driver';
+import type {DriverClass, DriverType, ExtensionType} from '@appium/types';
 import type {ExtManifest} from 'appium/types/index.js';
 
 import type {Manifest} from '../../../lib/extension/manifest/manifest.js';
@@ -122,6 +123,83 @@ describe('DriverConfig', function () {
   });
 
   describe('instance method', function () {
+    describe('findMatchingDriver()', function () {
+      let config: DriverConfig;
+      const installedDriver: ExtManifest<DriverType> = {
+        pkgName: 'appium-test-driver',
+        automationName: 'Test',
+        mainClass: 'TestDriver',
+        platformNames: ['TestOS'],
+        version: '1.0.0',
+        installSpec: 'appium-test-driver',
+        installType: 'npm',
+        installPath: '/somewhere',
+      };
+
+      beforeEach(function () {
+        config = DriverConfig.create(manifest);
+        mocks.sandbox.stub(config, 'installedExtensions').get(() => ({test: installedDriver}));
+      });
+
+      for (const caps of [
+        {automationName: 'Missing', platformName: 'TestOS'},
+        {automationName: 'Test', platformName: 'UnsupportedOS'},
+      ]) {
+        it(`should return session not created when no driver supports ${JSON.stringify(caps)}`, async function () {
+          const loadDriver = mocks.sandbox.stub(config, 'requireAsync');
+          await assert.rejects(config.findMatchingDriver(caps), (err: unknown) => {
+            assert.ok(err instanceof errors.SessionNotCreatedError);
+            const [status, body] = getResponseForW3CError(err);
+            assert.strictEqual(status, 500);
+            assert.strictEqual(body.value.error, 'session not created');
+            assert.match(body.value.message!, /Could not find a driver/);
+            assert.ok(err.cause instanceof Error);
+            return true;
+          });
+          assert.strictEqual(loadDriver.called, false);
+        });
+      }
+
+      it('should retain the cause when the matching driver cannot be loaded', async function () {
+        const cause = new Error('Cannot load driver module');
+        mocks.sandbox.stub(config, 'requireAsync').rejects(cause);
+        await assert.rejects(
+          config.findMatchingDriver({automationName: 'Test', platformName: 'TestOS'}),
+          (err: unknown) => {
+            assert.ok(err instanceof errors.SessionNotCreatedError);
+            assert.strictEqual(err.cause, cause);
+            assert.match(err.message, /Cannot load driver module/);
+            return true;
+          },
+        );
+      });
+
+      it('should report session not created when the driver class is missing', async function () {
+        mocks.sandbox.stub(config, 'requireAsync').resolves(undefined);
+        await assert.rejects(config.findMatchingDriver({automationName: 'Test', platformName: 'TestOS'}), {
+          name: 'SessionNotCreatedError',
+          message: /did not export a class/,
+        });
+      });
+
+      it('should return a matching driver using case-insensitive names', async function () {
+        mocks.sandbox.stub(config, 'requireAsync').resolves(BaseDriver as unknown as DriverClass);
+        const result = await config.findMatchingDriver({automationName: 'test', platformName: 'testos'});
+        assert.deepStrictEqual(result, {driver: BaseDriver, version: '1.0.0', driverName: 'test'});
+      });
+
+      for (const missing of ['platformName', 'automationName']) {
+        it(`should retain input validation when ${missing} is missing`, async function () {
+          const caps: Record<string, string> = {automationName: 'Test', platformName: 'TestOS'};
+          delete caps[missing];
+          await assert.rejects(config.findMatchingDriver(caps), {
+            name: 'Error',
+            message: new RegExp(`You must include an? ${missing} capability`),
+          });
+        });
+      }
+    });
+
     describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
         const config = DriverConfig.create(manifest);

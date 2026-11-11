@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
+import {errors} from '@appium/base-driver';
 import {fs, util} from '@appium/support';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtPackageJson, ExtRecord} from 'appium/types/index.js';
@@ -42,6 +43,11 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   static getInstance(manifest: Manifest): DriverConfig | undefined {
     return DriverConfig._instances.get(manifest);
+  }
+
+  /** Creates an independent driver selection for one server without changing the CLI singleton. */
+  createServerConfig(): DriverConfig {
+    return new DriverConfig(this.manifest);
   }
 
   /**
@@ -111,9 +117,9 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   /**
    * Registers an already-imported driver class without mutating extensions.yaml.
    *
-   * The conventional *Driver class suffix gives programmatic callers a stable
-   * automation identity (XCUITestDriver -> XCUITest, UiAutomator2Driver ->
-   * UiAutomator2). A driver may instead expose a static automationName string.
+   * Uses a static automationName string, or the class name with a trailing Driver
+   * suffix removed. Package metadata is not inferred from the class; use a resolved
+   * package location when its declared automationName differs from the class name.
    */
   addEmbeddedDriver(driver: DriverClass): string {
     const declaredAutomationName = (driver as DriverClass & {automationName?: unknown}).automationName;
@@ -128,8 +134,55 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     if (!driverName) {
       throw new TypeError(`Could not derive a driver name from automationName '${automationName}'`);
     }
-    this.embeddedDrivers.set(automationName.toLowerCase(), {driver, driverName});
+    const automationKey = automationName.toLowerCase();
+    const existing = this.embeddedDrivers.get(automationKey);
+    if (existing && existing.driver !== driver) {
+      throw new TypeError(`Multiple embedded drivers claim automationName '${automationName}'`);
+    }
+    for (const [otherAutomationName, embedded] of this.embeddedDrivers) {
+      if (otherAutomationName !== automationKey && embedded.driverName === driverName) {
+        throw new TypeError(`Multiple embedded automation names derive the driver name '${driverName}'`);
+      }
+    }
+    this.embeddedDrivers.set(automationKey, {driver, driverName});
     return driverName;
+  }
+
+  /**
+   * Selects requested package drivers using the same precedence as session matching.
+   * Embedded classes win over package drivers; resolved packages precede installed packages.
+   */
+  getActiveDriverNames(requestedNames: string[]): string[] {
+    const drivers = this.installedExtensions;
+    const preferredNames = new Map<string, string>();
+    for (const [driverName, {automationName}] of Object.entries(drivers)) {
+      const automationKey = automationName.toLowerCase();
+      if (!this.embeddedDrivers.has(automationKey) && !preferredNames.has(automationKey)) {
+        preferredNames.set(automationKey, driverName);
+      }
+    }
+    const requested = new Set(requestedNames);
+    const embeddedNames = new Set([...this.embeddedDrivers.values()].map(({driverName}) => driverName));
+    return [...requested].filter((driverName) => {
+      const {automationName} = drivers[driverName];
+      const preferredName = preferredNames.get(automationName.toLowerCase());
+      if (preferredName === undefined) {
+        return false;
+      }
+      if (preferredName !== driverName) {
+        if (!requested.has(preferredName)) {
+          throw new TypeError(
+            `Requested driver '${driverName}' is shadowed by unselected driver '${preferredName}' ` +
+              `for automationName '${automationName}'`,
+          );
+        }
+        return false;
+      }
+      if (embeddedNames.has(driverName)) {
+        throw new TypeError(`An embedded driver and a package driver both use the name '${driverName}'`);
+      }
+      return true;
+    });
   }
 
   public override extensionDesc(
@@ -177,7 +230,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;
-      throw new Error(msg, {cause: err});
+      throw new errors.SessionNotCreatedError(msg, err);
     }
   }
 

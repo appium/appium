@@ -29,7 +29,7 @@ export default {
 
 export type {ConsoleOpts} from './console.js';
 export type {TextStyle} from './console.js';
-export type {CopyFileOptions, WalkDirCallback} from './fs.js';
+export type {CopyFileOptions, RimrafOptions, WalkDirCallback} from './fs.js';
 export type {AuthCredentials, DownloadOptions, HttpUploadOptions, NetOptions} from './net.js';
 export type {Affixes, OpenedAffixes} from './tempdir.js';
 export type {
@@ -39,4 +39,11 @@ export type {
   PluralizeOptions,
   TruncateStringOptions,
 } from './util.js';
-export type {ExtractAllOptions, ZipCompressionOptions, ZipEntry, ZipOptions, ZipSourceOptions} from './zip.js';
+export type {
+  ExtractAllOptions,
+  ExtractStreamOptions,
+  ZipCompressionOptions,
+  ZipEntry,
+  ZipOptions,
+  ZipSourceOptions,
+} from './zip.js';

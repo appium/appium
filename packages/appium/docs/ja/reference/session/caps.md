@@ -34,7 +34,7 @@ default value.
 | `webSocketUrl`                                        | Toggle support of the WebDriver BiDi protocol                                                                                                                                                                        | `boolean` |         |
 | `appium:eventTimings` (deprecated) | Toggle collection of [Event Timings](../../guides/event-timing.md). This capability is deprecated - please use the [`getLogEvents`](../api/appium.md#getlogevents) endpoint instead. | `boolean` |         |
 | `appium:newCommandTimeout`                            | Number of seconds the Appium server should wait for clients to send commands before stopping the session. A value of `0` disables the timeout.                                       | `number`  | `60`    |
-| `appium:printPageSourceOnFindFailure`                 | Toggle retrieval of the the page source and its printing to the Appium log, whenever a request to find an element fails                                                                                              | `boolean` |         |
+| `appium:printPageSourceOnFindFailure`                 | Toggle retrieval of the page source and its printing to the Appium log, whenever a request to find an element fails                                                                                                  | `boolean` |         |
 
 ### Validated Capabilities
 
@@ -46,11 +46,5 @@ capabilities is optional and entirely driver-dependent.
 | --------------------------------------------------- | ------------------------------------------------------------- |
 | `platformVersion`                                   | Must be `string`                                              |
 | `appium:app`                                        | Must be `string`; empty values are ignored                    |
-| `appium:autoLaunch` (deprecated) | Must be `boolean`                                             |
-| `appium:autoWebview`                                | Must be `boolean`                                             |
 | `appium:fullReset`                                  | Must be `boolean`; mutually exclusive with `appium:noReset`   |
-| `appium:language`                                   | Must be `string`                                              |
-| `appium:locale`                                     | Must be `string`                                              |
-| `appium:orientation`                                | Must be either `LANDSCAPE` or `PORTRAIT`                      |
 | `appium:noReset`                                    | Must be `boolean`; mutually exclusive with `appium:fullReset` |
-| `appium:udid`                                       | Must be `string`                                              |

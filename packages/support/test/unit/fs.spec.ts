@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import {mkdir, writeFile} from 'node:fs/promises';
+import {promises as fsPromises} from 'node:fs';
+import {mkdir, symlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
@@ -7,6 +8,7 @@ import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
 import {fs, system, tempDir} from '../../lib/index.js';
+import {Walker} from '../../lib/internal/index.js';
 
 const TEST_TIMEOUT = 10000;
 
@@ -94,6 +96,54 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
     assert.strictEqual(await fs.exists(newPath), false);
   });
 
+  it('rimraf() forwards retry options while retaining removal defaults', async function () {
+    const rmStub = sandbox.stub(fsPromises, 'rm').resolves();
+    await fs.rimraf('locked-directory', {maxRetries: 3, retryDelay: 100});
+    sandbox.assert.calledOnceWithExactly(rmStub, 'locked-directory', {
+      recursive: true,
+      force: true,
+      maxRetries: 3,
+      retryDelay: 100,
+    });
+  });
+
+  for (const remove of [fs.rimraf, fs.rimrafSync]) {
+    describe(remove.name, function () {
+      it('removes nested contents when options are omitted', async function () {
+        const root = await tempDir.openDir();
+        await mkdir(path.join(root, 'nested'));
+        await writeFile(path.join(root, 'nested', 'file.txt'), 'content');
+        await remove(root);
+        assert.strictEqual(await fs.exists(root), false);
+      });
+
+      it('does not throw for a missing path when options are omitted', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.doesNotReject(async () => remove(missing));
+      });
+
+      it('keeps force enabled even if a JavaScript caller passes false', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.doesNotReject(async () => {
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(missing, {force: false});
+        });
+      });
+
+      it('keeps recursive enabled even if a JavaScript caller passes false', async function () {
+        const root = await tempDir.openDir();
+        try {
+          await writeFile(path.join(root, 'file.txt'), 'content');
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(root, {recursive: false});
+          assert.strictEqual(await fs.exists(root), false);
+        } finally {
+          await fs.rimraf(root);
+        }
+      });
+    });
+  }
+
   it('sanitizeName()', function () {
     assert.strictEqual(
       fs.sanitizeName(':file?.txt', {
@@ -179,6 +229,46 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   describe('walkDir()', function () {
+    it('should reject and destroy the walker on ENOENT', {timeout: 2000}, async function () {
+      const error = Object.assign(new Error('Cannot stat an entry'), {code: 'ENOENT'});
+      const destroy = sandbox.spy(Walker.prototype, 'destroy');
+      sandbox.stub(Walker.prototype, '_read').callsFake(function (this: Walker) {
+        this.emit('error', error, {path: import.meta.dirname});
+      });
+
+      await assert.rejects(
+        fs.walkDir(import.meta.dirname, true, () => false),
+        error,
+      );
+
+      assert.equal(destroy.calledOnce, true);
+    });
+
+    it(
+      'should skip a self-referencing link and visit healthy files',
+      {skip: system.isWindows(), timeout: 2000},
+      async function () {
+        const root = await tempDir.openDir();
+        try {
+          await symlink('loop', path.join(root, 'loop'));
+          const healthyFile = path.join(root, 'z-healthy.txt');
+          await writeFile(healthyFile, 'healthy');
+          const visited: string[] = [];
+
+          assert.equal(
+            await fs.walkDir(root, true, async (item) => {
+              visited.push(item);
+              return false;
+            }),
+            null,
+          );
+          assert.deepEqual(visited.sort(), [root, healthyFile].sort());
+        } finally {
+          await fs.rimraf(root);
+        }
+      },
+    );
+
     it('walkDir recursive', async function () {
       assert.notStrictEqual(
         await fs.walkDir(import.meta.dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),

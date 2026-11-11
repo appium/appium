@@ -15,7 +15,7 @@ structure:
 
 ```
 {
-    "<event_type>": [<occurence_timestamp_1>, ...],
+    "<event_type>": [<occurrence_timestamp_1>, ...],
     "commands": [
         {
             "cmd": "<command_name>",
@@ -27,7 +27,7 @@ structure:
 }
 ```
 
-In other words, the `events` property has 2 kinds of properties of its own:
+In other words, the event history object has 2 kinds of properties of its own:
 
 * Properties which are the names of event types
 * The `commands` property
@@ -61,7 +61,8 @@ generate various kinds of reports from event timings output:
 
 !!! note
 
-    In the past, events were available as a part of `GET /session/:id` response
+    In the past, when the `appium:eventTimings` capability was set to `true`, the event history
+    was also returned as an `events` property of the `GET /session/:id` response
 
 ## Add a custom event
 

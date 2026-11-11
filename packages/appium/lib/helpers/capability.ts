@@ -1,4 +1,4 @@
-import {errors, isW3cCaps, processCapabilities, STANDARD_CAPS} from '@appium/base-driver';
+import {errors, isStandardCap, isW3cCaps, processCapabilities} from '@appium/base-driver';
 import {util} from '@appium/support';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
@@ -6,7 +6,6 @@ import {log as logger} from '../logger.js';
 import {mapKeys} from '../utils/index.js';
 
 const W3C_APPIUM_PREFIX = 'appium';
-const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
 
 /** Result of successfully parsing W3C capabilities for the inner driver. */
 export interface ParsedDriverCaps<C extends Constraints = BaseDriverCapConstraints> {
@@ -25,7 +24,7 @@ export interface InvalidCaps<C extends Constraints = BaseDriverCapConstraints> {
  * Creates an error when a session receives non-W3C capabilities.
  */
 export function makeNonW3cCapsError(): Error {
-  return new errors.SessionNotCreatedError(
+  return new errors.InvalidArgumentError(
     'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. ' +
       'See https://www.w3.org/TR/webdriver/#new-session for more details.',
   );
@@ -53,28 +52,25 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
 
   if (!util.isEmpty(defaultCapabilities)) {
     for (const [defaultCapKey, defaultCapValue] of Object.entries(defaultCapabilities)) {
-      let isCapAlreadySet = false;
-      for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
-        if (
-          util.isPlainObject(firstMatchEntry) &&
-          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
-        ) {
-          isCapAlreadySet = true;
-          break;
-        }
-      }
-      isCapAlreadySet =
-        isCapAlreadySet ||
-        (util.isPlainObject(w3cCapabilities.alwaysMatch) &&
-          hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey));
-      if (isCapAlreadySet) {
+      // alwaysMatch already requires this key. Putting the default on firstMatch would make merge fail.
+      if (
+        util.isPlainObject(w3cCapabilities.alwaysMatch) &&
+        hasOwnCapability(w3cCapabilities.alwaysMatch as Record<string, unknown>, defaultCapKey)
+      ) {
         continue;
       }
 
       if (util.isEmpty(w3cCapabilities.firstMatch)) {
         w3cCapabilities.firstMatch = [{[defaultCapKey]: defaultCapValue}] as W3CCapabilities<C>['firstMatch'];
-      } else {
-        (w3cCapabilities.firstMatch[0] as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
+      }
+      for (const firstMatchEntry of w3cCapabilities.firstMatch ?? []) {
+        if (
+          !util.isPlainObject(firstMatchEntry) ||
+          hasOwnCapability(firstMatchEntry as Record<string, unknown>, defaultCapKey)
+        ) {
+          continue;
+        }
+        (firstMatchEntry as Record<string, unknown>)[defaultCapKey] = defaultCapValue;
       }
     }
   }
@@ -108,9 +104,7 @@ export function insertAppiumPrefixes<C extends Constraints = BaseDriverCapConstr
   caps: Capabilities<C>,
 ): NSCapabilities<C> {
   return mapKeys(caps as Record<string, unknown>, (_, key) =>
-    STANDARD_CAPS_LOWERCASE.has(String(key).toLowerCase()) || String(key).includes(':')
-      ? String(key)
-      : `${W3C_APPIUM_PREFIX}:${key}`,
+    isStandardCap(String(key)) || String(key).includes(':') ? String(key) : `${W3C_APPIUM_PREFIX}:${key}`,
   ) as NSCapabilities<C>;
 }
 

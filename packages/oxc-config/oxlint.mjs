@@ -22,7 +22,7 @@ export const ignorePatterns = ['**/.*', '**/*-d.ts', '**/build/**', '**/coverage
  */
 /** @type {import('oxlint').OxlintConfig} */
 const config = {
-  plugins: [],
+  plugins: ['eslint', 'promise', 'import', 'oxc', 'typescript', 'unicorn'],
   options: {
     typeAware: true,
   },
@@ -112,7 +112,6 @@ const config = {
   overrides: [
     {
       files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
-      plugins: ['promise', 'import', 'typescript', 'unicorn'],
       env: {
         es2022: true,
         node: true,
@@ -124,16 +123,21 @@ const config = {
     },
     {
       files: ['**/test/**'],
-      plugins: ['typescript', 'import'],
       rules: {
         'no-unused-expressions': 'off',
         'import/no-named-as-default-member': 'off',
         'promise/always-return': 'off',
+        'promise/catch-or-return': 'off',
+        'promise/no-callback-in-promise': 'off',
+        'promise/param-names': 'off',
         'promise/prefer-await-to-callbacks': 'off',
         'promise/prefer-await-to-then': 'off',
         'typescript/ban-ts-comment': 'off',
+        'typescript/no-base-to-string': 'off',
         'typescript/no-non-null-assertion': 'off',
         'typescript/no-floating-promises': 'off',
+        'typescript/no-useless-default-assignment': 'off',
+        'typescript/restrict-template-expressions': 'off',
       },
     },
   ],

@@ -29,8 +29,10 @@ async setUrl(url) {
 }
 ```
 
-[^1]: 你可能会注意到 `setUrl` 看起来与 `Navigate To` 完全不同，那么我们怎么知道使用它而不是其他随机字符串呢？ 其实，Appium 的 WebDriver 协议到方法名的映射是在 `@appium/base-driver` 包中的一个特殊文件中定义的，叫做 [routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js)。
-    所以如果你正在编写驱动程序，这就是你要去找出要使用什么方法名和期望什么参数的地方。 或者你可以查看任何主要 Appium 驱动程序的源代码！
+[^1]: 你可能会注意到 `setUrl` 看起来与 `Navigate To` 完全不同，那么我们怎么知道使用它而不是其他随机字符串呢？ Well, Appium's WebDriver-protocol-to-method-name
+    mappings are defined in special files within the `@appium/base-driver` package's
+    [routes/](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/routes) directory.
+    所以如果你正在编写驱动程序，这就是你要去找出要使用什么方法名和期望什么参数的地方。或者你可以查看任何主要 Appium 驱动程序的源代码！
 
 就是这样！ 我们如何实际实现该命令完全取决于我们自己，并取决于我们想要支持的平台。 以下是针对不同平台的此命令的一些不同示例实现：
 
@@ -48,7 +50,9 @@ async setUrl(url) {
 
 ## 自动化映射
 
-&#x4F46;_&#x901A;&#x5E38;_&#x9A71;动程序作者想要做的是为给定的平台提供自动化行为，这些行为在语义上与浏览器的 WebDriver 规范实现非常相似。 当你想查找一个元素时，你应该得到一个 UI 元素的引用。 当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。 等等。
+But _typically_ what driver authors want to do is to provide automation behaviours for a given
+platform(s) that are semantically very similar to the WebDriver spec implementations for
+browsers. 当你想查找一个元素时，你应该得到一个 UI 元素的引用。当你想点击或轻触该元素时，产生的行为应该与人点击或轻触该元素相同。等等。
 
 因此，驱动程序作者面临的真正挑战不是如何使用 WebDriver 协议（因为 `BaseDriver` 为你封装了所有这些），而是如何在目标平台上实现实际的自动化。 每个驱动程序都依赖于自己的一套底层技术。 正如[概览](index.md)中提到的，iOS 驱动程序使用 Apple 的一项名为 [XCUITest](https://developer.apple.com/documentation/xctest/xcuielement) 的技术。 这些底层自动化技术通常都有自己专有或特殊的 API。 编写驱动程序就是将 WebDriver 协议映射到这个底层 API 的任务（有时是一组不同的底层 API——例如，UiAutomator2 驱动程序不仅依赖于 Google 的 [UiAutomator2](https://developer.android.com/training/testing/other-components/ui-automator) 技术，还依赖于只能通过 [ADB](https://developer.android.com/tools/adb) 获得的功能，以及只能通过辅助应用内的 Android SDK 获得的功能）。 将所有这些整合到一个单一、可用的 WebDriver 接口中，是驱动程序开发这项非常有用（但极具挑战性）的艺术！
 
@@ -94,7 +98,10 @@ WebDriver 协议！ 没错，XCUITest 驱动程序的 Objective-C 端本身就�
 
 如果你不熟悉"代理"的概念，在这种情况下，它只是意味着 XCUITest 驱动程序根本不会参与处理该命令。 相反，它只会在协议级别被重新打包并转发到 WebDriverAgent，WebDriverAgent 的响应同样会直接传回客户端，而不会有任何 XCUITest 驱动程序代码看到或修改它。
 
-这种架构模式为选择在各处使用 WebDriver 协议而不是构建定制协议的驱动程序作者提供了一个很好的额外好处。 这也意味着 Appium 可以非常轻松地为任何其他现有的 WebDriver 实现创建包装驱动程序。 例如，如果你查看 [Appium Safari 驱动程序](https://github.com/appium/appium-safari-driver)代码，你会发现它基本上没有实现任何标准命令，因为所有这些命令都直接代理到底层的 SafariDriver 进程。
+这种架构模式为选择在各处使用 WebDriver 协议而不是构建定制协议的驱动程序作者提供了一个很好的额外好处。这也意味着 Appium 可以非常轻松地为任何其他现有的 WebDriver 实现创建包装驱动程序。 If
+you look at the [Appium Safari driver](https://appium.github.io/appium-safari-driver/) code, for
+example, you'll see that it implements basically no standard commands, because all of these are
+proxied directly to an underlying SafariDriver process.
 
 了解这种代理机制有时在幕后发生是很重要的，因为如果你曾经深入研究一些开源驱动程序代码试图找出命令的实现位置，你可能会惊讶地发现 Node.js 驱动程序代码本身根本没有任何实现！ 在这种情况下，你需要找出命令被代理到哪里，以便你可以在那里查找相应的实现。
 

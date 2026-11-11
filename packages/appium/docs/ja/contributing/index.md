@@ -62,7 +62,7 @@ cd appium
 
 !!! info
 
-    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
+    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/).
 
 Install dependencies:
 
@@ -108,6 +108,27 @@ You can also run tests for specific workspaces, e.g.:
 export APPIUM_WORKSPACE=@appium/base-driver
 npm run test:unit -w $APPIUM_WORKSPACE
 ```
+
+### Code Style
+
+#### JSDoc
+
+Add concise JSDoc to all public class methods and exported functions.
+
+#### Module Ordering
+
+Place exported functions and classes before non-exported functions and classes in each module.
+This rule does not apply to constants or variables.
+
+#### Class Member Ordering
+
+When adding or moving class methods, follow these conventions:
+
+- Order methods by visibility: public → protected → private. Methods without an explicit visibility
+  modifier belong to the public group.
+- Place private helper methods at the end of the class.
+- Preserve existing order within each visibility group.
+- Before finishing, check the ordering of methods you added or moved.
 
 ### Documentation
 

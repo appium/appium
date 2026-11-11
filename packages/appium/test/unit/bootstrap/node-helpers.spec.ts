@@ -97,11 +97,11 @@ describe('bootstrap/node-helpers', function () {
       await assert.rejects(requireDir(), /must exist/);
     });
 
-    it('should fail to use a non-writeable dir', async function () {
+    it('should fail to use a non-writable dir', async function () {
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'appium-requireDir-test-'));
       try {
         await fs.chmod(tempDir, 0o444);
-        await assert.rejects(requireDir(tempDir), /must be writeable/);
+        await assert.rejects(requireDir(tempDir), /must be writable/);
       } finally {
         await fs.chmod(tempDir, 0o700);
         await fs.rmdir(tempDir);

@@ -25,7 +25,7 @@ appium driver install xcuitest
 ```
 
 This command will install the latest version of the
-[XCUITest Driver](https://github.com/appium/appium-xcuitest-driver). The Extension CLI comes with a variety
+[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/). The Extension CLI comes with a variety
 of commands and parameters; see the documentation for that command for all the specifics.
 
 The all-important question when Appium is managing your extensions for you is: where are they installed?
@@ -63,7 +63,7 @@ like any other dependency. Basically, whenever you run Appium, if you have not e
 1. Try to determine whether the _current directory_ is inside an `npm` package.
 1. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
    `package.json`
-1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
+1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will load
    drivers and plugins defined in that `package.json` file instead.
 
 This means you are freely able to add Appium drivers and plugins as regular package dependencies or
@@ -106,3 +106,28 @@ Appium also accepts an ESM namespace object whose default/named exports identify
 Directly supplied drivers stay in memory and are not added to `extensions.yaml`. String entries
 remain supported: a string can name an installed driver, or be an absolute path/`file:` URL for a
 driver package resolved by the embedding package.
+
+For a directly supplied class, Appium uses its static `automationName` string, if present, or its
+class name with the trailing `Driver` removed. It does not infer the package's metadata from the
+constructor. When those names differ, use the resolved package location so Appium reads the declared
+`automationName`, driver name and supported platforms from `package.json`. For example, the
+UiAutomator2 package exports `AndroidUiautomator2Driver`, while its declared automation name is
+`UiAutomator2`:
+
+```js
+import {main} from 'appium';
+
+await main({
+  useDrivers: [import.meta.resolve('appium-uiautomator2-driver')],
+});
+```
+
+Each server keeps its directly supplied classes and resolved package locations in its own driver
+configuration, even when multiple servers share an `APPIUM_HOME`. A directly supplied class takes
+precedence over a package driver with the same `automationName`; a resolved package takes precedence
+over an installed driver. Only the preferred driver contributes server hooks and routes. Supplying
+different classes with the same automation name, or conflicting derived driver names, is an error.
+If an installed driver is shadowed by an unselected package with the same automation name, startup
+reports the conflicting names instead of silently omitting the requested driver's hooks.
+A single constructor must also have one active driver name; mixing a direct class and package metadata
+that give it different names is rejected before its hooks run.

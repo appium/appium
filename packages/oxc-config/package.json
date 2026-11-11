@@ -1,6 +1,6 @@
 {
   "name": "@appium/oxc-config",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Shared Oxlint and Oxfmt config for Appium projects",
   "keywords": [
     "appium",
@@ -36,8 +36,8 @@
     "test:smoke": "node scripts/test-smoke.mjs"
   },
   "dependencies": {
-    "oxfmt": "^0.64.0",
-    "oxlint": "~1.79.0",
+    "oxfmt": "^0.74.0",
+    "oxlint": "~1.89.0",
     "oxlint-tsgolint": "^7.0.2001"
   },
   "engines": {

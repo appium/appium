@@ -2,7 +2,7 @@ import http from 'node:http';
 import https from 'node:https';
 import nodeUrl from 'node:url';
 
-import {logger, util} from '@appium/support';
+import {logger, util, net} from '@appium/support';
 import type {AppiumLogger, HTTPBody, HTTPHeaders, HTTPMethod, ProxyOptions, ProxyResponse} from '@appium/types';
 import type {AxiosError, AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import type {Request, Response} from 'express';
@@ -17,7 +17,10 @@ import {ProxyRequest} from './proxy-request.js';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}');
+// Preserve URL encoding while retaining wildcard arrays for pathname reconstruction.
+const COMMAND_WITH_SESSION_ID_MATCHER = pathToRegexMatch('{/*prefix}/session/:sessionId{/*command}', {
+  decode: (value) => value,
+});
 
 const ALLOWED_OPTS = [
   'scheme',
@@ -122,7 +125,8 @@ export class WebDriverProxy {
     const normalizedPathname = this._toNormalizedPathname(parsedUrl);
     const commandName = normalizedPathname ? routeToCommandName(normalizedPathname, method) : '';
     const requiresSessionId = !commandName || (commandName && isSessionCommand(commandName));
-    const proxyPrefix = `${this.scheme}://${this.server}:${this.port}${this.base}`;
+    const host = net.formatHostnameForUrl(this.server);
+    const proxyPrefix = `${this.scheme}://${host}:${this.port}${this.base}`;
     let proxySuffix = normalizedPathname ? `/${normalizedPathname.replace(/^\/+/, '')}` : '';
     if (parsedUrl.search) {
       proxySuffix += parsedUrl.search;
@@ -299,6 +303,7 @@ export class WebDriverProxy {
         value.error as string,
         (value.message as string) ?? '',
         value.stacktrace as string | undefined,
+        value.data as Record<string, unknown> | undefined,
       );
     }
     throw new errors.UnknownError(

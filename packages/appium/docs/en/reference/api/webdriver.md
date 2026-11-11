@@ -93,9 +93,9 @@ timeout for supported drivers and contexts.
 
 |Name|Description|Type|
 |--|--|--|
-|`script`|Script timeout|number|
-|`pageLoad`|Page load timeout|number|
-|`implicit`|Implicit wait timeout|number|
+|`script`|Script timeout|number or null|
+|`pageLoad`|Page load timeout|number or null|
+|`implicit`|Implicit wait timeout|number or null|
 |`command`|Appium command timeout|number|
 
 ### timeouts
@@ -115,9 +115,9 @@ for supported drivers and contexts.
 
 |Name|Description|Type|
 |--|--|--|
-|`script?`|Script timeout (in milliseconds)|number|
-|`implicit?`|Implicit wait timeout (in milliseconds)|number|
-|`pageLoad?`|Page load timeout (in milliseconds)|number|
+|`script?`|Script timeout (in milliseconds)|number or null|
+|`implicit?`|Implicit wait timeout (in milliseconds)|number or null|
+|`pageLoad?`|Page load timeout (in milliseconds)|number or null|
 |`command?`|Appium command timeout (in milliseconds)|number|
 
 #### Response
@@ -956,7 +956,7 @@ POST /session/:sessionId/actions
 
 > WebDriver documentation: [Perform Actions](https://w3c.github.io/webdriver/#perform-actions)
 
-Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions).
+Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions). See the [Automating Gestures](../../guides/gestures.md) guide for multi-language examples.
 
 #### Parameters
 

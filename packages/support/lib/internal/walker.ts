@@ -128,6 +128,12 @@ export class Walker extends Readable {
       const item: WalkItem = {path: pathItem, stats};
       if (err) {
         this.emit('error', err, item);
+        // No item was pushed, so the stream will not request another read on its own.
+        queueMicrotask(() => {
+          if (!this.destroyed) {
+            this._read();
+          }
+        });
         return;
       }
 

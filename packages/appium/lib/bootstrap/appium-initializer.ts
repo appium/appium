@@ -169,14 +169,15 @@ export class AppiumInitializer {
       await requireDir(appiumHome, true, appiumHomeSourceName);
     }
 
+    const serverDriverConfig = driverConfig.createServerConfig();
     const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>);
-    appiumDriver.driverConfig = driverConfig;
+    appiumDriver.driverConfig = serverDriverConfig;
     await preflightChecks(serverArgs, this.throwInsteadOfExit, programmaticArgs);
 
     return {
       appiumDriver,
       parsedArgs: serverArgs,
-      driverConfig,
+      driverConfig: serverDriverConfig,
       pluginConfig,
       appiumHome,
     } as InitResult<Cmd>;

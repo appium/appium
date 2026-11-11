@@ -46,6 +46,7 @@
     "dev": "run-s build:compile \"build:workspaces\" \"build:compile -- --watch\"",
     "dev:docs": "npm run -w packages/appium dev:docs",
     "docs": "npm run -w packages/appium build:docs",
+    "docs:check-llmstxt": "npm run -w packages/appium check:docs:llmstxt",
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "docs:publish": "npm run -w packages/appium publish:docs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
@@ -81,36 +82,36 @@
   "devDependencies": {
     "@appium/oxc-config": "2.0.0-beta.0",
     "@tsconfig/node22": "22.0.0",
-    "@types/async-lock": "1.4.2",
     "@types/express": "5.0.6",
     "@types/json-schema": "7.0.15",
     "@types/lockfile": "1.0.4",
     "@types/method-override": "3.0.0",
     "@types/mime-types": "3.0.1",
     "@types/morgan": "1.9.10",
-    "@types/node": "24.13.3",
+    "@types/node": "24.19.2",
     "@types/picomatch": "4.0.3",
     "@types/pluralize": "0.0.33",
     "@types/semver": "7.8.0",
     "@types/shell-quote": "1.7.5",
-    "@types/sinon": "22.0.0",
+    "@types/sinon": "22.0.2",
     "@types/which": "3.0.4",
     "@types/ws": "8.18.1",
     "@types/yargs": "17.0.35",
-    "asyncbox": "6.4.2",
+    "asyncbox": "6.6.0",
+    "axios": "1.20.0",
     "conventional-changelog-conventionalcommits": "9.3.1",
     "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
-    "json-schema-to-typescript": "15.0.4",
-    "lerna": "10.0.1",
-    "npm-run-all2": "9.0.3",
+    "json-schema-to-typescript": "16.0.0",
+    "lerna": "10.1.1",
+    "npm-run-all2": "9.0.4",
     "rimraf": "6.1.3",
     "sinon": "22.1.0",
     "teen_process": "4.2.1",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
-    "webdriverio": "9.31.2",
-    "ws": "8.21.3"
+    "webdriverio": "9.32.0",
+    "ws": "8.22.0"
   },
   "overrides": {
     "@sidvind/better-ajv-errors": {
@@ -119,7 +120,7 @@
     "ajv-formats": {
       "ajv": "8.20.0"
     },
-    "http-cache-semantics": "4.2.0"
+    "http-cache-semantics": "4.3.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

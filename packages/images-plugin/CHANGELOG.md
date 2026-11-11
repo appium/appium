@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0-beta.7](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.6...@appium/images-plugin@6.0.0-beta.7) (2026-10-31)
+
+### Bug Fixes
+
+* **images-plugin:** rethrow feature comparison errors besides a missing match ([#23107](https://github.com/appium/appium/issues/23107)) ([9bf6c13](https://github.com/appium/appium/commit/9bf6c13163d02240175c97a58bcfa31711c6b5ef))
+
+
+## [6.0.0-beta.6](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.5...@appium/images-plugin@6.0.0-beta.6) (2026-10-26)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [6.0.0-beta.5](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.4...@appium/images-plugin@6.0.0-beta.5) (2026-10-18)
+
+### Bug Fixes
+
+* **images-plugin:** return every image match from findElements ([#22926](https://github.com/appium/appium/issues/22926)) ([b0b2ce9](https://github.com/appium/appium/commit/b0b2ce903caa48def6ed28984aaec59afe26519a))
+
+
+## [6.0.0-beta.4](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.3...@appium/images-plugin@6.0.0-beta.4) (2026-10-09)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
 ## [6.0.0-beta.3](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.2...@appium/images-plugin@6.0.0-beta.3) (2026-10-05)
 
 **Note:** Version bump only for package @appium/images-plugin

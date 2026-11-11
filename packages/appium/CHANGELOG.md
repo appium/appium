@@ -3,6 +3,116 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.7](https://github.com/appium/appium/compare/appium@4.0.0-beta.6...appium@4.0.0-beta.7) (2026-10-31)
+
+### Bug Fixes
+
+* **appium:** respect server compatibility in extension update and warn on non-npm install ([#23119](https://github.com/appium/appium/issues/23119)) ([80f69e3](https://github.com/appium/appium/commit/80f69e32d87172eaf838819845e8017517acbaf2))
+
+
+## [4.0.0-beta.6](https://github.com/appium/appium/compare/appium@4.0.0-beta.5...appium@4.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** ExtractAllOptions.useSystemUnzip is removed.
+* **support:** Non-UTF-8-flagged file names now default to utf8 instead of cp437, and cp437 decoding is no longer supported (modern archives use UTF-8). Such archives must be recreated or converted; fileNamesEncoding only accepts Node.js BufferEncodings.
+* **appium:** install local extensions without global npm links (#23086)
+* **base-driver:** preserve proxied command validation ordering (#23060)
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **base-driver:** validate every timeout capability candidate (#23062)
+* **appium:** removed the --callback-address (-ca) server argument and the server.callback-address config property
+* **appium:** removed the --callback-port (-cp) server argument and the server.callback-port config property
+* **appium:** removed the --debug-log-spacing server argument and the server.debug-log-spacing config property
+* **appium:** removed the --strict-caps server argument and the server.strict-caps config property
+* **appium:** removed the --trace-dir server argument and the server.trace-dir config property
+* **base-driver:** POST body has to be a JSON object, otherwise the server returns invalid argument error.
+
+### Features
+
+* **support:** Remove system unzip from extractAllTo ([#23091](https://github.com/appium/appium/issues/23091)) ([0f1a761](https://github.com/appium/appium/commit/0f1a76184b78ee3d60652b9a610c808213196f7c))
+
+### Bug Fixes
+
+* **appium:** install local extensions without global npm links ([#23086](https://github.com/appium/appium/issues/23086)) ([3615d6d](https://github.com/appium/appium/commit/3615d6df4c5a785524092f8c28dc338385a4468a))
+* **appium:** preserve npm arguments on Windows ([#22957](https://github.com/appium/appium/issues/22957)) ([dd71f66](https://github.com/appium/appium/commit/dd71f66e4ac343bc48e78f5b661ca02b351553c1))
+* **appium:** remove unused server arguments ([#23063](https://github.com/appium/appium/issues/23063)) ([16c84ea](https://github.com/appium/appium/commit/16c84ea20314f605b93070de283818a78c0ed4bb))
+* **appium:** send log webhooks to ipv6 hosts ([#23061](https://github.com/appium/appium/issues/23061)) ([819905b](https://github.com/appium/appium/commit/819905beb265431446ec56776373ec15f13a0a8f))
+* **base-driver:** preserve proxied command validation ordering ([#23060](https://github.com/appium/appium/issues/23060)) ([6cc4095](https://github.com/appium/appium/commit/6cc4095c59bc7ce23b47ce768707aae978794824))
+* **base-driver:** reject command POST bodies that are not JSON objects ([#23007](https://github.com/appium/appium/issues/23007)) ([39e9512](https://github.com/appium/appium/commit/39e9512b4a4c936edae0d7a56bdd4bd613075322))
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+* **base-driver:** validate every timeout capability candidate ([#23062](https://github.com/appium/appium/issues/23062)) ([531f482](https://github.com/appium/appium/commit/531f482d8759e7c621276b212489b764a994766a))
+* **docs:** correct stale instructions in .NET quickstart ([#23049](https://github.com/appium/appium/issues/23049)) ([2dd05e1](https://github.com/appium/appium/commit/2dd05e12d3e5911203856977120813ce56b69552))
+* **docs:** X-Appium-Is-Sensitive also accepts the value &#x27;yes&#x27; ([#23051](https://github.com/appium/appium/issues/23051)) ([2cf7f4e](https://github.com/appium/appium/commit/2cf7f4e6b21fdf36f85986187d5361d980f7cb42))
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([8e42cbc](https://github.com/appium/appium/commit/8e42cbc82d95da690b73399782f750043464352d))
+
+
+## [4.0.0-beta.5](https://github.com/appium/appium/compare/appium@4.0.0-beta.4...appium@4.0.0-beta.5) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** match standard capability names case-sensitively (#22976)
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* fix(appium): release one proxied BiDi command per response
+
+* test(appium): cover overlapping duplicate BiDi command IDs
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+* **types:** the locale, language, autoWebview, orientation and udid capabilities are no longer part of the standard capability constraints. They are not generic enough and must be defined by the corresponding drivers.
+* **types:** the deprecated appium:autoLaunch capability is no longer part of the standard capability constraints.
+
+### Features
+
+* **appium:** fallback to latest compatible extension version for CLI &#x60;install&#x60; ([#22951](https://github.com/appium/appium/issues/22951)) ([0b3fe1c](https://github.com/appium/appium/commit/0b3fe1ce35fd40eea8f91a3e8f9846ee03445276))
+* **types:** remove deprecated autoLaunch capability ([#22950](https://github.com/appium/appium/issues/22950)) ([8822cea](https://github.com/appium/appium/commit/8822ceaabb68a213a8244e4f955d8ee68221e329))
+* **types:** remove driver-specific capabilities from base constraints ([#22952](https://github.com/appium/appium/issues/22952)) ([cce0b58](https://github.com/appium/appium/commit/cce0b5814d94157caa6a25834a469277ad1a4dcc))
+
+### Bug Fixes
+
+* **appium:** apply default capabilities to every firstMatch candidate ([#22988](https://github.com/appium/appium/issues/22988)) ([f820e04](https://github.com/appium/appium/commit/f820e04000f138addab57917ef92d01071596f96))
+* **appium:** classify driver selection failures as session not created ([#22970](https://github.com/appium/appium/issues/22970)) ([9b1ddb8](https://github.com/appium/appium/commit/9b1ddb8bf6cb51ce93114b70c536d0db18b39bfa))
+* **appium:** suspend idle timeout during BiDi commands ([#22947](https://github.com/appium/appium/issues/22947)) ([3f82e6a](https://github.com/appium/appium/commit/3f82e6a1817de5acb6584b92c98bd156295060d3))
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c10c413](https://github.com/appium/appium/commit/c10c41384cdb4276faaab1a908cf9f80a77464a5))
+* **base-driver:** match standard capability names case-sensitively ([#22976](https://github.com/appium/appium/issues/22976)) ([f3edfc5](https://github.com/appium/appium/commit/f3edfc5e03deb6821599614a35cf5ec5df03a3c3)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** preserve capability invalid argument errors ([#22977](https://github.com/appium/appium/issues/22977)) ([b452a5e](https://github.com/appium/appium/commit/b452a5eade468d6c20a62c89357f72f492441038)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** validate and merge all capability candidates ([#22982](https://github.com/appium/appium/issues/22982)) ([aba33a2](https://github.com/appium/appium/commit/aba33a2d17621e5db28e4505773c6603b075e7f2))
+* **base-driver:** validate standard timeouts and preserve null values ([#22961](https://github.com/appium/appium/issues/22961)) ([eef8246](https://github.com/appium/appium/commit/eef8246f8a6983c7818c99bfd94d5ae7ec8bfa1e))
+
+
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/appium@4.0.0-beta.3...appium@4.0.0-beta.4) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** Replace the &#x60;windows&#x60; known-driver shortcut with &#x60;wincore&#x60; pointing to appium-wincore-driver instead of the obsolete appium-windows-driver
+
+### Features
+
+* **appium:** replace obsolete windows driver with appium-wincore-driver  ([#22917](https://github.com/appium/appium/issues/22917)) ([7544a10](https://github.com/appium/appium/commit/7544a1008d96f44f19499500314b6ae21d54d4f2))
+
+### Bug Fixes
+
+* **appium:** prevent recursion when logging the first BiDi event of a method ([#22897](https://github.com/appium/appium/issues/22897)) ([e230727](https://github.com/appium/appium/commit/e230727090f24a3c777c88de9d43d83ff94ea97d))
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* tune wincore driver integration ([#22922](https://github.com/appium/appium/issues/22922)) ([9f8455e](https://github.com/appium/appium/commit/9f8455e1973e97c8a6451a9291de741dadfed775))
+
+
 ## [4.0.0-beta.3](https://github.com/appium/appium/compare/appium@4.0.0-beta.2...appium@4.0.0-beta.3) (2026-10-05)
 
 ### Features

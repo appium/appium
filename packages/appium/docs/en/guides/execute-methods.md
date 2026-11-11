@@ -16,7 +16,7 @@ by client libraries. There are two main strategies for this:
    based client library (including all Selenium and Appium clients).
 
 There are pros and cons for each strategy, but it is ultimately up to the extension author to
-decide how they wish implement new commands. 
+decide how they wish to implement new commands. 
 
 This guide is designed to specifically help you understand the "Execute Method" strategy.  This
 pattern is commonly used in official Appium drivers and other third-party extensions.
@@ -67,7 +67,7 @@ function, but the function itself—the snippet—is always a string and is the 
 In the world of Appium, we are usually not automating a web browser, which means this command is
 not particularly useful. But it *is* useful as a way to encode the name of an arbitrary command and
 to provide parameters. For example, the [XCUITest
-Driver](https://github.com/appium/appium-xcuitest-driver) has implemented a command that lets a client
+Driver](https://appium.github.io/appium-xcuitest-driver/) has implemented a command that lets a client
 terminate a running application if you know the ID (the `bundleId`) of the app. The way that the
 driver makes this command available is via the Execute Method `mobile: terminateApp`. Instead of
 providing a JavaScript function to the "Execute Script" command, the user provides a _known string_

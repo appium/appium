@@ -5,7 +5,7 @@ import net from 'node:net';
 import type {AppiumServer} from '@appium/types';
 import {main as appiumServer} from 'appium';
 import {fs} from 'appium/support.js';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 import {exec} from 'teen_process';
 
 import type {AppiumEnv, E2ESetupOpts} from './types.js';

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.2](https://github.com/appium/appium/compare/@appium/oxc-config@2.0.0-beta.1...@appium/oxc-config@2.0.0-beta.2) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **oxc-config:** enable 19 additional oxlint rules
+* **oxc-config:** enable 45 additional correctness rules
+
+### Features
+
+* **oxc-config:** enable all oxlint correctness rules ([#22899](https://github.com/appium/appium/issues/22899)) ([c064fc8](https://github.com/appium/appium/commit/c064fc8246dad87ed5c512eda453e3d494e34dde))
+* **oxc-config:** enable plugins at the root level ([#22908](https://github.com/appium/appium/issues/22908)) ([27d3fe4](https://github.com/appium/appium/commit/27d3fe41f79110b6cddc34cd61075746ac371ba3))
+
+
 ## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/oxc-config@2.0.0-beta.0...@appium/oxc-config@2.0.0-beta.1) (2026-10-05)
 
 **Note:** Version bump only for package @appium/oxc-config

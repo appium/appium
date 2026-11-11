@@ -3,15 +3,16 @@ import type {Constraints, Core, Driver, DriverMethodDef, ExternalDriver, MethodM
 import type {Application, Express, Request, Response} from 'express';
 
 import type {BaseDriver} from '../basedriver/driver.js';
-import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants.js';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH} from '../constants.js';
 import {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
-import {ensureW3cResponse, formatResponseValue} from './helpers.js';
+import {ensureW3cResponse, formatResponseValue, isProtocolResponseEnvelope} from './helpers.js';
 import {preserveIdempotentSessionResponse} from './idempotency.js';
+import {jsonParseErrors} from './json-parse-error.js';
 import {checkParams, makeArgs, unwrapParams, wrapParams} from './params.js';
 import {runWithProxyReq} from './proxy-context.js';
 import {tryWdProxy} from './proxy.js';
 import {CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, METHOD_MAP} from './routes/index.js';
-import {extractProtocol, getLogger, getSessionId, isSessionCommand} from './session.js';
+import {getLogger, getSessionId, isSessionCommand} from './session.js';
 import {getCommandValidator} from './validators.js';
 
 export const deprecatedCommandsLogged: Set<string> = new Set();
@@ -51,13 +52,36 @@ export function routeConfiguringFunction(driver: Core<any>): RouteConfiguringFun
 
     const allMethods: MethodMap<Driver> = {...METHOD_MAP, ...extraMethodMap};
     for (const [path, methods] of Object.entries(allMethods)) {
-      for (const [method, spec] of Object.entries(methods)) {
-        const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
-        // set up the express route handler
-        buildHandler(app, method, `${basePath}${path}`, spec, driver, isSessCommand);
-      }
+      registerCommandRoutes(app, `${basePath}${path}`, methods, driver);
     }
   };
+}
+
+/** Registers a command path with HEAD handling before Express's GET fallback. */
+function registerCommandRoutes(
+  app: Express,
+  path: string,
+  methods: MethodMap<Driver>[string],
+  driver: Core<any>,
+): void {
+  if (methods.GET && !('HEAD' in methods)) {
+    const allowedMethods = Object.keys(methods).join(', ');
+    app.head(path, (_req, res) => {
+      res.status(405).set('Allow', allowedMethods).set('Content-Type', 'application/json; charset=utf-8').end();
+    });
+  }
+
+  // Preserve runtime compatibility with explicit HEAD handlers regardless of declaration
+  // order. MethodMap's public types only declare GET, POST, and DELETE.
+  const entries = Object.entries(methods);
+  const orderedEntries = [
+    ...entries.filter(([method]) => method === 'HEAD'),
+    ...entries.filter(([method]) => method !== 'HEAD'),
+  ];
+  for (const [method, spec] of orderedEntries) {
+    const isSessCommand = spec.command ? isSessionCommand(spec.command) : false;
+    buildHandler(app, method, path, spec, driver, isSessCommand);
+  }
 }
 
 function buildHandler(
@@ -73,11 +97,15 @@ function buildHandler(
     let httpStatus = 200;
     let newSessionId: string | undefined;
     const sessionId = getSessionId(driver, req);
-    let currentProtocol = extractProtocol(driver, sessionId);
 
     try {
       logDeprecationWarning(driver, method, path, spec, sessionId);
       ensureSessionExists(driver, sessionId, isSessCmd);
+      const jsonParseError = jsonParseErrors.getInvalidArgument(req);
+      if (jsonParseError) {
+        throw jsonParseError;
+      }
+      assertPostBodyIsJsonObject(req, spec);
 
       const proxyOutcome = await tryWdProxy(driver, req, res, spec, isSessCmd, sessionId);
       if (proxyOutcome === 'handled') {
@@ -92,8 +120,18 @@ function buildHandler(
       }
       const command = spec.command;
 
-      const jsonObj = preparePayload(spec, req.body);
-      const args = buildCommandArgs(req, jsonObj, spec, command);
+      // Direct proxying delegates payload and command validation to the remote end.
+      // A plugin intercepting that same proxy path must preserve this ownership.
+      const jsonObj = preparePayload(spec, req.body, {
+        validatePayloadParams: !didPluginOverrideProxy,
+      });
+      const args = buildCommandArgs({
+        req,
+        jsonObj,
+        spec,
+        command,
+        validateCommandArguments: !didPluginOverrideProxy,
+      });
 
       // run the driver command wrapped inside the argument validators
       getLogger(driver, sessionId).debug(
@@ -104,9 +142,8 @@ function buildHandler(
       );
 
       const result = didPluginOverrideProxy
-        ? await runWithProxyReq(req, () => runDriverCommand(driver, command, args, sessionId, currentProtocol))
-        : await runDriverCommand(driver, command, args, sessionId, currentProtocol);
-      currentProtocol = result.currentProtocol;
+        ? await runWithProxyReq(req, () => runDriverCommand(driver, command, args, sessionId))
+        : await runDriverCommand(driver, command, args, sessionId);
       newSessionId = result.newSessionId;
       httpResBody.value = result.driverRes;
 
@@ -117,14 +154,13 @@ function buildHandler(
           })}`,
       );
     } catch (err) {
-      currentProtocol = currentProtocol || extractProtocol(driver, sessionId || newSessionId);
       [httpStatus, httpResBody] = buildErrorResponse(err, driver, sessionId || newSessionId);
     }
 
     if (newSessionId && abandonIfDisconnected?.()) {
       await deleteAbandonedSession(driver, newSessionId);
     } else {
-      sendHandlerResponse(res, httpStatus, httpResBody, newSessionId, currentProtocol);
+      sendHandlerResponse(res, httpStatus, httpResBody, newSessionId);
     }
     return newSessionId;
   };
@@ -217,19 +253,57 @@ function ensureSessionExists(driver: Core<any>, sessionId: string | undefined, i
 }
 
 /**
+ * WebDriver requires a command POST body to be a JSON object.
+ * The JSON parser turns a zero-length body into `{}`, so that case is recognized
+ * from `Content-Length` before it can be treated as an empty object.
+ * A route that sets `payloadParams.wrap` may instead receive one bare array or value.
+ */
+function assertPostBodyIsJsonObject(req: Request, spec: DriverMethodDef<Driver>): void {
+  if (req.method !== 'POST' || acceptsWrappedBody(req, spec)) {
+    return;
+  }
+  const lengthHeader = req.headers['content-length'];
+  const lengthValue = Array.isArray(lengthHeader) ? lengthHeader[0] : lengthHeader;
+  const omittedBody = lengthValue !== undefined && Number(lengthValue) === 0;
+  if (omittedBody || !util.isPlainObject(req.body)) {
+    throw new errors.InvalidArgumentError('HTTP request body must be a JSON object');
+  }
+}
+
+function acceptsWrappedBody(req: Request, spec: DriverMethodDef<Driver>): boolean {
+  if (!spec.payloadParams?.wrap) {
+    return false;
+  }
+  const {body} = req;
+  return Array.isArray(body) || (body != null && typeof body !== 'object');
+}
+
+/**
  * Wraps/unwraps and validates the JSON payload against the route's payload spec.
  */
-function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any): any {
+function preparePayload(
+  spec: DriverMethodDef<Driver>,
+  jsonObj: any,
+  {validatePayloadParams}: {validatePayloadParams: boolean},
+): any {
   if (spec.payloadParams?.wrap) {
     jsonObj = wrapParams(spec.payloadParams, jsonObj);
   }
   if (spec.payloadParams?.unwrap) {
     jsonObj = unwrapParams(spec.payloadParams, jsonObj);
   }
-  if (spec.payloadParams) {
+  if (spec.payloadParams && validatePayloadParams) {
     checkParams(spec.payloadParams, jsonObj);
   }
   return jsonObj;
+}
+
+interface CommandArgsOptions {
+  req: Request;
+  jsonObj: any;
+  spec: DriverMethodDef<Driver>;
+  command: string;
+  validateCommandArguments: boolean;
 }
 
 /**
@@ -237,10 +311,10 @@ function preparePayload(spec: DriverMethodDef<Driver>, jsonObj: any): any {
  * command-specific validator. Proxy info a plugin might need is appended separately, after
  * the args have been logged, since it carries the raw (circular) request/response objects.
  */
-function buildCommandArgs(req: Request, jsonObj: any, spec: DriverMethodDef<Driver>, command: string): any[] {
+function buildCommandArgs({req, jsonObj, spec, command, validateCommandArguments}: CommandArgsOptions): any[] {
   const args = makeArgs(req.params, jsonObj, spec.payloadParams || {});
   const validator = getCommandValidator(command);
-  if (validator) {
+  if (validator && validateCommandArguments) {
     validator(...args);
   }
   return args;
@@ -248,44 +322,37 @@ function buildCommandArgs(req: Request, jsonObj: any, spec: DriverMethodDef<Driv
 
 interface DriverCommandResult {
   driverRes: any;
-  currentProtocol: keyof typeof PROTOCOLS;
   newSessionId?: string;
 }
 
 /**
- * Runs the driver command and interprets its result: resolves the protocol used for the
- * response, unpacks the createSession/deleteSession special cases, and raises W3C errors
- * embedded in the result value.
+ * Runs the driver command and interprets its result: unpacks the createSession/deleteSession
+ * special cases, and raises W3C errors embedded in the result value.
  */
 async function runDriverCommand(
   driver: Core<any>,
   command: string,
   args: any[],
   sessionId: string | undefined,
-  currentProtocol: keyof typeof PROTOCOLS,
 ): Promise<DriverCommandResult> {
   let driverRes: any = await (driver as BaseDriver<any>).executeCommand(command, ...args);
 
-  // Get the protocol after executeCommand
-  currentProtocol = extractProtocol(driver, sessionId) || currentProtocol;
-
-  // If `executeCommand` was overridden and the method returns an object
-  // with a protocol and value/error property, re-assign the protocol
-  if (util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol')) {
-    currentProtocol = (driverRes as {protocol?: keyof typeof PROTOCOLS}).protocol || currentProtocol;
+  // A marked envelope, or `{protocol, error}` when `error` is an Error.
+  // `{protocol: 'W3C', value}` is command data.
+  if (isProtocolResponseEnvelope(driverRes)) {
     if (driverRes.error) {
       throw driverRes.error;
     }
     driverRes = driverRes.value;
   }
 
+  // a protocol field on the unwrapped value means it is command data
+  const isProtocolData = util.isPlainObject(driverRes) && Object.hasOwn(driverRes, 'protocol');
+
   let newSessionId: string | undefined;
   // unpack createSession response
   if (command === CREATE_SESSION_COMMAND) {
     newSessionId = driverRes[0];
-    getLogger(driver, newSessionId).debug(
-      `Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`,
-    );
     driverRes = {
       capabilities: driverRes[1],
     };
@@ -304,11 +371,16 @@ async function runDriverCommand(
     driverRes = null;
   }
 
-  if (util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
-    throw errorFromW3CJsonCode(driverRes.value.error, driverRes.value.message, driverRes.value.stacktrace);
+  if (!isProtocolData && util.hasValue(driverRes) && util.isPlainObject(driverRes.value) && driverRes.value.error) {
+    throw errorFromW3CJsonCode(
+      driverRes.value.error,
+      driverRes.value.message,
+      driverRes.value.stacktrace,
+      driverRes.value.data,
+    );
   }
 
-  return {driverRes, currentProtocol, newSessionId};
+  return {driverRes, newSessionId};
 }
 
 /**
@@ -358,13 +430,13 @@ function sendHandlerResponse(
   httpStatus: number,
   httpResBody: any,
   newSessionId: string | undefined,
-  currentProtocol: keyof typeof PROTOCOLS,
 ): void {
   if (typeof httpResBody === 'string') {
     res.status(httpStatus).setHeader('content-type', 'application/json; charset=utf-8').send(httpResBody);
     return;
   }
-  if (newSessionId && currentProtocol === PROTOCOLS.W3C) {
+  // Appium 4 only writes W3C responses, so the new session id is always part of the body.
+  if (newSessionId && util.isPlainObject(httpResBody.value)) {
     httpResBody.value.sessionId = newSessionId;
   }
   res.status(httpStatus).json(ensureW3cResponse(httpResBody));

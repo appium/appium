@@ -161,7 +161,7 @@ for the particular driver or whether it supports parallel sessions.
    automation, all using the WebDriver model that's already the standard for web automation.
 5. You can run your automated tests locally and in a cloud. There are multiple cloud providers that
    support various Appium drivers (mostly targeting iOS and Android mobile automation).
-6. [Appium Inspector](https://github.com/appium/appium-inspector) can be used to visually inspect
+6. [Appium Inspector](https://appium.github.io/appium-inspector/) can be used to visually inspect
    the page source of applications across different platforms, facilitating easier test development.
 
 Investing in the [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) protocol means you

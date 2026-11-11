@@ -30,6 +30,48 @@ describe('Websockets (e2e)', function () {
   });
 
   describe('web sockets support', function () {
+    it('should survive percent-encoded upgrade paths and continue accepting connections', async function () {
+      const wss = new WebSocketServer({noServer: true});
+      wss.on('connection', (ws) => ws.send(WS_DATA));
+      const endpoint = '/bidi/:sessionId';
+      await baseServer.addWebSocketHandler(endpoint, wss);
+      try {
+        for (const sessionId of ['%FF', '%', 'valid-session']) {
+          const client = new WebSocket(`ws://${TEST_HOST}:${port}/bidi/${sessionId}`);
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          try {
+            await new Promise<void>((resolve, reject) => {
+              timer = setTimeout(() => reject(new Error('WebSocket exchange timed out')), 5000);
+              let receivedMessage = false;
+              client.addEventListener('error', () => reject(new Error('WebSocket connection failed')), {once: true});
+              client.addEventListener(
+                'message',
+                (event) => {
+                  try {
+                    assert.strictEqual(event.data, WS_DATA);
+                    receivedMessage = true;
+                    client.close();
+                  } catch (error) {
+                    reject(error);
+                  }
+                },
+                {once: true},
+              );
+              client.addEventListener(
+                'close',
+                () => (receivedMessage ? resolve() : reject(new Error('WebSocket closed before receiving data'))),
+                {once: true},
+              );
+            });
+          } finally {
+            clearTimeout(timer);
+            client.close();
+          }
+        }
+      } finally {
+        await baseServer.removeWebSocketHandler(endpoint);
+      }
+    });
     it('should be able to add websocket handler and remove it', async function () {
       const wss = new WebSocketServer({
         noServer: true,

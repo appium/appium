@@ -1,62 +1,39 @@
 ---
-title: Building Drivers
+title: 开发驱动
 ---
 
-Appium wants to make it easy for anyone to develop their own automation drivers as part of the
-Appium ecosystem. This guide will explain what's involved and how you can accomplish various driver
-development tasks using the tools Appium provides. This guide assumes you (1) are a competent user of
-Appium, (2) are a competent Node.js developer, and (3) that you have read and understood the
-[Driver Intro](../intro/drivers.md).
+Appium 希望让任何人都能在 Appium 生态系统中开发自己的自动化驱动。本指南将介绍其中涉及的工作，以及如何使用 Appium 提供的工具完成各种驱动开发任务。阅读本指南的前提是你：（1）能熟练使用 Appium，（2）是一名合格的 Node.js 开发者，（3）已经阅读并理解了[驱动介绍](../intro/drivers.md)。
 
-If that describes you, great! This guide will get you started.
+如果你符合这些描述，太好了！本指南将带你入门。
 
-## Before you create your driver
+## 创建驱动之前
 
-Before you get to work implementing your driver, it's important to have a few things sorted out.
-For example, you need to know what your driver will do. Which platform is it trying to expose
-WebDriver automation for?
+在动手实现你的驱动之前，先把几件事理清楚很重要。例如，你需要知道你的驱动要做什么。它为哪个平台提供 WebDriver 自动化能力。
 
-Appium doesn't magically give you the power to automate any platform. All it does is give you a set
-of convenient tools for implementing the WebDriver Protocol. So if you want to create, for example,
-a driver for a new app platform, you'll need to know how to automate apps on that platform _without Appium_.
+Appium 并不会凭空赋予你自动化任何平台的能力。它所做的只是提供一套便捷的工具，帮你实现 WebDriver 协议。所以，如果你想为一个新的应用平台创建驱动，你需要先知道如&#x4F55;_&#x4E0D;借助Appiu&#x6D;_&#x5728;该平台上自动化应用。
 
-This usually means that you need to be very familiar with app development for a given platform. And
-it usually means that you will rely on tools or SDKs provided by the platform vendor.
+这通常意味着你必须非常熟悉某个平台的应用开发，而且往往要依赖该平台厂商提供的工具或 SDK。
 
-Basically, if you can't answer the question **"how would I launch, remotely trigger behaviours, and
-read state from an app on this platform?" then you're not quite ready to write an Appium driver**.
-Make sure you do the research to feel comfortable that there _is_ a path forward. Once there is,
-coding it up and making it available as an Appium driver should be the easy part!
+如果你无法回答这个问题——**"我该如何在这个平台上启动应用、远程触发应用行为并读取应用状态？"——那么你还不太适合开始编写 Appium 驱动**。请先做好调研，确认确&#x5B9E;_&#x6709;_&#x53EF;行的路径再继续。一旦路径清晰，把它编码实现并做成一个 Appium 驱动就简单多了！
 
-## Other drivers to reference
+## 可供参考的其他驱动
 
-One of the greatest things about building an Appium driver is that there are already a number of
-open source Appium drivers which you can look at for reference. There is
-a [fake-driver](https://github.com/appium/appium/tree/master/packages/fake-driver) sample driver which
-does basically nothing other than showcase some of the things described in this guide.
+构建 Appium 驱动最棒的一点是：已经有许多开源的 Appium 驱动可供参考。其中有一个fake-driver](https://github.com/appium/appium/tree/master/packages/fake-driver) 示例驱动，它几乎不
+做任何实际事情，只用来演示本指南中提到的若干要点。
 
-And of course, all of Appium's official drivers are open source and available in repositories at
-the project's GitHub organization. So if you ever find yourself asking, "how does a driver do X?",
-read the code for these drivers! Also don't be afraid to ask questions of the Appium developers if
-you get stuck; we're always happy to help make sure the driver development experience is a good
-one!
+当然，Appium 的所有官方驱动都是开源的，可以在项目的 GitHub 组织的仓库中找到。所以如果你正在思考"驱动是怎么实现 X 的？"，去读这些驱动的源码吧！如果你在开发中遇到卡壳的地方，也尽管向 Appium 开发者们提问，我们总是乐于提供帮助，确保你的驱动开发体验顺畅！
 
-## Basic requirements for Appium drivers
+## Appium 驱动的基本要求
 
-These are the things your driver _must_ do (or be), if you want it to be a valid Appium driver.
+如果你想让某个东西成为一个合法的 Appium 驱动，以下是&#x5B83;_&#x5FC5;&#x987B;_&#x505A;到（或满足）的事情。
 
-### Node.js package with Appium extension metadata
+### 带 Appium 扩展元数据的 Node.js 包
 
-All Appium drivers are fundamentally Node.js packages, and therefore must have a valid
-`package.json`. Your driver is not _limited_ to Node.js, but it must provide an adapter written in Node.js so it can be loaded by Appium.
+所有 Appium 驱动本质上都是 Node.js 包，因此必须有一个合法的 `package.json`。你的驱动并&#x4E0D;_&#x5C40;&#x9650;_&#x4E8E;用 Node.js 编写，但它必须提供一个用 Node.js 编写的适配器，以便 Appium 能够加载它。
 
-Your `package.json` must include `appium` as a `peerDependency`. The requirements for the
-dependency versions should be as loose as possible (unless you happen to know your driver will only
-work with certain versions of Appium). For Appium 2, for example, this would look something like
-`^2.0.0`, declaring that your driver works with any version of Appium that starts with 2.x.
+你的 `package.json` 必须将 `appium` 声明为 `peerDependency`。对依赖版本的要求应尽量宽松（除非你明确知道你的驱动只能与某些特定版本的 Appium 配合工作）。以 Appium 2 为例，写成`^2.0.0` 即可，表示你的驱动兼容所有 2.x 版本的 Appium。
 
-Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension
-metadata'):
+你的 `package.json` 必须包含一个 `appium` 字段，如下所示（我们称之为"Appium 扩展元数据"）：
 
 ```json
 {
@@ -73,25 +50,16 @@ metadata'):
 }
 ```
 
-The required subfields are:
+必需的子字段如下：
 
-- `driverName`: this should be a short name for your driver.
-- `automationName`: this should be the string users will use for their `appium:automationName`
-  capability to tell Appium to use _your_ driver.
-- `platformNames`: this is an array of one or more platform names considered valid for your driver.
-  When a user sends in the `platformName` capability to start a session, it must be included in
-  this list for your driver to handle the session. Known platform name strings include: `iOS`,
-  `tvOS`, `macOS`, `Windows`, `Android`.
-- `mainClass`: this is a named export (in CommonJS style) from your `main` field. It must be a
-  class which extends Appium's `BaseDriver` (see below).
+- `driverName`：你的驱动的简短名称。
+- `automationName`：用户在 `appium:automationName` 能力中填写的字符串，用于让 Appium 使&#x7528;_&#x4F60;&#x7684;_&#x9A71;动。
+- `platformNames`：一个数组，包含你的驱动认为合法的一个或多个平台名称。当用户发起会话并传入  `platformName` 能力时，该值必须在此列表中，你的驱动才会处理该会话。这些名称通常应包含你的驱动所面向的操作系统——例如，面向 iOS 的驱动应包含 `iOS`，而面向 Windows 上 Chrome 浏览器的驱动应包含 `Windows`。
+- `mainClass`：从 `main` 字段具名导出（CommonJS 风格）的类。它必须是继承自 Appium 的 `BaseDriver` 的类（见下文）。
 
-### Extend Appium's `BaseDriver` class
+### 继承 Appium 的 `BaseDriver` 类
 
-Ultimately, your driver is much easier to write because most of the hard work of implementing the
-WebDriver protocol and handling certain common logic is taken care of already by Appium. This is
-all encoded up as a class which Appium exports for you to use, called `BaseDriver`. It is exported
-from `appium/driver`, so you can use one of these styles to import it and create your _own_ class
-that extends it:
+归根结底，你的驱动之所以好写，是因为实现 WebDriver 协议以及处理某些通用逻辑的繁重工作已经由 Appium 代劳了。这一切都封装在一个 Appium 导出的类中，名为 `BaseDriver`。它从 `appium/driver` 导出，你可以用下面任一方式导入它，并创建继承它&#x7684;_&#x4F60;自己&#x7684;_&#x7C7B;：
 
 ```js
 import {BaseDriver} from 'appium/driver';
@@ -101,32 +69,25 @@ export class MyDriver extends BaseDriver {
 }
 ```
 
-### Make your driver available
+### 让你的驱动可用
 
-That's basically it! With a Node.js package exporting a driver class and with correct Appium
-extension metadata, you've got yourself an Appium driver! Now it doesn't _do_ anything, but you can
-load it up in Appium, start and stop sessions with it, etc...
+基本就是这样！一个导出驱动类的 Node.js 包，再加上正确的 Appium 扩展元数据，你就拥有了一个Appium 驱动！虽然它还什么都&#x4E0D;_&#x505A;_，但你已经可以在 Appium 中加载它、用它启动和停止会话了……
 
-To make it available to users, you could publish it via NPM. When you do so, your driver will be
-installable via the Appium CLI:
+要让其他用户能用你的驱动，你可以通过 NPM 发布它。发布之后，用户就可以通过 Appium CLI 安装它：
 
 ```
 appium driver install --source=npm <driver-package-on-npm>
 ```
 
-It's a good idea to test your driver first, of course. One way to see how it works within Appium is
-to install it locally first:
+当然，最好先测试你的驱动。观察它在 Appium 中如何工作，一种方式是以本地方式安装它：
 
 ```
 appium driver install --source=local /path/to/your/driver
 ```
 
-### Developing your driver
+### 驱动的开发流程
 
-How you develop your driver is up to you. It is convenient, however, to run it from within Appium
-without having to do lots of publishing and installing. The most straightforward way to do this is
-to include the most recent version of Appium as a `devDependency`, and then also your own driver,
-like this:
+如何开发你的驱动完全由你决定。不过，如何能在 Appium 中直接运行驱动，免去反复发布和安装呢？最直接的做法是把最新版本的 Appium 作为 `devDependency`，同时把你的驱动也作为依赖引入，例如：
 
 ```json
 {
@@ -139,37 +100,27 @@ like this:
 }
 ```
 
-Now, you can run Appium locally (`npm exec appium` or `npx appium`), and because your driver is
-listed as a dependency alongside it, it will be automatically "installed" and available. You can
-design your e2e tests this way, or if you're writing them in Node.js, you can simply import
-Appium's start server methods to handle starting and stopping the Appium server in Node. (TODO:
-reference an implementation of this in one of the open source drivers when ready).
+这样，你就可以在本地运行 Appium（`npm exec appium` 或 `npx appium`），并且由于你的驱动与它并列列为依赖，它会被自动"安装"并可用。你可以按这种方式设计你的 e2e 测试；如果用 Node.js 编写测试，你还可以直接导入 Appium 的启动服务方法，在 Node 中启停 Appium 服务器。 （TODO：待相关实现就绪后，在此引用某个开源驱动的实现。）
 
-Another way to do local development with an existing Appium server install is to simply install
-your driver locally:
+在 Appium 服务器上安装并进行本地开发的另一种方式是直接把驱动以本地源安装：
 
 ```
 appium driver install --source=local /path/to/your/driver/dev/dir
 ```
 
-### Refreshing your driver during development
+### 开发过程中刷新驱动
 
-When the Appium server starts, it loads your driver into memory. Changes to your driver code will
-not take effect until the next time the Appium server starts. Simply starting a new session is not
-sufficient to cause your driver's code to be reloaded.
+Appium 服务器启动时会将你的驱动加载进内存。驱动代码的修改要到下一次 Appium 服务器启动时才会生效。启动一个新会话并不会以让驱动代码重新加载。
 
-However, you can set the `APPIUM_RELOAD_EXTENSIONS` environment variable to `1` to request that
-Appium clear its module cache and reload extensions whenever a new session is requested. This may
-obviate the need to restart the server when you make code changes to your driver.
+不过，你可以把环境变量 `APPIUM_RELOAD_EXTENSIONS` 设为 `1`，要求 Appium 在每次收到新会话请求时清除模块缓存并重新加载扩展。这样在修改驱动代码后，也许就不必重启服务器了。
 
-## Standard driver implementation ideas
+## 驱动实现的标准思路
 
-These are things you will probably find yourself wanting to do when creating a driver.
+以下是创建驱动时你多半会想做的事情。
 
-### Set up state in a constructor
+### 在构造函数中初始化状态
 
-If you define your own constructor, you'll need to call `super` to make sure all the standard state
-is set up correctly:
+如果你定义了自己的构造函数，需要调用 `super`，确保所有标准状态被正确初始化：
 
 ```js
 constructor(...args) {
@@ -178,22 +129,15 @@ constructor(...args) {
 }
 ```
 
-The `args` parameter here is the object containing all the CLI args used to start the Appium
-server.
+这里的 `args` 参数是包含启动 Appium 服务器所用的全部 CLI 参数的对象。
 
-### Define and validate accepted capabilities
+### 定义并校验支持的能力
 
-You can define your own capabilities and basic validation for them. Users will always be able to
-send in capabilities that you don't define, but if they send in capabilities you have explicitly
-defined, then Appium will validate that they are of the correct type (and will check for the
-presence of required capabilities).
+你可以定义自己的能力并为它们配置基本校验。用户可能调用你未定义的能力；但对于你已明确定义的能力，Appium 会校验其类型是否正确（并检查必填能力是否存在）。
 
-If you want to turn capability validation off entirely, set `this.shouldValidateCaps` to `false` in
-your constructor.
+如果你想关闭校验，只需在构造函数中把 `this.shouldValidateCaps` 设为 `false`。
 
-To give Appium your validation constraints, set `this.desiredCapConstraints` to a validation object
-in your constructor. Validation objects can be somewhat complex. Here's an example from the
-UiAutomator2 driver:
+要把校验约束提供给 Appium，需要在构造函数中把 `this.desiredCapConstraints` 设为一个校验对象。校验对象可以写得很复杂。下面是 UiAutomator2 驱动的一个例子：
 
 ```js
 {
@@ -213,13 +157,9 @@ UiAutomator2 driver:
 }
 ```
 
-### Start a session and read capabilities
+### 启动会话并读取能力
 
-Appium's `BaseDriver` already implements the `createSession` command, so you don't have to. However
-it's very common to need to perform your own startup actions (launching an app, running some
-platform code, or doing different things based on capabilities you have defined for your driver).
-So you'll probably end up overriding `createSession`. You can do so by defining the method in your
-driver:
+Appium 的 `BaseDriver` 已经实现了 `createSession` 命令，所以你不实现它也可以。但驱动通常需要执行自己的启动动作（启动应用、运行某些平台代码、或根据你为驱动定义的能力做不同的事情）。因此你很可能会去重写 `createSession`。你可以在驱动中定义该方法来实现：
 
 ```js
 async createSession(w3cCaps) {
@@ -229,29 +169,19 @@ async createSession(w3cCaps) {
 }
 ```
 
-!!! warning "Deprecated"
+!!! 警告 “已废弃”
 
 ```
-Older drivers may still define `createSession` with up to four parameters, e.g.
-`createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
-retired JSON Wire Protocol, which required desired and required caps as the first two
-arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
-likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
-coordinating with other concurrently-running sessions. New drivers should use the single-argument
-form shown above.
+较老的驱动可能仍以最多四个参数定义 createSession，例如createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)。这种形式是已退役的 JSON Wire Protocol 的遗留产物——它要求前两个参数是期望能力和必须能力，而实际上只有第一个W3C 形式的参数被使用过。otherDriverData 参数同样已被废弃，与其他并行运行会话的协调请改用IPC（见下文"向同一会话中的插件发送消息"）。新驱动应使用上面所示的单参数形式。
 ```
 
-You'll want to make sure to call `super.createSession` in order to get the session ID as well as
-the processed capabilities (note that capabilities are also set on `this.caps`; modifying `caps`
-locally here would have no effect other than changing what the user sees in the create session
-response).
+你要确保调用 `super.createSession`，以拿到会话 ID 以及处理过的能力（注意：能力同时也被设置在`this.caps` 上；此处仅修改局部变量 `caps`，这只改变用户在创建会话响应中看到的内容，没有其他效果）。
 
-So that's it! You can fill out the middle section with whatever startup logic your driver requires.
+就是这样！中间的空白部分由你的驱动所需的启动逻辑来填充。
 
-### End a session
+### 结束会话
 
-If your driver requires any cleanup or shutdown logic, it's best to do it as part of overriding the
-implementation of `deleteSession`:
+如果你的驱动需要清理或关闭逻辑，最好的方式是重写 `deleteSession` 实现：
 
 ```js
 async deleteSession() {
@@ -261,33 +191,21 @@ async deleteSession() {
 }
 ```
 
-It's very important not to throw any errors here if possible so that all parts of session cleanup
-can succeed!
+非常重要的一点是：尽可能不要在这里抛出错误，这样才能让会话清理的每个环节都成功执行！
 
-### Access capabilities and CLI args
+### 访问能力与 CLI 参数
 
-You'll often want to read parameters the user has set for the session, whether as CLI args or as
-capabilities. The easiest way to do this is to access `this.opts`, which is a merge of all options,
-from the CLI or from capabilities. So for example to access the `appium:app` capability, you could
-simply get the value of `this.opts.app`.
+你可能需要读取用户为会话设置的参数，无论它们是 CLI 参数还是能力。最简单的方式是访问 `this.opts`，它合并了来自 CLI 和能力的全部选项。例如要访问 `appium:app` 能力，直接读取 `this.opts.app` 即可。
 
-If you care about knowing whether something was sent in as a CLI arg _or_ a capability, you can
-access the `this.cliArgs` and `this.caps` objects explicitly.
+如果你想知道某个值究竟是以 CLI 参&#x6570;_&#x8FD8;&#x662F;_&#x80FD;力传入的，可以显式访问 `this.cliArgs` 和 `this.caps` 对象。
 
-In all cases, the `appium:` capability prefix will have been stripped away by the time you are
-accessing values here, for convenience.
+在所有情况下，为方便起见，当你读取这些值时，`appium:` 能力前缀都已经被剥离掉了。
 
-### Implement WebDriver classic commands
+### 实现 WebDriver classic 命令
 
-You handle WebDriver commands by implementing functions in your driver class. Each member of the
-WebDriver Protocol, plus the various Appium extensions, has a corresponding function that you
-implement if you want to support that command in your driver. The best way to see which commands
-Appium supports and which method you need to implement for each command is to look at Appium's
-[routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
-Each route object in this file tells you the command name as well as the parameters you'd expect to
-receive for that command.
+你通过在驱动类中实现函数来处理 WebDriver 命令。 WebDriver 协议的每一个成员，以及 Appium 的各种扩展，都对应一个函数——如果你想支持该命令，就实现它。要了解 Appium 支持哪些命令、每个命令需要实现哪个方法，最好的办法是查看 Appium 的 [routes/](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js)。该文件中的每个路由对象都会告诉你命令名称以及该命令预期接收的参数。
 
-Let's take this block for example:
+比如下面这段：
 
 ```js
 '/session/:sessionId/url': {
@@ -296,10 +214,7 @@ Let's take this block for example:
 }
 ```
 
-Here we see that the route `/session/:sessionId/url` is mapped to two commands, one for a `GET`
-request and one for a `POST` request. If we want to allow our driver to change the "url" (or
-whatever that might mean for our driver), we can therefore implement the `setUrl` command, knowing
-it will take the `url` parameter:
+可以看到路由 `/session/:sessionId/url` 映射到两个命令，一个对应 `GET` 请求，一个对应 `POST` 请求。如果我们想让驱动能够改变 "url"，就可以实现 `setUrl` 命令，并知道它会接收 `url` 参数：
 
 ```js
 async setUrl(url) {
@@ -307,37 +222,23 @@ async setUrl(url) {
 }
 ```
 
-A few notes:
+几点说明：
 
-- all command methods should be `async` functions or otherwise return a `Promise`
-- you don't need to worry about protocol encoding/decoding. You will get JS objects as params, and
-  can return JSON-serializable objects in response. Appium will take care of wrapping it up in the
-  WebDriver protocol response format, turning it into JSON, etc...
-- all session-based commands receive the `sessionId` parameter as the last parameter
-- all element-based commands receive the `elementId` parameter as the second-to-last parameter
-- if your driver doesn't implement a command, users can still try to access the command, and will
-  get a `501 Not Yet Implemented` response error.
+- 所有命令方法都应当是 `async` 函数，或者以其他方式返回 `Promise`
+- 你不必关心协议的编解码。参数会以 JS 对象形式传入，你只需返回可 JSON 序列化的对象即可。 Appium 会自动把它们包装成 WebDriver 协议响应格式、转成 JSON 等等……
+- 所有基于会话的命令都会把 `sessionId` 参数作为最后一个参数传入
+- 所有基于元素的命令都会把 `elementId` 参数作为倒数第二个参数传入
+- 如果你的驱动没有实现某个命令，用户仍然可以尝试调用，但会收到 `501 Not Yet Implemented` 错误响应。
 
-### Implement WebDriver BiDi commands
+### 实现 WebDriver BiDi 命令
 
-[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) is a newer version of the WebDriver spec
-which is implemented over Websockets instead of HTTP. As an Appium driver author you can take
-advantage of Appium's BiDi support without having to know anything about the BiDi protocol or
-Websockets. Implementing handlers for BiDi commands works just the same as implementing handlers
-for WebDriver classic commands (described in the previous section). You simply define a method on
-your driver of the appropriate name, and it will be called when the BiDi command is requested by
-the client. To see which specific names you should use for BiDi commands, have a look at
-[bidi-commands.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.js)
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) 是 WebDriver 规范的新版本，基于 Websocket 而非 HTTP 实现。作为 Appium 驱动作者，你可以直接利用 Appium 的 BiDi 支持，而无需了解 BiDi 协议或 Websocket 的任何细节。实现 BiDi 命令的处理方法与实现 WebDriver 经典命令的处理方法完全一样（见上一节）。你只需在驱动上定义名称对应的方法，当客户端请求该 BiDi 命令时它就会被调用。要查看 BiDi 命令应使用的具体名称，请参考 [bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)。
 
-You are not limited to BiDi commands that are defined in the official BiDi specification. If you
-wish to define new commands, you may do so; you just need to tell Appium about them! See
-[below](#extend-the-existing-protocol-with-new-commands) for more information.
+你不必局限于官方 BiDi 规范中已定义的命令。如果你想定义新命令，也完全可以——只需要把这些新命令告知 Appium！详情请见下文 [用新的命令扩展现有协议](#用新的命令扩展现有协议)。
 
-### Implement element finding
+### 实现元素查找
 
-Element finding is a special command implementation case. You don't actually want to override
-`findElement` or `findElements`, even though those are what are listed in `routes.js`. Appium does
-a lot of work for you if instead you implement this function:
+元素查找是一种特殊的命令实现情形。尽管 `routes.js` 中列出的命令是 `findElement` 和 `findElements`，但实际上你不应该重写它们。如果你改为实现下面这个函数，Appium 会替你完成大量工作：
 
 ```js
 async findElOrEls(strategy, selector, mult, context) {
@@ -345,55 +246,43 @@ async findElOrEls(strategy, selector, mult, context) {
 }
 ```
 
-Here's what gets passed in:
+传入的参数含义如下：
 
-- `strategy` - a string, the locator strategy being used
-- `selector` - a string, the selector
-- `mult` - boolean, whether the user has requested one element or all elements matching the
-  selector
-- `context` - (optional) if defined, will be a W3C Element (i.e., a JS object with the W3C element
-  identifier as the key and the element ID as the value)
+- `strategy`——字符串，正在使用的定位策略
+- `selector`——字符串，选择器
+- `mult`——布尔值，表示用户是要查找单个元素还是匹配该选择器的所有元素
+- `context`——（可选）若有值，则是一个 W3C Element（即以 W3C 元素标识符为键、元素 ID 为值的 JS 对象）
 
-And you need to return one of the following:
+你需要返回以下二者之一：
 
-- a single W3C element (an object as described above)
-- an array of W3C elements
+- 单个 W3C 元素（即上面描述的对象）
+- W3C 元素数组
 
-Note that you can import that W3C web element identifier from `appium/support`:
+注意，你可以从 `appium/support` 导入 W3C web 元素标识符：
 
 ```js
 import {util} from 'appium/support';
 const { W3C_WEB_ELEMENT_IDENTIFIER } = util;
 ```
 
-What you do with elements is up to you! Usually you end up keeping a cache map of IDs to actual
-element "objects" or whatever the equivalent is for your platform.
+拿到元素之后怎么用完全由你决定！通常你会维护一个从 ID 到真实元素"对象"（或你平台上等价事物）的映射。
 
-### Define valid locator strategies
+### 定义合法的定位策略
 
-Your driver might only support a subset of the standard WebDriver locator strategies, or it might
-add its own custom locator strategies. To tell Appium which strategies are considered valid for
-your driver, create an array of strategies and assign it to `this.locatorStrategies`:
+你的驱动可能只支持标准 WebDriver 定位策略的一个子集，也可能添加自己的自定义定位策略。如何告诉 Appium 你的驱动支持哪些策略呢？你需要创建一个策略数组并赋给 `this.locatorStrategies`：
 
 ```js
 this.locatorStrategies = ['xpath', 'custom-strategy'];
 ```
 
-Appium will throw an error if the user attempts to use any strategies other than the allowed ones,
-which enables you to keep your element finding code clean and deal with only the strategies you
-know about.
+如果用户尝试使用允许范围之外的策略，Appium 会抛出错误，这能让你把元素查找代码保持干净，只处理你支持的策略。
 
-By default, the list of valid strategies is empty, so if your driver isn't simply proxying to
-another WebDriver endpoint, you'll need to define some. The protocol-standard locator strategies
-are defined [here](https://www.w3.org/TR/webdriver/#locator-strategies).
+默认情况下，合法策略列表为空。所以如果你的驱动不是简单地代理到另一个 WebDriver 端点，你就需要
+定义一些策略。协议标准的定位策略定义在[这里](https://www.w3.org/TR/webdriver/#locator-strategies)。
 
-### Throw WebDriver-specific errors
+### 抛出 WebDriver 错误
 
-The WebDriver spec defines a set of error
-codes to accompany command responses if an
-error occurred. Appium has created error classes for each of these codes, so you can throw the
-appropriate error from inside a command, and it will do the right thing in terms of the protocol
-response to the user. To get access to these error classes, import them from `appium/driver`:
+WebDriver 规范定义了一组[错误码](https://github.com/jlipps/simple-wd-spec#error-codes)，用于在命令发生错误时伴随响应返回。 Appium 为每个错误码都创建了对应的错误类，因此你可以在命令内部抛出相应的错误，Appium 会按照协议规范把它正确地响应给用户。要获得这些错误类，从 `appium/driver` 导入即可：
 
 ```
 import {errors} from 'appium/driver';
@@ -401,42 +290,34 @@ import {errors} from 'appium/driver';
 throw new errors.NoSuchElementError();
 ```
 
-### Log messages to the Appium log
+### 向 Appium 日志写消息
 
-You can always use `console.log`, of course, but Appium provides a nice logger for you as
-`this.log` (it has `.info`, `.debug`, `.log`, `.warn`, `.error` methods on it for differing log
-levels). If you want to create an Appium logger outside of a driver context (say in a script or
-helper file), you can always construct your own too:
+你当然可以随时用 `console.log`，但 Appium 为你提供了一个更贴心的日志器 `this.log`（它有 `.info`、`.debug`、`.log`、`.warn`、`.error` 等不同日志级别的方法）。如果你想在驱动上下文之外（比如脚本或辅助文件中）创建 Appium 日志器，也可以自行构造：
 
 ```js
 import {logging} from 'appium/support';
 const log = logging.getLogger('MyDriver');
 ```
 
-## Further possibilities for Appium drivers
+## Appium 驱动的进阶能力
 
-These are things your driver _can_ do to take advantage of extra driver features or do its job more
-conveniently.
+以下是你的驱&#x52A8;_&#x53EF;&#x4EE5;_&#x505A;的事情，以利用更多驱动特性或更便捷地完成工作。
 
-### Add a schema for custom command line arguments
+### 为自定义命令行参数添加 schema
 
-You can add custom CLI args if you want your driver to receive data from the command line when the
-Appium server is started (for example, ports that a server administrator should set that should not
-be passed in as capabilities.
+如果你希望驱动在 Appium 服务器启动时从命令行接收数据，就可以添加自定义 CLI 参数（例如由服务器管理员设定的端口，这类参数不适合通过能力传入）。
 
-To define CLI arguments (or configuration properties) for the Appium server, your extension must provide a _schema_. In
-the `appium` property of your extension's `package.json`, add a `schema` property. This will either
-a) be a schema itself, or b) be a path to a schema file.
+要为 Appium 服务器定义 CLI 参数（或配置属性），你的驱动必须提供一个 _schema_。在驱动 `package.json` 的 `appium` 属性下添加一个 `schema` 属性。它可以本身就是 schema，也可以指向 schema 文件的路径。
 
-The rules for these schemas:
+schema 的规则如下：
 
-- Schemas must conform to [JSON Schema Draft-07](https://ajv.js.org/json-schema.html#draft-07).
-- If the `schema` property is a path to a schema file, the file must be in JSON or JS (CommonJS) format.
-- Custom `$id` values are unsupported. To use `$ref`, provide a value relative to the schema root, e.g., `/properties/foo`.
-- Known values of the `format` keyword are likely supported, but various other keywords may be unsupported. If you find a keyword that is unsupported which you need to use, please [ask for support](https://github.com/appium/appium/issues/new) or send a PR!
-- The schema must be of type `object` (`{"type": "object"}`), containing the arguments in a `properties` keyword. Nested properties are unsupported.
+- Schema 必须符合 [JSON Schema Draft-07](https://ajv.js.org/json-schema.html#draft-07)。
+- 如果 `schema` 属性是 schema 文件的路径，该文件必须是 JSON 或 JS（CommonJS）格式。
+- 不支持自定义 `$id` 值。要使用 `$ref`，请提供相对于 schema 根的值，例如 `/properties/foo`。
+- `format` 关键字的已知取值一般是受支持的，但其他一些关键字可能不受支持。如果你需要用到的某个关键字不受支持，请[提出支持请求](https://github.com/appium/appium/issues/new)或提交 PR！
+- Schema 的类型必须是 `object`（`{"type": "object"}`），参数放在 `properties` 关键字中。不支持嵌套属性。
 
-Example:
+示例：
 
 ```json
 {
@@ -457,10 +338,8 @@ Example:
 }
 ```
 
-The above schema defines two properties which can be set via CLI argument or configuration file. If
-this extension is a _driver_ and its name is "horace", the CLI args would be
-`--driver-horace-test-web-server-port` and `--driver-horace-test-web-server-host`, respectively.
-Alternatively, a user could provide a configuration file containing:
+上面的 schema 定义了两个可通过 CLI 参数或配置文件设置的属性。如果这个扩展是一&#x4E2A;_&#x9A71;&#x52A8;_&#x4E14;名字为 "horace"，那么对应的 CLI 参数分别是 `--driver-horace-test-web-server-port` 和
+`--driver-horace-test-web-server-host`。用户也可以提供如下内容的配置文件：
 
 ```json
 {
@@ -475,7 +354,7 @@ Alternatively, a user could provide a configuration file containing:
 }
 ```
 
-### Add driver scripts
+### 添加驱动脚本
 
 Sometimes you might want users of your driver to be able to run scripts outside the context of
 a session (for example, to run a script that pre-builds aspects of your driver). To support this,

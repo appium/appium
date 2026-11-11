@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
-import {errors, WebDriverProxy} from '@appium/base-driver';
+import {errors, markResponseEnvelope, WebDriverProxy} from '@appium/base-driver';
 import {getTestPort, httpDelete, httpGet, httpPost, TEST_HOST} from '@appium/driver-test-support';
 import type {RouteMatcher} from '@appium/types';
 import type {Application, Request, Response} from 'express';
@@ -42,7 +42,11 @@ describe('Protocol', function () {
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      const {baseUrl: baseUrlStr, setup, teardown: teardownFn} = await createServer(driver);
+      const {
+        baseUrl: baseUrlStr,
+        setup,
+        teardown: teardownFn,
+      } = await createServer(driver, {extraMethodMap: FakeDriver.newMethodMap});
       baseUrl = baseUrlStr;
       teardown = teardownFn;
       await setup();
@@ -97,6 +101,41 @@ describe('Protocol', function () {
       });
     });
 
+    it('should reject a command POST that has no body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should reject a command POST whose body is a JSON array', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/back`, [], {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
+    it('should accept a JSON array body for a route that wraps its payload', async function () {
+      const {data} = await httpPost(`${baseUrl}/session/foo/wrapped`, [1, 2, 3]);
+      assert.deepStrictEqual(data.value, [1, 2, 3]);
+    });
+
+    it('should reject a command POST that omits a required body', async function () {
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/url`, undefined, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
+      assert.match(data.value.message, /JSON object/);
+    });
+
     it('should include url request parameters for methods to use - elementid', async function () {
       const {data} = await httpPost(`${baseUrl}/session/foo/element/bar/click`, {});
       assert.deepStrictEqual(data.value, ['bar', 'foo']);
@@ -130,6 +169,37 @@ describe('Protocol', function () {
 
     it('should get 404 for bad routes', async function () {
       await assert.rejects(httpGet(`${baseUrl}/blargimarg`), /404/);
+    });
+
+    it('should return unknown method when a known url is called with the wrong method', async function () {
+      const {status, data} = await httpPost(
+        `${baseUrl}/status`,
+        {},
+        {
+          throwOnError: false,
+        },
+      );
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown method when a known session url is called with the wrong method', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/session/foo`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 405);
+      assert.strictEqual(data.value.error, 'unknown method');
+    });
+
+    it('should return unknown command when the path only shares a prefix with a known url', async function () {
+      const {status, data} = await httpGet(`${baseUrl}/status/extra`, {
+        throwOnError: false,
+      });
+
+      assert.strictEqual(status, 404);
+      assert.strictEqual(data.value.error, 'unknown command');
     });
 
     it('4xx responses should have content-type of application/json', async function () {
@@ -192,6 +262,95 @@ describe('Protocol', function () {
       assert.strictEqual(data.value.message, 'Mishandled Driver Error');
       assert.ok(!data.sessionId);
     });
+
+    it('should return a script result that contains a protocol field', async function () {
+      const location = {href: 'https://example.com/home', host: 'example.com', protocol: 'https:'};
+      sandbox.stub(driver, 'executeCommand').resolves(location);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return window.location',
+        args: [],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, location);
+    });
+
+    it('should still unwrap a W3C protocol response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves(
+        markResponseEnvelope({
+          protocol: 'W3C',
+          value: {host: 'example.com'},
+        }),
+      );
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`);
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, {host: 'example.com'});
+    });
+
+    it('should return a command result whose protocol is W3C', async function () {
+      const result = {protocol: 'W3C', value: 5};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return {protocol: "W3C", value: 5}',
+        args: [],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, result);
+    });
+
+    it('should return a command result whose protocol value looks like an error', async function () {
+      const result = {protocol: 'W3C', value: {error: 'no such element', message: 'ordinary script data'}};
+      sandbox.stub(driver, 'executeCommand').resolves(result);
+
+      const {status, data} = await httpPost(`${baseUrl}/session/foo/execute/sync`, {
+        script: 'return arguments[0]',
+        args: [result],
+      });
+
+      assert.strictEqual(status, 200);
+      assert.deepStrictEqual(data.value, result);
+    });
+
+    it('should return an error from an MJSONWP response envelope', async function () {
+      sandbox.stub(driver, 'executeCommand').resolves({
+        protocol: 'MJSONWP',
+        error: new Error('legacy session failed'),
+      });
+
+      const {status, data} = await httpGet(`${baseUrl}/session/foo/url`, {throwOnError: false});
+
+      assert.strictEqual(status, 500);
+      assert.strictEqual(data.value.error, 'unknown error');
+      assert.match(data.value.message, /legacy session failed/);
+    });
+
+    for (const errorData of [{text: 'Unexpected alert', details: {retryable: false}}, {}, undefined]) {
+      it(`should preserve optional data in a returned driver error: ${JSON.stringify(errorData)}`, async function () {
+        const value = {
+          error: 'unexpected alert open',
+          message: 'Returned driver error',
+          stacktrace: 'Remote driver stacktrace',
+          ...(errorData === undefined ? {} : {data: errorData}),
+        };
+        sandbox.stub(driver, 'executeCommand').resolves({value});
+
+        const {status, data} = await httpGet(`${baseUrl}/session/foo/url`, {throwOnError: false});
+
+        assert.strictEqual(status, 500);
+        assert.strictEqual(data.value.error, value.error);
+        assert.strictEqual(data.value.message, value.message);
+        assert.strictEqual(data.value.stacktrace, value.stacktrace);
+        assert.strictEqual(Object.hasOwn(data.value, 'data'), errorData !== undefined);
+        if (errorData !== undefined) {
+          assert.deepStrictEqual(data.value.data, errorData);
+        }
+      });
+    }
 
     describe('w3c sendkeys migration', function () {
       it('should not accept value for sendkeys', async function () {
@@ -539,6 +698,24 @@ describe('Protocol', function () {
         });
       } finally {
         if (data.value.sessionId) {
+          await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
+        }
+      }
+    });
+
+    it('should return a W3C new session response when the driver protocol is MJSONWP', async function () {
+      driver.protocol = 'MJSONWP';
+      let data: any;
+      try {
+        ({data} = await httpPost(`${baseUrl}/session`, {
+          capabilities: {alwaysMatch: {}, firstMatch: [{}]},
+        }));
+        assert.strictEqual(data.value.sessionId.indexOf('fakeSession_'), 0);
+        assert.ok(!data.sessionId);
+        assert.ok(!Object.hasOwn(data, 'status'));
+      } finally {
+        driver.protocol = 'W3C';
+        if (data?.value?.sessionId) {
           await httpDelete(`${baseUrl}/session/${data.value.sessionId}`);
         }
       }

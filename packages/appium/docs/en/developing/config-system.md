@@ -62,7 +62,7 @@ functionality (e.g., the `plugin` or `driver` subcommands).
 
     Note that this file is the _base_ schema; this will become painfully relevant.
 
-This file is is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is
+This file is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is
 especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.
 
 It is more straightforward to explain how config files are validated, so we'll start there.

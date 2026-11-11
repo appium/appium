@@ -93,7 +93,7 @@ assert File.size? 'find_result_visual.png'
 ```javascript
 // Typescript / Javascript
 /*
-   Typescsript code for occurrence comparison using the template matching algorithm.
+   TypeScript code for occurrence comparison using the template matching algorithm.
    It detects if an image is contained in another image (called the template).
    The image must have the same scale and look the same. However, you can add a scaling transformation beforehand.
 
@@ -151,7 +151,7 @@ const isImagePresent = async () => {
 
   // then you know if the image was found by comparing the rectangle with a reference rectangle.
   // the structure minMax contains the property maxVal that gives the quality of the match
-  // 1 is prefect match, but you may get .999. If you extract an image from the screenshot manually,
+  // 1 is perfect match, but you may get .999. If you extract an image from the screenshot manually,
   // you will get an image that matches.
 };
 ```

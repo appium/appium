@@ -3,6 +3,7 @@ import type {LookupAddress, LookupAllOptions} from 'node:dns';
 import net from 'node:net';
 import {domainToASCII} from 'node:url';
 
+import {net as netUtils} from '@appium/support';
 import type {AppUrlRulesConfig} from '@appium/types';
 import type {AxiosRequestConfig} from 'axios';
 import picomatch from 'picomatch';
@@ -427,7 +428,7 @@ function toRedirectUrl(redirectOpts: Record<string, any>): URL {
     if (href) {
       return new URL(href);
     }
-    const authority = hostname ? `${formatHostname(hostname)}${port ? `:${port}` : ''}` : host;
+    const authority = hostname ? `${netUtils.formatHostnameForUrl(hostname)}${port ? `:${port}` : ''}` : host;
     return new URL(`${protocol}//${authority}${path ?? '/'}`);
   } catch (e) {
     throw new Error(`The redirect target of the application URL cannot be determined, so it ${NOT_ALLOWED_SUFFIX}`, {
@@ -456,10 +457,6 @@ function normalizeHostname(hostname: string): string {
     .split('.')
     .map((label) => (GLOB_CHARS.test(label) ? label : domainToASCII(label)))
     .join('.');
-}
-
-function formatHostname(hostname: string): string {
-  return net.isIPv6(hostname) ? `[${hostname}]` : hostname;
 }
 
 function redactUrl(url: URL | string): string {

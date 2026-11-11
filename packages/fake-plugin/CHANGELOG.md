@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0-beta.7](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.6...@appium/fake-plugin@5.0.0-beta.7) (2026-10-31)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
+## [5.0.0-beta.6](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.5...@appium/fake-plugin@5.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+
+### Bug Fixes
+
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+
+
+## [5.0.0-beta.5](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.4...@appium/fake-plugin@5.0.0-beta.5) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+
+### Bug Fixes
+
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c10c413](https://github.com/appium/appium/commit/c10c41384cdb4276faaab1a908cf9f80a77464a5))
+
+
+## [5.0.0-beta.4](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.3...@appium/fake-plugin@5.0.0-beta.4) (2026-10-09)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
 ## [5.0.0-beta.3](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.2...@appium/fake-plugin@5.0.0-beta.3) (2026-10-05)
 
 ### Bug Fixes

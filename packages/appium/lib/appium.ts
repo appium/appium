@@ -1,5 +1,3 @@
-import {isIPv6} from 'node:net';
-
 import {
   AppiumIpc,
   BaseDriver,
@@ -10,6 +8,8 @@ import {
   generateDriverLogPrefix,
   getProxyReq,
   GET_STATUS_COMMAND,
+  isProtocolResponseEnvelope,
+  markResponseEnvelope,
   isSessionCommand,
   isW3cCaps,
   LIST_DRIVER_COMMANDS_COMMAND,
@@ -17,9 +17,10 @@ import {
   promoteAppiumOptions,
   promoteAppiumOptionsForObject,
   PROTOCOLS,
+  runWithCommandTimeout,
   withoutProxyReq,
 } from '@appium/base-driver';
-import {util} from '@appium/support';
+import {util, net} from '@appium/support';
 import type {
   AppiumServer,
   DriverCaps,
@@ -30,7 +31,6 @@ import type {
   Plugin,
   PluginClass,
   PluginCommand,
-  Protocol,
   RouteMatcher,
   StringRecord,
   TimestampedMultiSessionData,
@@ -395,7 +395,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const host = bidiCommands.determineBiDiHost(address);
-        const urlHost = isIPv6(host) ? `[${host}]` : host;
+        const urlHost = net.formatHostnameForUrl(host);
         const bidiUrl = `${scheme}://${urlHost}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
@@ -421,16 +421,16 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
           this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
         }
       }
-      return {
+      return markResponseEnvelope({
         protocol,
         error: error instanceof Error ? error : new Error(String(error)),
-      };
+      });
     }
 
-    return {
+    return markResponseEnvelope({
       protocol,
       value: [innerSessionId, dCaps, protocol],
-    };
+    });
   }
 
   /**
@@ -477,11 +477,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
-    let protocol: Protocol | undefined;
     try {
       const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
       if (dstSession) {
-        protocol = dstSession.protocol;
         this.cleanupBidiSockets(sessionId);
       }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
@@ -490,17 +488,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         throw new Error('Session not found');
       }
 
-      return {
-        protocol,
+      return markResponseEnvelope({
+        protocol: PROTOCOLS.W3C,
         value: await dstSession.deleteSession(sessionId),
-      };
+      });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       this.log.error(`Had trouble ending session ${sessionId}: ${msg}`);
-      return {
-        protocol,
+      return markResponseEnvelope({
+        protocol: PROTOCOLS.W3C,
         error: e instanceof Error ? e : new Error(msg),
-      };
+      });
     } finally {
       // regardless of whether the deleteSession completes successfully or not
       // make the session unavailable, because who knows what state it might
@@ -615,7 +613,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // sure that session actually exists on the session driver, and set the session driver itself
     let sessionId: string | null = null;
     let dstSession: ExternalDriver | null = null;
-    let protocol: string | null | undefined = null;
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let driver: this | ExternalDriver = this;
     if (isSessionCmd) {
@@ -624,8 +621,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (!dstSession) {
         throw new Error(`The session with id '${sessionId}' does not exist`);
       }
-      // now save the response protocol given that the session driver's protocol might differ
-      protocol = dstSession.protocol;
       if (!isUmbrellaCmd) {
         driver = dstSession;
       }
@@ -633,14 +628,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     // get any plugins which are registered as handling this command
     const plugins = this.pluginsToHandleCmd(cmd, sessionId);
-
-    // if any plugins are going to handle this command, we can't guarantee that the default
-    // driver's executeCommand method will be called, which means we can't guarantee that the
-    // newCommandTimeout will be cleared. So we do it here as well.
-    if (plugins.length && dstSession) {
-      this.log.debug('Clearing new command timeout pre-emptively since plugin(s) will handle this command');
-      await dstSession.clearNewCommandTimeout();
-    }
 
     // now we define a 'cmdHandledBy' object which will keep track of which plugins have handled this
     // command. we care about this because (a) multiple plugins can handle the same command, and
@@ -673,7 +660,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         if (!dstSession?.proxyCommand) {
           throw new NoDriverProxyCommandError();
         }
-        return await dstSession.proxyCommand(
+        return await dstSession.executeCommand(
+          'proxyCommand',
           reqForProxy.originalUrl,
           reqForProxy.method as HTTPMethod,
           reqForProxy.body,
@@ -707,21 +695,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     });
     // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
     // re-enters executeCommand for a different command doesn't inherit and misuse this one
-    const res = await withoutProxyReq(() => this.executeWrappedCommand({wrappedCmd, protocol}));
+    const execute = () => withoutProxyReq(() => this.executeWrappedCommand(wrappedCmd));
+    // Keep the timer suspended through the entire plugin chain, including work after next().
+    // Plugins may handle a command themselves or continue processing after the driver returns.
+    const res =
+      dstSession && plugins.length
+        ? await runWithCommandTimeout(dstSession, execute, {restart: cmd !== DELETE_SESSION_COMMAND})
+        : await execute();
 
-    // if we had plugins, make sure to log out the helpful report about which plugins ended up
-    // handling the command and which didn't
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
-
-    // if we had plugins, and if they did not ultimately call the default handler, this means our
-    // new command timeout was not restarted by the default handler's executeCommand call, so
-    // restart it here using the same logic as in BaseDriver's executeCommand
-    if (dstSession && !cmdHandledBy.default && dstSession.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
-      this.log.debug(
-        'Restarting new command timeout via umbrella driver since plugin did not ' + 'allow default handler to execute',
-      );
-      await dstSession.startNewCommandTimeout();
-    }
 
     // And finally, if the command was createSession, we want to migrate any plugins which were
     // previously sessionless to use the new sessionId, so that plugins can share state between
@@ -821,13 +803,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   }
 
   /** Runs the wrapped plugin chain and merges the result into a `SessionHandlerResult` shape. */
-  async executeWrappedCommand({
-    wrappedCmd,
-    protocol,
-  }: {
-    wrappedCmd: () => Promise<unknown>;
-    protocol: string | null | undefined;
-  }): Promise<SessionHandlerResult<unknown>> {
+  async executeWrappedCommand(wrappedCmd: () => Promise<unknown>): Promise<SessionHandlerResult<unknown>> {
     let cmdRes: unknown;
     let cmdErr: unknown;
     const res: SessionHandlerResult<unknown> = {};
@@ -840,17 +816,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       cmdErr = e;
     }
 
-    // Sadly, we don't know exactly what kind of object will be returned. It will either be a bare
-    // object, or a protocol-aware object with protocol and error/value keys. So we need to sniff
-    // it and make sure we don't double-wrap it if it's the latter kind.
-    if (util.isPlainObject(cmdRes) && 'protocol' in cmdRes) {
+    // A marked envelope or a returned Error is passed through. `{protocol: 'W3C', value}` is data.
+    if (isProtocolResponseEnvelope(cmdRes)) {
       Object.assign(res, cmdRes);
     } else {
       res.value = cmdRes;
       res.error = cmdErr instanceof Error ? cmdErr : undefined;
-      res.protocol = protocol ?? undefined;
+      res.protocol = PROTOCOLS.W3C;
     }
-    return res;
+    return markResponseEnvelope(res);
   }
 
   /** Whether the inner session driver is actively proxying for this session id. */

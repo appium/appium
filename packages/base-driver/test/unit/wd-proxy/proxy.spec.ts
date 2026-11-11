@@ -3,7 +3,7 @@ import {before, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
 
-import {WebDriverProxy} from '../../../lib/index.js';
+import {WebDriverProxy, getResponseForW3CError} from '../../../lib/index.js';
 import {type MockRequestOpts, request} from './mock-request.js';
 
 function buildReqRes(url: string, method: string, body?: any): [any, any] {
@@ -53,6 +53,24 @@ describe('proxy', function () {
     assert.strictEqual(j.server, '127.0.0.2');
     assert.strictEqual(j.port, port);
   });
+  it('should retain downstream error data through command and HTTP proxy responses', async function () {
+    const j = mockProxy({sessionId: '123'});
+    const value = {
+      error: 'unexpected alert open',
+      message: 'alert',
+      stacktrace: 'remote stack',
+      data: {text: 'Unsaved changes'},
+    };
+    j.proxyCommand = async () => [{statusCode: 500} as any, {value}];
+    await assert.rejects(j.command('/url', 'GET'), (error) => {
+      assert.deepStrictEqual(getResponseForW3CError(error), [500, {value}]);
+      return true;
+    });
+    const [req, res] = buildReqRes('/session/123/url', 'GET');
+    await j.proxyReqRes(req, res);
+    assert.equal(res.sentCode, 500);
+    assert.deepStrictEqual(res.sentBody.value, value);
+  });
   it('should save session id on session creation', async function () {
     const j = mockProxy();
     const [res, body] = await j.proxy('/session', 'POST', {
@@ -63,6 +81,16 @@ describe('proxy', function () {
     assert.strictEqual(j.sessionId, '123');
   });
   describe('getUrlForProxy', function () {
+    for (const value of ['a%23b', 'a%2Fb', 'a%25b', 'a%3Fb', '%E6%97%A5%E6%9C%AC']) {
+      for (const prefix of ['', '/session/old', '/wd/hub/session/old']) {
+        it(`should preserve encoded parameters ${value} under ${prefix || '/'}`, function () {
+          assert.equal(
+            mockProxy({sessionId: 'new'}).getUrlForProxy(`${prefix}/element/${value}/attribute/${value}?q=%25`, 'GET'),
+            `http://${TEST_HOST}:${port}/session/new/element/${value}/attribute/${value}?q=%25`,
+          );
+        });
+      }
+    }
     it('should modify session id, host, and port', function () {
       assert.strictEqual(
         mockProxy({sessionId: '123'}).getUrlForProxy('http://host.com:1234/session/456/element/200/value', 'POST'),

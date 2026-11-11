@@ -4,6 +4,7 @@ import {BaseDriver} from './basedriver/driver.js';
 export {DriverCore} from './basedriver/core.js';
 export {DeviceSettings} from './basedriver/device-settings.js';
 export {AppiumIpc} from './basedriver/ipc.js';
+export {runWithCommandTimeout} from './basedriver/command-timeout.js';
 
 export {BaseDriver};
 export {
@@ -31,7 +32,11 @@ export {
   errors,
   getProxyReq,
   getResponseForW3CError,
+  JsonParseErrors,
+  jsonParseErrors,
   isErrorType,
+  isProtocolResponseEnvelope,
+  markResponseEnvelope,
   isSessionCommand,
   handleIdempotency,
   makeArgs,

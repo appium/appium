@@ -19,6 +19,7 @@ import type {Constraints} from './constraints.js';
 import type {HTTPHeaders, HTTPMethod} from './http.js';
 import type {AppiumLogger} from './logger.js';
 import type {AppiumServer, UpdateServerCallback} from './server.js';
+import type {TimeoutValue} from './standard-caps.js';
 import type {Class, Merge, StringRecord} from './util.js';
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -42,6 +43,9 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   curValue: unknown,
 ) => Promise<void>;
 
+/**
+ * @deprecated Ignored. Responses are always W3C. Removed in Appium 5.
+ */
 export type Protocol = 'MJSONWP' | 'W3C';
 
 /**
@@ -55,6 +59,9 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   sessionCreationTimestampMs: number;
   opts: DriverOpts<C>;
   initialOpts: InitialOpts;
+  /**
+   * @deprecated Ignored. Responses are always W3C. Removed in Appium 5.
+   */
   protocol?: Protocol;
   helpers: DriverHelpers;
   basePath: string;
@@ -62,7 +69,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   allowInsecure: string[];
   denyInsecure: string[];
   newCommandTimeoutMs: number;
-  implicitWaitMs: number;
+  implicitWaitMs: TimeoutValue;
   locatorStrategies: string[];
   webLocatorStrategies: string[];
   eventEmitter: EventEmitter;

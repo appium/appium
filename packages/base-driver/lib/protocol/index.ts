@@ -1,6 +1,8 @@
 export {BIDI_COMMANDS} from './bidi-commands/index.js';
 export {errorFromW3CJsonCode, errors, getResponseForW3CError, isErrorType} from './errors.js';
+export {isProtocolResponseEnvelope, markResponseEnvelope} from './helpers.js';
 export {handleIdempotency} from './idempotency.js';
+export {JsonParseErrors, jsonParseErrors} from './json-parse-error.js';
 export {checkParams, makeArgs, validateExecuteMethodParams} from './params.js';
 export type {CheckParamsOptions} from './params.js';
 export {getProxyReq, runWithProxyReq, withoutProxyReq} from './proxy-context.js';

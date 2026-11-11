@@ -133,8 +133,23 @@ export async function getActiveDrivers(
       }
     }
   }
-  const pairs = await importExtensions('driver', driverConfig, filteredDriverNames, maxParallelImports);
-  return new Map([...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)]);
+  const pairs = await importExtensions(
+    'driver',
+    driverConfig,
+    driverConfig.getActiveDriverNames(filteredDriverNames),
+    maxParallelImports,
+  );
+  const activeDrivers: DriverNameMap = new Map();
+  for (const [driver, driverName] of [...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)]) {
+    const existingName = activeDrivers.get(driver);
+    if (existingName !== undefined && existingName !== driverName) {
+      throw new TypeError(
+        `Driver class '${driver.name}' cannot be activated as both '${existingName}' and '${driverName}'`,
+      );
+    }
+    activeDrivers.set(driver, driverName);
+  }
+  return activeDrivers;
 }
 
 /** Whether a `useDrivers` entry is the location of a driver package rather than a driver name */

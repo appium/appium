@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0-beta.7](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.6...@appium/storage-plugin@3.0.0-beta.7) (2026-10-31)
+
+**Note:** Version bump only for package @appium/storage-plugin
+
+
+
+
+
+## [3.0.0-beta.6](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.5...@appium/storage-plugin@3.0.0-beta.6) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+
+### Bug Fixes
+
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([17421ae](https://github.com/appium/appium/commit/17421ae61fa9f9e74a52b116f3ed2ee3c09fbc1f))
+
+
+## [3.0.0-beta.5](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.4...@appium/storage-plugin@3.0.0-beta.5) (2026-10-18)
+
+### Bug Fixes
+
+* **storage-plugin:** contain upload event socket errors ([#22963](https://github.com/appium/appium/issues/22963)) ([139f086](https://github.com/appium/appium/commit/139f086941acb06a189892887e829639e525fee8))
+* **storage-plugin:** preserve pending upload sockets across retries ([#22948](https://github.com/appium/appium/issues/22948)) ([d8fff40](https://github.com/appium/appium/commit/d8fff407cfa8a005de0dfe65df6c6ed8e715245e))
+* **storage-plugin:** reject concurrent WebSocket uploads ([#22962](https://github.com/appium/appium/issues/22962)) ([9940156](https://github.com/appium/appium/commit/9940156d1a316619d2709c91d216e1cb3e81ef43))
+* **storage-plugin:** reject reserved partial-file names ([#22959](https://github.com/appium/appium/issues/22959)) ([ef5468c](https://github.com/appium/appium/commit/ef5468ceac8dec3c26748211a21dc52dbd007037))
+
+
+## [3.0.0-beta.4](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.3...@appium/storage-plugin@3.0.0-beta.4) (2026-10-09)
+
+### ⚠ BREAKING CHANGES
+
+* **storage-plugin:** the storage routes (and the stream/events websocket paths) were always mounted at the server root, ignoring --base-path. They are now prefixed with the base path, e.g. /wd/hub/appium/storage/add.
+
+### Bug Fixes
+
+* **storage-plugin:** mount routes under the server base path ([#22906](https://github.com/appium/appium/issues/22906)) ([8297d31](https://github.com/appium/appium/commit/8297d31fb18b4d0b9e2b377332cfc680281ec6ed))
+
+
 ## [3.0.0-beta.3](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.2...@appium/storage-plugin@3.0.0-beta.3) (2026-10-05)
 
 ### Bug Fixes

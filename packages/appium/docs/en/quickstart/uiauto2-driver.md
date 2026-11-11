@@ -12,7 +12,7 @@ interface that allows Appium to automate a particular platform.
     (whereas the iOS driver, for example, requires you to be using macOS).
 
 The driver we're going to use is called the [UiAutomator2
-Driver](https://github.com/appium/appium-uiautomator2-driver). It's worth visiting that driver's
+Driver](https://appium.github.io/appium-uiautomator2-driver/). It's worth visiting that driver's
 documentation and bookmarking it, because it will be an invaluable reference down the line.
 
 ## Set up Android automation requirements
@@ -105,7 +105,7 @@ appium setup
 ```
 
 Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
-(only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
+(only if running macOS), and [Espresso](https://appium.github.io/appium-espresso-driver/).
 
 You can also use this command to batch install drivers for desktop applications or desktop browsers.
 For more details on this, refer to the [Setup command documentation](../reference/cli/setup.md).

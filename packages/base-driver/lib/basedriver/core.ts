@@ -12,8 +12,9 @@ import type {
   Protocol,
   RouteMatcher,
   StringRecord,
+  TimeoutValue,
 } from '@appium/types';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 
 import {DEFAULT_BASE_PATH, NEW_COMMAND_TIMEOUT_MS, PROTOCOLS, W3C_TIMEOUTS_MS} from '../constants.js';
 import {errors, GET_STATUS_COMMAND} from '../protocol/index.js';
@@ -55,9 +56,9 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   allowInsecure: string[] = [];
   denyInsecure: string[] = [];
   newCommandTimeoutMs: number = NEW_COMMAND_TIMEOUT_MS;
-  scriptTimeoutMs: number = W3C_TIMEOUTS_MS.SCRIPT;
-  pageLoadTimeoutMs: number = W3C_TIMEOUTS_MS.PAGE_LOAD;
-  implicitWaitMs: number = W3C_TIMEOUTS_MS.IMPLICIT_WAIT;
+  scriptTimeoutMs: TimeoutValue = W3C_TIMEOUTS_MS.SCRIPT;
+  pageLoadTimeoutMs: TimeoutValue = W3C_TIMEOUTS_MS.PAGE_LOAD;
+  implicitWaitMs: TimeoutValue = W3C_TIMEOUTS_MS.IMPLICIT_WAIT;
   locatorStrategies: string[] = [];
   webLocatorStrategies: string[] = [];
   managedDrivers: Driver[] = [];

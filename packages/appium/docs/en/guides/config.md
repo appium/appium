@@ -34,7 +34,7 @@ discovered and loaded by Appium:
 - `appium.config.cjs`
 - `.appiumrc` (which is considered to be JSON)
 
-Further, _if your project uses Node.js,_ you can use store the configuration inside an `appium`
+Further, _if your project uses Node.js,_ you can store the configuration inside an `appiumConfig`
 property in your `package.json` and it will be automatically discovered.
 
 ### Config File Search
@@ -95,4 +95,4 @@ and the values of any specific configuration it provides are under this. For exa
 
 All properties are case-sensitive and will be in
 [kebab-case](https://en.wikipedia.org/wiki/Naming_convention_(programming)#Delimiter-separated_words).
-For example, `callback-port` is allowed, but `callbackPort` is not.
+For example, `base-path` is allowed, but `basePath` is not.

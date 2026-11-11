@@ -7,7 +7,7 @@ import type {TransformMetadata} from './types.js';
 import {transformQuery} from './xpath.js';
 
 export class UniversalXMLPlugin extends BasePlugin {
-  static executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
+  static override executeMethodMap: ExecuteMethodMap<UniversalXMLPlugin> = {
     'universalXml: setEnabled': {
       command: 'setTranslationEnabled',
       params: {required: ['enabled']},
@@ -69,7 +69,11 @@ export class UniversalXMLPlugin extends BasePlugin {
   ): Promise<string> {
     void sessId;
     const source = (next ? await next() : await driver.getPageSource()) as string;
-    if (!this.translationEnabled) {
+    if (
+      !this.translationEnabled ||
+      typeof driver.getCurrentContext !== 'function' ||
+      (await driver.getCurrentContext()) !== 'NATIVE_APP'
+    ) {
       return source;
     }
     const metadata: TransformMetadata = {};

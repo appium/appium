@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
+import {link} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {promisify} from 'node:util';
@@ -137,6 +138,16 @@ describe('util', function () {
     it('should pass an array through', function () {
       const arr = ['a', 'b'];
       assert.deepStrictEqual(util.safeJsonParse(arr), arr);
+    });
+    for (const arr of [[1], [true], ['null'], ['{}']]) {
+      it(`should preserve the array ${JSON.stringify(arr)}`, function () {
+        assert.strictEqual(util.safeJsonParse(arr), arr);
+      });
+    }
+    it('should not coerce objects to strings', function () {
+      const obj = {toString: sandbox.stub().returns('1')};
+      assert.strictEqual(util.safeJsonParse(obj), obj);
+      sandbox.assert.notCalled(obj.toString);
     });
     it('should correctly parse json array', function () {
       const arr = ['a', 'b'];
@@ -340,6 +351,23 @@ describe('util', function () {
     after(async function () {
       await fs.rimraf(tmpDir);
     });
+
+    /**
+     * Make `fs.stat` report the given identity fields instead of the real ones.
+     *
+     * @param targetPath - Path whose stat result is altered, or `undefined` to alter every one.
+     * @param overrides - Values replacing `ino` and/or `dev` of the real stat result.
+     */
+    async function stubStatsOf(targetPath: string | undefined, overrides: {ino?: bigint; dev?: bigint}) {
+      const stat = await fs.stat(targetPath ?? path1, {bigint: true});
+      const stub = sandbox.stub(fs, 'stat');
+      if (targetPath) {
+        stub.callThrough().withArgs(targetPath, {bigint: true}).resolves(Object.assign(stat, overrides));
+      } else {
+        stub.resolves(Object.assign(stat, overrides));
+      }
+    }
+
     it('should match paths to the same file/folder', async function () {
       assert.strictEqual(
         await util.isSameDestination(path1, path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))),
@@ -352,6 +380,25 @@ describe('util', function () {
     it('should not match paths to different files', async function () {
       assert.strictEqual(await util.isSameDestination(path1, path2), false);
     });
+    it('should not match equal inode numbers on different devices', async function () {
+      const firstStat = await fs.stat(path1, {bigint: true});
+      await stubStatsOf(path2, {ino: firstStat.ino, dev: firstStat.dev + 1n});
+
+      assert.strictEqual(await util.isSameDestination(path1, path2), false);
+      assert.strictEqual(await util.isSameDestination(path1, path1, path2), false);
+    });
+    it('should match hard links to the same file', async function () {
+      const linkPath = path.join(tmpDir, 'hard-link.txt');
+      await link(path1, linkPath);
+
+      assert.strictEqual(await util.isSameDestination(path1, linkPath, path1), true);
+    });
+    it('should not match different paths with unknown inode numbers', async function () {
+      await stubStatsOf(undefined, {ino: 0n});
+
+      assert.strictEqual(await util.isSameDestination(path1, path2), false);
+      assert.strictEqual(await util.isSameDestination(path1, path1), true);
+    });
   });
 
   describe('compareVersions', function () {
@@ -363,6 +410,25 @@ describe('util', function () {
       assert.strictEqual(util.compareVersions('11.1', '!=', '11.10'), true);
       assert.strictEqual(util.compareVersions('12.0', '<', 10 as any), false);
     });
+    for (const [left, operator, right, expected] of [
+      ['2.0.0-beta.1', '>', '1.9.9', true],
+      ['2.0.0-beta.1', '>=', '1.9.9', true],
+      ['2.0.0-beta.1', '<', '2.0.0', true],
+      ['2.0.0-beta.1', '<=', '2.0.0', true],
+      ['2.0.0-beta.1', '>', '1.9.9-beta.1', true],
+      ['2.0.0-beta.1', '>', '2.0.0', false],
+      ['2.0.0-beta.1', '<', '1.9.9', false],
+      ['2.0.0-beta.10', '>', '2.0.0-beta.2', true],
+      ['2.0.0-alpha.1', '<', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '=', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '==', '2.0.0-beta.1', true],
+      ['2.0.0-beta.1', '!=', '2.0.0-beta.1', false],
+      ['2.0.0-beta.1', '!=', '2.0.0', true],
+    ] as const) {
+      it(`should evaluate ${left} ${operator} ${right} as ${expected}`, function () {
+        assert.strictEqual(util.compareVersions(left, operator, right), expected);
+      });
+    }
     it('should throw if any of version arguments is invalid', function () {
       assert.throws(() => util.compareVersions(undefined as any, '<', '11.0'));
       assert.throws(() => util.compareVersions('11.0', '==', null as any));

@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.6...@appium/execute-driver-plugin@8.0.0-beta.7) (2026-10-31)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
+## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.5...@appium/execute-driver-plugin@8.0.0-beta.6) (2026-10-26)
+
+### Bug Fixes
+
+* **execute-driver-plugin:** return null when a script result refers to itself ([#23085](https://github.com/appium/appium/issues/23085)) ([1db7aa9](https://github.com/appium/appium/commit/1db7aa9eb73943cc387da28f16d99b8cc1b6392d))
+
+
+## [8.0.0-beta.5](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.4...@appium/execute-driver-plugin@8.0.0-beta.5) (2026-10-18)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
+## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.3...@appium/execute-driver-plugin@8.0.0-beta.4) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* **execute-driver-plugin:** bracket IPv6 server hosts for webdriverio ([#22912](https://github.com/appium/appium/issues/22912)) ([dbae73b](https://github.com/appium/appium/commit/dbae73b92180c457936c1d040ad9684cdd842b8e))
+
+
 ## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.2...@appium/execute-driver-plugin@8.0.0-beta.3) (2026-10-05)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

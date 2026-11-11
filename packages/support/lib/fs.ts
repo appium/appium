@@ -11,8 +11,8 @@ import {
   type PathLike,
   promises as fsPromises,
   read,
+  type RmOptions,
   rmSync,
-  type Stats,
   write,
 } from 'node:fs';
 import path from 'node:path';
@@ -21,11 +21,18 @@ import {promisify} from 'node:util';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 
-import {walk, type Walker, type WalkItem, type WalkOptions} from './internal/index.js';
+import {
+  MoveOperation,
+  type MvOptions,
+  pluralize,
+  walk,
+  type Walker,
+  type WalkItem,
+  type WalkOptions,
+} from './internal/index.js';
 import log from './logger.js';
 import {isWindows} from './system.js';
 import {Timer} from './timing.js';
-import {isSameDestination, isSubPath, pluralize} from './util.js';
 
 /**
  * Options for {@linkcode fs.copyFile}.
@@ -48,13 +55,10 @@ export interface CopyFileOptions {
   dereference?: boolean;
 }
 
-/** Options for {@linkcode fs.mv} */
-export interface MvOptions {
-  /** Whether to automatically create the destination folder structure */
-  mkdirp?: boolean;
-  /** Set to false to throw if the destination file already exists */
-  clobber?: boolean;
-}
+export type {MvOptions};
+
+/** Options for {@linkcode fs.rimraf} and {@linkcode fs.rimrafSync}; recursive and force removal are always enabled. */
+export type RimrafOptions = Omit<RmOptions, 'recursive' | 'force'>;
 
 /**
  * Callback used during directory walking in {@linkcode fs.walkDir}.
@@ -122,10 +126,6 @@ export function toCpOptions(opts: CopyFileOptions = {}): CopyOptions {
   };
 }
 
-function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
-  return err instanceof Error && 'code' in err;
-}
-
 export const fs = {
   /**
    * Resolves `true` if `path` is _readable_.
@@ -165,18 +165,20 @@ export const fs = {
 
   /**
    * Remove a directory and all its contents, recursively.
+   * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
-  async rimraf(filepath: PathLike): Promise<void> {
-    return await fsPromises.rm(filepath, {recursive: true, force: true});
+  async rimraf(filepath: PathLike, opts: RimrafOptions = {}): Promise<void> {
+    return await fsPromises.rm(filepath, {...opts, recursive: true, force: true});
   },
 
   /**
    * Remove a directory and all its contents, recursively (sync).
+   * Options are forwarded to Node.js; `recursive` and `force` are always `true`.
    * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
-  rimrafSync(filepath: PathLike): void {
-    return rmSync(filepath, {recursive: true, force: true});
+  rimrafSync(filepath: PathLike, opts: RimrafOptions = {}): void {
+    return rmSync(filepath, {...opts, recursive: true, force: true});
   },
 
   /**
@@ -212,73 +214,7 @@ export const fs = {
    * Move a file or a folder.
    */
   async mv(from: string, to: string, opts: MvOptions = {}): Promise<void> {
-    const ensureDestination = async (p: PathLike): Promise<boolean> => {
-      if (opts?.mkdirp && !(await this.exists(p))) {
-        await fsPromises.mkdir(p, {recursive: true});
-        return true;
-      }
-      return false;
-    };
-    const renameFile = async (src: PathLike, dst: PathLike, skipExistenceCheck: boolean): Promise<void> => {
-      if (!skipExistenceCheck && (await this.exists(dst))) {
-        if (opts?.clobber === false) {
-          const err = new Error(`The destination path '${dst?.toString()}' already exists`) as NodeJS.ErrnoException;
-          err.code = 'EEXIST';
-          throw err;
-        }
-        await this.rimraf(dst);
-      }
-      try {
-        await fsPromises.rename(src, dst);
-      } catch (err) {
-        if (isErrnoException(err) && err.code === 'EXDEV') {
-          // Preserve relative and dangling links when rename crosses filesystems.
-          await fsPromises.cp(String(src), String(dst), {verbatimSymlinks: true});
-          await this.rimraf(src);
-        } else {
-          throw err;
-        }
-      }
-    };
-
-    let fromStat: Stats;
-    try {
-      fromStat = await fsPromises.stat(from);
-    } catch (err) {
-      if (isErrnoException(err) && err.code === 'ENOENT') {
-        throw new Error(`The source path '${from}' does not exist or is not accessible`, {
-          cause: err,
-        });
-      }
-      throw err;
-    }
-    // moving a path onto itself deletes it, and a destination inside the source never returns
-    if (await isSameDestination(from, to)) {
-      return;
-    }
-    if (fromStat.isDirectory() && isSubPath(path.resolve(to), path.resolve(from))) {
-      throw new Error(`Cannot move '${from}' to '${to}' because the destination is inside the source`);
-    }
-    if (fromStat.isFile()) {
-      const dstRootWasCreated = await ensureDestination(path.dirname(to));
-      await renameFile(from, to, dstRootWasCreated);
-    } else if (fromStat.isDirectory()) {
-      const dstRootWasCreated = await ensureDestination(to);
-      const items = await fsPromises.readdir(from, {withFileTypes: true});
-      for (const item of items) {
-        const srcPath = path.join(from, item.name);
-        const destPath = path.join(to, item.name);
-        if (item.isDirectory()) {
-          await this.mv(srcPath, destPath, opts);
-        } else if (item.isFile() || item.isSymbolicLink()) {
-          await renameFile(srcPath, destPath, dstRootWasCreated);
-        }
-      }
-    } else {
-      return;
-    }
-
-    await this.rimraf(from);
+    await new MoveOperation(from, to, opts, fs).move();
   },
 
   /** Find path to an executable in system `PATH`. @see https://github.com/npm/node-which */
@@ -452,3 +388,7 @@ export const fs = {
 };
 
 export default fs;
+
+function isErrnoException(err: unknown): err is NodeJS.ErrnoException {
+  return err instanceof Error && 'code' in err;
+}

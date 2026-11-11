@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "8.0.0-beta.2",
+  "version": "8.0.0-beta.6",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -47,23 +47,23 @@
   },
   "scripts": {
     "test": "npm run test:unit",
-    "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",
+    "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=60000 \"./build/test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "node --test --experimental-test-module-mocks --test-concurrency=1 --enable-source-maps \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/logger": "~3.0.0-beta.1",
-    "@appium/types": "~2.0.0-beta.2",
+    "@appium/logger": "~3.0.0-beta.2",
+    "@appium/types": "~2.0.0-beta.5",
     "archiver": "^8.0.0",
-    "asyncbox": "^6.4.2",
-    "axios": "^1.19.0",
+    "asyncbox": "^6.6.0",
+    "axios": "^1.20.0",
     "lockfile": "^1.0.4",
     "mime-types": "^3.0.2",
     "plist": "^5.0.0",
     "pluralize": "^8.0.0",
     "sanitize-filename": "^1.6.4",
     "semver": "^7.8.5",
-    "shell-quote": "^1.10.0",
+    "shell-quote": "^1.12.0",
     "teen_process": "^4.2.1",
     "which": "^7.0.0",
     "yauzl": "^3.4.0"

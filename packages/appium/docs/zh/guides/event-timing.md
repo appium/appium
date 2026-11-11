@@ -17,7 +17,7 @@ property:
 
 ```
 {
-    "<event_type>": [<occurence_timestamp_1>, ...],
+    "<event_type>": [<occurrence_timestamp_1>, ...],
     "commands": [
         {
             "cmd": "<command_name>",

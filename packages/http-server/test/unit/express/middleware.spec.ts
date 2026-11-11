@@ -5,9 +5,86 @@ import {match} from 'path-to-regexp';
 import sinon from 'sinon';
 
 import {log} from '../../../lib/logger.js';
-import {handleLogContext} from '../../../lib/middleware.js';
+import {handleLogContext, rejectBrowserOrigin, tryHandleWebSocketUpgrade} from '../../../lib/middleware/index.js';
 
 describe('middleware', function () {
+  describe('WebSocket upgrades', function () {
+    for (const path of ['/bidi/%FF', '/bidi/%', '/bidi/a%2Fb?query=1']) {
+      it(`should match ${path} without decoding unused route parameters`, function () {
+        const handleUpgrade = sinon.spy();
+        const req = {headers: {upgrade: 'websocket'}, url: path};
+        assert.equal(
+          tryHandleWebSocketUpgrade({
+            req: req as any,
+            socket: {} as any,
+            head: Buffer.alloc(0),
+            webSocketsMapping: {'/bidi/:sessionId': {handleUpgrade} as any},
+          }),
+          true,
+        );
+        assert.equal(handleUpgrade.calledOnce, true);
+      });
+    }
+
+    it('should reject an upgrade with an Origin header unless CORS is allowed', function () {
+      const handleUpgrade = sinon.spy();
+      const end = sinon.spy();
+      const req = {headers: {upgrade: 'websocket', origin: 'https://evil.example'}, url: '/bidi'};
+      const opts = {
+        req: req as any,
+        socket: {end} as any,
+        head: Buffer.alloc(0),
+        webSocketsMapping: {'/bidi': {handleUpgrade} as any},
+      };
+      assert.equal(tryHandleWebSocketUpgrade(opts), true);
+      assert.equal(end.calledOnce, true);
+      assert.match(end.firstCall.args[0], /^HTTP\/1\.1 403/);
+      assert.equal(handleUpgrade.called, false);
+
+      assert.equal(tryHandleWebSocketUpgrade({...opts, socket: {} as any, allowCors: true}), true);
+      assert.equal(handleUpgrade.calledOnce, true);
+    });
+
+    it('should consume and close an upgrade whose handler throws', function () {
+      const destroy = sinon.spy();
+      const handleUpgrade = sinon.stub().throws(new Error('upgrade failed'));
+      assert.equal(
+        tryHandleWebSocketUpgrade({
+          req: {headers: {upgrade: 'websocket'}, url: '/bidi/session'} as any,
+          socket: {destroy} as any,
+          head: Buffer.alloc(0),
+          webSocketsMapping: {'/bidi/:sessionId': {handleUpgrade} as any},
+        }),
+        true,
+      );
+      assert.equal(destroy.calledOnce, true);
+    });
+  });
+  describe('rejectBrowserOrigin', function () {
+    function run(method: string, origin?: string) {
+      const json = sinon.spy();
+      const res = {status: sinon.stub().returnsThis(), json};
+      const next = sinon.spy();
+      rejectBrowserOrigin(
+        {method, path: '/appium/storage/reset', headers: origin ? {origin} : {}} as any,
+        res as any,
+        next,
+      );
+      return {res, next};
+    }
+
+    it('should reject state-changing requests with an Origin header', function () {
+      const {res, next} = run('POST', 'https://evil.example');
+      assert.equal(res.status.calledWith(403), true);
+      assert.equal(next.called, false);
+    });
+
+    it('should pass requests without an Origin header and safe methods', function () {
+      assert.equal(run('POST').next.calledOnce, true);
+      assert.equal(run('GET', 'https://evil.example').next.calledOnce, true);
+    });
+  });
+
   describe('match', function () {
     it('should match static path pattern', function () {
       const pathname = '/ws/session/1234/appium/device/syslog';

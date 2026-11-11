@@ -49,5 +49,9 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+      - name: Check llms.txt
+        run: npm run docs:check-llmstxt
       - name: Build Docs
         run: npm run docs:preview
+      - name: Verify llms.txt was published to the site
+        run: test -s packages/appium/docs/site/en/llms.txt

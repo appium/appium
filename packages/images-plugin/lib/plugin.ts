@@ -11,7 +11,7 @@ import {ImageElement} from './image-element.js';
 
 export class ImageElementPlugin extends BasePlugin {
   // this plugin supports a non-standard 'compare images' command
-  static newMethodMap: MethodMap<ImageElementPlugin> = {
+  static override newMethodMap: MethodMap<ImageElementPlugin> = {
     '/session/:sessionId/appium/compare_images': {
       POST: {
         command: 'compareImages',

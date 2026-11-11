@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.6](https://github.com/appium/appium/compare/@appium/docutils@4.0.0-beta.5...@appium/docutils@4.0.0-beta.6) (2026-10-31)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [4.0.0-beta.5](https://github.com/appium/appium/compare/@appium/docutils@4.0.0-beta.4...@appium/docutils@4.0.0-beta.5) (2026-10-26)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/@appium/docutils@4.0.0-beta.3...@appium/docutils@4.0.0-beta.4) (2026-10-18)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [4.0.0-beta.3](https://github.com/appium/appium/compare/@appium/docutils@4.0.0-beta.2...@appium/docutils@4.0.0-beta.3) (2026-10-09)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
 ## [4.0.0-beta.2](https://github.com/appium/appium/compare/@appium/docutils@4.0.0-beta.1...@appium/docutils@4.0.0-beta.2) (2026-10-05)
 
 **Note:** Version bump only for package @appium/docutils

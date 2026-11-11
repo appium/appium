@@ -102,10 +102,10 @@ and it is recommended to migrate to the following replacements:
 
 |Appium 1 Package|Replacement in Appium 2|
 |--|--|
-|iOS Driver|[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/latest/)|
-|UiAutomator Driver|[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver/)|
+|iOS Driver|[XCUITest Driver](https://appium.github.io/appium-xcuitest-driver/)|
+|UiAutomator Driver|[UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/)|
 |`wd` Client|[WebdriverIO Client](https://webdriver.io/)|
-|Appium Desktop|[Appium Inspector](https://github.com/appium/appium-inspector)|
+|Appium Desktop|[Appium Inspector](https://appium.github.io/appium-inspector/)|
 
 !!! info "Actions Needed"
 
@@ -197,8 +197,12 @@ and [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/m
 (MJSONWP) were used instead.
 
 In Appium 1, all of these protocols were supported, so that older Selenium/Appium clients could
-still communicate with newer Appium servers. Appium 2 removes support for JSONWP/MJSONWP and is now
-only compatible with the W3C WebDriver Protocol.
+still communicate with newer Appium servers. Appium 2 removes support for JSONWP/MJSONWP (including
+legacy `TouchAction` and `MultiAction` endpoints) and is now only compatible with the W3C WebDriver
+Protocol. Multi-touch and pointer gestures should be performed using the W3C
+[Perform Actions](../reference/api/webdriver.md#performactions) API (see the
+[Automating Gestures](./gestures.md) guide) or driver-specific
+[Execute Methods](./execute-methods.md).
 
 !!! info "Actions Needed"
 

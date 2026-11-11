@@ -15,7 +15,9 @@ export interface ProxyObject {
   socksUsername?: string;
   socksPassword?: string;
 }
-export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', number>;
+/** A standard WebDriver timeout in milliseconds, or null to disable the timeout. */
+export type TimeoutValue = number | null;
+export type Timeouts = Record<'script' | 'pageLoad' | 'implicit', TimeoutValue>;
 
 /**
  * W3C standard capabilities
@@ -51,9 +53,9 @@ export interface StandardCapabilities {
    */
   setWindowRect?: boolean;
   /**
-   * Describes the timeouts imposed on certain session operations.
+   * Describes the timeouts imposed on certain session operations. Omitted fields retain their defaults.
    */
-  timeouts?: Timeouts;
+  timeouts?: Partial<Timeouts>;
   /**
    * Defines the current session’s strict file interactability.
    */

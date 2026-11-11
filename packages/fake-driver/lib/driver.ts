@@ -1,7 +1,7 @@
 import type {Server as HttpServer} from 'node:http';
 
 import type {IIpcSubscription, InitialOpts, IpcData, IpcMessage} from '@appium/types';
-import {BaseDriver} from 'appium/driver.js';
+import {BaseDriver, runWithCommandTimeout} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import type {Express, Request, Response} from 'express';
 
@@ -29,10 +29,10 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   static newMethodMap = NEW_METHOD_MAP;
   static executeMethodMap = EXECUTE_METHOD_MAP;
 
-  readonly desiredCapConstraints = desiredCapConstraints;
+  override readonly desiredCapConstraints = desiredCapConstraints;
 
   /** Registers 'actions' with the base driver's generic getLogTypes/getLog commands. */
-  readonly supportedLogTypes = {
+  override readonly supportedLogTypes = {
     actions: {
       description: 'Log of all actions performed against the driver in this session',
       getter: () => this.appModel.actionLog,
@@ -92,16 +92,16 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
   // Find commands
   getExistingElementForNode = findCommands.getExistingElementForNode;
   wrapNewEl = findCommands.wrapNewEl;
-  findElOrEls = findCommands.findElOrEls;
-  findElement = findCommands.findElement;
-  findElements = findCommands.findElements;
-  findElementFromElement = findCommands.findElementFromElement;
-  findElementsFromElement = findCommands.findElementsFromElement;
+  override findElOrEls = findCommands.findElOrEls;
+  override findElement = findCommands.findElement;
+  override findElements = findCommands.findElements;
+  override findElementFromElement = findCommands.findElementFromElement;
+  override findElementsFromElement = findCommands.findElementsFromElement;
 
   // General commands
   title = generalCommands.title;
   keys = generalCommands.keys;
-  getPageSource = generalCommands.getPageSource;
+  override getPageSource = generalCommands.getPageSource;
   getOrientation = generalCommands.getOrientation;
   setOrientation = generalCommands.setOrientation;
   getScreenshot = generalCommands.getScreenshot;
@@ -139,7 +139,7 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
     this.lastPluginMath = null;
   }
 
-  get bidiProxyUrl(): string | null {
+  override get bidiProxyUrl(): string | null {
     return this._bidiProxyUrl;
   }
 
@@ -215,6 +215,29 @@ export class FakeDriver<Thing extends IpcData = null> extends BaseDriver<FakeDri
 
   async getWindowHandle(): Promise<string> {
     return '1';
+  }
+
+  /**
+   * Example custom entry point called directly, outside Appium's command dispatcher.
+   * Protect both the queued command and asynchronous work after executeCommand returns.
+   * Idle expiry resumes after the whole operation finishes, including when postProcess throws.
+   * Normal commands using BaseDriver.executeCommand need no additional wrapper. The helper tracks
+   * activity; it does not create a queue or guard arbitrary custom timers. This example uses the
+   * standard BaseDriver.startNewCommandTimeout implementation.
+   *
+   * @example
+   * const handle = await driver.getWindowHandleWithPostProcessing(async (handle) => {
+   *   await saveHandle(handle); // Application-specific asynchronous work
+   * });
+   *
+   * @see ../test/unit/command-timeout.spec.ts for success, failure, overlap, and idle expiry tests.
+   */
+  async getWindowHandleWithPostProcessing(postProcess: (handle: string) => Promise<void>): Promise<string> {
+    return await runWithCommandTimeout(this, async () => {
+      const handle = await this.executeCommand<string>('getWindowHandle');
+      await postProcess(handle);
+      return handle;
+    });
   }
 
   async getWindowHandles(): Promise<string[]> {

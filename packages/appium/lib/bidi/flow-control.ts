@@ -29,7 +29,6 @@ interface BiDiFlowArgs {
 
 /** The listeners that have handled an emitted event, and its serialized form */
 export interface BiDiEmitRecord {
-  tick: number;
   data?: Buffer;
   consumers: Set<object>;
 }
@@ -56,10 +55,8 @@ const CLOSE_GRACE_MS = 5000;
 const MAX_CLOSE_REASON_LENGTH = 120;
 
 const SIGNALS: WeakMap<EventEmitter, BackpressureSignals> = new WeakMap();
-const EMIT_RECORDS: WeakMap<object, BiDiEmitRecord> = new WeakMap();
-// Counts event loop ticks (lazily), so that records expire without a callback per event
-let currentTick = 0;
-let tickScheduled = false;
+// Replaced as a whole at the end of the tick, so no record outlives it, whatever happens to its source
+let emitRecords: WeakMap<object, BiDiEmitRecord> | undefined;
 
 /**
  * Reads the flow control settings from the server arguments, falling back to the defaults
@@ -83,17 +80,16 @@ export function resolveFlowOptions(args?: BiDiFlowArgs): BiDiFlowOptions {
  * @returns The record shared by all listeners of the same emit until the end of the tick
  */
 export function trackBiDiEvent(source: object, consumer: object): BiDiEmitRecord {
-  if (!tickScheduled) {
-    tickScheduled = true;
+  if (!emitRecords) {
+    emitRecords = new WeakMap();
     queueMicrotask(() => {
-      ++currentTick;
-      tickScheduled = false;
+      emitRecords = undefined;
     });
   }
-  let record = EMIT_RECORDS.get(source);
-  if (!record || record.tick !== currentTick || record.consumers.has(consumer)) {
-    record = {tick: currentTick, consumers: new Set()};
-    EMIT_RECORDS.set(source, record);
+  let record = emitRecords.get(source);
+  if (!record || record.consumers.has(consumer)) {
+    record = {consumers: new Set()};
+    emitRecords.set(source, record);
   }
   record.consumers.add(consumer);
   return record;

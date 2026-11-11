@@ -27,8 +27,9 @@ interface BiDiFlowArgs {
   bidiHeartbeatInterval?: number;
 }
 
-interface SerializedEvent {
-  data: Buffer;
+/** The listeners that have handled an emitted event, and its serialized form */
+export interface BiDiEmitRecord {
+  data?: Buffer;
   consumers: Set<object>;
 }
 
@@ -54,7 +55,7 @@ const CLOSE_GRACE_MS = 5000;
 const MAX_CLOSE_REASON_LENGTH = 120;
 
 const SIGNALS: WeakMap<EventEmitter, BackpressureSignals> = new WeakMap();
-const SERIALIZED_EVENTS: WeakMap<object, SerializedEvent> = new WeakMap();
+const EMIT_RECORDS: WeakMap<object, BiDiEmitRecord> = new WeakMap();
 
 /**
  * Reads the flow control settings from the server arguments, falling back to the defaults
@@ -70,26 +71,38 @@ export function resolveFlowOptions(args?: BiDiFlowArgs): BiDiFlowOptions {
 }
 
 /**
- * Serializes an event once for all consumers of the same emit; cached until the end of the tick.
+ * Registers a listener as the handler of an emitted event. Every listener must call it for
+ * every event, so that a repeated consumer reliably means the object has been emitted again.
  *
  * @param source The object that has been emitted
- * @param event The payload to serialize
- * @param consumer The listener that sends the event. A repeated consumer means a repeated emit.
+ * @param consumer The listener that handles the event
+ * @returns The record shared by all listeners of the same emit until the end of the tick
  */
-export function serializeBiDiEvent(source: object, event: object, consumer: object): Buffer {
-  let cached = SERIALIZED_EVENTS.get(source);
-  if (!cached || cached.consumers.has(consumer)) {
-    const fresh: SerializedEvent = {data: Buffer.from(JSON.stringify(event)), consumers: new Set()};
-    cached = fresh;
-    SERIALIZED_EVENTS.set(source, fresh);
+export function trackBiDiEvent(source: object, consumer: object): BiDiEmitRecord {
+  let record = EMIT_RECORDS.get(source);
+  if (!record || record.consumers.has(consumer)) {
+    const fresh: BiDiEmitRecord = {consumers: new Set()};
+    record = fresh;
+    EMIT_RECORDS.set(source, fresh);
     queueMicrotask(() => {
-      if (SERIALIZED_EVENTS.get(source) === fresh) {
-        SERIALIZED_EVENTS.delete(source);
+      if (EMIT_RECORDS.get(source) === fresh) {
+        EMIT_RECORDS.delete(source);
       }
     });
   }
-  cached.consumers.add(consumer);
-  return cached.data;
+  record.consumers.add(consumer);
+  return record;
+}
+
+/**
+ * Serializes an event once for all connections that receive it
+ *
+ * @param record The record of the emit, see {@linkcode trackBiDiEvent}
+ * @param event The payload to serialize
+ */
+export function serializeBiDiEvent(record: BiDiEmitRecord, event: object): Buffer {
+  record.data ??= Buffer.from(JSON.stringify(event));
+  return record.data;
 }
 
 /**
@@ -101,6 +114,7 @@ export class BiDiConnectionGuard {
   private readonly resumeLimit: number;
   private heartbeat?: NodeJS.Timeout;
   private closeTimer?: NodeJS.Timeout;
+  private watchdog?: NodeJS.Timeout;
   private missedPongs = 0;
   private overLimitSince: number | null = null;
   private congested = false;
@@ -142,13 +156,24 @@ export class BiDiConnectionGuard {
     const buffered = this.ws.bufferedAmount;
     if (buffered <= maxBufferedBytes) {
       this.overLimitSince = null;
+      clearTimeout(this.watchdog);
+      this.watchdog = undefined;
       return true;
     }
     const now = Date.now();
     this.overLimitSince ??= now;
-    if (buffered > maxBufferedBytes * HARD_CAP_FACTOR || now - this.overLimitSince >= maxBufferedMs) {
+    const overLimitMs = now - this.overLimitSince;
+    if (buffered > maxBufferedBytes * HARD_CAP_FACTOR || overLimitMs >= maxBufferedMs) {
       this.closeOverloaded(buffered);
       return false;
+    }
+    if (!this.watchdog) {
+      // do not depend on events or pings to notice that the limit has been exceeded for too long
+      this.watchdog = setTimeout(() => {
+        this.watchdog = undefined;
+        this.checkBuffer();
+      }, maxBufferedMs - overLimitMs);
+      this.watchdog.unref();
     }
     return true;
   }
@@ -180,6 +205,7 @@ export class BiDiConnectionGuard {
   private readonly onClose = (): void => {
     this.dispose();
     clearTimeout(this.closeTimer);
+    clearTimeout(this.watchdog);
   };
 
   private readonly onPong = (): void => {
@@ -210,6 +236,7 @@ export class BiDiConnectionGuard {
 
   private closeOverloaded(buffered: number): void {
     this.terminated = true;
+    clearTimeout(this.watchdog);
     const {maxBufferedBytes, maxBufferedMs} = this.options;
     this.log.warn(
       `Closing the BiDi connection: ${buffered} bytes are waiting to be read by the client ` +

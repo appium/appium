@@ -20,7 +20,13 @@ import {WebSocket} from 'ws';
 import type {AppiumDriver} from '../appium.js';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from '../constants.js';
 import {capitalize} from '../utils/index.js';
-import {BiDiConnectionGuard, BiDiDeliveryGate, resolveFlowOptions, serializeBiDiEvent} from './flow-control.js';
+import {
+  BiDiConnectionGuard,
+  BiDiDeliveryGate,
+  resolveFlowOptions,
+  serializeBiDiEvent,
+  trackBiDiEvent,
+} from './flow-control.js';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
@@ -316,7 +322,10 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
     const socketSend = promisify(socket.send.bind(socket)) as SendData;
     return async (data: string | Buffer, options?: {binary?: boolean}) => {
       try {
-        await assertIsOpen(socket);
+        // no yielding for an open socket: the buffer checks of the caller must see this write
+        if (socket.readyState !== WebSocket.OPEN) {
+          await assertIsOpen(socket);
+        }
         await socketSend(data, options);
       } catch (err) {
         logSocketErr(err instanceof Error ? err : new Error(String(err)));
@@ -582,6 +591,7 @@ function initBidiEventListeners(
   const eventListenerFactory = (extType: 'driver' | 'plugin', ext: ExtensionCore) => {
     const gate = new BiDiDeliveryGate(guard, ext.eventEmitter, ext.log);
     const eventListener = async (event: BiDiEvent) => {
+      const emitRecord = trackBiDiEvent(event, gate);
       let {context, method, params = {}} = event;
       // if the driver didn't specify a context, use the empty context
       if (!context) {
@@ -617,7 +627,10 @@ function initBidiEventListeners(
         return Array.isArray(contexts) && (contexts.includes('') || contexts.includes(context));
       });
       if (!isSubscribed) {
-        gate.forget(method);
+        // other contexts of the method may still be subscribed
+        if (!hasSubscription(bidiHandlerDriver, method, moduleName)) {
+          gate.forget(method);
+        }
       } else {
         if (!guard.checkBuffer() || !gate.admit(method, event.delivery)) {
           return;
@@ -638,7 +651,7 @@ function initBidiEventListeners(
         // now we can send the event onto the socket
         // serialized once for all connections; sent as a text frame
         const ev = {type: 'event', context, method, params};
-        await send(serializeBiDiEvent(event, ev, gate), {binary: false});
+        await send(serializeBiDiEvent(emitRecord, ev), {binary: false});
       }
     };
     registrations.push({emitter: ext.eventEmitter, eventListener, gate});
@@ -654,6 +667,10 @@ function initBidiEventListeners(
   }
   ws.once('close', disposeConnection);
   BIDI_CONNECTION_CLEANUPS.set(ws, disposeConnection);
+}
+
+function hasSubscription(driver: AnyDriver, method: string, moduleName: string): boolean {
+  return [method, moduleName].some((event) => (driver.bidiEventSubs[event]?.length ?? 0) > 0);
 }
 
 async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<WebSocket> {

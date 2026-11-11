@@ -20,6 +20,8 @@ class FakeSocket extends EventEmitter {
   readonly OPEN = WebSocket.OPEN;
   readyState: number = WebSocket.OPEN;
   bufferedAmount = 0;
+  // emulates a client that does not read: every write stays buffered
+  accumulate = false;
   readonly sent: Array<{data: string | Buffer; options: {binary?: boolean}}> = [];
   readonly close = sinon.spy((_code?: number, _reason?: string) => {
     this.readyState = WebSocket.CLOSING;
@@ -31,6 +33,9 @@ class FakeSocket extends EventEmitter {
 
   send(data: string | Buffer, options: {binary?: boolean}, callback: () => void): void {
     this.sent.push({data, options});
+    if (this.accumulate) {
+      this.bufferedAmount += Buffer.byteLength(data);
+    }
     callback();
   }
 
@@ -199,6 +204,41 @@ describe('BiDi flow control', function () {
       assert.equal(driver.eventEmitter.listenerCount('bidiEvent'), 1);
     });
 
+    it('checks the buffer for every event of a synchronous burst', async function () {
+      const socket = connect({bidiMaxBufferedBytes: 4 * MiB, bidiMaxBufferedMs: 60_000});
+      socket.accumulate = true;
+      const text = 'x'.repeat(MiB);
+      for (let i = 0; i < 20; ++i) {
+        driver.eventEmitter.emit('bidiEvent', {method: METHOD, params: {id: `e${i}`, text}});
+      }
+      await setImmediate();
+      assert.equal(socket.close.callCount, 1);
+      // the limit is exceeded by two events at most: the buffer is at the hard cap
+      assert.ok(socket.sent.length <= 9, `${socket.sent.length} events have been sent`);
+    });
+
+    it('closes the connection after the timeout even if no more events or pings come', async function () {
+      const clock = sinon.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
+      const socket = connect({bidiMaxBufferedBytes: 10 * MiB, bidiMaxBufferedMs: 1000, bidiHeartbeatInterval: 0});
+      socket.bufferedAmount = 11 * MiB;
+      emit('a');
+      await clock.tickAsync(999);
+      assert.equal(socket.close.callCount, 0);
+      await clock.tickAsync(1);
+      assert.equal(socket.close.callCount, 1);
+    });
+
+    it('does not close the connection that drains before the timeout', async function () {
+      const clock = sinon.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
+      const socket = connect({bidiMaxBufferedBytes: 10 * MiB, bidiMaxBufferedMs: 1000, bidiHeartbeatInterval: 0});
+      socket.bufferedAmount = 11 * MiB;
+      emit('a');
+      await clock.tickAsync(500);
+      socket.bufferedAmount = 0;
+      await clock.tickAsync(5000);
+      assert.equal(socket.close.callCount, 0);
+    });
+
     it('is disabled by a zero limit', async function () {
       const socket = connect({bidiMaxBufferedBytes: 0, bidiMaxBufferedMs: 0});
       socket.bufferedAmount = 1024 * MiB;
@@ -342,6 +382,42 @@ describe('BiDi flow control', function () {
         signals.map(({state}) => state),
         ['dropping', 'recovered'],
       );
+    });
+
+    it('keeps skipping a subscribed context when another context of the method is not subscribed', async function () {
+      await driver.bidiUnsubscribe([METHOD], ['']);
+      await driver.bidiSubscribe([METHOD], ['a']);
+      const socket = connect();
+      const emitIn = (context: string, id: string) =>
+        driver.eventEmitter.emit('bidiEvent', {method: METHOD, context, params: {id}, delivery: key(id)});
+      socket.bufferedAmount = 3 * MiB;
+      emitIn('a', 'd1');
+      socket.bufferedAmount = 0;
+      emitIn('b', 'd2');
+      emitIn('a', 'd3');
+      emitIn('a', 'k4');
+      await setImmediate();
+      assert.deepEqual(socket.methods, ['k4']);
+      assert.deepEqual(
+        signals.map(({state}) => state),
+        ['dropping', 'recovered'],
+      );
+    });
+
+    it('does not send a cached event to a connection that skipped it before the object was changed', async function () {
+      const fast = connect();
+      const slow = attach(appium);
+      slow.bufferedAmount = 3 * MiB;
+      emit('d1', key('d1'));
+      slow.bufferedAmount = 0;
+      const event = {method: METHOD, params: {id: 'd2'}, delivery: key('d2')};
+      driver.eventEmitter.emit('bidiEvent', event);
+      event.params.id = 'k3';
+      event.delivery = key('k3');
+      driver.eventEmitter.emit('bidiEvent', event);
+      await setImmediate();
+      assert.deepEqual(fast.methods, ['d1', 'd2', 'k3']);
+      assert.deepEqual(slow.methods, ['k3']);
     });
 
     it('always sends reliable events', async function () {

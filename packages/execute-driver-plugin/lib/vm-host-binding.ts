@@ -406,6 +406,21 @@ function syncShadowProperty(
   return wrappedDesc;
 }
 
+function pruneShadowKeys(shadowTarget: HostTarget, hostKeySet: ReadonlySet<string | symbol>): Array<string | symbol> {
+  const retainedNonConfigurable: Array<string | symbol> = [];
+  for (const shadowKey of Reflect.ownKeys(shadowTarget)) {
+    if (!hostKeySet.has(shadowKey)) {
+      const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, shadowKey);
+      if (shadowDesc?.configurable) {
+        Reflect.deleteProperty(shadowTarget, shadowKey);
+      } else if (shadowDesc) {
+        retainedNonConfigurable.push(shadowKey);
+      }
+    }
+  }
+  return retainedNonConfigurable;
+}
+
 /**
  * Synchronizes all own properties and non-extensibility from `hostTarget` onto `shadowTarget`.
  * Returns early once `shadowTarget` is already frozen, or sealed while `hostTarget` is not frozen.
@@ -416,14 +431,7 @@ function syncShadowExtensibility(shadowTarget: HostTarget, hostTarget: HostTarge
   }
   const hostKeys = Reflect.ownKeys(hostTarget).filter((key) => !isBlockedPrototypeKey(key));
   const hostKeySet = new Set<string | symbol>(hostKeys);
-  for (const shadowKey of Reflect.ownKeys(shadowTarget)) {
-    if (!hostKeySet.has(shadowKey)) {
-      const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, shadowKey);
-      if (shadowDesc?.configurable) {
-        Reflect.deleteProperty(shadowTarget, shadowKey);
-      }
-    }
-  }
+  pruneShadowKeys(shadowTarget, hostKeySet);
   for (const key of hostKeys) {
     const hostDesc = Reflect.getOwnPropertyDescriptor(hostTarget, key);
     if (hostDesc) {
@@ -633,14 +641,7 @@ const DEEP_HANDLER: ProxyHandler<HostTarget> = {
       }
       const hostKeys = Reflect.ownKeys(hostTarget).filter((key) => !isBlockedPrototypeKey(key));
       const hostKeySet = new Set<string | symbol>(hostKeys);
-      for (const key of Reflect.ownKeys(shadowTarget)) {
-        if (!hostKeySet.has(key)) {
-          const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, key);
-          if (shadowDesc && !shadowDesc.configurable) {
-            hostKeys.push(key);
-          }
-        }
-      }
+      hostKeys.push(...pruneShadowKeys(shadowTarget, hostKeySet));
       return hostKeys;
     });
   },
@@ -736,4 +737,15 @@ function wrapIfNeeded(value: unknown): unknown {
   return wrapDeep(value as HostTarget);
 }
 
-const FALLBACK_WRAPPED_ERROR: object = wrapDeep(new RangeError('Maximum call stack size exceeded'));
+function createFrozenFallbackError(): RangeError {
+  const err = new RangeError('Maximum call stack size exceeded');
+  Object.defineProperty(err, 'stack', {
+    value: err.stack,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+  return Object.freeze(err);
+}
+
+const FALLBACK_WRAPPED_ERROR: object = wrapDeep(createFrozenFallbackError());

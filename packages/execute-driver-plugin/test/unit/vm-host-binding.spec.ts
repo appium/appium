@@ -987,4 +987,89 @@ describe('wrapHostBindingForVmContext', function () {
       newTargetCheck: 'blocked',
     });
   });
+
+  it('should keep the fallback RangeError immutable across VM mutations and freezes', function () {
+    const poisonedError = new Proxy(
+      {},
+      {
+        getPrototypeOf() {
+          throw new Error('unwrappable');
+        },
+      },
+    );
+    const d = wrapHostBindingForVmContext({
+      triggerFallback() {
+        throw poisonedError;
+      },
+    });
+
+    const first = JSON.parse(
+      vm.runInNewContext(
+        `(() => {
+           let err;
+           try {
+             d.triggerFallback();
+           } catch (e) {
+             err = e;
+           }
+           const initialStackLine = String(err.stack).split('\\n')[0];
+           err.message = 'mutated';
+           err.stack = 'mutated-stack';
+           err.foo = 1;
+           let strictSetThrew = false;
+           try {
+             (() => { 'use strict'; err.message = 'strict-mutated'; })();
+           } catch (e) {
+             strictSetThrew = e instanceof TypeError;
+           }
+           const defMutate = Reflect.defineProperty(err, 'message', {value: 'x'});
+           const defNew = Reflect.defineProperty(err, 'foo', {value: 1});
+           const defNoop = Reflect.defineProperty(err, 'message', {});
+           const prevented = Object.preventExtensions(err) === err;
+           const frozen = Object.freeze(err) === err;
+           return JSON.stringify({
+             initialStackLine,
+             strictSetThrew,
+             defMutate,
+             defNew,
+             defNoop,
+             prevented,
+             frozen,
+             isFrozen: Object.isFrozen(err),
+           });
+         })()`,
+        {d},
+      ) as string,
+    );
+
+    const second = JSON.parse(
+      vm.runInNewContext(
+        `(() => {
+           try {
+             d.triggerFallback();
+           } catch (e) {
+             return JSON.stringify({
+               message: e.message,
+               stackLine: String(e.stack).split('\\n')[0],
+               hasFoo: 'foo' in e,
+             });
+           }
+         })()`,
+        {d},
+      ) as string,
+    );
+
+    assert.equal(first.strictSetThrew, true);
+    assert.equal(first.defMutate, false);
+    assert.equal(first.defNew, false);
+    assert.equal(first.defNoop, true);
+    assert.equal(first.prevented, true);
+    assert.equal(first.frozen, true);
+    assert.equal(first.isFrozen, true);
+    assert.deepEqual(second, {
+      message: 'Maximum call stack size exceeded',
+      stackLine: first.initialStackLine,
+      hasFoo: false,
+    });
+  });
 });

@@ -162,13 +162,12 @@ describe('Driver CLI', {timeout: 90000}, function () {
     });
 
     it('should install a driver from the list of known drivers', async function () {
-      const latestPeerReq = JSON.parse(
-        (
-          await exec('npm', ['view', 'appium-uiautomator2-driver', 'peerDependencies.appium', '--json'], {
-            encoding: 'utf-8',
-          })
-        ).stdout,
-      ) as string;
+      const rawPeerReq = (
+        await exec('npm', ['view', 'appium-uiautomator2-driver', 'peerDependencies.appium', '--json'], {
+          encoding: 'utf-8',
+        })
+      ).stdout.trim();
+      const latestPeerReq = rawPeerReq ? (JSON.parse(rawPeerReq) as string) : undefined;
       const ret = await runInstall(['uiautomator2']);
       const expectedInstallSpec =
         !latestPeerReq || satisfies(npmPackage.version, latestPeerReq, {includePrerelease: true})

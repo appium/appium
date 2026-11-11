@@ -5,7 +5,7 @@ import {describe, it, before, after, beforeEach, type TestContext} from 'node:te
 import {fs, system, tempDir, util} from '@appium/support';
 import type {DriverType} from '@appium/types';
 import type {ExtRecord} from 'appium/types';
-import {prerelease} from 'semver';
+import {prerelease, satisfies} from 'semver';
 import {exec} from 'teen_process';
 
 import {
@@ -17,7 +17,7 @@ import {
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
   KNOWN_DRIVERS,
 } from '../../lib/constants';
-import {omitKeys, resolveFrom} from '../../lib/utils';
+import {npmPackage, omitKeys, resolveFrom} from '../../lib/utils';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
 
@@ -162,10 +162,20 @@ describe('Driver CLI', {timeout: 90000}, function () {
     });
 
     it('should install a driver from the list of known drivers', async function () {
+      const rawPeerReq = (
+        await exec('npm', ['view', 'appium-uiautomator2-driver', 'peerDependencies.appium', '--json'], {
+          encoding: 'utf-8',
+        })
+      ).stdout.trim();
+      const latestPeerReq = rawPeerReq ? (JSON.parse(rawPeerReq) as string) : undefined;
       const ret = await runInstall(['uiautomator2']);
+      const expectedInstallSpec =
+        !latestPeerReq || satisfies(npmPackage.version, latestPeerReq, {includePrerelease: true})
+          ? 'uiautomator2'
+          : `uiautomator2@${ret.uiautomator2.version}`;
       assert.strictEqual(ret.uiautomator2.pkgName, 'appium-uiautomator2-driver');
       assert.strictEqual(ret.uiautomator2.installType, 'npm');
-      assert.strictEqual(ret.uiautomator2.installSpec, 'uiautomator2');
+      assert.strictEqual(ret.uiautomator2.installSpec, expectedInstallSpec);
       const list = await runList(['--installed']);
       const rest = omitKeys(list.uiautomator2 ?? {}, ['installed', 'repositoryUrl']);
       assertDeepInclude(rest, {

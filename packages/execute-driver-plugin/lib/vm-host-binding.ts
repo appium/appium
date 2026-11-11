@@ -1,47 +1,11 @@
 /**
- * @fileoverview Bridges host-realm (child process) objects into Node's `vm.runInNewContext` without
- * leaking main-realm prototype metadata that untrusted script could use to obtain the real
- * `Function` constructor and escape the VM (RCE on the Appium host).
- *
- * ## Why this exists
- *
- * `vm` isolates *globals* and bytecode, but any **host object** you inject still carries the
- * **main V8 realm's** prototypes.
- *
- * ## Strategy (high level)
- *
- * 1. **Deep `Proxy`**: Every host object/function exposed to the script is wrapped. Property
- *    reads (`get`), call results (`apply` / `construct`), and—where allowed—descriptor reflection
- *    (`getOwnPropertyDescriptor`) funnel return values through `wrapIfNeeded`, which recursively
- *    wraps objects and functions so nested references never surface as raw host callables.
- *
- * 2. **Prototype-adjacent keys**: `constructor` and `__proto__` are not read from the target;
- *    the `get` trap returns a frozen null-prototype sentinel, `getPrototypeOf` always reports that
- *    sentinel (not the real prototype chain), `has` hides those keys, and `setPrototypeOf` is
- *    rejected—closing the usual `…constructor.constructor` chains.
- *
- * 3. **Identity**: `targetToProxy` is a `WeakMap` from each host object/function to its single
- *    proxy, so repeated reads (e.g. `driver.m === driver.m`) stay stable and cycles do not recurse
- *    forever. `proxyToTarget` reverses the mapping so `Reflect.get`/`apply` can unwrap `this` and
- *    pass the real host receiver to accessors and methods that expect it.
- *
- * 4. **Promises**: A `Proxy` around a native `Promise` breaks V8's internal `then` branding
- *    (WebdriverIO breaks). Host promises are therefore surfaced as a **null-prototype thenable**
- *    that forwards to the real promise and runs `wrapIfNeeded` on fulfilled/rejected values before
- *    VM continuations run. One thenable object per promise lives in `promiseToThenableHost`.
- *
- * 5. **Descriptors**: For **configurable** own properties only, `getOwnPropertyDescriptor` returns
- *    descriptors whose `value` / `get` / `set` are wrapped—so descriptor-based extraction of a
- *    method still yields a sandbox proxy. **Non-configurable** properties must return the real
- *    descriptor unchanged (ECMAScript Proxy invariants); those paths can still expose raw host
- *    callables until the script uses normal property access, which remains wrapped.
- *
- * 6. **`defineProperty`**: Incoming descriptors from the VM may reference our proxies; fields are
- *    unwrapped before `Reflect.defineProperty` so the host object receives real functions/objects.
- *
- * This is defense in depth: Node documents that `vm` is not a full security boundary. Treat
- * `--allow-insecure=…:execute_driver_script` as highly privileged regardless of this module.
+ * @fileoverview Deep-proxy bridge for host objects exposed to `vm.runInNewContext`.
+ * Wraps nested return values, descriptors (via structural shadow targets), Promises,
+ * and VM callback boundaries while hiding `constructor` and `__proto__` prototype chains.
+ * Node's `vm` is not a full security boundary; keep `execute_driver_script` behind `--allow-insecure`.
  */
+
+import {types} from 'node:util';
 
 /**
  * Null-prototype object returned for prototype-adjacent property lookups on
@@ -64,11 +28,18 @@ const targetToProxy = new WeakMap<HostTarget, object>();
 /** Deep proxy → underlying host target (unwrap `this` / receivers / defineProperty). */
 const proxyToTarget = new WeakMap<object, HostTarget>();
 
-/**
- * Host `Promise` → null-prototype thenable facade (one per promise; then wrapped by `wrapDeep`).
- * Native promises cannot be proxied without breaking `Promise.prototype.then` receiver checks.
- */
+/** Proxy shadow target → underlying host target for the shared `DEEP_HANDLER`. */
+const shadowToHost = new WeakMap<HostTarget, HostTarget>();
+
+const vmFnToHostWrapper = new WeakMap<HostCallable, HostCallable>();
+const vmObjects = new WeakSet<HostTarget>();
 const promiseToThenableHost = new WeakMap<Promise<unknown>, object>();
+
+const CONSTRUCTOR_TEST_TARGET = new Proxy(function () {}, {
+  construct() {
+    return {};
+  },
+});
 
 /**
  * Entry point: wrap a host object or function for use as a global in `vm.runInNewContext`.
@@ -83,24 +54,197 @@ export function wrapHostBindingForVmContext<T extends HostTarget>(hostValue: T):
   return wrapDeep(hostValue);
 }
 
-/**
- * @returns Whether `value` is a proxy created by this module (`proxyToTarget` has an entry).
- * Includes both object proxies and function proxies.
- */
 function isOurProxy(value: unknown): value is HostTarget {
   return value !== null && (typeof value === 'object' || typeof value === 'function') && proxyToTarget.has(value);
 }
 
+function isVmRealmValue(value: unknown): boolean {
+  return value !== null && (typeof value === 'object' || typeof value === 'function') && vmObjects.has(value);
+}
+
+function isVmObjectPrototype(proto: object): boolean {
+  if (proto === Object.prototype || proto === SAFE_LOOKUP_TARGET) {
+    return false;
+  }
+  try {
+    if (Reflect.getPrototypeOf(proto) !== null) {
+      return false;
+    }
+    const ctorDesc = Reflect.getOwnPropertyDescriptor(proto, 'constructor');
+    const ctor = ctorDesc && 'value' in ctorDesc ? ctorDesc.value : undefined;
+    if (typeof ctor !== 'function' || isOurProxy(ctor)) {
+      return false;
+    }
+    const fnProto = Reflect.getPrototypeOf(ctor);
+    return fnProto !== null && fnProto !== Function.prototype && Reflect.getPrototypeOf(fnProto) === proto;
+  } catch {
+    return false;
+  }
+}
+
+function hasVmRealmPrototype(value: object): boolean {
+  let current: object | null = value;
+  for (let depth = 0; current !== null && depth < 64; depth++) {
+    if (current === Object.prototype || current === Function.prototype || current === Error.prototype) {
+      return false;
+    }
+    if (current === SAFE_LOOKUP_TARGET || shadowToHost.has(current)) {
+      return false;
+    }
+    if (isOurProxy(current)) {
+      return depth > 0;
+    }
+    if (isVmObjectPrototype(current)) {
+      return true;
+    }
+    try {
+      current = Reflect.getPrototypeOf(current);
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
+function recordVmValue(value: unknown): void {
+  if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
+    return;
+  }
+  if (
+    value === SAFE_LOOKUP_TARGET ||
+    isOurProxy(value) ||
+    targetToProxy.has(value) ||
+    shadowToHost.has(value) ||
+    promiseToThenableHost.has(value as Promise<unknown>) ||
+    !hasVmRealmPrototype(value)
+  ) {
+    return;
+  }
+  vmObjects.add(value);
+}
+
+function wrapErrorForVm(err: unknown): unknown {
+  if (isOurProxy(err) || isVmRealmValue(err)) {
+    return err;
+  }
+  try {
+    return wrapIfNeeded(err);
+  } catch {
+    return FALLBACK_WRAPPED_ERROR;
+  }
+}
+
+function copyFunctionMetadata(vmFn: HostCallable, wrapped: HostCallable, includePrototype: boolean): void {
+  for (const key of ['length', 'name'] as const) {
+    const desc = Reflect.getOwnPropertyDescriptor(vmFn, key);
+    if (desc) {
+      Reflect.defineProperty(wrapped, key, mapDescriptorForHost(desc));
+    }
+  }
+  if (includePrototype) {
+    const protoDesc = Reflect.getOwnPropertyDescriptor(vmFn, 'prototype');
+    if (protoDesc && 'value' in protoDesc) {
+      Reflect.defineProperty(wrapped, 'prototype', {
+        value: unwrapIfProxy(protoDesc.value),
+        writable: Boolean(protoDesc.writable),
+      });
+    }
+  }
+  Object.defineProperty(wrapped, 'toString', {
+    value: () => Function.prototype.toString.call(vmFn),
+    configurable: true,
+    writable: true,
+  });
+}
+
+function runVmCallback(
+  thisArg: unknown,
+  args: unknown[],
+  op: (safeThis: unknown, safeArgs: unknown[]) => unknown,
+  awaitResult = false,
+): unknown {
+  const safeThis = wrapIfNeeded(thisArg);
+  const safeArgs = args.map((arg) => wrapIfNeeded(arg));
+  try {
+    const raw = op(safeThis, safeArgs);
+    return awaitResult
+      ? Promise.resolve(raw)
+          .then((val) => unwrapIfProxy(val))
+          .catch((err: unknown) => {
+            recordVmValue(err);
+            throw wrapErrorForVm(err);
+          })
+      : unwrapIfProxy(raw);
+  } catch (err) {
+    recordVmValue(err);
+    throw wrapErrorForVm(err);
+  }
+}
+
+function wrapVmFunctionForHost(vmFn: HostCallable): HostCallable {
+  const cached = vmFnToHostWrapper.get(vmFn);
+  if (cached) {
+    return cached;
+  }
+  recordVmValue(vmFn);
+
+  const applyVm = (safeThis: unknown, safeArgs: unknown[]): unknown => Reflect.apply(vmFn, safeThis, safeArgs);
+  const constructible = isConstructibleFunction(vmFn);
+  let wrapped: HostCallable;
+  if (types.isAsyncFunction(vmFn)) {
+    wrapped = async function (this: unknown, ...args: unknown[]): Promise<unknown> {
+      return await (runVmCallback(this, args, applyVm, true) as Promise<unknown>);
+    };
+  } else if (constructible) {
+    wrapped = function (this: unknown, ...args: unknown[]): unknown {
+      if (new.target) {
+        const actualNewTarget =
+          new.target === wrapped ? (vmFn as unknown as HostConstructor) : (wrapIfNeeded(new.target) as HostConstructor);
+        return runVmCallback(undefined, args, (_this, safeArgs) =>
+          Reflect.construct(vmFn as unknown as HostConstructor, safeArgs, actualNewTarget),
+        );
+      }
+      return runVmCallback(this, args, applyVm);
+    };
+  } else {
+    wrapped = {
+      callVm(this: unknown, ...args: unknown[]): unknown {
+        return runVmCallback(this, args, applyVm);
+      },
+    }.callVm;
+  }
+
+  copyFunctionMetadata(vmFn, wrapped, constructible);
+  vmFnToHostWrapper.set(vmFn, wrapped);
+  targetToProxy.set(wrapped, vmFn);
+  proxyToTarget.set(wrapped, vmFn);
+  return wrapped;
+}
+
 /**
- * Maps a value that may be our deep proxy back to the underlying host target for host APIs.
- *
- * @param value - Possibly a proxy from this module, or any other value.
- * @returns The host target if `value` is our proxy; otherwise `value` unchanged.
+ * Maps a value crossing from the VM into the host:
+ * - Unwraps proxies created by this module back to their underlying host target.
+ * - Wraps VM-realm functions so host callers cannot hand raw host `this`/arguments back to them.
+ * - Tracks VM-originated objects in `vmObjects` so they round-trip back to the VM unchanged.
  */
 function unwrapIfProxy<T>(value: T): T {
   if (isOurProxy(value)) {
-    return proxyToTarget.get(value) as T;
+    const target = proxyToTarget.get(value) as T;
+    if (
+      typeof target === 'function' &&
+      vmFnToHostWrapper.get(target as unknown as HostCallable) === (value as unknown)
+    ) {
+      return value;
+    }
+    return target;
   }
+  if (typeof value === 'function') {
+    if (targetToProxy.has(value)) {
+      return value;
+    }
+    return wrapVmFunctionForHost(value as unknown as HostCallable) as unknown as T;
+  }
+  recordVmValue(value);
   return value;
 }
 
@@ -115,6 +259,18 @@ function isNativePromise(value: object): value is Promise<unknown> {
 }
 
 /**
+ * Executes a trap operation and ensures any thrown host-realm error is wrapped via
+ * {@link wrapIfNeeded} before crossing into the VM catch block.
+ */
+function runTrapSafely<T>(fn: () => T): T {
+  try {
+    return fn();
+  } catch (err) {
+    throw wrapErrorForVm(err);
+  }
+}
+
+/**
  * Wraps a host Promise by exposing a null-prototype thenable that delegates to `p` and ensures
  * fulfillment/rejection values are passed through {@link wrapIfNeeded} before VM callbacks run.
  *
@@ -126,7 +282,7 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
   const hostObj: object =
     cached ??
     (() => {
-      /* eslint-disable promise/prefer-await-to-then -- thenable facade over a host Promise */
+      /* eslint-disable unicorn/no-thenable,promise/prefer-await-to-then -- thenable facade over a host Promise */
       const o = Object.assign(Object.create(null), {
         then(onFulfilled?: unknown, onRejected?: unknown) {
           const adaptFulfill =
@@ -152,7 +308,7 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
           return wrapIfNeeded(p.finally(onFinally as () => void | PromiseLike<void> | undefined));
         },
       });
-      /* eslint-enable promise/prefer-await-to-then */
+      /* eslint-enable unicorn/no-thenable,promise/prefer-await-to-then */
       promiseToThenableHost.set(p, o);
       return o;
     })();
@@ -160,34 +316,148 @@ function wrapPromiseAsThenable(p: Promise<unknown>): unknown {
 }
 
 /**
- * Clones a **configurable** property descriptor so `value` / `get` / `set` are wrapped for the VM.
+ * Tests whether a callable has an internal `[[Construct]]` slot without throwing on common
+ * non-constructible callables (async functions, generators, arrow functions, concise methods).
+ */
+function isConstructibleFunction(fn: HostCallable): boolean {
+  if (types.isAsyncFunction(fn) || types.isGeneratorFunction(fn)) {
+    return false;
+  }
+  if ((fn as unknown) === Proxy || Reflect.getOwnPropertyDescriptor(fn, 'prototype') !== undefined) {
+    return true;
+  }
+  const nameDesc = Reflect.getOwnPropertyDescriptor(fn, 'name');
+  const fnName = nameDesc && 'value' in nameDesc ? nameDesc.value : undefined;
+  if (!types.isProxy(fn) && typeof fnName === 'string' && !fnName.startsWith('bound ')) {
+    return false;
+  }
+  try {
+    Reflect.construct(CONSTRUCTOR_TEST_TARGET, [], fn);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Creates a clean shadow target matching the structural kind of `hostTarget` (function, array,
+ * or plain object) so V8 Proxy invariants are checked against the shadow target while keeping
+ * its prototype aligned with `SAFE_LOOKUP_TARGET`.
  *
- * @param d - Descriptor from `Reflect.getOwnPropertyDescriptor` on the host target.
- * @returns A new descriptor safe to return from the proxy `getOwnPropertyDescriptor` trap.
+ * For constructible functions, uses a bound function `(function () {}).bind(null)` so the shadow
+ * target has `[[Construct]]` without a fabricated non-configurable own `.prototype` property.
+ */
+function createShadowTarget(hostTarget: HostTarget): HostTarget {
+  let shadow: HostTarget;
+  if (typeof hostTarget === 'function') {
+    shadow = isConstructibleFunction(hostTarget as HostCallable) ? function () {}.bind(null) : () => {};
+  } else if (Array.isArray(hostTarget)) {
+    shadow = [];
+  } else {
+    shadow = {};
+  }
+  Reflect.setPrototypeOf(shadow, SAFE_LOOKUP_TARGET);
+  return shadow;
+}
+
+/**
+ * Clones a host property descriptor so `value` / `get` / `set` are wrapped for the VM while
+ * preserving the host descriptor's real `configurable`, `enumerable`, and `writable` flags.
  */
 function mapDescriptorForSandbox(descriptor: PropertyDescriptor): PropertyDescriptor {
   if ('value' in descriptor) {
     return {
-      configurable: descriptor.configurable,
-      enumerable: descriptor.enumerable,
-      writable: descriptor.writable,
+      configurable: Boolean(descriptor.configurable),
+      enumerable: Boolean(descriptor.enumerable),
+      writable: Boolean(descriptor.writable),
       value: wrapIfNeeded(descriptor.value),
     };
   }
   return {
-    configurable: descriptor.configurable,
-    enumerable: descriptor.enumerable,
+    configurable: Boolean(descriptor.configurable),
+    enumerable: Boolean(descriptor.enumerable),
     get: descriptor.get ? (wrapIfNeeded(descriptor.get) as () => unknown) : undefined,
     set: descriptor.set ? (wrapIfNeeded(descriptor.set) as (v: unknown) => void) : undefined,
   };
 }
 
 /**
+ * Synchronizes a single property from `hostTarget` onto `shadowTarget` when required by V8
+ * Proxy invariants (e.g. non-configurable properties, array `length`, or non-extensible targets).
+ */
+function syncShadowProperty(
+  shadowTarget: HostTarget,
+  hostTarget: HostTarget,
+  prop: string | symbol,
+): PropertyDescriptor | undefined {
+  const hostDesc = Reflect.getOwnPropertyDescriptor(hostTarget, prop);
+  if (!hostDesc) {
+    const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, prop);
+    if (shadowDesc?.configurable) {
+      Reflect.deleteProperty(shadowTarget, prop);
+    }
+    return undefined;
+  }
+  const wrappedDesc = mapDescriptorForSandbox(hostDesc);
+  const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, prop);
+  if (!wrappedDesc.configurable || shadowDesc !== undefined || !Reflect.isExtensible(shadowTarget)) {
+    Reflect.defineProperty(shadowTarget, prop, wrappedDesc);
+  }
+  return wrappedDesc;
+}
+
+function pruneShadowKeys(shadowTarget: HostTarget, hostKeySet: ReadonlySet<string | symbol>): Array<string | symbol> {
+  const retainedNonConfigurable: Array<string | symbol> = [];
+  for (const shadowKey of Reflect.ownKeys(shadowTarget)) {
+    if (!hostKeySet.has(shadowKey)) {
+      const shadowDesc = Reflect.getOwnPropertyDescriptor(shadowTarget, shadowKey);
+      if (shadowDesc?.configurable) {
+        Reflect.deleteProperty(shadowTarget, shadowKey);
+      } else if (shadowDesc) {
+        retainedNonConfigurable.push(shadowKey);
+      }
+    }
+  }
+  return retainedNonConfigurable;
+}
+
+/**
+ * Synchronizes all own properties and non-extensibility from `hostTarget` onto `shadowTarget`.
+ * Returns early once `shadowTarget` is already frozen, or sealed while `hostTarget` is not frozen.
+ */
+function syncShadowExtensibility(shadowTarget: HostTarget, hostTarget: HostTarget): void {
+  if (Object.isFrozen(shadowTarget) || (Object.isSealed(shadowTarget) && !Object.isFrozen(hostTarget))) {
+    return;
+  }
+  const hostKeys = Reflect.ownKeys(hostTarget).filter((key) => !isBlockedPrototypeKey(key));
+  const hostKeySet = new Set<string | symbol>(hostKeys);
+  pruneShadowKeys(shadowTarget, hostKeySet);
+  for (const key of hostKeys) {
+    const hostDesc = Reflect.getOwnPropertyDescriptor(hostTarget, key);
+    if (hostDesc) {
+      Reflect.defineProperty(shadowTarget, key, mapDescriptorForSandbox(hostDesc));
+    }
+  }
+  if (!Reflect.isExtensible(hostTarget)) {
+    Reflect.preventExtensions(shadowTarget);
+  }
+}
+
+function findPropertyDescriptor(target: object, prop: string | symbol): PropertyDescriptor | undefined {
+  let current: object | null = target;
+  while (current !== null) {
+    const desc = Reflect.getOwnPropertyDescriptor(current, prop);
+    if (desc) {
+      return desc;
+    }
+    current = Reflect.getPrototypeOf(current);
+  }
+  return undefined;
+}
+
+/**
  * Prepares a property descriptor coming **from** the VM so `Reflect.defineProperty` on the host
  * receives real targets, not our proxy objects.
- *
- * @param descriptor - Descriptor passed into the proxy `defineProperty` trap.
- * @returns Descriptor with `value` / `get` / `set` unwrapped where they were our proxies.
  */
 function mapDescriptorForHost(descriptor: PropertyDescriptor): PropertyDescriptor {
   const mapped: PropertyDescriptor = {};
@@ -213,109 +483,210 @@ function mapDescriptorForHost(descriptor: PropertyDescriptor): PropertyDescripto
 }
 
 /**
- * Unwraps the proxy when used as the `receiver` for `Reflect.get`, so host getters see real `this`.
+ * Unwraps the proxy when used as the `receiver` for `Reflect.get` / `Reflect.set`, preserving
+ * VM subclass/object receivers without wrapping them as callback functions.
  */
 function reflectReceiver(receiver: unknown): unknown {
-  return unwrapIfProxy(receiver);
+  if (isOurProxy(receiver)) {
+    return proxyToTarget.get(receiver);
+  }
+  recordVmValue(receiver);
+  return receiver;
 }
 
 /**
  * Unwraps constructor references passed to `Reflect.construct`.
- *
- * @param newTarget - Constructor received by the proxy `construct` trap.
- * @returns Host constructor with this module's proxy removed when applicable.
+ * Preserves VM-defined subclass constructors (`newTarget`) instead of wrapping them as callbacks.
  */
 function unwrapConstructor(newTarget: HostCallable): HostConstructor {
-  return unwrapIfProxy(newTarget) as unknown as HostConstructor;
+  if (isOurProxy(newTarget)) {
+    return proxyToTarget.get(newTarget) as HostConstructor;
+  }
+  recordVmValue(newTarget);
+  return newTarget as unknown as HostConstructor;
 }
 
 /**
  * Unwraps each argument before forwarding calls into host functions so VM-facing proxies
- * round-trip back to their original host targets.
- *
- * @param argList - Arguments received by the proxy `apply` trap.
- * @returns Arguments with this module's proxies replaced by underlying host targets.
+ * round-trip back to their original host targets and VM callbacks are wrapped for host calls.
  */
 function unwrapArgList(argList: readonly unknown[]): unknown[] {
   return argList.map((arg) => unwrapIfProxy(arg));
 }
 
 /**
- * Builds the shared `ProxyHandler` used for every deep wrap (objects and functions).
- *
- * Traps implement the file-level strategy: hide prototype edges, wrap outgoing values, unwrap
- * incoming `this` / descriptors where required by invariants.
+ * Looks up the real host target for a proxy's shadow target.
  */
-function createDeepHandler(): ProxyHandler<HostTarget> {
-  return {
-    apply(proxyTarget: HostTarget, thisArg: unknown, argArray: unknown[]): unknown {
-      const hostFn = proxyTarget as HostCallable;
+function resolveHostTarget(shadowTarget: HostTarget): HostTarget {
+  return shadowToHost.get(shadowTarget) ?? shadowTarget;
+}
+
+/**
+ * Shared `ProxyHandler` for all wrapped host objects and functions.
+ * Resolves `hostTarget` from `shadowTarget` via `shadowToHost`.
+ */
+const DEEP_HANDLER: ProxyHandler<HostTarget> = {
+  apply(shadowTarget: HostTarget, thisArg: unknown, argArray: unknown[]): unknown {
+    return runTrapSafely(() => {
+      const hostFn = resolveHostTarget(shadowTarget) as HostCallable;
       const hostThis = unwrapIfProxy(thisArg);
       const hostArgs = unwrapArgList(argArray);
       const result = Reflect.apply(hostFn, hostThis, hostArgs);
       return wrapIfNeeded(result);
-    },
+    });
+  },
 
-    construct(proxyTarget: HostTarget, argArray: unknown[], newTarget: unknown): object {
-      const hostCtor = proxyTarget as HostConstructor;
+  construct(shadowTarget: HostTarget, argArray: unknown[], newTarget: unknown): object {
+    return runTrapSafely(() => {
+      const hostCtor = resolveHostTarget(shadowTarget) as HostConstructor;
       const hostArgs = unwrapArgList(argArray);
       const hostNewTarget = unwrapConstructor(newTarget as HostCallable);
       const result = Reflect.construct(hostCtor, hostArgs, hostNewTarget);
       return wrapIfNeeded(result) as object;
-    },
+    });
+  },
 
-    defineProperty(target: HostTarget, prop: string | symbol, descriptor: PropertyDescriptor): boolean {
-      return Reflect.defineProperty(target, prop, mapDescriptorForHost(descriptor));
-    },
-
-    get(target: HostTarget, prop: string | symbol, receiver: unknown): unknown {
-      if (isBlockedPrototypeKey(prop)) {
-        return SAFE_LOOKUP_TARGET;
-      }
-      const value = Reflect.get(target, prop, reflectReceiver(receiver));
-      return wrapIfNeeded(value);
-    },
-
-    getOwnPropertyDescriptor(target: HostTarget, prop: string | symbol): PropertyDescriptor | undefined {
-      if (isBlockedPrototypeKey(prop)) {
-        return {
-          configurable: true,
-          enumerable: false,
-          value: SAFE_LOOKUP_TARGET,
-          writable: false,
-        };
-      }
-      const descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
-      if (!descriptor) {
-        return undefined;
-      }
-      // Non-configurable properties must keep a descriptor compatible with the target
-      // (SameValue rules for getters / values); wrapping would violate Proxy invariants.
-      if (!descriptor.configurable) {
-        return descriptor;
-      }
-      return mapDescriptorForSandbox(descriptor);
-    },
-
-    getPrototypeOf(target: HostTarget): object | null {
-      void target;
-      return SAFE_LOOKUP_TARGET;
-    },
-
-    has(target: HostTarget, prop: string | symbol): boolean {
+  defineProperty(shadowTarget: HostTarget, prop: string | symbol, descriptor: PropertyDescriptor): boolean {
+    return runTrapSafely(() => {
       if (isBlockedPrototypeKey(prop)) {
         return false;
       }
-      return Reflect.has(target, prop);
-    },
+      const hostTarget = resolveHostTarget(shadowTarget);
+      const defined = Reflect.defineProperty(hostTarget, prop, mapDescriptorForHost(descriptor));
+      if (defined) {
+        syncShadowProperty(shadowTarget, hostTarget, prop);
+      }
+      return defined;
+    });
+  },
 
-    setPrototypeOf(target: HostTarget, prototype: object | null): boolean {
-      void target;
-      void prototype;
-      return false;
-    },
-  };
-}
+  deleteProperty(shadowTarget: HostTarget, prop: string | symbol): boolean {
+    return runTrapSafely(() => {
+      if (isBlockedPrototypeKey(prop)) {
+        return false;
+      }
+      const hostTarget = resolveHostTarget(shadowTarget);
+      const deleted = Reflect.deleteProperty(hostTarget, prop);
+      if (deleted) {
+        Reflect.deleteProperty(shadowTarget, prop);
+      }
+      return deleted;
+    });
+  },
+
+  get(shadowTarget: HostTarget, prop: string | symbol, receiver: unknown): unknown {
+    return runTrapSafely(() => {
+      if (isBlockedPrototypeKey(prop)) {
+        return SAFE_LOOKUP_TARGET;
+      }
+      const hostTarget = resolveHostTarget(shadowTarget);
+      const value = Reflect.get(hostTarget, prop, reflectReceiver(receiver));
+      const wrapped = wrapIfNeeded(value);
+      const hostDesc = Reflect.getOwnPropertyDescriptor(hostTarget, prop);
+      if (hostDesc && !hostDesc.configurable) {
+        syncShadowProperty(shadowTarget, hostTarget, prop);
+      }
+      return wrapped;
+    });
+  },
+
+  getOwnPropertyDescriptor(shadowTarget: HostTarget, prop: string | symbol): PropertyDescriptor | undefined {
+    return runTrapSafely(() => {
+      if (isBlockedPrototypeKey(prop)) {
+        return undefined;
+      }
+      const hostTarget = resolveHostTarget(shadowTarget);
+      if (!Reflect.isExtensible(hostTarget)) {
+        syncShadowExtensibility(shadowTarget, hostTarget);
+      }
+      return syncShadowProperty(shadowTarget, hostTarget, prop);
+    });
+  },
+
+  getPrototypeOf(_shadowTarget: HostTarget): object | null {
+    return SAFE_LOOKUP_TARGET;
+  },
+
+  has(shadowTarget: HostTarget, prop: string | symbol): boolean {
+    return runTrapSafely(() => {
+      if (isBlockedPrototypeKey(prop)) {
+        return false;
+      }
+      const hostTarget = resolveHostTarget(shadowTarget);
+      const exists = Reflect.has(hostTarget, prop);
+      if (!exists) {
+        syncShadowProperty(shadowTarget, hostTarget, prop);
+      }
+      return exists;
+    });
+  },
+
+  isExtensible(shadowTarget: HostTarget): boolean {
+    return runTrapSafely(() => {
+      const hostTarget = resolveHostTarget(shadowTarget);
+      if (!Reflect.isExtensible(hostTarget)) {
+        syncShadowExtensibility(shadowTarget, hostTarget);
+      }
+      return Reflect.isExtensible(shadowTarget);
+    });
+  },
+
+  ownKeys(shadowTarget: HostTarget): Array<string | symbol> {
+    return runTrapSafely(() => {
+      const hostTarget = resolveHostTarget(shadowTarget);
+      if (!Reflect.isExtensible(hostTarget)) {
+        syncShadowExtensibility(shadowTarget, hostTarget);
+      } else if (Array.isArray(hostTarget)) {
+        syncShadowProperty(shadowTarget, hostTarget, 'length');
+      }
+      const hostKeys = Reflect.ownKeys(hostTarget).filter((key) => !isBlockedPrototypeKey(key));
+      const hostKeySet = new Set<string | symbol>(hostKeys);
+      hostKeys.push(...pruneShadowKeys(shadowTarget, hostKeySet));
+      return hostKeys;
+    });
+  },
+
+  preventExtensions(shadowTarget: HostTarget): boolean {
+    return runTrapSafely(() => {
+      const hostTarget = resolveHostTarget(shadowTarget);
+      if (!Reflect.preventExtensions(hostTarget)) {
+        return false;
+      }
+      syncShadowExtensibility(shadowTarget, hostTarget);
+      return true;
+    });
+  },
+
+  set(shadowTarget: HostTarget, prop: string | symbol, value: unknown, receiver: unknown): boolean {
+    return runTrapSafely(() => {
+      if (isBlockedPrototypeKey(prop)) {
+        return false;
+      }
+      const hostTarget = resolveHostTarget(shadowTarget);
+      const actualReceiver = reflectReceiver(receiver);
+      const desc = findPropertyDescriptor(hostTarget, prop);
+      const invokesHostSetter = Boolean(desc && 'set' in desc && typeof desc.set === 'function');
+      const writesToHost = actualReceiver === hostTarget || isOurProxy(receiver) || invokesHostSetter;
+      const valueToSet = writesToHost ? unwrapIfProxy(value) : value;
+      if (!writesToHost) {
+        recordVmValue(value);
+      }
+      const updated = Reflect.set(hostTarget, prop, valueToSet, actualReceiver);
+      if (
+        updated &&
+        actualReceiver === hostTarget &&
+        Reflect.getOwnPropertyDescriptor(shadowTarget, prop) !== undefined
+      ) {
+        syncShadowProperty(shadowTarget, hostTarget, prop);
+      }
+      return updated;
+    });
+  },
+
+  setPrototypeOf(_shadowTarget: HostTarget, _prototype: object | null): boolean {
+    return false;
+  },
+};
 
 /**
  * Returns the one deep proxy for this host target, creating and caching it on first use.
@@ -328,29 +699,33 @@ function wrapDeep<T extends HostTarget>(hostValue: T): T {
   if (typeof hostValue !== 'object' && typeof hostValue !== 'function') {
     return hostValue;
   }
-  if (isOurProxy(hostValue)) {
-    return hostValue as T;
-  }
   const cached = targetToProxy.get(hostValue);
   if (cached) {
     return cached as T;
   }
-  const handler = createDeepHandler();
-  const proxy = new Proxy(hostValue, handler);
+  if (isOurProxy(hostValue) || isVmRealmValue(hostValue)) {
+    return hostValue as T;
+  }
+  const shadowTarget = createShadowTarget(hostValue);
+  shadowToHost.set(shadowTarget, hostValue);
+  const proxy = new Proxy(shadowTarget, DEEP_HANDLER);
   targetToProxy.set(hostValue, proxy);
   proxyToTarget.set(proxy, hostValue);
   return proxy as T;
 }
 
 /**
- * Recursively wraps objects and functions; leaves primitives unchanged; routes Promises to the
- * thenable facade.
+ * Recursively wraps objects and functions; leaves primitives and VM-originated values unchanged;
+ * routes host Promises to the thenable facade.
  *
  * @param value - Result of a `get` / `apply` / descriptor field, or any nested host value.
- * @returns Wrapped proxy, thenable-wrapped promise pipeline, or the original primitive.
+ * @returns Wrapped proxy, thenable-wrapped promise pipeline, or the original primitive/VM value.
  */
 function wrapIfNeeded(value: unknown): unknown {
   if (value === null || (typeof value !== 'object' && typeof value !== 'function')) {
+    return value;
+  }
+  if (isVmRealmValue(value)) {
     return value;
   }
   if (typeof value === 'function') {
@@ -361,3 +736,16 @@ function wrapIfNeeded(value: unknown): unknown {
   }
   return wrapDeep(value as HostTarget);
 }
+
+function createFrozenFallbackError(): RangeError {
+  const err = new RangeError('Maximum call stack size exceeded');
+  Object.defineProperty(err, 'stack', {
+    value: err.stack,
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+  return Object.freeze(err);
+}
+
+const FALLBACK_WRAPPED_ERROR: object = wrapDeep(createFrozenFallbackError());

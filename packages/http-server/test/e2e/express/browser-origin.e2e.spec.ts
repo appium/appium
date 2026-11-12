@@ -7,7 +7,7 @@ import type {AppiumServer} from '@appium/types';
 import axios from 'axios';
 import express from 'express';
 import type {Express} from 'express';
-import WebSocket, {WebSocketServer} from 'ws';
+import {WebSocket, WebSocketServer} from 'ws';
 
 import {configureServer, server} from '../../../lib/server.js';
 

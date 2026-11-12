@@ -11,6 +11,8 @@ const jsonBodyParser = bodyParser.json({limit: '1gb'});
  * route is still `invalid argument`, before that route's own handler runs.
  */
 export function parseJsonBody(req: Request, res: Response, next: NextFunction): void {
+  // body-parser only offers a callback API
+  // oxlint-disable-next-line promise/prefer-await-to-callbacks
   jsonBodyParser(req, res, (err?: unknown) => {
     if (isBodyParseError(err)) {
       jsonParseErrors.remember(req, err);

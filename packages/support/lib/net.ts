@@ -171,6 +171,21 @@ export async function checkPortStatus(
   });
 }
 
+/** Thrown by {@linkcode findAPortNotInUse} when every port in the range is in use. */
+export class NoFreePortError extends Error {
+  /**
+   * @param startPort - First port of the scanned range
+   * @param endPort - Last port of the scanned range
+   */
+  constructor(
+    readonly startPort: number,
+    readonly endPort: number,
+  ) {
+    super(`No free port available in range ${startPort}..${endPort}`);
+    this.name = 'NoFreePortError';
+  }
+}
+
 /**
  * Finds the first port in the given range that nothing is listening on.
  * Ports are probed sequentially with {@linkcode checkPortStatus}.
@@ -180,7 +195,7 @@ export async function checkPortStatus(
  * @param options - Probe options; `timeoutMs` applies to each probe
  * @returns The first port that is not in use
  * @throws {RangeError} If the range is invalid
- * @throws {Error} If every port in the range is in use
+ * @throws {NoFreePortError} If every port in the range is in use
  */
 export async function findAPortNotInUse(
   startPort: number,
@@ -195,7 +210,7 @@ export async function findAPortNotInUse(
       return port;
     }
   }
-  throw new Error(`No free port available in range ${startPort}..${endPort}`);
+  throw new NoFreePortError(startPort, endPort);
 }
 
 /**

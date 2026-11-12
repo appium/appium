@@ -13,6 +13,7 @@ import {
   findAPortNotInUse,
   formatHostnameForUrl,
   getFreePort,
+  NoFreePortError,
   uploadFile,
 } from '../../lib/net.js';
 
@@ -359,7 +360,13 @@ describe('port helpers', () => {
   it('findAPortNotInUse throws if the range is exhausted', async () => {
     const busy = await listen();
     try {
-      await assert.rejects(findAPortNotInUse(busy.port, busy.port), /No free port available/);
+      await assert.rejects(findAPortNotInUse(busy.port, busy.port), (err: unknown) => {
+        assert.ok(err instanceof NoFreePortError);
+        assert.equal(err.startPort, busy.port);
+        assert.equal(err.endPort, busy.port);
+        assert.match(err.message, /No free port available/);
+        return true;
+      });
     } finally {
       await busy.close();
     }

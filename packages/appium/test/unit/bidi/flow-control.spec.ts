@@ -152,6 +152,19 @@ describe('BiDi flow control', function () {
       assert.equal(socket.terminate.callCount, 1);
     });
 
+    it('arms the watchdog when the last event crosses the limit and the heartbeat is off', async function () {
+      const clock = sinon.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
+      const socket = connect({bidiMaxBufferedBytes: 10 * MiB, bidiMaxBufferedMs: 1000, bidiHeartbeatInterval: 0});
+      socket.accumulate = true;
+      socket.bufferedAmount = 10 * MiB;
+      emit('a');
+      await clock.tickAsync(999);
+      assert.equal(socket.close.callCount, 0);
+      await clock.tickAsync(1);
+      assert.equal(socket.close.callCount, 1);
+      assert.equal(socket.close.firstCall.args[0], 1013);
+    });
+
     it('still terminates a closing connection that receives more events', async function () {
       const clock = sinon.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
       const socket = connect({bidiMaxBufferedBytes: 10 * MiB, bidiMaxBufferedMs: 0});

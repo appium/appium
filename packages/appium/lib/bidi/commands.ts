@@ -368,7 +368,10 @@ function initBidiProxyHandlers(
   // the client
   proxyClient.on('message', async (data, isBinary) => {
     if (guard.checkBuffer()) {
-      await send(data as Buffer, {binary: isBinary});
+      const sent = send(data as Buffer, {binary: isBinary});
+      // this write may have crossed the limit; a stalled client never completes it
+      guard.checkBuffer();
+      await sent;
     }
   });
 
@@ -651,7 +654,10 @@ function initBidiEventListeners(
         // now we can send the event onto the socket
         // serialized once for all connections; sent as a text frame
         const ev = {type: 'event', context, method, params};
-        await send(serializeBiDiEvent(emitRecord, ev), {binary: false});
+        const sent = send(serializeBiDiEvent(emitRecord, ev), {binary: false});
+        // this write may have crossed the limit; a stalled client never completes it
+        guard.checkBuffer();
+        await sent;
       }
     };
     registrations.push({emitter: ext.eventEmitter, eventListener, gate});

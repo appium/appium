@@ -116,6 +116,20 @@ const MAX_PORT = 65535;
 /** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
 export type PortStatus = 'open' | 'closed';
 
+/** Options for {@linkcode checkPortStatus} and {@linkcode findAPortNotInUse}. */
+export interface PortCheckOptions {
+  /** Host to probe. Defaults to `127.0.0.1` */
+  host?: string;
+  /** Connection timeout per probe in milliseconds. Defaults to 400 */
+  timeoutMs?: number;
+}
+
+/** Options for {@linkcode getFreePort}. */
+export interface FreePortOptions {
+  /** Host to bind to. Defaults to all interfaces */
+  host?: string;
+}
+
 /**
  * Checks whether something accepts TCP connections on the given port.
  *
@@ -123,13 +137,11 @@ export type PortStatus = 'open' | 'closed';
  * or timed out. Any other socket error is rethrown.
  *
  * @param port - Port to probe
- * @param host - Host to probe. Defaults to `127.0.0.1`
- * @param timeoutMs - Connection timeout in milliseconds. Defaults to 400
+ * @param options - Probe options
  */
 export async function checkPortStatus(
   port: number,
-  host: string = DEFAULT_PORT_CHECK_HOST,
-  timeoutMs: number = DEFAULT_PORT_CHECK_TIMEOUT_MS,
+  {host = DEFAULT_PORT_CHECK_HOST, timeoutMs = DEFAULT_PORT_CHECK_TIMEOUT_MS}: PortCheckOptions = {},
 ): Promise<PortStatus> {
   return await new Promise<PortStatus>((resolve, reject) => {
     const socket = new Socket();
@@ -153,11 +165,11 @@ export async function checkPortStatus(
 
 /**
  * Finds the first port in the given range that nothing is listening on.
- * Ports are probed with {@linkcode checkPortStatus}.
+ * Ports are probed sequentially with {@linkcode checkPortStatus}.
  *
  * @param startPort - First port to check (inclusive)
  * @param endPort - Last port to check (inclusive)
- * @param host - Host to probe. Defaults to `127.0.0.1`
+ * @param options - Probe options; `timeoutMs` applies to each probe
  * @returns The first port that is not in use
  * @throws {RangeError} If the range is invalid
  * @throws {Error} If every port in the range is in use
@@ -165,7 +177,7 @@ export async function checkPortStatus(
 export async function findAPortNotInUse(
   startPort: number,
   endPort: number,
-  host: string = DEFAULT_PORT_CHECK_HOST,
+  options: PortCheckOptions = {},
 ): Promise<number> {
   if (
     !Number.isInteger(startPort) ||
@@ -177,7 +189,7 @@ export async function findAPortNotInUse(
     throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
   }
   for (let port = startPort; port <= endPort; port++) {
-    if ((await checkPortStatus(port, host)) === 'closed') {
+    if ((await checkPortStatus(port, options)) === 'closed') {
       return port;
     }
   }
@@ -188,10 +200,10 @@ export async function findAPortNotInUse(
  * Asks the OS for a free port by binding to port 0.
  * The port may be taken by another process after this call returns.
  *
- * @param host - Host to bind to. Defaults to all interfaces
+ * @param options - Bind options
  * @returns A port number that was free at the time of the call
  */
-export async function getFreePort(host?: string): Promise<number> {
+export async function getFreePort({host}: FreePortOptions = {}): Promise<number> {
   return await new Promise<number>((resolve, reject) => {
     const server = createServer();
     server.once('error', reject);

@@ -167,10 +167,14 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch((err) => {
-    console.error(err.message);
-    process.exitCode = 1;
-  });
+  void (async () => {
+    try {
+      await main();
+    } catch (err) {
+      console.error(err.message);
+      process.exitCode = 1;
+    }
+  })();
 }
 
 module.exports = main;

@@ -76,7 +76,7 @@
     "@sidvind/better-ajv-errors": "5.0.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
-    "argparse": "3.0.3",
+    "argparse": "3.0.4",
     "asyncbox": "6.5.0",
     "axios": "1.20.0",
     "lilconfig": "3.1.4",

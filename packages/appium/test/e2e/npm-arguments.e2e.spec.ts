@@ -363,6 +363,11 @@ describe('Windows npm resolution', {skip: !system.isWindows()}, function () {
   });
 });
 
+// A killed child may still hold its node.exe for a moment on Windows
+async function removeFixture(root: string) {
+  await rm(root, {recursive: true, force: true, maxRetries: 10});
+}
+
 async function createPathFixture(t: TestContext) {
   const root = await tempDir.openDir();
   const originalPath = process.env.PATH;
@@ -372,7 +377,7 @@ async function createPathFixture(t: TestContext) {
     } else {
       process.env.PATH = originalPath;
     }
-    await fs.rimraf(root);
+    await removeFixture(root);
   });
   const cwd = path.join(root, 'child project');
   const callerDirectory = path.join(root, 'caller npm');
@@ -436,10 +441,7 @@ async function createNpmFixture(
 async function createSelectionFixture(t: TestContext, shimName = 'npm installation') {
   // Expand 8.3 short names so that paths match `process.execPath` of child processes
   const root = await realpath(await tempDir.openDir());
-  t.after(async () => {
-    // A killed child may still hold its node.exe for a moment
-    await rm(root, {recursive: true, force: true, maxRetries: 10});
-  });
+  t.after(() => removeFixture(root));
   const shimDir = path.join(root, shimName);
   const marker = path.join(root, 'selected-cli');
   const source = (label: string) =>

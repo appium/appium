@@ -1,13 +1,20 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import type {AddressInfo} from 'node:net';
+import net, {type AddressInfo} from 'node:net';
 import path from 'node:path';
 import {after, before, describe, it} from 'node:test';
 import {promisify} from 'node:util';
 import {gzip} from 'node:zlib';
 
 import {fs, tempDir} from '../../lib/index.js';
-import {downloadFile, formatHostnameForUrl, uploadFile} from '../../lib/net.js';
+import {
+  checkPortStatus,
+  downloadFile,
+  findAPortNotInUse,
+  formatHostnameForUrl,
+  getFreePort,
+  uploadFile,
+} from '../../lib/net.js';
 
 const FILE_BYTES = 100;
 
@@ -274,3 +281,55 @@ async function withServer(
     });
   }
 }
+
+describe('port helpers', () => {
+  async function listen(): Promise<{port: number; close: () => Promise<void>}> {
+    const server = net.createServer();
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
+    const {port} = server.address() as AddressInfo;
+    return {port, close: () => new Promise<void>((resolve) => server.close(() => resolve()))};
+  }
+
+  it('getFreePort returns a bindable port', async () => {
+    const port = await getFreePort();
+    assert.ok(Number.isInteger(port) && port > 0);
+    const busy = await listen();
+    await busy.close();
+    assert.equal(await checkPortStatus(port), 'closed');
+  });
+
+  it('checkPortStatus reports open for a listening port', async () => {
+    const busy = await listen();
+    try {
+      assert.equal(await checkPortStatus(busy.port), 'open');
+    } finally {
+      await busy.close();
+    }
+    assert.equal(await checkPortStatus(busy.port), 'closed');
+  });
+
+  it('findAPortNotInUse skips ports in use', async () => {
+    const busy = await listen();
+    try {
+      const found = await findAPortNotInUse(busy.port, busy.port + 20);
+      assert.notEqual(found, busy.port);
+      assert.ok(found > busy.port);
+    } finally {
+      await busy.close();
+    }
+  });
+
+  it('findAPortNotInUse throws if the range is exhausted', async () => {
+    const busy = await listen();
+    try {
+      await assert.rejects(findAPortNotInUse(busy.port, busy.port), /No free port available/);
+    } finally {
+      await busy.close();
+    }
+  });
+
+  it('findAPortNotInUse rejects invalid ranges', async () => {
+    await assert.rejects(findAPortNotInUse(5000, 4000), RangeError);
+    await assert.rejects(findAPortNotInUse(0, 10), RangeError);
+  });
+});

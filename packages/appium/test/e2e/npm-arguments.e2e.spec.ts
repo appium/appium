@@ -364,7 +364,7 @@ describe('Windows npm resolution', {skip: !system.isWindows()}, function () {
 });
 
 // A killed child may still hold its node.exe for a moment on Windows
-async function removeFixture(root: string) {
+async function removeFixture(root: string): Promise<void> {
   await rm(root, {recursive: true, force: true, maxRetries: 10});
 }
 

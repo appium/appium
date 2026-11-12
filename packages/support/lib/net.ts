@@ -138,11 +138,12 @@ export interface FreePortOptions {
  * Checks whether something accepts TCP connections on the given port.
  *
  * `open` means a service is listening; `closed` means the connection was refused
- * or timed out. Any other socket error is rethrown.
+ * or timed out.
  *
  * @param port - Port to probe
  * @param options - Probe options
  * @throws {RangeError} If the port is not an integer in 1..65535
+ * @throws {Error} If the socket fails for any reason other than a refused connection or a timeout
  */
 export async function checkPortStatus(
   port: number,
@@ -196,6 +197,7 @@ export class NoFreePortError extends Error {
  * @returns The first port that is not in use
  * @throws {RangeError} If the range is invalid
  * @throws {NoFreePortError} If every port in the range is in use
+ * @throws {Error} If probing a port fails, see {@linkcode checkPortStatus}
  */
 export async function findAPortNotInUse(
   startPort: number,
@@ -219,6 +221,7 @@ export async function findAPortNotInUse(
  *
  * @param options - Bind options
  * @returns A port number that was free at the time of the call
+ * @throws {Error} If the server cannot bind to the host or cannot be closed
  */
 export async function getFreePort({host}: FreePortOptions = {}): Promise<number> {
   return await new Promise<number>((resolve, reject) => {

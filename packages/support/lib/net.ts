@@ -113,6 +113,10 @@ const DEFAULT_PORT_CHECK_HOST = '127.0.0.1';
 const DEFAULT_PORT_CHECK_TIMEOUT_MS = 400;
 const MAX_PORT = 65535;
 
+function isValidPort(port: number): boolean {
+  return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
+}
+
 /** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
 export type PortStatus = 'open' | 'closed';
 
@@ -138,11 +142,15 @@ export interface FreePortOptions {
  *
  * @param port - Port to probe
  * @param options - Probe options
+ * @throws {RangeError} If the port is not an integer in 1..65535
  */
 export async function checkPortStatus(
   port: number,
   {host = DEFAULT_PORT_CHECK_HOST, timeoutMs = DEFAULT_PORT_CHECK_TIMEOUT_MS}: PortCheckOptions = {},
 ): Promise<PortStatus> {
+  if (!isValidPort(port)) {
+    throw new RangeError(`Invalid port ${port}`);
+  }
   return await new Promise<PortStatus>((resolve, reject) => {
     const socket = new Socket();
     let status: PortStatus = 'closed';
@@ -179,13 +187,7 @@ export async function findAPortNotInUse(
   endPort: number,
   options: PortCheckOptions = {},
 ): Promise<number> {
-  if (
-    !Number.isInteger(startPort) ||
-    !Number.isInteger(endPort) ||
-    startPort < 1 ||
-    endPort > MAX_PORT ||
-    startPort > endPort
-  ) {
+  if (!isValidPort(startPort) || !isValidPort(endPort) || startPort > endPort) {
     throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
   }
   for (let port = startPort; port <= endPort; port++) {

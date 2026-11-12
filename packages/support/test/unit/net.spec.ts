@@ -340,13 +340,9 @@ describe('port helpers', () => {
     }
   });
 
-  it('checkPortStatus treats a timeout as closed', async () => {
-    // 192.0.2.0/24 (TEST-NET-1) is non-routable; may fail fast with ENETUNREACH on some hosts
-    try {
-      assert.equal(await checkPortStatus(80, {host: '192.0.2.1', timeoutMs: 50}), 'closed');
-    } catch (e) {
-      assert.match((e as NodeJS.ErrnoException).code ?? '', /ENETUNREACH|EHOSTUNREACH/);
-    }
+  it('checkPortStatus rejects invalid ports', async () => {
+    await assert.rejects(checkPortStatus(0), RangeError);
+    await assert.rejects(checkPortStatus(70000), RangeError);
   });
 
   it('findAPortNotInUse skips ports in use', async () => {

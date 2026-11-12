@@ -39,7 +39,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "cpy lib/screen.png build",
+    "build": "node -e \"require('node:fs').cpSync('lib/screen.png', 'build/lib/screen.png')\"",
     "clean": "npx rimraf build/lib/screen.png",
     "test": "npm run test:unit",
     "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\"",

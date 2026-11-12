@@ -1,6 +1,7 @@
 export * from './action';
 export * from './appium-config';
 export * from './capabilities';
+export * from './capability-schema';
 export * from './command-maps';
 export * from './commands';
 export * from './config';

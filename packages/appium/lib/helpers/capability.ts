@@ -12,6 +12,8 @@ const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLo
 export interface ParsedDriverCaps<C extends Constraints = BaseDriverCapConstraints> {
   desiredCaps: Capabilities<C>;
   processedW3CCapabilities: W3CCapabilities<C>;
+  /** All candidates, with server defaults applied, for schema-aware drivers. */
+  candidateW3CCapabilities: W3CCapabilities<C>;
 }
 
 /** Result when capability parsing fails or caps are invalid. */
@@ -99,7 +101,35 @@ export function parseCapsForInnerDriver<C extends Constraints = BaseDriverCapCon
   return {
     desiredCaps,
     processedW3CCapabilities,
+    candidateW3CCapabilities: w3cCapabilities,
   };
+}
+
+/**
+ * Retains candidates for the selected platform/automation pair without routing them to another driver.
+ * Candidate-level driver validation happens inside BaseDriver, after server defaults are applied.
+ */
+export function getCapsForSchemaDriver<C extends Constraints>(
+  caps: W3CCapabilities<C>,
+  selectedCaps: Capabilities<C>,
+  constraints: C,
+): W3CCapabilities<C> {
+  const routingKeys = ['platformName', 'automationName'];
+  const firstMatch = (caps.firstMatch?.length ? caps.firstMatch : [{}]).filter((candidate) => {
+    try {
+      const merged = processCapabilities({alwaysMatch: caps.alwaysMatch, firstMatch: [candidate]}, constraints);
+      return routingKeys.every((key) => {
+        const value = (merged as Record<string, unknown>)[key];
+        const selected = (selectedCaps as Record<string, unknown>)[key];
+        return (
+          typeof value === 'string' && typeof selected === 'string' && value.toLowerCase() === selected.toLowerCase()
+        );
+      });
+    } catch {
+      return false;
+    }
+  });
+  return {...caps, firstMatch};
 }
 
 /**

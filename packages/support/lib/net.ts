@@ -113,10 +113,6 @@ const DEFAULT_PORT_CHECK_HOST = '127.0.0.1';
 const DEFAULT_PORT_CHECK_TIMEOUT_MS = 400;
 const MAX_PORT = 65535;
 
-function isValidPort(port: number): boolean {
-  return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
-}
-
 /** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
 export type PortStatus = 'open' | 'closed';
 
@@ -354,4 +350,8 @@ export async function downloadFile(
       log.debug(`Approximate download speed: ${toReadableSizeString(bytesPerSec)}/s`);
     }
   }
+}
+
+function isValidPort(port: number): boolean {
+  return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
 }

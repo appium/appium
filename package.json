@@ -100,7 +100,6 @@
     "asyncbox": "6.6.0",
     "axios": "1.20.0",
     "conventional-changelog-conventionalcommits": "9.3.1",
-    "cpy-cli": "7.0.0",
     "cross-env": "10.1.0",
     "json-schema-to-typescript": "16.0.0",
     "lerna": "10.1.1",

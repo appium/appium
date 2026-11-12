@@ -149,6 +149,20 @@ describe('moving directories with symlinks', {skip: system.isWindows()}, functio
     assert.equal(await fsPromises.readlink(destination), source);
   });
 
+  it('changes the spelling of an entry that differs only by case', async function () {
+    const source = path.join(root, 'Foo.txt');
+    const destination = path.join(root, 'foo.txt');
+    await fsPromises.writeFile(source, 'payload');
+    // on a case-insensitive volume both spellings resolve to the same entry
+    const sourceStat = await fsPromises.lstat(source, {bigint: true});
+    sandbox.stub(fsPromises, 'lstat').callThrough().withArgs(destination, {bigint: true}).resolves(sourceStat);
+
+    await fs.mv(source, destination);
+
+    assert.deepEqual(await fsPromises.readdir(root), ['foo.txt']);
+    assert.equal(await fsPromises.readFile(destination, 'utf8'), 'payload');
+  });
+
   it('does not treat equal inode numbers on different devices as the same entry', async function () {
     const source = path.join(root, 'source');
     const destination = path.join(root, 'destination');

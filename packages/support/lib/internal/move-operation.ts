@@ -2,7 +2,6 @@ import {type BigIntStats, type PathLike, promises as fsPromises, type Stats} fro
 import path from 'node:path';
 
 import type {MoveFs} from './fs-like.js';
-import {isWindows} from './platform.js';
 import {isSubPath} from './sub-path.js';
 
 /** Options for {@linkcode fs.mv} */
@@ -81,13 +80,13 @@ export class MoveOperation {
     const fromName = path.basename(from);
     const toName = path.basename(to);
     if (
-      isWindows() &&
       fromName !== toName &&
       fromName.toLowerCase() === toName.toLowerCase() &&
       (await fsPromises.realpath(path.dirname(from))) === (await fsPromises.realpath(path.dirname(to)))
     ) {
-      // Windows preserves spelling even when names identify the same entry. Do not remove
-      // either path: rename changes the spelling, and cleanup would delete the renamed entry.
+      // Case-insensitive volumes (Windows, macOS by default) preserve spelling even when names identify
+      // the same entry. Do not remove either path: rename changes the spelling, and cleanup would delete
+      // the renamed entry.
       const toEntry = await fsPromises.lstat(to, {bigint: true});
       if (fromStat.dev === toEntry.dev && fromStat.ino === toEntry.ino) {
         await fsPromises.rename(from, to);

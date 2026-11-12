@@ -283,19 +283,42 @@ async function withServer(
 }
 
 describe('port helpers', () => {
-  async function listen(): Promise<{port: number; close: () => Promise<void>}> {
+  type Listener = {port: number; close: () => Promise<void>};
+
+  async function listen(port = 0): Promise<Listener> {
     const server = net.createServer();
-    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
-    const {port} = server.address() as AddressInfo;
-    return {port, close: () => new Promise<void>((resolve) => server.close(() => resolve()))};
+    await new Promise<void>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(port, '127.0.0.1', () => resolve());
+    });
+    return {
+      port: (server.address() as AddressInfo).port,
+      close: () => new Promise<void>((resolve) => server.close(() => resolve())),
+    };
+  }
+
+  // Listens on an OS-assigned port that leaves `room` ports above it within the valid range
+  async function listenWithRoom(room: number): Promise<Listener> {
+    for (;;) {
+      const l = await listen();
+      if (l.port + room <= 65535) {
+        return l;
+      }
+      await l.close();
+    }
   }
 
   it('getFreePort returns a bindable port', async () => {
     const port = await getFreePort();
     assert.ok(Number.isInteger(port) && port > 0);
-    const busy = await listen();
-    await busy.close();
     assert.equal(await checkPortStatus(port), 'closed');
+    const bound = await listen(port);
+    try {
+      assert.equal(bound.port, port);
+      assert.equal(await checkPortStatus(port), 'open');
+    } finally {
+      await bound.close();
+    }
   });
 
   it('checkPortStatus reports open for a listening port', async () => {
@@ -327,7 +350,7 @@ describe('port helpers', () => {
   });
 
   it('findAPortNotInUse skips ports in use', async () => {
-    const busy = await listen();
+    const busy = await listenWithRoom(20);
     try {
       const found = await findAPortNotInUse(busy.port, busy.port + 20);
       assert.notEqual(found, busy.port);

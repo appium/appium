@@ -214,6 +214,66 @@ UiAutomator2 driver:
 }
 ```
 
+#### Validate capabilities with JSON Schema
+
+Drivers can also declare an immutable draft-07 JSON Schema using `desiredCapSchema`:
+
+```ts
+import {BaseDriver} from 'appium/driver';
+import type {CapabilitySchema, SchemaConstraints} from '@appium/types';
+
+const capabilitySchema = {
+  type: 'object',
+  properties: {
+    retryCount: {type: 'integer', minimum: 0},
+    mode: {type: 'string', enum: ['safe', 'fast']},
+  },
+  required: ['mode'],
+} as const satisfies CapabilitySchema;
+
+class MyDriver extends BaseDriver<SchemaConstraints<typeof capabilitySchema>> {
+  readonly desiredCapSchema = capabilitySchema;
+}
+```
+
+Use unprefixed property names for Appium capabilities (`retryCount`, rather than
+`appium:retryCount`). Other vendor prefixes remain part of the property name. Appium expands
+`appium:options` and merges `alwaysMatch` with each `firstMatch` candidate before applying the
+schema. If one candidate fails validation, Appium tries the next one. This allows required
+properties and cross-property rules to be satisfied by the complete candidate.
+Appium still selects the driver using the first candidate that passes its server-level constraints.
+Schema-aware drivers receive the remaining candidates for that same platform/automation-name pair;
+Schema validation does not switch to another driver or platform.
+
+Schema validation does not convert strings to numbers or booleans, insert defaults, or remove
+unknown properties. For example, `{type: 'integer'}` accepts `3` but rejects `"3"`.
+Existing `desiredCapConstraints` and base constraints still apply, including their existing
+value conversions. When both declarations are present, the normalized candidate must satisfy
+both. Setting `shouldValidateCaps` to `false` disables both forms of validation.
+
+Leave additional properties allowed unless your schema explicitly accounts for base capabilities
+(such as `platformName`) and other vendor capabilities. `additionalProperties: false` rejects
+every property not declared at that schema location. Top-level `properties` are included in
+Appium's known-capability diagnostics; properties declared only through references or composition
+may still produce an unrecognized-capability warning.
+
+Schemas support local references, but unresolved external references and unsupported keywords or
+drafts are driver definition errors. Validation does not fetch remote schemas. Schemas are compiled
+and cached by object identity: replace the schema object to change rules instead of mutating it.
+
+`SchemaConstraints` provides existing `DriverCaps`/`opts` typing for top-level string, number,
+integer, boolean, and object properties, including string enums. Arrays, references, and composed
+property schemas remain `unknown`; this helper does not infer every JSON Schema feature. It is a
+type helper only: do not assign its generated constraints to `desiredCapConstraints` to enable
+runtime validation. The `desiredCapSchema` declaration enables runtime validation.
+
+Existing drivers can continue using `desiredCapConstraints`. To migrate incrementally, move a
+capability's rule to `desiredCapSchema`, update callers to send correctly typed values, and remove
+the corresponding legacy rule. JSON Schema `required` tests presence, so use `minLength`, patterns,
+`minItems`, or `minProperties` when you also need to reject empty values. Legacy case-insensitive
+enumerations and deprecation warnings do not have equivalent behavior in a plain `enum` or the
+JSON Schema `deprecated` annotation; retain the legacy rule if that behavior is needed.
+
 ### Start a session and read capabilities
 
 Appium's `BaseDriver` already implements the `createSession` command, so you don't have to. However

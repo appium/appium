@@ -39,7 +39,13 @@ import * as bidiCommands from './bidi-commands';
 import {BIDI_BASE_PATH, DRIVER_TYPE, SESSION_DISCOVERY_FEATURE} from './constants';
 import type {DriverConfig} from './extension/driver-config';
 import {APPIUM_VER, getBuildInfo, updateBuildInfo} from './helpers/build';
-import {makeNonW3cCapsError, parseCapsForInnerDriver, type ParsedDriverCaps, pullSettings} from './helpers/capability';
+import {
+  getCapsForSchemaDriver,
+  makeNonW3cCapsError,
+  parseCapsForInnerDriver,
+  type ParsedDriverCaps,
+  pullSettings,
+} from './helpers/capability';
 import * as insecureFeatures from './insecure-features';
 import * as inspectorCommands from './inspector-commands';
 import {getDefaultsForExtension} from './schema';
@@ -317,7 +323,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if ('error' in parsedCaps && parsedCaps.error) {
         throw parsedCaps.error;
       }
-      const {desiredCaps, processedW3CCapabilities} = parsedCaps as ParsedDriverCaps<AppiumDriverConstraints>;
+      const {desiredCaps, processedW3CCapabilities, candidateW3CCapabilities} =
+        parsedCaps as ParsedDriverCaps<AppiumDriverConstraints>;
 
       const {
         driver: InnerDriver,
@@ -334,6 +341,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       let otherPendingDriversData: DriverData[] = [];
 
       const driverInstance = new InnerDriver(this.args, true) as unknown as ExternalDriver;
+      const driverCapabilities = driverInstance.desiredCapSchema
+        ? getCapsForSchemaDriver(candidateW3CCapabilities, desiredCaps, this.desiredCapConstraints)
+        : processedW3CCapabilities;
 
       this.configureDriverFeatures(driverInstance, driverName);
 
@@ -372,9 +382,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
       try {
         [innerSessionId, dCaps] = (await driverInstance.createSession(
-          processedW3CCapabilities as never,
-          processedW3CCapabilities,
-          processedW3CCapabilities,
+          driverCapabilities as never,
+          driverCapabilities,
+          driverCapabilities,
           [...runningDriversData, ...otherPendingDriversData],
         )) as [string, DriverCaps<AppiumDriverConstraints> & {webSocketUrl?: string | boolean}];
         this.sessions[innerSessionId] = driverInstance;

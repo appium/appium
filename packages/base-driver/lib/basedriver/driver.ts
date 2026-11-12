@@ -4,6 +4,7 @@ import {
   BASE_DESIRED_CAP_CONSTRAINTS,
   type BaseDriverCapConstraints,
   type Capabilities,
+  type CapabilitySchema,
   type Constraints,
   type DefaultCreateSessionResult,
   type DefaultDeleteSessionResult,
@@ -25,7 +26,8 @@ import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
 import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {mergePlainObjects} from '../utils';
-import {processCapabilities, validateCaps} from './capabilities';
+import {processCapabilities, promoteAppiumOptions, validateCaps} from './capabilities';
+import {getCapabilitySchemaValidator} from './capability-schema';
 import {clearBidiSubscriptions} from './commands/bidi-subscriptions';
 import {DriverCore} from './core';
 import * as helpers from './helpers';
@@ -53,6 +55,8 @@ export class BaseDriver<
   caps: DriverCaps<C>;
   originalCaps!: W3CDriverCaps<C>;
   desiredCapConstraints!: C;
+  /** Optional immutable draft-07 schema for complete, normalized capability candidates. */
+  desiredCapSchema?: CapabilitySchema;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
@@ -302,10 +306,30 @@ export class BaseDriver<
       logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
     );
 
+    // Compile outside candidate validation so a broken driver schema is not treated as a bad candidate.
+    const schemaValidator =
+      this.shouldValidateCaps && this.desiredCapSchema
+        ? getCapabilitySchemaValidator(this.desiredCapSchema)
+        : undefined;
+    const constraints = this._desiredCapConstraints;
     let caps: DriverCaps<C>;
     try {
-      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
-      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
+      caps = processCapabilities(
+        schemaValidator ? promoteAppiumOptions(originalCaps) : originalCaps,
+        constraints,
+        this.shouldValidateCaps,
+        schemaValidator
+          ? (candidate) => {
+              const normalized = fixCaps(candidate, constraints, this.log);
+              validateCaps(normalized, constraints);
+              schemaValidator(normalized);
+              return normalized;
+            }
+          : undefined,
+      ) as DriverCaps<C>;
+      if (!schemaValidator) {
+        caps = fixCaps(caps, constraints, this.log) as DriverCaps<C>;
+      }
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
       throw new errors.SessionNotCreatedError(message);
@@ -397,7 +421,12 @@ export class BaseDriver<
   }
 
   logExtraCaps(caps: Capabilities<C>) {
-    const knownCaps = Object.keys(this._desiredCapConstraints);
+    const knownCaps = [
+      ...new Set([
+        ...Object.keys(this._desiredCapConstraints),
+        ...Object.keys(this.desiredCapSchema?.properties ?? {}),
+      ]),
+    ];
     const knownCapsSet = new Set(knownCaps);
     const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
     if (extraCaps.length) {
@@ -416,6 +445,9 @@ export class BaseDriver<
 
     try {
       validateCaps(caps, this._desiredCapConstraints);
+      if (this.desiredCapSchema) {
+        getCapabilitySchemaValidator(this.desiredCapSchema)(caps);
+      }
     } catch (e) {
       const capError = e instanceof Error ? e : new Error(String(e));
       throw this.log.errorWithException(

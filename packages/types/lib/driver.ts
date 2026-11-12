@@ -4,6 +4,7 @@ import type internal from 'node:stream';
 import type {Merge} from 'type-fest';
 
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities';
+import type {CapabilitySchema} from './capability-schema';
 import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps';
 import type {
   DefaultCreateSessionResult,
@@ -249,6 +250,9 @@ export interface Driver<
    * The constraints object used to validate capabilities
    */
   desiredCapConstraints: C;
+
+  /** Optional draft-07 schema applied to complete, normalized capability candidates. */
+  desiredCapSchema?: CapabilitySchema;
 
   /**
    * Validate the capabilities used to start a session

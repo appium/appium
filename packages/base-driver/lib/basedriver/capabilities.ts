@@ -207,12 +207,14 @@ export function findNonPrefixedCaps<C extends Constraints>({
 
 /**
  * Parse capabilities
+ * @param validateMergedCaps - Optional validation/normalization of each complete candidate before selection.
  * @see https://www.w3.org/TR/webdriver/#processing-capabilities
  */
 export function parseCaps<C extends Constraints>(
   caps: W3CCapabilities<C>,
   constraints: C | undefined = {} as C,
   shouldValidateCaps: boolean | undefined = true,
+  validateMergedCaps?: (caps: Capabilities<C>) => Capabilities<C>,
 ): ParsedCaps<C> {
   // If capabilities request is not an object, return error (#1.1)
   if (!util.isPlainObject(caps)) {
@@ -289,7 +291,8 @@ export function parseCaps<C extends Constraints>(
   let matchedCaps: ParsedCaps<C>['matchedCaps'] = null;
   for (const firstMatchCaps of validatedFirstMatchCaps) {
     try {
-      matchedCaps = mergeCaps(strippedRequiredCaps, firstMatchCaps) as ParsedCaps<C>['matchedCaps'];
+      const mergedCaps = mergeCaps(strippedRequiredCaps, firstMatchCaps) as Capabilities<C>;
+      matchedCaps = shouldValidateCaps && validateMergedCaps ? validateMergedCaps(mergedCaps) : mergedCaps;
       if (matchedCaps) {
         break;
       }
@@ -311,13 +314,15 @@ export function parseCaps<C extends Constraints>(
 
 /**
  * Calls parseCaps and just returns the matchedCaps variable
+ * @param validateMergedCaps - Optional validation/normalization of each complete candidate before selection.
  */
 export function processCapabilities<C extends Constraints, W3CCaps extends W3CCapabilities<C>>(
   w3cCaps: W3CCaps,
   constraints: C | undefined = {} as C,
   shouldValidateCaps: boolean | undefined = true,
+  validateMergedCaps?: (caps: Capabilities<C>) => Capabilities<C>,
 ): Capabilities<C> {
-  const {matchedCaps, validationErrors} = parseCaps(w3cCaps, constraints, shouldValidateCaps);
+  const {matchedCaps, validationErrors} = parseCaps(w3cCaps, constraints, shouldValidateCaps, validateMergedCaps);
 
   // If we found an error throw an exception
   if (!util.hasValue(matchedCaps)) {

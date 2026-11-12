@@ -5,6 +5,7 @@ import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities
 
 import type {InvalidCaps} from '../../../lib/helpers/capability';
 import {
+  getCapsForSchemaDriver,
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
   pullSettings,
@@ -13,6 +14,29 @@ import {
 import {BASE_CAPS, W3C_CAPS} from '../../helpers';
 
 describe('helpers/capability', function () {
+  it('keeps same-driver schema candidates with defaults, excluding other driver routes', function () {
+    const constraints = {
+      platformName: {presence: true, isString: true},
+      automationName: {presence: true, isString: true},
+    } as const;
+    const request = {
+      alwaysMatch: {},
+      firstMatch: [
+        {platformName: 'Fake', 'appium:automationName': 'Fake', 'appium:count': -1},
+        {platformName: 'Other', 'appium:automationName': 'Other', 'appium:count': 2},
+        {platformName: 'fake', 'appium:automationName': 'fake', 'appium:count': 3},
+      ],
+    } as unknown as W3CCapabilities<Constraints>;
+    const original = structuredClone(request);
+    const parsed = parseCapsForInnerDriver(request, constraints, {'appium:defaultValue': 1});
+    assert.ok(!('error' in parsed));
+    const candidates = getCapsForSchemaDriver(parsed.candidateW3CCapabilities, parsed.desiredCaps, constraints);
+    assert.equal(candidates.firstMatch.length, 2);
+    assert.equal((candidates.firstMatch[0] as Record<string, unknown>)['appium:defaultValue'], 1);
+    assert.equal((candidates.firstMatch[1] as Record<string, unknown>)['appium:count'], 3);
+    assert.deepEqual(request, original);
+  });
+
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
       const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>) as InvalidCaps;

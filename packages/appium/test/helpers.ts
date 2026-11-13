@@ -38,7 +38,12 @@ const W3C_CAPS = {
 let TEST_PORT: Promise<number> | undefined;
 
 async function getTestPort(): Promise<number> {
-  return await (TEST_PORT ??= net.getFreePort());
+  TEST_PORT ??= net.getFreePort().catch((err: unknown) => {
+    // do not cache a failed lookup
+    TEST_PORT = undefined;
+    throw err;
+  });
+  return await TEST_PORT;
 }
 
 function resolveFixture(filename: string, ...pathParts: string[]): string {

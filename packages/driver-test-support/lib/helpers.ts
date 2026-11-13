@@ -1,4 +1,5 @@
 import {net as netUtils} from '@appium/support';
+import {AsyncLock} from 'asyncbox';
 
 /**
  * Default test host
@@ -95,13 +96,24 @@ async function httpRequest<T = any>(url: string, options: HttpRequestOptions = {
   return {status: response.status, data: parsedData as T, headers: responseHeaders};
 }
 
+const portLock = new AsyncLock();
+const issuedPorts = new Set<number>();
+
 /**
  * Returns a free port.
+ * The function call is race-free: the same port is never returned twice.
  *
  * @returns A free port
  */
 export async function getTestPort(): Promise<number> {
-  return await netUtils.getFreePort();
+  return await portLock.acquire('getTestPort', async () => {
+    let port = await netUtils.getFreePort();
+    while (issuedPorts.has(port)) {
+      port = await netUtils.getFreePort();
+    }
+    issuedPorts.add(port);
+    return port;
+  });
 }
 
 /**

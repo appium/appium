@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.0-beta.7](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.6...@appium/base-driver@11.0.0-beta.7) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** a command result shaped like {protocol, value} is no longer unwrapped. It is returned as the command value. {protocol, error} is still thrown when error is an Error and protocol is W3C or MJSONWP.
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+
+### Features
+
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([ddc1d55](https://github.com/appium/appium/commit/ddc1d555dbf04d1cdd4dfd79139e48b1b077817b))
+
+### Bug Fixes
+
+* **base-driver:** keep command results that contain a protocol field ([#23121](https://github.com/appium/appium/issues/23121)) ([bf7b97b](https://github.com/appium/appium/commit/bf7b97bd3605cab1c88d64732a89dc68b47520a2))
+
+
 ## [11.0.0-beta.6](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0-beta.5...@appium/base-driver@11.0.0-beta.6) (2026-10-31)
 
 ### Bug Fixes

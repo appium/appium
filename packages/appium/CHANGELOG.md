@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.8](https://github.com/appium/appium/compare/appium@4.0.0-beta.7...appium@4.0.0-beta.8) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** a command result shaped like {protocol, value} is no longer unwrapped. It is returned as the command value. {protocol, error} is still thrown when error is an Error and protocol is W3C or MJSONWP.
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+
+### Features
+
+* **appium:** add flow control for BiDi event delivery ([#23146](https://github.com/appium/appium/issues/23146)) ([ba7dcbb](https://github.com/appium/appium/commit/ba7dcbbda0720303c119cb1b121465cc2a471e65))
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([ddc1d55](https://github.com/appium/appium/commit/ddc1d555dbf04d1cdd4dfd79139e48b1b077817b))
+* **support:** add port helpers to net ([#23156](https://github.com/appium/appium/issues/23156)) ([d5d90c5](https://github.com/appium/appium/commit/d5d90c5d9373eedb96525105c25069b85f13dcbc))
+
+### Bug Fixes
+
+* **appium:** align insecure feature logging with automationName scope ([#23122](https://github.com/appium/appium/issues/23122)) ([370a404](https://github.com/appium/appium/commit/370a40410c5de3b6a196fb6c1c0157db75794ecf))
+* **appium:** avoid overlapping CLI spinners ([#23125](https://github.com/appium/appium/issues/23125)) ([42b0317](https://github.com/appium/appium/commit/42b03172f2eeb4d787987623c6e2e3a8525b35d6))
+* **base-driver:** keep command results that contain a protocol field ([#23121](https://github.com/appium/appium/issues/23121)) ([bf7b97b](https://github.com/appium/appium/commit/bf7b97bd3605cab1c88d64732a89dc68b47520a2))
+
+
 ## [4.0.0-beta.7](https://github.com/appium/appium/compare/appium@4.0.0-beta.6...appium@4.0.0-beta.7) (2026-10-31)
 
 ### Bug Fixes

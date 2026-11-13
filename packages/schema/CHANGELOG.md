@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.4](https://github.com/appium/appium/compare/@appium/schema@2.0.0-beta.3...@appium/schema@2.0.0-beta.4) (2026-11-13)
+
+### Features
+
+* **appium:** add flow control for BiDi event delivery ([#23146](https://github.com/appium/appium/issues/23146)) ([ba7dcbb](https://github.com/appium/appium/commit/ba7dcbbda0720303c119cb1b121465cc2a471e65))
+
+
 ## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/schema@2.0.0-beta.2...@appium/schema@2.0.0-beta.3) (2026-10-26)
 
 ### ⚠ BREAKING CHANGES

@@ -30,7 +30,15 @@ export default {
 export type {ConsoleOpts} from './console.js';
 export type {TextStyle} from './console.js';
 export type {CopyFileOptions, RimrafOptions, WalkDirCallback} from './fs.js';
-export type {AuthCredentials, DownloadOptions, HttpUploadOptions, NetOptions} from './net.js';
+export type {
+  AuthCredentials,
+  DownloadOptions,
+  FreePortOptions,
+  HttpUploadOptions,
+  NetOptions,
+  PortCheckOptions,
+  PortStatus,
+} from './net.js';
 export type {Affixes, OpenedAffixes} from './tempdir.js';
 export type {
   EncodingOptions,

@@ -602,6 +602,12 @@ If you use these items, import them from `@appium/http-server` instead.
 
 ## New Features
 
+### Drivers Supplied by Embedding Packages
+
+Programmatic `useDrivers` accepts imported driver classes or module namespaces, as well as absolute
+paths and `file:` URLs for driver packages. Packages embedding Appium can use their own dependencies
+without installing them in `APPIUM_HOME` (see [Embedding Appium in an `npm` Package](./managing-exts.md#embedding-appium-in-an-npm-package)).
+
 ### App URL Rules
 
 The new `--app-url-rules` server CLI flag (and its equivalent configuration file property) allows

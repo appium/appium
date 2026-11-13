@@ -85,3 +85,49 @@ project.
 This strategy is *only* recommended if you are already using `npm` for your project.
 Otherwise, it is recommended that you use Appium's Extension CLI and, if necessary, adjust
 `APPIUM_HOME` to change the location of stored extensions.
+
+## Embedding Appium in an `npm` Package
+
+If you publish a package that starts Appium itself, such as a tool that ships Appium together with
+the drivers it needs, the drivers can end up installed in different places depending on the package
+manager and the project that uses your package. Programmatic callers can bypass Appium's extension
+discovery by importing the driver and passing it directly in `useDrivers`:
+
+```js
+import {main} from 'appium';
+import XCUITestDriver from 'appium-xcuitest-driver';
+
+await main({
+  useDrivers: [XCUITestDriver],
+});
+```
+
+Appium also accepts an ESM namespace object whose default/named exports identify one driver class.
+Directly supplied drivers stay in memory and are not added to `extensions.yaml`. String entries
+remain supported: a string can name an installed driver, or be an absolute path/`file:` URL for a
+driver package resolved by the embedding package.
+
+For a directly supplied class, Appium uses its static `automationName` string, if present, or its
+class name with the trailing `Driver` removed. It does not infer the package's metadata from the
+constructor. When those names differ, use the resolved package location so Appium reads the declared
+`automationName`, driver name and supported platforms from `package.json`. For example, the
+UiAutomator2 package exports `AndroidUiautomator2Driver`, while its declared automation name is
+`UiAutomator2`:
+
+```js
+import {main} from 'appium';
+
+await main({
+  useDrivers: [import.meta.resolve('appium-uiautomator2-driver')],
+});
+```
+
+Each server keeps its directly supplied classes and resolved package locations in its own driver
+configuration, even when multiple servers share an `APPIUM_HOME`. A directly supplied class takes
+precedence over a package driver with the same `automationName`; a resolved package takes precedence
+over an installed driver. Only the preferred driver contributes server hooks and routes. Supplying
+different classes with the same automation name, or conflicting derived driver names, is an error.
+If an installed driver is shadowed by an unselected package with the same automation name, startup
+reports the conflicting names instead of silently omitting the requested driver's hooks.
+A single constructor must also have one active driver name; mixing a direct class and package metadata
+that give it different names is rejected before its hooks run.

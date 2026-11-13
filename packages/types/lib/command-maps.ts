@@ -1,4 +1,4 @@
-import type {Driver, DriverCommand} from './driver.js';
+import type {Driver, DriverCommand, ExternalDriver} from './driver.js';
 import type {Plugin, PluginCommand} from './plugin.js';
 import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray, StringRecord} from './util.js';
 
@@ -68,25 +68,189 @@ export interface BaseMethodDef {
   readonly info?: string;
 }
 
+type IsPureRestArray<P extends readonly unknown[]> = number extends P['length']
+  ? [P[number], ...P] extends P
+    ? true
+    : false
+  : false;
+
+type CanAcceptOptionalPayload<T> =
+  IsAny<T> extends true ? true : [unknown] extends [T] ? false : [undefined] extends [T] ? true : false;
+
+type CanAcceptOptionalRest<T> = IsAny<T> extends true ? true : undefined extends T ? true : false;
+
+type CanOmitRequiredParam<T> =
+  IsAny<T> extends true
+    ? true
+    : [unknown] extends [T]
+      ? false
+      : [string] extends [T]
+        ? true
+        : [undefined] extends [T]
+          ? true
+          : false;
+
+// Trailing omitted params must be optional, rest, or string (from URL path params).
+type CanOmitTrailing<P extends readonly unknown[]> = P extends readonly []
+  ? true
+  : IsPureRestArray<P> extends true
+    ? true
+    : P extends readonly [infer H, ...infer T]
+      ? CanOmitRequiredParam<H> extends true
+        ? CanOmitTrailing<T>
+        : false
+      : P extends readonly [(infer _)?, ...infer T]
+        ? CanOmitTrailing<T>
+        : true;
+
+type CanTakeExactO<CurP extends readonly unknown[], OLen extends readonly unknown[]> = OLen extends readonly []
+  ? CanOmitTrailing<CurP>
+  : CurP extends readonly []
+    ? false
+    : IsPureRestArray<CurP> extends true
+      ? CanAcceptOptionalRest<CurP[number]>
+      : CurP extends readonly [infer H, ...infer T]
+        ? CanAcceptOptionalPayload<H> extends true
+          ? OLen extends readonly [unknown, ...infer OTail]
+            ? CanTakeExactO<T, OTail>
+            : false
+          : false
+        : CurP extends readonly [(infer _)?, ...infer T]
+          ? OLen extends readonly [unknown, ...infer OTail]
+            ? CanTakeExactO<T, OTail>
+            : false
+          : false;
+
+type CanTakeRestO<CurP extends readonly unknown[]> = CurP extends readonly []
+  ? false
+  : IsPureRestArray<CurP> extends true
+    ? CanAcceptOptionalRest<CurP[number]>
+    : CurP extends readonly [infer H, ...infer T]
+      ? CanAcceptOptionalPayload<H> extends true
+        ? CanTakeRestO<T>
+        : false
+      : CurP extends readonly [(infer _)?, ...infer T]
+        ? CanTakeRestO<T>
+        : false;
+
+type FinitePrefixTuple<P extends readonly unknown[]> = P extends readonly []
+  ? []
+  : IsPureRestArray<P> extends true
+    ? []
+    : P extends readonly [infer _, ...infer T]
+      ? [unknown, ...FinitePrefixTuple<T>]
+      : P extends readonly [(infer _)?, ...infer T]
+        ? [unknown, ...FinitePrefixTuple<T>]
+        : [];
+
+type RequiredPropShape<RUnion, Opt> = (readonly [] extends RUnion
+  ? {readonly required?: RUnion | readonly [RUnion, ...RUnion[]] | string[] | string[][]}
+  : {readonly required: RUnion | readonly [RUnion, ...RUnion[]] | string[] | string[][]}) &
+  Opt;
+
+type PayloadShape<RUnion, O extends string[]> = RequiredPropShape<
+  RUnion,
+  O extends [] ? {readonly optional?: readonly [] | string[]} : {readonly optional: Readonly<O> | string[]}
+>;
+
+type MatchingRequiredForO<P extends readonly unknown[], O extends readonly unknown[], RAcc extends string[] = []> =
+  IsPureRestArray<P> extends true
+    ? O extends readonly []
+      ? Readonly<[...RAcc, ...string[]]>
+      : CanAcceptOptionalRest<P[number]> extends true
+        ? Readonly<[...RAcc, ...string[]]>
+        : never
+    :
+        | (CanTakeExactO<P, O> extends true ? Readonly<RAcc> : never)
+        | (P extends readonly []
+            ? never
+            : P extends readonly [infer _, ...infer T]
+              ? MatchingRequiredForO<T, O, [...RAcc, string]>
+              : P extends readonly [(infer _)?, ...infer T]
+                ? MatchingRequiredForO<T, O, [...RAcc, string]>
+                : never);
+
+type MatchingRequiredForRestO<P extends readonly unknown[], RAcc extends string[] = []> =
+  IsPureRestArray<P> extends true
+    ? CanAcceptOptionalRest<P[number]> extends true
+      ? Readonly<[...RAcc, ...string[]]>
+      : never
+    :
+        | (CanTakeRestO<P> extends true ? Readonly<RAcc> : never)
+        | (P extends readonly []
+            ? never
+            : P extends readonly [infer _, ...infer T]
+              ? MatchingRequiredForRestO<T, [...RAcc, string]>
+              : P extends readonly [(infer _)?, ...infer T]
+                ? MatchingRequiredForRestO<T, [...RAcc, string]>
+                : never);
+
+type CollectByO<
+  P extends readonly unknown[],
+  O extends string[] = [],
+  Budget extends unknown[] = FinitePrefixTuple<P>,
+> =
+  | ([MatchingRequiredForO<P, O>] extends [never] ? never : PayloadShape<MatchingRequiredForO<P, O>, O>)
+  | (Budget extends [unknown, ...infer Tail] ? CollectByO<P, [...O, string], Tail> : never);
+
+type PayloadParamsFor<P extends readonly unknown[]> =
+  | CollectByO<P>
+  | ([MatchingRequiredForRestO<P>] extends [never]
+      ? never
+      : RequiredPropShape<MatchingRequiredForRestO<P>, {readonly optional?: ReadonlyArray<string>}>);
+
+type PayloadParamsProp<P extends readonly unknown[]> =
+  CanOmitTrailing<P> extends true
+    ? {
+        readonly payloadParams?: PayloadParams &
+          (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
+      }
+    : {
+        readonly payloadParams: PayloadParams &
+          (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
+      };
+
+type LooseMethodDef = BaseMethodDef & {
+  readonly command?: string;
+};
+
+type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
+  IsNever<Commands> extends true
+    ? LooseMethodDef
+    : IsNever<keyof Commands> extends true
+      ? LooseMethodDef
+      : [string] extends [keyof Commands]
+        ? LooseMethodDef
+        :
+            | (BaseMethodDef & {readonly command?: never})
+            | {
+                [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> & {
+                  readonly command: K;
+                } & PayloadParamsProp<
+                    Kind extends 'driver' ? DriverCommandParams<Commands[K]> : PluginCommandParams<Commands[K]>
+                  >;
+              }[keyof Commands];
+
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  */
-export interface DriverMethodDef<T extends Driver, D extends boolean = boolean> extends BaseMethodDef {
-  /**
-   * Name of the command.
-   */
-  readonly command?: D extends true ? string : keyof ConditionalPick<Required<T>, DriverCommand>;
-}
+export type DriverMethodDef<T extends Driver, D extends boolean = false> = true extends D
+  ? LooseMethodDef
+  : IsAny<T> extends true
+    ? LooseMethodDef
+    : [ExternalDriver] extends [T]
+      ? LooseMethodDef
+      : CheckedMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
 
 /**
  * A definition of an exposed API command in a {@linkcode Plugin}.
  */
-export interface PluginMethodDef<T extends Plugin> extends BaseMethodDef {
-  /**
-   * Name of the command.
-   */
-  readonly command?: keyof ConditionalPick<Required<T>, PluginCommand>;
-}
+export type PluginMethodDef<T extends Plugin> =
+  IsAny<T> extends true
+    ? LooseMethodDef
+    : [Plugin] extends [T]
+      ? LooseMethodDef
+      : CheckedMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
 
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode PluginMethodDef}.

@@ -61,7 +61,7 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
-    assert.strictEqual(app.use.callCount, 12);
+    assert.strictEqual(app.use.callCount, 13);
     assert.strictEqual(app.all.callCount, 0);
   });
 
@@ -70,7 +70,7 @@ describe('server configuration', function () {
     const configureRoutes = () => {};
     // @ts-expect-error registerTestPages is not normally used in this way
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter, registerTestPages});
-    assert.strictEqual(app.use.callCount, 16);
+    assert.strictEqual(app.use.callCount, 17);
     assert.strictEqual(app.all.callCount, 4);
   });
 

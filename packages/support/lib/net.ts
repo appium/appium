@@ -116,7 +116,7 @@ const MAX_PORT = 65535;
 /** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
 export type PortStatus = 'open' | 'closed';
 
-/** Options for {@linkcode checkPortStatus} and {@linkcode findAPortNotInUse}. */
+/** Options for {@linkcode checkPortStatus}. */
 export interface PortCheckOptions {
   /** Host to probe. Defaults to `127.0.0.1` */
   host?: string;
@@ -125,9 +125,14 @@ export interface PortCheckOptions {
 }
 
 /** Options for {@linkcode getFreePort}. */
-export interface FreePortOptions {
-  /** Host to bind to. Defaults to all interfaces */
+export interface FreePortOptions extends PortCheckOptions {
+  /**
+   * Host to bind to if `port` is omitted (defaults to all interfaces),
+   * or to probe otherwise (defaults to `127.0.0.1`)
+   */
   host?: string;
+  /** A single port, or an inclusive `[startPort, endPort]` range to try in order. Defaults to any OS-assigned port */
+  port?: number | [startPort: number, endPort: number];
 }
 
 /**
@@ -168,7 +173,7 @@ export async function checkPortStatus(
   });
 }
 
-/** Thrown by {@linkcode findAPortNotInUse} when every port in the range is in use. */
+/** Thrown by {@linkcode getFreePort} when every requested port is in use. */
 export class NoFreePortError extends Error {
   /**
    * @param startPort - First port of the scanned range
@@ -184,50 +189,33 @@ export class NoFreePortError extends Error {
 }
 
 /**
- * Finds the first port in the given range that nothing is listening on.
- * Ports are probed sequentially with {@linkcode checkPortStatus}.
+ * Finds a free port.
  *
- * @param startPort - First port to check (inclusive)
- * @param endPort - Last port to check (inclusive)
- * @param options - Probe options; `timeoutMs` applies to each probe
- * @returns The first port that is not in use
- * @throws {RangeError} If the range is invalid
- * @throws {NoFreePortError} If every port in the range is in use
- * @throws {Error} If probing a port fails, see {@linkcode checkPortStatus}
+ * Without `port` the OS picks the port (by binding to port 0). Otherwise the given port, or the
+ * ports of the given range in order, are probed with {@linkcode checkPortStatus} and the first
+ * one that nothing is listening on is returned.
+ * The port may be taken by another process after this call returns.
+ *
+ * @param options - Bind options, or probe options if `port` is given; `timeoutMs` applies to each probe
+ * @returns A port number that was free at the time of the call
+ * @throws {RangeError} If the port or range is invalid
+ * @throws {NoFreePortError} If every requested port is in use
+ * @throws {Error} If binding or probing fails, see {@linkcode checkPortStatus}
  */
-export async function findAPortNotInUse(
-  startPort: number,
-  endPort: number,
-  options: PortCheckOptions = {},
-): Promise<number> {
+export async function getFreePort({host, timeoutMs, port}: FreePortOptions = {}): Promise<number> {
+  if (port === undefined) {
+    return await listenOnAnyPort(host);
+  }
+  const [startPort, endPort] = Array.isArray(port) ? port : [port, port];
   if (!isValidPort(startPort) || !isValidPort(endPort) || startPort > endPort) {
     throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
   }
-  for (let port = startPort; port <= endPort; port++) {
-    if ((await checkPortStatus(port, options)) === 'closed') {
-      return port;
+  for (let candidate = startPort; candidate <= endPort; candidate++) {
+    if ((await checkPortStatus(candidate, {host, timeoutMs})) === 'closed') {
+      return candidate;
     }
   }
   throw new NoFreePortError(startPort, endPort);
-}
-
-/**
- * Asks the OS for a free port by binding to port 0.
- * The port may be taken by another process after this call returns.
- *
- * @param options - Bind options
- * @returns A port number that was free at the time of the call
- * @throws {Error} If the server cannot bind to the host or cannot be closed
- */
-export async function getFreePort({host}: FreePortOptions = {}): Promise<number> {
-  return await new Promise<number>((resolve, reject) => {
-    const server = createServer();
-    server.once('error', reject);
-    server.listen(0, host, () => {
-      const {port} = server.address() as AddressInfo;
-      server.close((err) => (err ? reject(err) : resolve(port)));
-    });
-  });
 }
 
 /** Uploads the given file to a remote location via HTTP(S). */
@@ -354,4 +342,16 @@ export async function downloadFile(
 
 function isValidPort(port: number): boolean {
   return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
+}
+
+/** Asks the OS for a port by binding a temporary server to port 0. */
+async function listenOnAnyPort(host?: string): Promise<number> {
+  return await new Promise<number>((resolve, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, host, () => {
+      const {port} = server.address() as AddressInfo;
+      server.close((err) => (err ? reject(err) : resolve(port)));
+    });
+  });
 }

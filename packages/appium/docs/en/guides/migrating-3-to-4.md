@@ -559,6 +559,11 @@ If you use these items, import them from `@appium/http-server` instead.
   ([#22719](https://github.com/appium/appium/pull/22719))
 * `net`: support for FTP-based file uploads has been removed, along with the `FtpUploadOptions` and
   `NotHttpUploadOptions` types ([#22678](https://github.com/appium/appium/pull/22678))
+* `net`: the new `checkPortStatus()`, `findAPortNotInUse()` and `getFreePort()` helpers replace the
+  `portscanner` package and custom free port lookups in drivers and plugins
+  ([#23156](https://github.com/appium/appium/pull/23156)). Unlike `portscanner`, they accept an
+  options object (`host`, `timeoutMs`) instead of positional arguments, and `findAPortNotInUse()`
+  throws `NoFreePortError` if the whole range is busy instead of resolving with `false`
 * `mjpeg`: the module has been removed ([#22678](https://github.com/appium/appium/pull/22678))
 * `mkdirp`: the module has been removed ([#22678](https://github.com/appium/appium/pull/22678)).
   Import `mkdirp()` from the `fs` module instead

@@ -10,7 +10,6 @@ import {fs, tempDir} from '../../lib/index.js';
 import {
   checkPortStatus,
   downloadFile,
-  findAPortNotInUse,
   formatHostnameForUrl,
   getFreePort,
   NoFreePortError,
@@ -298,14 +297,22 @@ describe('port helpers', () => {
     };
   }
 
-  // Listens on an OS-assigned port that leaves `room` ports above it within the valid range
-  async function listenWithRoom(room: number): Promise<Listener> {
+  // Listens on `count` consecutive ports starting from an OS-assigned one
+  async function listenRun(count: number): Promise<Listener[]> {
     for (;;) {
-      const l = await listen();
-      if (l.port + room <= 65535) {
-        return l;
+      const first = await listen();
+      const run = [first];
+      try {
+        for (let i = 1; i < count && first.port + i <= 65535; i++) {
+          run.push(await listen(first.port + i));
+        }
+        if (run.length === count) {
+          return run;
+        }
+      } catch {
+        // a neighbor port is taken, retry from another base
       }
-      await l.close();
+      await Promise.all(run.map((l) => l.close()));
     }
   }
 
@@ -346,21 +353,32 @@ describe('port helpers', () => {
     await assert.rejects(checkPortStatus(70000), RangeError);
   });
 
-  it('findAPortNotInUse skips ports in use', async () => {
-    const busy = await listenWithRoom(20);
+  it('getFreePort returns the first free port of a range', async () => {
+    const run = await listenRun(4);
+    const [first, second, third, fourth] = run;
     try {
-      const found = await findAPortNotInUse(busy.port, busy.port + 20);
-      assert.notEqual(found, busy.port);
-      assert.ok(found > busy.port);
+      await Promise.all([third.close(), fourth.close()]);
+      assert.equal(await getFreePort({port: [first.port, fourth.port]}), third.port);
     } finally {
-      await busy.close();
+      await Promise.all([first.close(), second.close()]);
     }
   });
 
-  it('findAPortNotInUse throws if the range is exhausted', async () => {
+  it('getFreePort includes the last port of a range', async () => {
+    const run = await listenRun(3);
+    const last = run[2];
+    try {
+      await last.close();
+      assert.equal(await getFreePort({port: [run[0].port, last.port]}), last.port);
+    } finally {
+      await Promise.all(run.slice(0, 2).map((l) => l.close()));
+    }
+  });
+
+  it('getFreePort throws if the range is exhausted', async () => {
     const busy = await listen();
     try {
-      await assert.rejects(findAPortNotInUse(busy.port, busy.port), (err: unknown) => {
+      await assert.rejects(getFreePort({port: [busy.port, busy.port]}), (err: unknown) => {
         assert.ok(err instanceof NoFreePortError);
         assert.equal(err.startPort, busy.port);
         assert.equal(err.endPort, busy.port);
@@ -372,8 +390,31 @@ describe('port helpers', () => {
     }
   });
 
-  it('findAPortNotInUse rejects invalid ranges', async () => {
-    await assert.rejects(findAPortNotInUse(5000, 4000), RangeError);
-    await assert.rejects(findAPortNotInUse(0, 10), RangeError);
+  it('getFreePort accepts a single port', async () => {
+    const free = await getFreePort({host: '127.0.0.1'});
+    assert.equal(await getFreePort({port: free}), free);
+    const busy = await listen();
+    try {
+      await assert.rejects(getFreePort({port: busy.port}), NoFreePortError);
+    } finally {
+      await busy.close();
+    }
+  });
+
+  it('getFreePort treats a port held on all interfaces as busy', async () => {
+    const server = net.createServer();
+    await new Promise<void>((resolve) => server.listen(0, '0.0.0.0', () => resolve()));
+    try {
+      const {port} = server.address() as AddressInfo;
+      await assert.rejects(getFreePort({port}), NoFreePortError);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  });
+
+  it('getFreePort rejects invalid ranges', async () => {
+    await assert.rejects(getFreePort({port: [5000, 4000]}), RangeError);
+    await assert.rejects(getFreePort({port: [0, 10]}), RangeError);
+    await assert.rejects(getFreePort({port: 0}), RangeError);
   });
 });

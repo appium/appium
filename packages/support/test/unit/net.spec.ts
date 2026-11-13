@@ -297,14 +297,22 @@ describe('port helpers', () => {
     };
   }
 
-  // Listens on an OS-assigned port that leaves `room` ports above it within the valid range
-  async function listenWithRoom(room: number): Promise<Listener> {
+  // Listens on `count` consecutive ports starting from an OS-assigned one
+  async function listenRun(count: number): Promise<Listener[]> {
     for (;;) {
-      const l = await listen();
-      if (l.port + room <= 65535) {
-        return l;
+      const first = await listen();
+      const run = [first];
+      try {
+        for (let i = 1; i < count && first.port + i <= 65535; i++) {
+          run.push(await listen(first.port + i));
+        }
+        if (run.length === count) {
+          return run;
+        }
+      } catch {
+        // a neighbor port is taken, retry from another base
       }
-      await l.close();
+      await Promise.all(run.map((l) => l.close()));
     }
   }
 
@@ -345,13 +353,25 @@ describe('port helpers', () => {
     await assert.rejects(checkPortStatus(70000), RangeError);
   });
 
-  it('getFreePort skips ports in use within a range', async () => {
-    const busy = await listenWithRoom(20);
+  it('getFreePort returns the first free port of a range', async () => {
+    const run = await listenRun(4);
+    const [first, second, third, fourth] = run;
     try {
-      const found = await getFreePort({host: '127.0.0.1', port: [busy.port, busy.port + 20]});
-      assert.ok(found > busy.port);
+      await Promise.all([third.close(), fourth.close()]);
+      assert.equal(await getFreePort({host: '127.0.0.1', port: [first.port, fourth.port]}), third.port);
     } finally {
-      await busy.close();
+      await Promise.all([first.close(), second.close()]);
+    }
+  });
+
+  it('getFreePort includes the last port of a range', async () => {
+    const run = await listenRun(3);
+    const last = run[2];
+    try {
+      await last.close();
+      assert.equal(await getFreePort({host: '127.0.0.1', port: [run[0].port, last.port]}), last.port);
+    } finally {
+      await Promise.all(run.slice(0, 2).map((l) => l.close()));
     }
   });
 

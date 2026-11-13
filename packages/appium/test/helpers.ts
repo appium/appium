@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import net from 'node:net';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {isDeepStrictEqual} from 'node:util';
+
+import {net} from '@appium/support';
 
 import {insertAppiumPrefixes} from '../lib/helpers/capability.js';
 
@@ -36,23 +37,8 @@ const W3C_CAPS = {
 
 let TEST_PORT: number | undefined;
 
-async function getPort(): Promise<number> {
-  const server = net.createServer();
-  return await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, () => {
-      const address = server.address();
-      if (!address || typeof address === 'string') {
-        server.close(() => reject(new Error('Could not resolve a free port')));
-        return;
-      }
-      server.close((err) => (err ? reject(err) : resolve(address.port)));
-    });
-  });
-}
-
 async function getTestPort(): Promise<number> {
-  return (TEST_PORT ??= await getPort());
+  return (TEST_PORT ??= await net.getFreePort());
 }
 
 function resolveFixture(filename: string, ...pathParts: string[]): string {

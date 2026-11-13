@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.8](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.7...@appium/execute-driver-plugin@8.0.0-beta.8) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+
+### Features
+
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([ddc1d55](https://github.com/appium/appium/commit/ddc1d555dbf04d1cdd4dfd79139e48b1b077817b))
+
+
 ## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.6...@appium/execute-driver-plugin@8.0.0-beta.7) (2026-10-31)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

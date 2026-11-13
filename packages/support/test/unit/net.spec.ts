@@ -358,7 +358,7 @@ describe('port helpers', () => {
     const [first, second, third, fourth] = run;
     try {
       await Promise.all([third.close(), fourth.close()]);
-      assert.equal(await getFreePort({host: '127.0.0.1', port: [first.port, fourth.port]}), third.port);
+      assert.equal(await getFreePort({port: [first.port, fourth.port]}), third.port);
     } finally {
       await Promise.all([first.close(), second.close()]);
     }
@@ -369,7 +369,7 @@ describe('port helpers', () => {
     const last = run[2];
     try {
       await last.close();
-      assert.equal(await getFreePort({host: '127.0.0.1', port: [run[0].port, last.port]}), last.port);
+      assert.equal(await getFreePort({port: [run[0].port, last.port]}), last.port);
     } finally {
       await Promise.all(run.slice(0, 2).map((l) => l.close()));
     }
@@ -378,7 +378,7 @@ describe('port helpers', () => {
   it('getFreePort throws if the range is exhausted', async () => {
     const busy = await listen();
     try {
-      await assert.rejects(getFreePort({host: '127.0.0.1', port: [busy.port, busy.port]}), (err: unknown) => {
+      await assert.rejects(getFreePort({port: [busy.port, busy.port]}), (err: unknown) => {
         assert.ok(err instanceof NoFreePortError);
         assert.equal(err.startPort, busy.port);
         assert.equal(err.endPort, busy.port);
@@ -392,12 +392,23 @@ describe('port helpers', () => {
 
   it('getFreePort accepts a single port', async () => {
     const free = await getFreePort({host: '127.0.0.1'});
-    assert.equal(await getFreePort({host: '127.0.0.1', port: free}), free);
+    assert.equal(await getFreePort({port: free}), free);
     const busy = await listen();
     try {
-      await assert.rejects(getFreePort({host: '127.0.0.1', port: busy.port}), NoFreePortError);
+      await assert.rejects(getFreePort({port: busy.port}), NoFreePortError);
     } finally {
       await busy.close();
+    }
+  });
+
+  it('getFreePort treats a port held on all interfaces as busy', async () => {
+    const server = net.createServer();
+    await new Promise<void>((resolve) => server.listen(0, '0.0.0.0', () => resolve()));
+    try {
+      const {port} = server.address() as AddressInfo;
+      await assert.rejects(getFreePort({port}), NoFreePortError);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
     }
   });
 

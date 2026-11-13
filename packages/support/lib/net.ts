@@ -125,8 +125,11 @@ export interface PortCheckOptions {
 }
 
 /** Options for {@linkcode getFreePort}. */
-export interface FreePortOptions {
-  /** Host to bind to. Defaults to all interfaces */
+export interface FreePortOptions extends PortCheckOptions {
+  /**
+   * Host to bind to if `port` is omitted (defaults to all interfaces),
+   * or to probe otherwise (defaults to `127.0.0.1`)
+   */
   host?: string;
   /** A single port, or an inclusive `[startPort, endPort]` range to try in order. Defaults to any OS-assigned port */
   port?: number | [startPort: number, endPort: number];
@@ -186,30 +189,30 @@ export class NoFreePortError extends Error {
 }
 
 /**
- * Finds a port that can be bound.
+ * Finds a free port.
  *
- * Without `port` the OS picks the port (by binding to port 0); otherwise the given port,
- * or the ports of the given range in order, are tried and the first bindable one is returned.
+ * Without `port` the OS picks the port (by binding to port 0). Otherwise the given port, or the
+ * ports of the given range in order, are probed with {@linkcode checkPortStatus} and the first
+ * one that nothing is listening on is returned.
  * The port may be taken by another process after this call returns.
  *
- * @param options - Bind options
+ * @param options - Bind options, or probe options if `port` is given; `timeoutMs` applies to each probe
  * @returns A port number that was free at the time of the call
  * @throws {RangeError} If the port or range is invalid
  * @throws {NoFreePortError} If every requested port is in use
- * @throws {Error} If binding fails for any reason other than the port being in use
+ * @throws {Error} If binding or probing fails, see {@linkcode checkPortStatus}
  */
-export async function getFreePort({host, port}: FreePortOptions = {}): Promise<number> {
+export async function getFreePort({host, timeoutMs, port}: FreePortOptions = {}): Promise<number> {
   if (port === undefined) {
-    return (await tryListen(0, host)) as number;
+    return await listenOnAnyPort(host);
   }
   const [startPort, endPort] = Array.isArray(port) ? port : [port, port];
   if (!isValidPort(startPort) || !isValidPort(endPort) || startPort > endPort) {
     throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
   }
   for (let candidate = startPort; candidate <= endPort; candidate++) {
-    const bound = await tryListen(candidate, host);
-    if (bound !== null) {
-      return bound;
+    if ((await checkPortStatus(candidate, {host, timeoutMs})) === 'closed') {
+      return candidate;
     }
   }
   throw new NoFreePortError(startPort, endPort);
@@ -341,14 +344,14 @@ function isValidPort(port: number): boolean {
   return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
 }
 
-/** Binds a temporary server to the port; resolves with the port, or `null` if it is in use. */
-async function tryListen(port: number, host?: string): Promise<number | null> {
-  return await new Promise<number | null>((resolve, reject) => {
+/** Asks the OS for a port by binding a temporary server to port 0. */
+async function listenOnAnyPort(host?: string): Promise<number> {
+  return await new Promise<number>((resolve, reject) => {
     const server = createServer();
-    server.once('error', (err: NodeJS.ErrnoException) => (err.code === 'EADDRINUSE' ? resolve(null) : reject(err)));
-    server.listen(port, host, () => {
-      const {port: boundPort} = server.address() as AddressInfo;
-      server.close((err) => (err ? reject(err) : resolve(boundPort)));
+    server.once('error', reject);
+    server.listen(0, host, () => {
+      const {port} = server.address() as AddressInfo;
+      server.close((err) => (err ? reject(err) : resolve(port)));
     });
   });
 }

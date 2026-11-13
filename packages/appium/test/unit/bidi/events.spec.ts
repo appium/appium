@@ -9,15 +9,15 @@ import {BasePlugin} from '@appium/base-plugin';
 import type {ExternalDriver} from '@appium/types';
 import {WebSocket} from 'ws';
 
-import {AppiumDriver} from '../../lib/appium.js';
+import {AppiumDriver} from '../../../lib/appium.js';
 
 class EventSocket extends EventEmitter {
   readonly OPEN = WebSocket.OPEN;
   readonly readyState = WebSocket.OPEN;
   readonly messages: string[] = [];
 
-  send(data: string, callback: () => void): void {
-    this.messages.push(data);
+  send(data: string | Buffer, _options: unknown, callback: () => void): void {
+    this.messages.push(data.toString());
     callback();
   }
 }

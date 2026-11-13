@@ -32,6 +32,9 @@ appium
 |`--app-url-rules`|Rules that remote application URLs (e.g. in the `appium:app` capability) must satisfy before the server downloads them. See the [Restricting Remote App URLs](../../guides/security.md#restricting-remote-app-urls) guide for details. Can be a path to a JSON file or raw JSON.|object||
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
 |`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
+|`--bidi-heartbeat-interval`|Interval (in seconds) between WebSocket pings sent to each [BiDi](../api/bidi.md) client. A connection that misses two consecutive pongs is terminated. Disabled if set to `0`.|integer|`15`|
+|`--bidi-max-buffered-bytes`|Maximum number of bytes the server may keep buffered for a BiDi connection whose client is not reading fast enough. A connection that stays above the limit for longer than `--bidi-max-buffered-ms`, or exceeds twice the limit, is closed with the code `1013`. Disabled if set to `0`, which also turns off skipping of droppable events.|integer|`33554432`|
+|`--bidi-max-buffered-ms`|Time (in milliseconds) a BiDi connection may stay above `--bidi-max-buffered-bytes` before it is closed. If set to `0`, the connection is closed as soon as the limit is exceeded.|integer|`30000`|
 |`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||

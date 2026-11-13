@@ -788,6 +788,36 @@ this.eventEmitter.emit('bidiEvent', {
 Now, if the client has subscribed to the `system.cpu` event, it will be notified with the load
 whenever the driver emits it.
 
+#### Slow clients and high-rate events
+
+Appium does not buffer events indefinitely for a client that does not read them. A connection
+that keeps more than `--bidi-max-buffered-bytes` unsent for longer than `--bidi-max-buffered-ms`
+is closed with the code `1013`, and connections that do not answer WebSocket pings (see
+`--bidi-heartbeat-interval`) are terminated. Both only affect the offending connection.
+
+Drivers that emit events at a high rate (e.g. media streams) can let Appium skip events for a
+connection that is falling behind, instead of waiting for it to be closed. Add a `delivery` hint
+to the event (it is never sent to clients; older Appium versions ignore it):
+
+```js
+this.eventEmitter.emit('bidiEvent', {
+  method: 'appium:media.units',
+  params: {track: 'video', units},
+  delivery: {policy: 'droppable', chain: 'video', syncPoint: startsWithKeyframe},
+})
+```
+
+- `policy`: `reliable` (default) events are always sent, `droppable` ones may be skipped.
+- `chain`: events of the same chain depend on each other. After one is skipped for a connection,
+  the following ones are skipped for it too, until an event with `syncPoint: true` (e.g. a keyframe)
+  arrives and the connection has caught up. Every connection resynchronizes independently.
+
+Subscriptions are per session, not per connection, so Appium decides by the state of each
+connection's buffer. To react to dropped events (e.g. to request a keyframe or lower the bitrate),
+listen to `bidiBackpressure` on the same emitter. Its payload is `{method, chain?, state, dropped}`,
+where `state` is `dropping` once the first connection starts skipping events (and again whenever a
+sync point is skipped, so that you can request a new one) and `recovered` once the last one stops, and `dropped` is the largest number of events skipped for a single connection.
+
 ### Make itself aware of resources other concurrent drivers are using
 
 Let's say your driver uses up some system resources, like ports. There are a few ways to make sure

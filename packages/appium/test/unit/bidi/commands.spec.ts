@@ -8,9 +8,9 @@ import {BasePlugin} from '@appium/base-plugin';
 import sinon from 'sinon';
 import {WebSocket} from 'ws';
 
-import type {AppiumDriver} from '../../lib/appium.js';
-import {onBidiConnection, onBidiMessage} from '../../lib/bidi-commands.js';
-import {BIDI_EVENT_NAME} from '../../lib/constants.js';
+import type {AppiumDriver} from '../../../lib/appium.js';
+import {onBidiConnection, onBidiMessage} from '../../../lib/bidi/commands.js';
+import {BIDI_EVENT_NAME} from '../../../lib/constants.js';
 
 const SESSION_ID = 'bidi-session';
 const LOG_EVENT = 'log.entryAdded';
@@ -92,8 +92,8 @@ describe('bidi-commands', function () {
       const ws = Object.assign(new EventEmitter(), {
         readyState: WebSocket.OPEN,
         OPEN: WebSocket.OPEN,
-        send: (data: string, cb: (err?: Error) => void) => {
-          sentData.push(data);
+        send: (data: string | Buffer, _options: unknown, cb: (err?: Error) => void) => {
+          sentData.push(data.toString());
           cb();
         },
         close: () => {},

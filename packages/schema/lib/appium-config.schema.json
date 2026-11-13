@@ -70,6 +70,27 @@
           "title": "base-path config",
           "type": "string"
         },
+        "bidi-heartbeat-interval": {
+          "default": 15,
+          "description": "Number of seconds between WebSocket ping frames sent to each BiDi client. A connection that misses two consecutive pongs is terminated. A value of 0 disables the heartbeat.",
+          "minimum": 0,
+          "title": "bidi-heartbeat-interval config",
+          "type": "integer"
+        },
+        "bidi-max-buffered-bytes": {
+          "default": 33554432,
+          "description": "Maximum number of bytes the server may keep buffered for a single BiDi connection that is not reading fast enough. A connection that stays above this limit for longer than \"bidi-max-buffered-ms\" (or exceeds twice the limit) is closed with the code 1013. A value of 0 disables the limit, as well as skipping of droppable events.",
+          "minimum": 0,
+          "title": "bidi-max-buffered-bytes config",
+          "type": "integer"
+        },
+        "bidi-max-buffered-ms": {
+          "default": 30000,
+          "description": "Number of milliseconds a BiDi connection may stay above \"bidi-max-buffered-bytes\" before it is closed. A value of 0 closes the connection as soon as the limit is exceeded.",
+          "minimum": 0,
+          "title": "bidi-max-buffered-ms config",
+          "type": "integer"
+        },
         "default-capabilities": {
           "$comment": "TODO",
           "appiumCliAliases": [

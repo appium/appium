@@ -46,7 +46,12 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
       );
     }
 
-    for (const prop in newSettings) {
+    for (const prop of Object.keys(newSettings)) {
+      if (prop === '__proto__' || prop === 'constructor' || prop === 'prototype') {
+        throw new errors.InvalidArgumentError(
+          `Settings updates must not use the '${prop}' key, because it would pollute object prototypes`,
+        );
+      }
       if (this._settings[prop] !== undefined) {
         if (this._settings[prop] === newSettings[prop]) {
           log.debug(`The value of '${prop}' setting did not change. Skipping the update for it`);
@@ -54,7 +59,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
         }
       }
       await this._onSettingsUpdate(prop as keyof T, newSettings[prop], this._settings[prop]);
-      this._settings[prop] = newSettings[prop];
+      (this._settings as Record<string, unknown>)[prop] = newSettings[prop];
     }
   }
 

@@ -26,6 +26,18 @@ export type AppUrlRulesConfig = AppUrlRules;
  */
 export type BasePathConfig = string;
 /**
+ * Number of seconds between WebSocket ping frames sent to each BiDi client. A connection that misses two consecutive pongs is terminated. A value of 0 disables the heartbeat.
+ */
+export type BidiHeartbeatIntervalConfig = number;
+/**
+ * Maximum number of bytes the server may keep buffered for a single BiDi connection that is not reading fast enough. A connection that stays above this limit for longer than "bidi-max-buffered-ms" (or exceeds twice the limit) is closed with the code 1013. A value of 0 disables the limit, as well as skipping of droppable events.
+ */
+export type BidiMaxBufferedBytesConfig = number;
+/**
+ * Number of milliseconds a BiDi connection may stay above "bidi-max-buffered-bytes" before it is closed. A value of 0 closes the connection as soon as the limit is exceeded.
+ */
+export type BidiMaxBufferedMsConfig = number;
+/**
  * Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.
  */
 export type DenyInsecureConfig = string[];
@@ -183,6 +195,9 @@ export interface ServerConfig {
   "allow-unknown-args"?: AllowUnknownArgsConfig;
   "app-url-rules"?: AppUrlRulesConfig;
   "base-path"?: BasePathConfig;
+  "bidi-heartbeat-interval"?: BidiHeartbeatIntervalConfig;
+  "bidi-max-buffered-bytes"?: BidiMaxBufferedBytesConfig;
+  "bidi-max-buffered-ms"?: BidiMaxBufferedMsConfig;
   "default-capabilities"?: DefaultCapabilitiesConfig;
   "deny-insecure"?: DenyInsecureConfig;
   driver?: DriverConfig;

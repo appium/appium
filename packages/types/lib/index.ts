@@ -1,5 +1,6 @@
 export * from './action.js';
 export * from './appium-config.js';
+export * from './bidi.js';
 export * from './capabilities.js';
 export * from './command-maps.js';
 export * from './commands/index.js';

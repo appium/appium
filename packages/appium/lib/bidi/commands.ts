@@ -83,12 +83,18 @@ export function determineBiDiHost(address: string): string {
 export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
   try {
     const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
-    const {bidiHandlerDriver, bidiHandlerPlugins, proxyClient, send, sendToProxy, logSocketErr} = initBiDiSocketFunc(
-      ws,
-      req,
-    );
+    const {
+      bidiHandlerDriver,
+      bidiHandlerPlugins,
+      proxyClient,
+      send: unguardedSend,
+      sendToProxy,
+      logSocketErr,
+    } = initBiDiSocketFunc(ws, req);
 
     const guard = new BiDiConnectionGuard(ws, resolveFlowOptions(this.args), bidiHandlerDriver.log);
+    // every write to the client (responses, events, proxied messages) is subject to the buffer limits
+    const send = guardSend(unguardedSend, guard);
 
     const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> =
       initBidiSocketHandlers.bind(this);
@@ -96,7 +102,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     if (proxyClient) {
       const initBidiProxyHandlersFunc: OmitThisParameter<typeof initBidiProxyHandlers> =
         initBidiProxyHandlers.bind(bidiHandlerDriver);
-      initBidiProxyHandlersFunc(proxyClient, ws, send, guard);
+      initBidiProxyHandlersFunc(proxyClient, ws, send);
     }
     const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> =
       initBidiEventListeners.bind(this);
@@ -351,15 +357,8 @@ function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage)
  * @param ws - the websocket connection to/from the client
  * @param send - a method used to send data to the
  * client
- * @param guard - enforces the send buffer limits of the connection
  */
-function initBidiProxyHandlers(
-  this: AnyDriver,
-  proxyClient: WebSocket,
-  ws: WebSocket,
-  send: SendData,
-  guard: BiDiConnectionGuard,
-): void {
+function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebSocket, send: SendData): void {
   // Set up handlers for events that might come from the upstream bidi socket connection if
   // we're in proxy mode
   const driverLog = this.log;
@@ -367,12 +366,7 @@ function initBidiProxyHandlers(
   // Here we're receiving a message from the upstream socket server. We want to pass it on to
   // the client
   proxyClient.on('message', async (data, isBinary) => {
-    if (guard.checkBuffer()) {
-      const sent = send(data as Buffer, {binary: isBinary});
-      // this write may have crossed the limit; a stalled client never completes it
-      guard.checkBuffer();
-      await sent;
-    }
+    await send(data as Buffer, {binary: isBinary});
   });
 
   // If the upstream socket server closes the connection, should close the connection to the
@@ -654,10 +648,7 @@ function initBidiEventListeners(
         // now we can send the event onto the socket
         // serialized once for all connections; sent as a text frame
         const ev = {type: 'event', context, method, params};
-        const sent = send(serializeBiDiEvent(emitRecord, ev), {binary: false});
-        // this write may have crossed the limit; a stalled client never completes it
-        guard.checkBuffer();
-        await sent;
+        await send(serializeBiDiEvent(emitRecord, ev), {binary: false});
       }
     };
     registrations.push({emitter: ext.eventEmitter, eventListener, gate});
@@ -673,6 +664,21 @@ function initBidiEventListeners(
   }
   ws.once('close', disposeConnection);
   BIDI_CONNECTION_CLEANUPS.set(ws, disposeConnection);
+}
+
+/**
+ * Verifies the send buffer limits right before and right after every write. The latter is needed
+ * because a write that crosses the limit must arm the watchdog, and a stalled client never completes it.
+ */
+function guardSend(send: SendData, guard: BiDiConnectionGuard): SendData {
+  return async (data, options) => {
+    if (!guard.checkBuffer()) {
+      return;
+    }
+    const sent = send(data, options);
+    guard.checkBuffer();
+    await sent;
+  };
 }
 
 function hasSubscription(driver: AnyDriver, method: string, moduleName: string): boolean {

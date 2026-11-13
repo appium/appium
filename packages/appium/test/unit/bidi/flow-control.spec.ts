@@ -230,6 +230,17 @@ describe('BiDi flow control', function () {
       assert.ok(socket.sent.length <= 9, `${socket.sent.length} events have been sent`);
     });
 
+    it('enforces the limit on command responses', async function () {
+      const socket = connect({bidiMaxBufferedBytes: 100, bidiMaxBufferedMs: 0, bidiHeartbeatInterval: 0});
+      socket.accumulate = true;
+      for (let i = 0; i < 20; ++i) {
+        socket.emit('message', Buffer.from(JSON.stringify({id: i, method: 'unknown.command', params: {}})));
+        await setImmediate();
+      }
+      assert.equal(socket.close.callCount, 1);
+      assert.ok(socket.sent.length < 20, `${socket.sent.length} responses have been sent`);
+    });
+
     it('closes the connection after the timeout even if no more events or pings come', async function () {
       const clock = sinon.useFakeTimers({toFake: ['Date', 'setTimeout', 'clearTimeout']});
       const socket = connect({bidiMaxBufferedBytes: 10 * MiB, bidiMaxBufferedMs: 1000, bidiHeartbeatInterval: 0});

@@ -1,5 +1,5 @@
 import type {WriteStream} from 'node:fs';
-import {isIPv6} from 'node:net';
+import {createServer, isIPv6, Socket, type AddressInfo} from 'node:net';
 import type {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 
@@ -107,6 +107,127 @@ type HttpRemoteUri = `http://${string}` | `https://${string}`;
  */
 export function formatHostnameForUrl(hostname: string): string {
   return isIPv6(hostname) ? `[${hostname}]` : hostname;
+}
+
+const DEFAULT_PORT_CHECK_HOST = '127.0.0.1';
+const DEFAULT_PORT_CHECK_TIMEOUT_MS = 400;
+const MAX_PORT = 65535;
+
+/** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
+export type PortStatus = 'open' | 'closed';
+
+/** Options for {@linkcode checkPortStatus} and {@linkcode findAPortNotInUse}. */
+export interface PortCheckOptions {
+  /** Host to probe. Defaults to `127.0.0.1` */
+  host?: string;
+  /** Connection timeout per probe in milliseconds. Defaults to 400 */
+  timeoutMs?: number;
+}
+
+/** Options for {@linkcode getFreePort}. */
+export interface FreePortOptions {
+  /** Host to bind to. Defaults to all interfaces */
+  host?: string;
+}
+
+/**
+ * Checks whether something accepts TCP connections on the given port.
+ *
+ * `open` means a service is listening; `closed` means the connection was refused
+ * or timed out.
+ *
+ * @param port - Port to probe
+ * @param options - Probe options
+ * @throws {RangeError} If the port is not an integer in 1..65535
+ * @throws {Error} If the socket fails for any reason other than a refused connection or a timeout
+ */
+export async function checkPortStatus(
+  port: number,
+  {host = DEFAULT_PORT_CHECK_HOST, timeoutMs = DEFAULT_PORT_CHECK_TIMEOUT_MS}: PortCheckOptions = {},
+): Promise<PortStatus> {
+  if (!isValidPort(port)) {
+    throw new RangeError(`Invalid port ${port}`);
+  }
+  return await new Promise<PortStatus>((resolve, reject) => {
+    const socket = new Socket();
+    let status: PortStatus = 'closed';
+    let error: Error | undefined;
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => {
+      status = 'open';
+      socket.destroy();
+    });
+    socket.once('timeout', () => socket.destroy());
+    socket.once('error', (err: NodeJS.ErrnoException) => {
+      if (err.code !== 'ECONNREFUSED') {
+        error = err;
+      }
+    });
+    socket.once('close', () => (error ? reject(error) : resolve(status)));
+    socket.connect(port, host);
+  });
+}
+
+/** Thrown by {@linkcode findAPortNotInUse} when every port in the range is in use. */
+export class NoFreePortError extends Error {
+  /**
+   * @param startPort - First port of the scanned range
+   * @param endPort - Last port of the scanned range
+   */
+  constructor(
+    readonly startPort: number,
+    readonly endPort: number,
+  ) {
+    super(`No free port available in range ${startPort}..${endPort}`);
+    this.name = 'NoFreePortError';
+  }
+}
+
+/**
+ * Finds the first port in the given range that nothing is listening on.
+ * Ports are probed sequentially with {@linkcode checkPortStatus}.
+ *
+ * @param startPort - First port to check (inclusive)
+ * @param endPort - Last port to check (inclusive)
+ * @param options - Probe options; `timeoutMs` applies to each probe
+ * @returns The first port that is not in use
+ * @throws {RangeError} If the range is invalid
+ * @throws {NoFreePortError} If every port in the range is in use
+ * @throws {Error} If probing a port fails, see {@linkcode checkPortStatus}
+ */
+export async function findAPortNotInUse(
+  startPort: number,
+  endPort: number,
+  options: PortCheckOptions = {},
+): Promise<number> {
+  if (!isValidPort(startPort) || !isValidPort(endPort) || startPort > endPort) {
+    throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
+  }
+  for (let port = startPort; port <= endPort; port++) {
+    if ((await checkPortStatus(port, options)) === 'closed') {
+      return port;
+    }
+  }
+  throw new NoFreePortError(startPort, endPort);
+}
+
+/**
+ * Asks the OS for a free port by binding to port 0.
+ * The port may be taken by another process after this call returns.
+ *
+ * @param options - Bind options
+ * @returns A port number that was free at the time of the call
+ * @throws {Error} If the server cannot bind to the host or cannot be closed
+ */
+export async function getFreePort({host}: FreePortOptions = {}): Promise<number> {
+  return await new Promise<number>((resolve, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, host, () => {
+      const {port} = server.address() as AddressInfo;
+      server.close((err) => (err ? reject(err) : resolve(port)));
+    });
+  });
 }
 
 /** Uploads the given file to a remote location via HTTP(S). */
@@ -229,4 +350,8 @@ export async function downloadFile(
       log.debug(`Approximate download speed: ${toReadableSizeString(bytesPerSec)}/s`);
     }
   }
+}
+
+function isValidPort(port: number): boolean {
+  return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
 }

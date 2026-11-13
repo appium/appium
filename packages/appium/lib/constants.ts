@@ -112,6 +112,19 @@ export const BIDI_BASE_PATH = '/bidi';
 export const BIDI_EVENT_NAME = 'bidiEvent';
 
 /**
+ * The name of the event that core emits on a driver/plugin event emitter when a BiDi client is
+ * too slow to receive `droppable` events (see `BiDiEventDelivery`)
+ */
+export const BIDI_BACKPRESSURE_EVENT_NAME = 'bidiBackpressure';
+
+/** Default of `--bidi-max-buffered-bytes`, used if the argument is not set */
+export const DEFAULT_BIDI_MAX_BUFFERED_BYTES = 32 * 1024 * 1024;
+/** Default of `--bidi-max-buffered-ms`, used if the argument is not set */
+export const DEFAULT_BIDI_MAX_BUFFERED_MS = 30_000;
+/** Default of `--bidi-heartbeat-interval` (in seconds), used if the argument is not set */
+export const DEFAULT_BIDI_HEARTBEAT_INTERVAL_SEC = 15;
+
+/**
  * The name of the insecure feature that allows retrieving the list of active server sessions
  */
 export const SESSION_DISCOVERY_FEATURE = 'session_discovery';

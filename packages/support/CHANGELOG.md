@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.6...@appium/support@8.0.0-beta.7) (2026-11-13)
+
+### Features
+
+* **support:** add port helpers to net ([#23156](https://github.com/appium/appium/issues/23156)) ([d5d90c5](https://github.com/appium/appium/commit/d5d90c5d9373eedb96525105c25069b85f13dcbc))
+
+
 ## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.5...@appium/support@8.0.0-beta.6) (2026-10-31)
 
 ### ⚠ BREAKING CHANGES

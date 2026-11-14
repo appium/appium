@@ -118,7 +118,10 @@
     "ajv-formats": {
       "ajv": "8.20.0"
     },
-    "http-cache-semantics": "4.3.0"
+    "http-cache-semantics": "4.3.0",
+    "nx": {
+      "undici": "7.30.2"
+    }
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

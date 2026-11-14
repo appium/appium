@@ -224,6 +224,13 @@ Updated migration guide to include new requirements for custom command timeout i
 * **base-driver:** split basedriver helpers into a barrel ([#22764](https://github.com/appium/appium/issues/22764)) ([33def2c](https://github.com/appium/appium/commit/33def2cc0ba200394b9b014713b7b2afac5758bc))
 * remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([ef8a8e1](https://github.com/appium/appium/commit/ef8a8e1934bfdc9699c2b9a7eca3e2201b4b9f93))
 * **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+## [10.8.3](https://github.com/appium/appium/compare/@appium/base-driver@10.8.2...@appium/base-driver@10.8.3) (2026-11-14)
+
+### Bug Fixes
+
+* **base-driver:** avoid catastrophic backtracking in isPackageOrBundle ([#23161](https://github.com/appium/appium/issues/23161)) ([091fd32](https://github.com/appium/appium/commit/091fd320b992e4987f9df08f8a5e86b2c23d9fb6))
+
+
 ## [10.8.2](https://github.com/appium/appium/compare/@appium/base-driver@10.8.1...@appium/base-driver@10.8.2) (2026-10-27)
 
 ### Bug Fixes

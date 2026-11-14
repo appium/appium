@@ -281,6 +281,13 @@ support (FtpUploadOptions, NotHttpUploadOptions; uploadFile only supports http/h
 * remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([ef8a8e1](https://github.com/appium/appium/commit/ef8a8e1934bfdc9699c2b9a7eca3e2201b4b9f93))
 * **support:** move npm-related helpers into appium package ([#22721](https://github.com/appium/appium/issues/22721)) ([d82d496](https://github.com/appium/appium/commit/d82d496f9e80d6628abface3b623601a6f9791f9))
 * **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+## [3.9.1](https://github.com/appium/appium/compare/appium@3.9.0...appium@3.9.1) (2026-11-14)
+
+### Bug Fixes
+
+* **execute-driver-plugin:** wrap non-configurable property descriptors via shadow target ([#23126](https://github.com/appium/appium/issues/23126)) ([b2ce3a0](https://github.com/appium/appium/commit/b2ce3a0f8074506a7b3eff2df15e0ac37999999a))
+
+
 ## [3.9.0](https://github.com/appium/appium/compare/appium@3.8.0...appium@3.9.0) (2026-10-27)
 
 ### Features

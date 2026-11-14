@@ -5,6 +5,7 @@ import type {ArgumentOptions} from 'argparse';
 
 import {
   DRIVER_TYPE,
+  EXT_SEARCH_ROOT_ARG,
   EXT_SUBCOMMAND_DOCTOR,
   EXT_SUBCOMMAND_INSTALL,
   EXT_SUBCOMMAND_LIST,
@@ -81,6 +82,15 @@ export function getServerArgs(): ArgumentDefinitions {
 function makeListArgs(type: ExtensionType): ArgumentDefinitions {
   return new Map([
     ...globalExtensionArgs,
+    [
+      [EXT_SEARCH_ROOT_ARG],
+      {
+        required: false,
+        type: 'str',
+        help: 'Search the dependencies of this project directory for installed extensions',
+        dest: 'extSearchRoot',
+      },
+    ],
     [
       ['--installed'],
       {
@@ -251,6 +261,15 @@ function makeRunArgs(type: ExtensionType): ArgumentDefinitions {
  * These don't make sense in the context of a config file for obvious reasons.
  */
 const serverArgsDisallowedInConfig: ArgumentDefinitions = new Map([
+  [
+    [EXT_SEARCH_ROOT_ARG],
+    {
+      dest: 'extSearchRoot',
+      type: 'str',
+      required: false,
+      help: 'Search the dependencies of this project directory for installed extensions',
+    },
+  ],
   [
     ['--shell'],
     {

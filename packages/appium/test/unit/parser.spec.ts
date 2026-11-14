@@ -5,7 +5,8 @@ import path from 'node:path';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
 import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {ArgParser, getParser} from '../../lib/cli/parser';
+import {getExtensionArgs} from '../../lib/cli/args';
+import {ArgParser, getExtensionSearchRoot, getParser} from '../../lib/cli/parser';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
@@ -23,6 +24,52 @@ describe('parser', function () {
   describe('Main Parser', function () {
     beforeEach(async function () {
       p = await getParser(true);
+    });
+
+    describe('getExtensionSearchRoot()', function () {
+      it('should extract separate and equals-style values', function () {
+        assert.strictEqual(
+          getExtensionSearchRoot(['driver', 'list', '--ext-search-root', 'packages/app']),
+          'packages/app',
+        );
+        assert.strictEqual(getExtensionSearchRoot(['--ext-search-root=packages/app']), 'packages/app');
+      });
+
+      it('should reject a missing value', function () {
+        assert.throws(() => getExtensionSearchRoot(['driver', 'list', '--ext-search-root']), /expected one argument/);
+      });
+
+      it('should not inspect extension script arguments after --', function () {
+        assert.strictEqual(
+          getExtensionSearchRoot(['driver', 'run', 'fake', 'script', '--', '--ext-search-root', 'packages/app']),
+          undefined,
+        );
+      });
+
+      it('should not inspect extension script arguments without --', function () {
+        assert.strictEqual(
+          getExtensionSearchRoot(['driver', 'run', 'fake', 'script', '--ext-search-root', 'packages/app']),
+          undefined,
+        );
+      });
+
+      it('should derive extension command support from its registered arguments', function () {
+        const extensionArgs = getExtensionArgs();
+        const searchRootDefinition = [...extensionArgs[DRIVER_TYPE].list].find(([names]) =>
+          names.includes('--ext-search-root'),
+        );
+        assert.ok(searchRootDefinition);
+        const [names, definition] = searchRootDefinition;
+        extensionArgs[DRIVER_TYPE].doctor.set(names, definition);
+        try {
+          assert.strictEqual(
+            getExtensionSearchRoot(['driver', 'doctor', '--ext-search-root', 'packages/app']),
+            'packages/app',
+          );
+        } finally {
+          extensionArgs[DRIVER_TYPE].doctor.delete(names);
+        }
+      });
     });
 
     it('should accept only server and driver subcommands', function () {
@@ -139,6 +186,16 @@ describe('parser', function () {
         );
       });
 
+      it('should parse --ext-search-root', function () {
+        assert.strictEqual(p.parseArgs(['--ext-search-root', 'packages/app']).extSearchRoot, 'packages/app');
+      });
+
+      it('should bootstrap abbreviated long options consistently with argparse', function () {
+        assert.strictEqual(getExtensionSearchRoot(['--ext-search-r', 'packages/app']), 'packages/app');
+        assert.strictEqual(getExtensionSearchRoot(['--ext-search-r=packages/app']), 'packages/app');
+        assert.strictEqual(getExtensionSearchRoot(['--ext-search-r=packages/app=one']), 'packages/app=one');
+      });
+
       it('should parse --deny-insecure correctly', function () {
         assert.strictEqual((p.parseArgs([]) as {denyInsecure?: unknown}).denyInsecure, undefined);
         assert.deepStrictEqual(p.parseArgs(['--deny-insecure', '']).denyInsecure, []);
@@ -227,6 +284,13 @@ describe('parser', function () {
         ]);
 
         assert.deepStrictEqual(args.driver.fake, (config as any)?.driver?.fake);
+      });
+
+      it('should parse --ext-search-root', function () {
+        assert.strictEqual(
+          p.parseArgs([DRIVER_TYPE, 'list', '--ext-search-root', 'packages/app']).extSearchRoot,
+          'packages/app',
+        );
       });
 
       it('should not yet apply defaults', function () {

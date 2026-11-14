@@ -281,6 +281,31 @@ support (FtpUploadOptions, NotHttpUploadOptions; uploadFile only supports http/h
 * remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([ef8a8e1](https://github.com/appium/appium/commit/ef8a8e1934bfdc9699c2b9a7eca3e2201b4b9f93))
 * **support:** move npm-related helpers into appium package ([#22721](https://github.com/appium/appium/issues/22721)) ([d82d496](https://github.com/appium/appium/commit/d82d496f9e80d6628abface3b623601a6f9791f9))
 * **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+## [3.9.0](https://github.com/appium/appium/compare/appium@3.8.0...appium@3.9.0) (2026-10-27)
+
+### Features
+
+* **appium:** fallback to latest compatible extension version for CLI &#x60;install&#x60; ([#23013](https://github.com/appium/appium/issues/23013)) ([3c20d79](https://github.com/appium/appium/commit/3c20d7923806bcc2333670e6cef5c24c6da60d62))
+
+### Bug Fixes
+
+* **appium:** backport bidi close code validation ([#22942](https://github.com/appium/appium/issues/22942)) ([14110e5](https://github.com/appium/appium/commit/14110e50b0bf3414c778e039acb7058a3c649e2e))
+* **appium:** prevent recursion when logging the first BiDi event of a method ([#22891](https://github.com/appium/appium/issues/22891)) ([77945dd](https://github.com/appium/appium/commit/77945ddaf10665f9457f6bdc94f9103a631f5ca4))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22895](https://github.com/appium/appium/issues/22895)) ([6241300](https://github.com/appium/appium/commit/62413002a83e70b14eb0a3979cd7a054757a0d80))
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([#23069](https://github.com/appium/appium/issues/23069)) ([4c753a1](https://github.com/appium/appium/commit/4c753a134d8e172cfec4caec9033fe2a3d884e27))
+
+
+## [3.8.0](https://github.com/appium/appium/compare/appium@3.7.0...appium@3.8.0) (2026-09-24)
+
+### Features
+
+* **appium:** accept package names for installed extension commands ([#22747](https://github.com/appium/appium/issues/22747)) ([6c911de](https://github.com/appium/appium/commit/6c911debd72cb7fe094d27671d1cf14098ff537a))
+
+### Bug Fixes
+
+* **appium:** do not treat a directory as a CLI argument file ([#22709](https://github.com/appium/appium/issues/22709)) ([6ba6faf](https://github.com/appium/appium/commit/6ba6faf6f533192afbdf9462dbbb3a5c1e5d85c5))
+* **appium:** filter prerelease versions in driver update e2e test ([#22794](https://github.com/appium/appium/issues/22794)) ([4e8e334](https://github.com/appium/appium/commit/4e8e334cbc0ae910f521ae7ff7d3ed15f9be0a6a))
+* **appium:** match insecure feature prefixes by automationName, case-insensitively ([#22710](https://github.com/appium/appium/issues/22710)) ([6ab17fe](https://github.com/appium/appium/commit/6ab17feb71d74c1f349616f22896faeb256a66ec))
 
 
 ## [3.7.0](https://github.com/appium/appium/compare/appium@3.6.0...appium@3.7.0) (2026-08-24)

@@ -160,6 +160,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **logger:** remove default exports and dead logging APIs ([#22719](https://github.com/appium/appium/issues/22719)) ([fe24f52](https://github.com/appium/appium/commit/fe24f527a4412ed86c7b5e5afe0c6e26dc569e6b))
 * remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([ef8a8e1](https://github.com/appium/appium/commit/ef8a8e1934bfdc9699c2b9a7eca3e2201b4b9f93))
 
+## [1.7.2](https://github.com/appium/appium/compare/@appium/types@1.7.1...@appium/types@1.7.2) (2026-10-27)
+
+### Bug Fixes
+
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22895](https://github.com/appium/appium/issues/22895)) ([6241300](https://github.com/appium/appium/commit/62413002a83e70b14eb0a3979cd7a054757a0d80))
+
+
+## [1.7.1](https://github.com/appium/appium/compare/@appium/types@1.7.0...@appium/types@1.7.1) (2026-09-24)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
 
 ## [1.7.0](https://github.com/appium/appium/compare/@appium/types@1.6.0...@appium/types@1.7.0) (2026-08-24)
 

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/oxc-config@2.0.0-beta.2...@appium/oxc-config@2.0.0-beta.3) (2026-11-13)
+## [1.1.3](https://github.com/appium/appium/compare/@appium/oxc-config@1.1.2...@appium/oxc-config@1.1.3) (2026-10-27)
 
 **Note:** Version bump only for package @appium/oxc-config
 
@@ -25,6 +26,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 ## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/oxc-config@2.0.0-beta.0...@appium/oxc-config@2.0.0-beta.1) (2026-10-05)
+## [1.1.2](https://github.com/appium/appium/compare/@appium/oxc-config@1.1.1...@appium/oxc-config@1.1.2) (2026-09-24)
 
 **Note:** Version bump only for package @appium/oxc-config
 

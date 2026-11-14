@@ -57,7 +57,7 @@ session.unsubscribe
 
 > WebDriver BiDi documentation: [session.unsubscribe](https://w3c.github.io/webdriver-bidi/#command-session-unsubscribe)
 
-Unsubscribes using previously returned subscription IDs, or the legacy event/context form.
+Unsubscribes using either previously returned subscription IDs or event names.
 Removing a subscription ID preserves any overlapping subscriptions.
 
 #### Parameters

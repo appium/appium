@@ -17,7 +17,7 @@ If you maintain an Appium driver that you would like to be listed here, feel fre
 
 These drivers are currently maintained by the Appium team:
 
-### [Chromium](https://appium.github.io/appium-chromium-driver)
+### [Chromium](https://appium.github.io/appium-chromium-driver/)
 
 - Target: Desktop Chromium-based browsers (Chrome, Microsoft Edge, etc.)
 - Mode: Web
@@ -26,7 +26,7 @@ These drivers are currently maintained by the Appium team:
 appium driver install chromium
 ```
 
-### [Espresso](https://appium.github.io/appium-espresso-driver)
+### [Espresso](https://appium.github.io/appium-espresso-driver/)
 
 - Target: Android applications (mobile, TV, Wear, XR, Automotive)
 - Mode: Native, Hybrid, Web
@@ -35,7 +35,7 @@ appium driver install chromium
 appium driver install espresso
 ```
 
-### [Gecko](https://appium.github.io/appium-geckodriver)
+### [Gecko](https://appium.github.io/appium-geckodriver/)
 
 - Target: Desktop and mobile Gecko-based browsers (Firefox, etc.)
 - Mode: Web
@@ -44,7 +44,7 @@ appium driver install espresso
 appium driver install gecko
 ```
 
-### [Mac2](https://appium.github.io/appium-mac2-driver)
+### [Mac2](https://appium.github.io/appium-mac2-driver/)
 
 - Target: macOS applications
 - Mode: Native
@@ -53,7 +53,7 @@ appium driver install gecko
 appium driver install mac2
 ```
 
-### [Safari](https://appium.github.io/appium-safari-driver)
+### [Safari](https://appium.github.io/appium-safari-driver/)
 
 - Target: Desktop and mobile Safari browsers
 - Mode: Web
@@ -62,7 +62,7 @@ appium driver install mac2
 appium driver install safari
 ```
 
-### [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver)
+### [UiAutomator2](https://appium.github.io/appium-uiautomator2-driver/)
 
 - Target: Android applications (mobile, TV, Wear, XR, Automotive)
 - Modes: Native, Hybrid, Web

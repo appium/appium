@@ -1,6 +1,5 @@
-import net from 'node:net';
-
 import {net as netUtils} from '@appium/support';
+import {AsyncLock} from 'asyncbox';
 
 /**
  * Default test host
@@ -97,40 +96,24 @@ async function httpRequest<T = any>(url: string, options: HttpRequestOptions = {
   return {status: response.status, data: parsedData as T, headers: responseHeaders};
 }
 
-let portFetchingPromise: Promise<number> | undefined;
+const portLock = new AsyncLock();
+const issuedPorts = new Set<number>();
 
 /**
  * Returns a free port.
- * The function call is race-free and thread-safe.
+ * The function call is race-free: the same port is never returned twice.
  *
  * @returns A free port
  */
 export async function getTestPort(): Promise<number> {
-  // make sure we are not racing
-  if (portFetchingPromise) {
-    try {
-      await portFetchingPromise;
-    } catch {
-      // ignore
-    } finally {
-      portFetchingPromise = undefined;
+  return await portLock.acquire('getTestPort', async () => {
+    let port = await netUtils.getFreePort();
+    while (issuedPorts.has(port)) {
+      port = await netUtils.getFreePort();
     }
-  }
-
-  portFetchingPromise = new Promise<number>((resolve, reject) => {
-    const server = net.createServer();
-    server.once('error', reject);
-    server.listen(0, () => {
-      const address = server.address();
-      if (!address || typeof address === 'string') {
-        server.close(() => reject(new Error('Could not resolve a free port')));
-        return;
-      }
-      const cb = (err?: Error) => (err ? reject(err) : resolve(Number(address.port)));
-      server.close(cb);
-    });
+    issuedPorts.add(port);
+    return port;
   });
-  return portFetchingPromise;
 }
 
 /**

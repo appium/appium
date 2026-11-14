@@ -1,4 +1,3 @@
-import {BaseDriver} from '@appium/base-driver';
 import {BaseDriverCapConstraints, Driver, DriverOpts, ExternalDriver} from '@appium/types';
 import {expectAssignable} from 'tsd';
 

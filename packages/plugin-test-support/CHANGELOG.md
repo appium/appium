@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/plugin-test-support@4.0.0-beta.6...@appium/plugin-test-support@4.0.0-beta.7) (2026-11-13)
+## [3.0.2](https://github.com/appium/appium/compare/@appium/plugin-test-support@3.0.1...@appium/plugin-test-support@3.0.2) (2026-10-27)
 
 **Note:** Version bump only for package @appium/plugin-test-support
 
@@ -23,6 +24,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 ## [4.0.0-beta.5](https://github.com/appium/appium/compare/@appium/plugin-test-support@4.0.0-beta.4...@appium/plugin-test-support@4.0.0-beta.5) (2026-10-18)
+## [3.0.1](https://github.com/appium/appium/compare/@appium/plugin-test-support@3.0.0...@appium/plugin-test-support@3.0.1) (2026-09-24)
 
 **Note:** Version bump only for package @appium/plugin-test-support
 

@@ -15,6 +15,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 ## [7.0.0-beta.7](https://github.com/appium/appium/compare/@appium/fake-driver@7.0.0-beta.6...@appium/fake-driver@7.0.0-beta.7) (2026-10-31)
+## [6.2.5](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.4...@appium/fake-driver@6.2.5) (2026-10-27)
 
 **Note:** Version bump only for package @appium/fake-driver
 
@@ -60,6 +61,7 @@ Updated migration guide to include new requirements for custom command timeout i
 
 
 ## [7.0.0-beta.4](https://github.com/appium/appium/compare/@appium/fake-driver@7.0.0-beta.3...@appium/fake-driver@7.0.0-beta.4) (2026-10-09)
+## [6.2.4](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.3...@appium/fake-driver@6.2.4) (2026-09-24)
 
 **Note:** Version bump only for package @appium/fake-driver
 

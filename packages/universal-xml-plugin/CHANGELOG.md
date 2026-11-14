@@ -23,6 +23,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 ## [4.0.0-beta.6](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.5...@appium/universal-xml-plugin@4.0.0-beta.6) (2026-10-26)
+## [3.0.2](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@3.0.1...@appium/universal-xml-plugin@3.0.2) (2026-10-27)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin
 
@@ -31,6 +32,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 ## [4.0.0-beta.5](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.4...@appium/universal-xml-plugin@4.0.0-beta.5) (2026-10-18)
+## [3.0.1](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@3.0.0...@appium/universal-xml-plugin@3.0.1) (2026-09-24)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin
 

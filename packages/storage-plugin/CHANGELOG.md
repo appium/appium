@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [3.0.0-beta.8](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.7...@appium/storage-plugin@3.0.0-beta.8) (2026-11-13)
+## [2.0.2](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.1...@appium/storage-plugin@2.0.2) (2026-10-27)
 
 **Note:** Version bump only for package @appium/storage-plugin
 
@@ -94,6 +95,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Code Refactoring
 
 * **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
+## [2.0.1](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.0...@appium/storage-plugin@2.0.1) (2026-09-24)
+
+### Bug Fixes
+
+* **storage-plugin:** map StorageArgumentError to InvalidArgumentError ([#22734](https://github.com/appium/appium/issues/22734)) ([f522b64](https://github.com/appium/appium/commit/f522b64456509d078a81c2d214cd99f9a3090205))
 
 
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@1.1.8...@appium/storage-plugin@2.0.0) (2026-08-24)

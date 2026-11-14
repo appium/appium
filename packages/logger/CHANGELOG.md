@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 ## [3.0.0-beta.2](https://github.com/appium/appium/compare/@appium/logger@3.0.0-beta.1...@appium/logger@3.0.0-beta.2) (2026-10-09)
+## [2.0.12](https://github.com/appium/appium/compare/@appium/logger@2.0.11...@appium/logger@2.0.12) (2026-09-24)
 
 **Note:** Version bump only for package @appium/logger
 

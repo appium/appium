@@ -50,7 +50,7 @@ _基础_ schema 是由 `lib/schema/appium-config-schema.js` 导出的一个符�
 ```
 
 This file is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is
-especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.。
+especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.
 
 解释配置文件的校验流程更直接一些，所以我们从那里开始。
 

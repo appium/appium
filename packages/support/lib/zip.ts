@@ -1,7 +1,5 @@
-import {createWriteStream} from 'node:fs';
 import path from 'node:path';
 import stream from 'node:stream';
-import {pipeline} from 'node:stream/promises';
 
 // @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
 import {ZipArchive} from 'archiver';
@@ -188,19 +186,17 @@ export async function _extractEntryTo(
     throw new Error(`Out of bound path "${dstPath}" found while processing file ${fileName}`);
   }
 
-  // Same symlink-safe directory/file handling as in ZipExtractor
+  // The writer refuses to write through symlinks that leave the destination
   await fs.mkdirp(destDir);
-  const dir = await fs.realpath(destDir);
-  const dest = path.resolve(dir, path.relative(destDir, dstPath));
-  if (fileName.endsWith('/')) {
-    await ensureDirWithinRoot(dir, dest, fileName);
-    return;
-  }
-  const realDestDir = await ensureDirWithinRoot(dir, path.dirname(dest), fileName);
-  await assertFileDestinationWithinRoot(dir, dest, realDestDir, fileName);
-
-  const readStream = await openReadStream(entry);
-  await writeFileNoFollow(readStream, dest, 0o666);
+  const writer = new ZipEntryWriter({dir: await fs.realpath(destDir), fs});
+  await writer.detectNaming();
+  await writer.write({
+    fileName,
+    mode: 0,
+    isDir: fileName.endsWith('/'),
+    isSymlink: false,
+    openBody: async () => await openReadStream(entry),
+  });
 }
 
 /**

@@ -13,10 +13,11 @@
 
 /* eslint-disable no-console */
 
-const fs = require('node:fs/promises');
-const path = require('node:path');
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
-const DOCS_EN_DIR = path.resolve(__dirname, '..', 'en');
+const DOCS_EN_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'en');
 const LLMS_TXT_PATH = path.join(DOCS_EN_DIR, 'llms.txt');
 
 /**
@@ -166,7 +167,7 @@ async function main() {
   console.log(`\nllms.txt is valid: ${links.length} link(s) checked, ${pages.length} page(s) found`);
 }
 
-if (require.main === module) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   void (async () => {
     try {
       await main();
@@ -177,4 +178,4 @@ if (require.main === module) {
   })();
 }
 
-module.exports = main;
+export default main;

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.8.3](https://github.com/appium/appium/compare/@appium/base-driver@10.8.2...@appium/base-driver@10.8.3) (2026-11-14)
+
+### Bug Fixes
+
+* **base-driver:** avoid catastrophic backtracking in isPackageOrBundle ([#23161](https://github.com/appium/appium/issues/23161)) ([091fd32](https://github.com/appium/appium/commit/091fd320b992e4987f9df08f8a5e86b2c23d9fb6))
+
+
 ## [10.8.2](https://github.com/appium/appium/compare/@appium/base-driver@10.8.1...@appium/base-driver@10.8.2) (2026-10-27)
 
 ### Bug Fixes

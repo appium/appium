@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.9.1](https://github.com/appium/appium/compare/appium@3.9.0...appium@3.9.1) (2026-11-14)
+
+### Bug Fixes
+
+* **execute-driver-plugin:** wrap non-configurable property descriptors via shadow target ([#23126](https://github.com/appium/appium/issues/23126)) ([b2ce3a0](https://github.com/appium/appium/commit/b2ce3a0f8074506a7b3eff2df15e0ac37999999a))
+
+
 ## [3.9.0](https://github.com/appium/appium/compare/appium@3.8.0...appium@3.9.0) (2026-10-27)
 
 ### Features

@@ -622,9 +622,11 @@ In this example we're adding a few new routes and a total of 3 new commands. For
 how to define commands in this way, it's best to have a look through `routes.js`. Now all you need
 to do is implement the command handlers in the same way you'd implement any other Appium command.
 
-If you're using TypeScript, declaring `newMethodMap` as `as const satisfies MethodMap<MyDriver>` lets
-the compiler check that each entry's `command` exists on your driver and that its `payloadParams`
-(`required` and `optional`) match the method's parameter signature.
+If you're using TypeScript, declaring `newMethodMap` as `as const satisfies MethodMap<MyDriver, true>`
+lets the compiler check that each entry's `command` exists on your driver and that its
+`payloadParams` (`required` and `optional`) match the method's parameter signature. Leave off the
+second type argument (`MethodMap<MyDriver>`) if the map includes commands proxied to an upstream
+WebDriver server rather than implemented locally on the driver class.
 
 The downside of this way of adding new commands is that people using the standard Appium clients
 won't have nice client-side functions designed to target these endpoints. So you would need to

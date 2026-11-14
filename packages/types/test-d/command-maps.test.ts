@@ -124,8 +124,8 @@ expectAssignable<ExecuteMethodMap<TestPlugin>>({
   'test: one': {command: 'oneRequiredOneOptional', params: {required: ['a'], optional: ['b']}},
 } as const);
 
-// MethodMap / DriverMethodDef checks
-type TestMethodDef = DriverMethodDef<TestDriver>;
+// MethodMap / DriverMethodDef checks (opt-in strict via D = false / Strict = true)
+type TestMethodDef = DriverMethodDef<TestDriver, false>;
 
 expectAssignable<TestMethodDef>({} as const);
 expectAssignable<TestMethodDef>({neverProxy: true} as const);
@@ -250,8 +250,16 @@ expectNotAssignable<TestMethodDef>({
 expectNotAssignable<TestMethodDef>({command: 'doesNotExist'} as const);
 expectNotAssignable<TestMethodDef>({command: 'notACommand'} as const);
 
-// Explicit D = true disables cross-checking, and non-const arrays remain accepted
+// Backwards-compatible defaults allow proxied commands; strict mode also accepts non-const arrays
+expectAssignable<DriverMethodDef<TestDriver>>({
+  command: 'anyCustomCommand',
+  payloadParams: {required: ['a', 'b']},
+} as const);
 expectAssignable<DriverMethodDef<TestDriver, true>>({
+  command: 'anyCustomCommand',
+  payloadParams: {required: ['a', 'b']},
+} as const);
+expectAssignable<DriverMethodDef<TestDriver, boolean>>({
   command: 'anyCustomCommand',
   payloadParams: {required: ['a', 'b']},
 } as const);
@@ -263,18 +271,31 @@ const driverMethodMap = {
     GET: {command: 'noArgs'},
     POST: {command: 'twoRequiredOneOptional', payloadParams: {required: ['a', 'b'], optional: ['c']}},
   },
-} as const satisfies MethodMap<TestDriver>;
+} as const satisfies MethodMap<TestDriver, true>;
 
+expectAssignable<MethodMap<TestDriver, true>>(driverMethodMap);
 expectAssignable<MethodMap<TestDriver>>(driverMethodMap);
 expectAssignable<MethodMap<Driver>>(driverMethodMap);
 expectAssignable<MethodMap<ExternalDriver>>(driverMethodMap);
-expectAssignable<MethodMap<any>>({
+expectAssignable<MethodMap<TestDriver>>({
+  '/proxied': {
+    GET: {command: 'proxiedCommand'},
+    POST: {command: 'anotherProxied', payloadParams: {required: ['x']}},
+  },
+} as const);
+expectNotAssignable<MethodMap<TestDriver, true>>({
+  '/proxied': {GET: {command: 'proxiedCommand'}},
+} as const);
+expectNotAssignable<MethodMap<TestDriver, true>>({
+  '/invalid-params': {POST: {command: 'oneRequiredNumber', payloadParams: {optional: ['a']}}},
+} as const);
+expectAssignable<MethodMap<any, true>>({
   '/any': {POST: {command: 'whatever', payloadParams: {required: ['a']}}},
 } as const);
-expectAssignable<DriverMethodDef<ExternalDriver>>({command: 'getPageSource'} as const);
+expectAssignable<DriverMethodDef<ExternalDriver, false>>({command: 'getPageSource'} as const);
 
 // PluginMethodDef / MethodMap<Plugin> checks
-type TestPluginMethodDef = PluginMethodDef<TestPlugin>;
+type TestPluginMethodDef = PluginMethodDef<TestPlugin, false>;
 
 expectAssignable<TestPluginMethodDef>({} as const);
 expectAssignable<TestPluginMethodDef>({command: 'noArgs'} as const);
@@ -299,11 +320,23 @@ expectNotAssignable<TestPluginMethodDef>({
 } as const);
 expectNotAssignable<TestPluginMethodDef>({command: 'handle'} as const);
 
+expectAssignable<PluginMethodDef<TestPlugin>>({
+  command: 'handledCommand',
+  payloadParams: {required: ['a']},
+} as const);
+expectAssignable<MethodMap<TestPlugin>>({
+  '/handled': {POST: {command: 'handledCommand', payloadParams: {required: ['x']}}},
+} as const);
+expectNotAssignable<MethodMap<TestPlugin, true>>({
+  '/handled': {GET: {command: 'handledCommand'}},
+} as const);
+
 const pluginMethodMap = {
   '/plugin': {
     POST: {command: 'oneRequiredOneOptional', payloadParams: {required: ['a'], optional: ['b']}},
   },
-} as const satisfies MethodMap<TestPlugin>;
+} as const satisfies MethodMap<TestPlugin, true>;
 
+expectAssignable<MethodMap<TestPlugin, true>>(pluginMethodMap);
 expectAssignable<MethodMap<TestPlugin>>(pluginMethodMap);
 expectAssignable<MethodMap<Plugin>>(pluginMethodMap);

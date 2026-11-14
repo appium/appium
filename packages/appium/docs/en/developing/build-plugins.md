@@ -355,9 +355,10 @@ static newMethodMap = {
 !!! note
 
     If you're using TypeScript, static member objects like `newMethodMap` and `executeMethodMap`
-    should be defined `as const` (for example `as const satisfies MethodMap<MyPlugin>` or
+    should be defined `as const` (for example `as const satisfies MethodMap<MyPlugin, true>` or
     `as const satisfies ExecuteMethodMap<MyPlugin>`) so TypeScript validates `command` names and
-    parameter counts against your command methods.
+    parameter counts against your command methods. Omit `, true` (`MethodMap<MyPlugin>`) when
+    routing commands through `handle()` instead of dedicated methods.
 
 In this example we're adding a few new routes and a total of 3 new commands. For more examples of
 how to define commands in this way, it's best to have a look through `routes.js`. Now all you need

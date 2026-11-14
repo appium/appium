@@ -18,6 +18,7 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
+ * Pass `true` as `Strict` to opt in to validating `command` names and `payloadParams`.
  *
  * @example
  * ```js
@@ -29,20 +30,20 @@ export interface PayloadParams {
  * }
  * ```
  */
-export type MethodMap<T extends Plugin | Driver> = T extends Plugin
-  ? Readonly<PluginMethodMap<T>>
+export type MethodMap<T extends Plugin | Driver, Strict extends boolean = false> = T extends Plugin
+  ? Readonly<PluginMethodMap<T, Strict>>
   : T extends Driver
-    ? Readonly<DriverMethodMap<T>>
+    ? Readonly<DriverMethodMap<T, Strict>>
     : never;
 
 /**
  * A {@linkcode MethodMap} for a {@linkcode Driver}.
  */
-export interface DriverMethodMap<T extends Driver> {
+export interface DriverMethodMap<T extends Driver, Strict extends boolean = false> {
   [key: string]: {
-    GET?: DriverMethodDef<T>;
-    POST?: DriverMethodDef<T>;
-    DELETE?: DriverMethodDef<T>;
+    GET?: DriverMethodDef<T, [Strict] extends [true] ? false : true>;
+    POST?: DriverMethodDef<T, [Strict] extends [true] ? false : true>;
+    DELETE?: DriverMethodDef<T, [Strict] extends [true] ? false : true>;
   };
 }
 
@@ -231,35 +232,38 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
                   >;
               }[keyof Commands];
 
-/**
- * A definition of an exposed API command in a {@linkcode Driver}.
- */
-export type DriverMethodDef<T extends Driver, D extends boolean = false> = true extends D
-  ? LooseMethodDef
+type IsLooseMethodCheck<T, Base, D extends boolean> = [true] extends [D]
+  ? true
   : IsAny<T> extends true
-    ? LooseMethodDef
-    : [ExternalDriver] extends [T]
-      ? LooseMethodDef
-      : CheckedMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
+    ? true
+    : [Base] extends [T]
+      ? true
+      : false;
 
 /**
- * A definition of an exposed API command in a {@linkcode Plugin}.
+ * A definition of an exposed API command in a {@linkcode Driver}. Pass `D = false` to opt in to strict checks.
  */
-export type PluginMethodDef<T extends Plugin> =
-  IsAny<T> extends true
+export type DriverMethodDef<T extends Driver, D extends boolean = true> =
+  IsLooseMethodCheck<T, ExternalDriver, D> extends true
     ? LooseMethodDef
-    : [Plugin] extends [T]
-      ? LooseMethodDef
-      : CheckedMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
+    : CheckedMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
+
+/**
+ * A definition of an exposed API command in a {@linkcode Plugin}. Pass `D = false` to opt in to strict checks.
+ */
+export type PluginMethodDef<T extends Plugin, D extends boolean = true> =
+  IsLooseMethodCheck<T, Plugin, D> extends true
+    ? LooseMethodDef
+    : CheckedMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
 
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode PluginMethodDef}.
  */
-export interface PluginMethodMap<T extends Plugin> {
+export interface PluginMethodMap<T extends Plugin, Strict extends boolean = false> {
   [key: string]: {
-    GET?: PluginMethodDef<T>;
-    POST?: PluginMethodDef<T>;
-    DELETE?: PluginMethodDef<T>;
+    GET?: PluginMethodDef<T, [Strict] extends [true] ? false : true>;
+    POST?: PluginMethodDef<T, [Strict] extends [true] ? false : true>;
+    DELETE?: PluginMethodDef<T, [Strict] extends [true] ? false : true>;
   };
 }
 

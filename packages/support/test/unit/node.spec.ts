@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {node} from '../../lib';
+import {node} from '../../lib/index.js';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -24,15 +24,29 @@ describe('node utilities', function () {
         32,
       );
     });
+
+    it('should size arrays with circular references', function () {
+      const self: unknown[] = [1];
+      self.push(self);
+      assert.strictEqual(node.getObjectSize(self), 8);
+
+      const first: unknown[] = [1];
+      const second: unknown[] = [2, first];
+      first.push(second);
+      assert.strictEqual(node.getObjectSize(first), 16);
+      assert.strictEqual(node.getObjectSize({items: [1, 2]}), 26);
+    });
   });
 
   describe('getModuleRootSync', function () {
     it("should be able to find current module's root", function () {
-      assert.ok(path.resolve(__dirname).includes(node.getModuleRootSync('@appium/support', __filename)!));
+      assert.ok(
+        path.resolve(import.meta.dirname).includes(node.getModuleRootSync('@appium/support', import.meta.filename)!),
+      );
     });
 
     it('should return null if no root is found', function () {
-      assert.strictEqual(node.getModuleRootSync('yolo', __filename), null);
+      assert.strictEqual(node.getModuleRootSync('yolo', import.meta.filename), null);
     });
   });
 

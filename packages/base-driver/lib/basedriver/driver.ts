@@ -9,26 +9,60 @@ import {
   type DefaultDeleteSessionResult,
   type Driver,
   type DriverCaps,
-  type InitialOpts,
-  type LegacyCreateSessionArgs,
+  type DriverOpts,
+  type LogDefRecord,
   type ServerArgs,
   type SessionCapabilities,
-  type SingularSessionData,
   type StringRecord,
   type W3CDriverCaps,
 } from '@appium/types';
-import type AsyncLock from 'async-lock';
 
-import {fixCaps, isW3cCaps} from '../helpers/capabilities';
-import {resolveExecuteExtensionName} from '../helpers/extension-command-name';
-import {getLevenshteinSuggestion} from '../helpers/levenshtein-match';
-import {calcSignature} from '../helpers/session';
-import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {mergePlainObjects} from '../utils';
-import {processCapabilities, validateCaps} from './capabilities';
-import {clearBidiSubscriptions} from './commands/bidi-subscriptions';
-import {DriverCore} from './core';
-import * as helpers from './helpers';
+import {fixCaps, isW3cCaps} from '../helpers/capabilities.js';
+import {resolveExecuteExtensionName} from '../helpers/extension-command-name.js';
+import {getLevenshteinSuggestion} from '../helpers/levenshtein-match.js';
+import {calcSignature} from '../helpers/session.js';
+import {DELETE_SESSION_COMMAND, errors, isErrorType} from '../protocol/index.js';
+import {mergePlainObjects} from '../utils.js';
+import {processCapabilities, validateCaps} from './capabilities.js';
+import {hasRunningCommands, runWithCommandTimeout} from './command-timeout.js';
+// oxlint-disable import/no-duplicates -- see comment below
+import {bidiStatus, bidiSubscribe, bidiUnsubscribe, clearBidiSubscriptions} from './commands/bidi.js';
+import {getLogEvents, logCustomEvent} from './commands/event.js';
+import {executeMethod} from './commands/execute.js';
+import {
+  findElement,
+  findElementFromElement,
+  findElements,
+  findElementsFromElement,
+  findElOrEls,
+  findElOrElsWithProcessing,
+  getPageSource,
+} from './commands/find.js';
+import {getLog, getLogTypes} from './commands/log.js';
+import {
+  getTimeouts,
+  implicitWaitForCondition,
+  parseTimeoutArgument,
+  setImplicitWait,
+  setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
+  timeouts,
+} from './commands/timeout.js';
+// oxlint-enable import/no-duplicates
+// Bare re-imports so `declare module '../driver.js'` augmentations in the command modules
+// (which add their methods to `BaseDriver`'s type) reach downstream consumers' `driver.d.ts`
+// import graph — the named imports above alone aren't part of `BaseDriver`'s emitted type
+// surface, so `tsc` would otherwise drop them from the declaration output.
+import './commands/bidi.js';
+import './commands/event.js';
+import './commands/execute.js';
+import './commands/find.js';
+import './commands/log.js';
+import './commands/timeout.js';
+import {DriverCore} from './core.js';
+import * as helpers from './helpers/index.js';
+import {deserializeTimeouts, W3C_TIMEOUTS} from './helpers/timeouts.js';
 
 type CommandInvoker<C extends Constraints> = BaseDriver<C> & Record<string, ((...args: any[]) => any) | undefined>;
 
@@ -44,53 +78,33 @@ export class BaseDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 >
   extends DriverCore<C, Settings>
-  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
+  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult>
 {
-  cliArgs: CArgs & ServerArgs;
-  caps: DriverCaps<C>;
+  cliArgs: CArgs & ServerArgs = {} as CArgs & ServerArgs;
+  caps: DriverCaps<C> = {} as DriverCaps<C>;
   originalCaps!: W3CDriverCaps<C>;
   desiredCapConstraints!: C;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
   serverPath?: string;
+  supportedLogTypes: Readonly<LogDefRecord> = {};
 
-  constructor(opts: InitialOpts, shouldValidateCaps = true) {
-    super(opts, shouldValidateCaps);
-
-    this.caps = {} as DriverCaps<C>;
-    this.cliArgs = {} as CArgs & ServerArgs;
-  }
-
-  /**
-   * Contains the base constraints plus whatever the subclass wants to add.
-   *
-   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
-   * an issue:
-   * @see {@link https://github.com/appium/appium/issues/new}
-   */
-  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
-    return Object.freeze(
-      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
-    );
-  }
+  private readonly pendingCommandControllers = new Set<AbortController>();
 
   /**
    * This is the main command handler for the driver. It wraps command
    * execution with timeout logic, checking that we have a valid session,
    * and ensuring that we execute commands one at a time. This method is called
-   * by MJSONWP's express router.
+   * by the WebDriver protocol's express router.
    */
   async executeCommand<T = unknown>(cmd: string, ...args: any[]): Promise<T> {
     // get start time for this command, and log in special cases
     const startTime = Date.now();
 
     if (cmd === 'createSession') {
-      // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
-      this.protocol = determineProtocol(args);
       this.logEvent(EVENT_SESSION_INIT);
     } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_START);
@@ -108,57 +122,45 @@ export class BaseDriver<
     const command = invoker[cmd];
     // If we don't have this command, it must not be implemented
     if (!command) {
-      await this.startNewCommandTimeout();
+      if (this.isCommandsQueueEnabled && !hasRunningCommands(this)) {
+        await this.startNewCommandTimeout();
+      }
       throw new errors.NotYetImplementedError();
     }
 
     const runCommandPromise = async () => {
-      let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
-      let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
       let wasSessionShutdownUnexpectedly = false;
-      const onUnexpectedShutdown = (e: Error) => {
-        wasSessionShutdownUnexpectedly = true;
-        unexpectedShutdownRejecter?.(e);
-      };
-      try {
-        return await Promise.race([
-          command.call(this, ...args),
-          // This promise is needed to monitor if the session has been
-          // shut down unexpectedly while the command was running
-          new Promise((resolve, reject) => {
-            unexpectedShutdownResolver = resolve;
-            unexpectedShutdownRejecter = reject;
+      return await runWithCommandTimeout(
+        this,
+        async () => {
+          const shutdown = Promise.withResolvers<void>();
+          const onUnexpectedShutdown = (e: Error) => {
+            wasSessionShutdownUnexpectedly = true;
+            shutdown.reject(e);
+          };
+          try {
             this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          }),
-        ]);
-      } finally {
-        if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
-          // This is needed to prevent memory leaks
-          this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
-          unexpectedShutdownRejecter = null;
-          // @ts-ignore typescript cannot understand this
-          unexpectedShutdownResolver?.();
-        }
-
-        // if we have set a new command timeout (which is the default), start a
-        // timer once we've finished executing this command. If we don't clear
-        // the timer (which is done when a new command comes in), we will trigger
-        // automatic session deletion in this.onCommandTimeout. Of course we don't
-        // want to trigger the timer when the user is shutting down the session
-        // intentionally
-        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
-          // resetting existing timeout
-          await this.startNewCommandTimeout();
-        }
-      }
+            return await Promise.race([
+              shutdown.promise,
+              // Observe both promises before the command can emit shutdown or throw synchronously.
+              Promise.resolve().then(() => command.call(this, ...args)),
+            ]);
+          } finally {
+            this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+            shutdown.resolve();
+          }
+        },
+        {restart: () => cmd !== DELETE_SESSION_COMMAND && !wasSessionShutdownUnexpectedly},
+      );
     };
+
+    // exempt commands bypass the queue, so they can run while other commands are queued/running,
+    // without needing to wait their turn behind them
+    const isQueueExempt = this.queueExemptCommands.has(cmd);
 
     const synchronizationKey = BaseDriver.name;
-    const commandsQueueGuard = this.commandsQueueGuard as AsyncLock & {
-      queues?: Record<string, unknown[]>;
-    };
-    const commandsQueueLen: number = commandsQueueGuard.queues?.[synchronizationKey]?.length ?? 0;
-    if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
+    const commandsQueueLen = this.commandsQueueGuard.getQueueLength(synchronizationKey);
+    if (this.isCommandsQueueEnabled && !isQueueExempt && commandsQueueLen > 0) {
       this.log.debug(
         `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
           `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
@@ -166,9 +168,10 @@ export class BaseDriver<
       );
     }
 
-    const res = this.isCommandsQueueEnabled
-      ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
-      : await runCommandPromise();
+    const res =
+      this.isCommandsQueueEnabled && !isQueueExempt
+        ? await this.runQueuedCommand(synchronizationKey, runCommandPromise)
+        : await runCommandPromise();
 
     // log timing information about this command
     const endTime = Date.now();
@@ -187,6 +190,16 @@ export class BaseDriver<
     return res;
   }
 
+  /**
+   * A helper method to modify the command name before it's logged.
+   *
+   * Useful for resolving generic commands like 'execute' to a more specific
+   * name based on arguments (e.g., identifying custom extensions).
+   *
+   * @param cmd - The original command name
+   * @param args - Arguments passed to the command
+   * @returns A potentially updated command name
+   */
   clarifyCommandName(cmd: string, args: string[]): string {
     if (cmd === 'execute') {
       const firstArg = args?.[0];
@@ -198,7 +211,15 @@ export class BaseDriver<
     return cmd;
   }
 
-  async startUnexpectedShutdown(err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')) {
+  /**
+   * Signify to any owning processes that this driver encountered an error which should cause the
+   * session to terminate immediately (for example an upstream service failed)
+   *
+   * @param err - the Error object which is causing the shutdown
+   */
+  async startUnexpectedShutdown(
+    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!'),
+  ): Promise<void> {
     this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
     this.shutdownUnexpectedly = true;
     try {
@@ -210,12 +231,23 @@ export class BaseDriver<
     }
   }
 
-  async startNewCommandTimeout() {
+  /**
+   * Start the timer for the New Command Timeout, which when it runs out, will stop the current
+   * session
+   */
+  async startNewCommandTimeout(): Promise<void> {
     // make sure there are no rogue timeouts
     await this.clearNewCommandTimeout();
 
+    // arming this while a command is still running shuts that command down
+    if (hasRunningCommands(this)) {
+      return;
+    }
+
     // if command timeout is 0, it is disabled
-    if (!this.newCommandTimeoutMs) return; // eslint-disable-line curly
+    if (!this.newCommandTimeoutMs) {
+      return;
+    }
 
     this.noCommandTimer = setTimeout(async () => {
       this.log.warn(`Shutting down because we waited ` + `${this.newCommandTimeoutMs / 1000.0} seconds for a command`);
@@ -224,44 +256,31 @@ export class BaseDriver<
         `${this.newCommandTimeoutMs / 1000.0} seconds ` +
         `expired. Try customizing the timeout using the ` +
         `'newCommandTimeout' desired capability`;
-      await this.startUnexpectedShutdown(new Error(errorMessage));
+      try {
+        await this.startUnexpectedShutdown(new Error(errorMessage));
+      } catch (err) {
+        // Timer callbacks have no caller to handle a rejected shutdown promise.
+        this.log.warn(
+          `Failed to clean up the session after the new command timeout: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
     }, this.newCommandTimeoutMs);
   }
 
-  assignServer(server: AppiumServer, host: string, port: number, path: string) {
+  /**
+   * A helper function used to assign server information to the driver instance so the driver knows
+   * where the server is Running
+   *
+   * @param server - the server object
+   * @param host - the server hostname
+   * @param port - the server port
+   * @param path - the server base url
+   */
+  assignServer(server: AppiumServer, host: string, port: number, path: string): void {
     this.server = server;
     this.serverHost = host;
     this.serverPort = port;
     this.serverPath = path;
-  }
-
-  /*
-   * Restart the session with the original caps,
-   * preserving the timeout config.
-   */
-  async reset() {
-    this.log.debug('Resetting app mid-session');
-    this.log.debug('Running generic full reset');
-
-    // preserving state
-    const currentConfig = {
-      implicitWaitMs: this.implicitWaitMs,
-      newCommandTimeoutMs: this.newCommandTimeoutMs,
-      sessionId: this.sessionId,
-      shutdownUnexpectedly: this.shutdownUnexpectedly,
-    };
-
-    try {
-      if (this.sessionId !== null) {
-        await this.deleteSession(this.sessionId);
-      }
-      this.log.debug('Restarting app');
-      await this.createSession(this.originalCaps);
-    } finally {
-      // always restore state.
-      Object.assign(this, currentConfig);
-    }
-    await this.clearNewCommandTimeout();
   }
 
   /**
@@ -269,26 +288,16 @@ export class BaseDriver<
    *
    * @param w3cCapabilities - the new session capabilities in W3C format
    */
-  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
-  /**
-   * @deprecated Historically the first three arguments were reserved for JSONWP capabilities.
-   * Appium 2 dropped support for that protocol; these positions are now intended to carry the
-   * same W3C capabilities value, and if they differ, which one wins is unspecified. Use the
-   * single-argument overload of {@linkcode createSession} instead. The `driverData` parameter is
-   * also deprecated; use {@linkcode IAppiumIpc} for cross-session coordination instead.
-   */
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
-  async createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult> {
-    const [w3cCapabilities1, w3cCapabilities2, w3cCapabilities] = legacyArgs;
+  async createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult> {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
     }
 
     this.log.debug();
 
-    const originalCaps = structuredClone([w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps));
+    const originalCaps = isW3cCaps(w3cCapabilities) ? structuredClone(w3cCapabilities) : undefined;
     if (!originalCaps) {
-      throw new errors.SessionNotCreatedError(
+      throw new errors.InvalidArgumentError(
         'Appium only supports W3C-style capability objects. ' +
           'Your client is sending an older capabilities format. Please update your client library.',
       );
@@ -302,52 +311,25 @@ export class BaseDriver<
       logger.markSensitive(JSON.stringify(originalCaps, null, 2)),
     );
 
-    let caps: DriverCaps<C>;
-    try {
-      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
-      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      throw new errors.SessionNotCreatedError(message);
+    const caps = this.processSessionCapabilities(originalCaps);
+    const initialTimeouts = deserializeTimeouts(caps.timeouts);
+    const opts = this.configureSessionOptions(caps);
+    this.applyNewCommandTimeout(caps);
+
+    // Initialize local state before the concrete driver starts its backend.
+    // Timeout command/setter overrides may require an already running backend.
+    for (const {name, property} of W3C_TIMEOUTS) {
+      const value = initialTimeouts[name];
+      if (value !== undefined) {
+        this[property] = value;
+      }
     }
-
-    this.validateDesiredCaps(caps);
-
     this.sessionId = util.uuidV4();
     this.sessionCreationTimestampMs = Date.now();
     this.caps = caps;
-    // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {...this.initialOpts, ...this.caps};
+    this.opts = opts;
 
-    // deal with resets
-    // some people like to do weird things by setting noReset and fullReset
-    // both to true, but this is misguided and strange, so error here instead
-    if (this.opts.noReset && this.opts.fullReset) {
-      throw new Error(
-        "The 'noReset' and 'fullReset' capabilities are mutually " +
-          'exclusive and should not both be set to true. You ' +
-          "probably meant to just use 'fullReset' on its own",
-      );
-    }
-    if (this.opts.noReset === true) {
-      this.opts.fullReset = false;
-    }
-    if (this.opts.fullReset === true) {
-      this.opts.noReset = false;
-    }
-    this.opts.fastReset = !this.opts.fullReset && !this.opts.noReset;
-    this.opts.skipUninstall = this.opts.fastReset || this.opts.noReset;
-
-    // Prevents empty string caps so we don't need to test it everywhere
-    if (typeof this.opts.app === 'string' && this.opts.app.trim() === '') {
-      delete this.opts.app;
-    }
-
-    if (this.caps.newCommandTimeout !== undefined) {
-      this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
-    }
-
-    this._log.prefix = helpers.generateDriverLogPrefix(this);
+    this.log.prefix = helpers.generateDriverLogPrefix(this);
 
     this.log.updateAsyncContext({
       sessionId: this.sessionId,
@@ -360,18 +342,6 @@ export class BaseDriver<
   }
 
   /**
-   * Returns capabilities for the session and event history (if applicable)
-   * @deprecated Use {@linkcode getAppiumSessionCapabilities} instead for getting the capabilities.
-   * Use {@linkcode EventCommands.getLogEvents} instead to get the event history.
-   */
-  async getSession() {
-    return (this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps) as SingularSessionData<
-      C,
-      SessionData
-    >;
-  }
-
-  /**
    * Returns capabilities for the session
    */
   async getAppiumSessionCapabilities(): Promise<SessionCapabilities<C>> {
@@ -380,23 +350,27 @@ export class BaseDriver<
 
   /**
    * Stop the current automation session.
+   * @see {@link https://w3c.github.io/webdriver/#delete-session}
+   *
+   * @param sessionId - the id of the session that is to be deleted
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async deleteSession(sessionId?: string | null) {
+  async deleteSession(sessionId?: string | null): Promise<void> {
+    void sessionId;
     await this.clearNewCommandTimeout();
-    if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
-      // simple hack to release pending commands if they exist
-      // @ts-expect-error private API
-      const queues = this.commandsQueueGuard.queues;
-      for (const key of Object.keys(queues)) {
-        queues[key] = [];
-      }
+    for (const controller of this.pendingCommandControllers) {
+      controller.abort(new errors.NoSuchDriverError('The session was deleted before this command could run'));
     }
+    this.pendingCommandControllers.clear();
     this.sessionId = null;
     clearBidiSubscriptions(this);
   }
 
-  logExtraCaps(caps: Capabilities<C>) {
+  /**
+   * A helper function to log unrecognized capabilities to the console
+   *
+   * @param caps - the capabilities
+   */
+  logExtraCaps(caps: Capabilities<C>): void {
     const knownCaps = Object.keys(this._desiredCapConstraints);
     const knownCapsSet = new Set(knownCaps);
     const extraCaps = Object.keys(caps).filter((cap) => !knownCapsSet.has(cap));
@@ -409,6 +383,13 @@ export class BaseDriver<
     }
   }
 
+  /**
+   * Validate the capabilities used to start a session
+   *
+   * @param caps - the capabilities
+   *
+   * @returns Whether or not the capabilities are valid
+   */
   validateDesiredCaps(caps: any): caps is DriverCaps<C> {
     if (!this.shouldValidateCaps) {
       return true;
@@ -431,21 +412,169 @@ export class BaseDriver<
     return true;
   }
 
-  async updateSettings(newSettings: Settings) {
+  /**
+   * Update the session's settings dictionary with a new settings object
+   *
+   * @param newSettings - A key-value map of setting names to values. Settings not named in the map
+   * will not have their value adjusted.
+   */
+  async updateSettings(newSettings: Settings): Promise<void> {
     if (!this.settings) {
       throw this.log.errorWithException('Cannot update settings; settings object not found');
     }
     return await this.settings.update(newSettings);
   }
 
-  async getSettings() {
+  /**
+   * Get the current settings for the session
+   *
+   * @returns The settings object
+   */
+  async getSettings(): Promise<Settings> {
     if (!this.settings) {
       throw this.log.errorWithException('Cannot get settings; settings object not found');
     }
     return this.settings.getSettings();
   }
+
+  /**
+   * Contains the base constraints plus whatever the subclass wants to add.
+   *
+   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
+   * an issue:
+   * @see {@link https://github.com/appium/appium/issues/new}
+   */
+  protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
+    return Object.freeze(
+      mergePlainObjects({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints) as BaseDriverCapConstraints & C,
+    );
+  }
+
+  /**
+   * Reject waiting commands when their session ends without interrupting a running command.
+   */
+  private async runQueuedCommand<T>(key: string, command: () => Promise<T>): Promise<T> {
+    const controller = new AbortController();
+    const {signal} = controller;
+    const cancellation = Promise.withResolvers<never>();
+    const onAbort = () => cancellation.reject(signal.reason);
+    signal.addEventListener('abort', onAbort, {once: true});
+    this.pendingCommandControllers.add(controller);
+    try {
+      const execution = this.commandsQueueGuard.acquire(key, async () => {
+        this.pendingCommandControllers.delete(controller);
+        signal.removeEventListener('abort', onAbort);
+        signal.throwIfAborted();
+        return await command();
+      });
+      return await Promise.race([execution, cancellation.promise]);
+    } finally {
+      this.pendingCommandControllers.delete(controller);
+      signal.removeEventListener('abort', onAbort);
+    }
+  }
+
+  /** Process and validate capabilities while preserving protocol error types. */
+  private processSessionCapabilities(originalCaps: W3CDriverCaps<C>): DriverCaps<C> {
+    let caps: DriverCaps<C>;
+    try {
+      caps = processCapabilities(originalCaps, this._desiredCapConstraints, this.shouldValidateCaps) as DriverCaps<C>;
+      caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
+    } catch (e) {
+      if (e instanceof Error && isErrorType(e, errors.InvalidArgumentError)) {
+        throw e;
+      }
+      const message = e instanceof Error ? e.message : String(e);
+      throw new errors.SessionNotCreatedError(message);
+    }
+
+    this.validateDesiredCaps(caps);
+    return caps;
+  }
+
+  /**
+   * Store `newCommandTimeout` as milliseconds.
+   * Null and blank strings are not a timeout. `'' * 1000` is 0, which disables the idle timeout.
+   * Node runs a negative timer delay immediately, which ends the session.
+   */
+  private applyNewCommandTimeout(caps: DriverCaps<C>): void {
+    const newCommandTimeout = caps.newCommandTimeout;
+    if (typeof newCommandTimeout !== 'number' || !Number.isFinite(newCommandTimeout)) {
+      return;
+    }
+    if (newCommandTimeout < 0) {
+      throw new errors.InvalidArgumentError(`Invalid newCommandTimeout value '${newCommandTimeout}'`);
+    }
+    this.newCommandTimeoutMs = newCommandTimeout * 1000;
+  }
+
+  /** Merge and normalize session options without changing driver state. */
+  private configureSessionOptions(caps: DriverCaps<C>): DriverOpts<C> {
+    // merge caps onto opts so we don't need to worry about what's where
+    const opts = {...this.initialOpts, ...caps};
+
+    // deal with resets
+    // some people like to do weird things by setting noReset and fullReset
+    // both to true, but this is misguided and strange, so error here instead
+    if (opts.noReset && opts.fullReset) {
+      throw new errors.SessionNotCreatedError(
+        "The 'noReset' and 'fullReset' capabilities are mutually " +
+          'exclusive and should not both be set to true. You ' +
+          "probably meant to just use 'fullReset' on its own",
+      );
+    }
+    for (const [enabledOption, disabledOption] of [
+      ['noReset', 'fullReset'],
+      ['fullReset', 'noReset'],
+    ] as const) {
+      if (opts[enabledOption] === true) {
+        opts[disabledOption] = false;
+      }
+    }
+    opts.fastReset = !opts.fullReset && !opts.noReset;
+    opts.skipUninstall = opts.fastReset || opts.noReset;
+
+    // Prevents empty string caps so we don't need to test it everywhere
+    if (typeof opts.app === 'string' && opts.app.trim() === '') {
+      delete opts.app;
+    }
+    return opts;
+  }
 }
 
-export * from './commands';
+Object.assign(BaseDriver.prototype, {
+  // bidi
+  bidiSubscribe,
+  bidiUnsubscribe,
+  bidiStatus,
 
-export default BaseDriver;
+  // event
+  logCustomEvent,
+  getLogEvents,
+
+  // execute
+  executeMethod,
+
+  // find
+  findElement,
+  findElements,
+  findElementFromElement,
+  findElementsFromElement,
+  findElOrEls,
+  getPageSource,
+  findElOrElsWithProcessing,
+
+  // log
+  getLogTypes,
+  getLog,
+
+  // timeout
+  timeouts,
+  getTimeouts,
+  setImplicitWait,
+  setNewCommandTimeout,
+  setPageLoadTimeout,
+  setScriptTimeout,
+  implicitWaitForCondition,
+  parseTimeoutArgument,
+});

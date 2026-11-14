@@ -1,26 +1,21 @@
-import type {NetworkInterfaceInfo} from 'node:os';
 import {inspect as dump, type InspectOptions} from 'node:util';
 
-import {
-  normalizeBasePath,
-  routeConfiguringFunction as makeRouter,
-  server as baseServer,
-  type ServerOpts,
-} from '@appium/base-driver';
+import {routeConfiguringFunction as makeRouter} from '@appium/base-driver';
+import {normalizeBasePath, server as baseServer} from '@appium/http-server';
+import type {ServerOpts} from '@appium/http-server';
 import {console as supportConsole, util} from '@appium/support';
 import type {AppiumServer, Driver, MethodMap, UpdateServerCallback} from '@appium/types';
-import type {Args, CliCommandServer, ParsedArgs} from 'appium/types';
+import type {Args, CliCommandServer, ParsedArgs} from 'appium/types/index.js';
 import {WebSocketServer} from 'ws';
 
-import type {AppiumDriver} from '../appium';
-import {BIDI_BASE_PATH, LONG_STACKTRACE_LIMIT} from '../constants';
-import type {DriverNameMap, PluginNameMap} from '../extension';
-import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build';
-import {fetchInterfaces, isBroadcastIp, V4_BROADCAST_IP} from '../helpers/network';
-import {log as logger} from '../logger';
-import {validate as validateSchema} from '../schema/schema';
-import {checkNodeOk, requireDir} from './node-helpers';
-import {getNonDefaultServerArgs} from './startup-config';
+import type {AppiumDriver} from '../appium.js';
+import {BIDI_BASE_PATH, CORS_FEATURE, LONG_STACKTRACE_LIMIT} from '../constants.js';
+import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
+import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
+import {log as logger} from '../logger.js';
+import {validate as validateSchema} from '../schema/schema.js';
+import {checkNodeOk, requireDir} from './node-helpers.js';
+import {getNonDefaultServerArgs} from './startup-config.js';
 
 const isStdoutTTY = process.stdout.isTTY;
 
@@ -60,28 +55,6 @@ export function determineAppiumHomeSource(appiumHomeFromArgs?: string | null): s
     return 'APPIUM_HOME environment variable';
   }
   return 'autodetected Appium home path';
-}
-
-/**
- * Logs the REST listener URL; if the bind address is a broadcast address, lists concrete interface URLs.
- */
-export function logServerAddress(url: string): void {
-  const urlObj = new URL(url);
-  logger.info(`Appium REST http interface listener started on ${url}`);
-  if (!isBroadcastIp(urlObj.hostname)) {
-    return;
-  }
-
-  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
-  const toLabel = (iface: NetworkInterfaceInfo) => {
-    const href = urlObj.href.replace(urlObj.hostname, iface.address);
-    return iface.internal ? `${href} (only accessible from the same host)` : href;
-  };
-  logger.info(
-    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
-      `in your client code to connect to this server:\n` +
-      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
-  );
 }
 
 /**
@@ -153,7 +126,7 @@ export function getExtraMethodMap(driverClasses: DriverNameMap, pluginClasses: P
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce<MethodMap<Driver>>(
     (map, klass) => ({
       ...map,
-      ...(klass.newMethodMap ?? {}),
+      ...klass.newMethodMap,
     }),
     {},
   );
@@ -173,7 +146,7 @@ export function buildServerOpts(
     routeConfiguringFunction,
     port: parsedArgs.port,
     hostname: parsedArgs.address,
-    allowCors: parsedArgs.allowCors,
+    allowCors: appiumDriver.isFeatureEnabled(CORS_FEATURE),
     basePath: parsedArgs.basePath,
     serverUpdaters: getServerUpdaters(driverClasses, pluginClasses),
     extraMethodMap: getExtraMethodMap(driverClasses, pluginClasses),
@@ -206,9 +179,18 @@ export async function createAppiumServer(
   return server;
 }
 
+/**
+ * Server args whose values describe the server's internal network and must not leak to clients
+ * via server logs
+ */
+const SENSITIVE_ARGS: ReadonlySet<keyof Args> = new Set(['appUrlRules']);
+
 function logNonDefaultArgsWarning(args: Args): void {
+  const shownArgs = Object.fromEntries(
+    Object.entries(args).map(([name, value]) => [name, SENSITIVE_ARGS.has(name as keyof Args) ? '<redacted>' : value]),
+  );
   logger.info('Non-default server args:');
-  inspect(args);
+  inspect(shownArgs);
 }
 
 function logDefaultCapabilitiesWarning(caps: ParsedArgs<CliCommandServer>['defaultCapabilities']): void {

@@ -2,28 +2,23 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it} from 'node:test';
 
-import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import {HTTPStatusCodes} from '../../../lib/helpers/http-status-codes.js';
+import {errorFromW3CJsonCode, errors, isErrorType} from '../../../lib/index.js';
+import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors.js';
 
-import {errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errors, isErrorType} from '../../../lib';
-import {BadParametersError, getResponseForW3CError} from '../../../lib/protocol/errors';
-
-const basename = path.basename(__filename, path.extname(__filename));
+const basename = path.basename(import.meta.filename, path.extname(import.meta.filename));
 
 interface ErrorListItem {
   errorName: string;
   errorMsg: string;
-  error?: string;
-  errorCode?: number;
+  error: string;
 }
 
-// Error codes and messages have been added according to JsonWireProtocol see
-// https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes
 const errorsList: ErrorListItem[] = [
   {
     errorName: 'NoSuchDriverError',
     errorMsg: 'A session is either terminated or not started',
     error: 'invalid session id',
-    errorCode: 6,
   },
   {
     errorName: 'ElementClickInterceptedError',
@@ -51,85 +46,78 @@ const errorsList: ErrorListItem[] = [
     errorName: 'NoSuchElementError',
     errorMsg: 'An element could not be located on the page using the given search parameters.',
     error: 'no such element',
-    errorCode: 7,
   },
   {
     errorName: 'NoSuchFrameError',
     errorMsg: 'A request to switch to a frame could not be satisfied because the frame could not be found.',
     error: 'no such frame',
-    errorCode: 8,
   },
   {
     errorName: 'NoSuchShadowRootError',
     errorMsg: 'The element does not have a shadow root attached.',
     error: 'no such shadow root',
-    errorCode: 65,
+  },
+  {
+    errorName: 'DetachedShadowRootError',
+    errorMsg: 'The referenced shadow root is no longer attached to the DOM.',
+    error: 'detached shadow root',
   },
   {
     errorName: 'UnknownCommandError',
     errorMsg:
       'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
     error: 'unknown command',
-    errorCode: 9,
   },
   {
     errorName: 'StaleElementReferenceError',
     errorMsg: 'An element command failed because the referenced element is no longer attached to the DOM.',
     error: 'stale element reference',
-    errorCode: 10,
   },
   {
     errorName: 'ElementNotVisibleError',
     errorMsg: 'An element command could not be completed because the element is not visible on the page.',
-    errorCode: 11,
+    error: 'element not visible',
   },
   {
     errorName: 'InvalidElementStateError',
     errorMsg:
       'An element command could not be completed because the element is in an invalid state (e.g. attempting to click a disabled element).',
     error: 'invalid element state',
-    errorCode: 12,
   },
   {
     errorName: 'UnknownError',
     errorMsg: 'An unknown server-side error occurred while processing the command.',
     error: 'unknown error',
-    errorCode: 13,
   },
   {
     errorName: 'ElementIsNotSelectableError',
     errorMsg: 'An attempt was made to select an element that cannot be selected.',
     error: 'element not selectable',
-    errorCode: 15,
   },
   {
     errorName: 'JavaScriptError',
     errorMsg: 'An error occurred while executing user supplied JavaScript.',
     error: 'javascript error',
-    errorCode: 17,
   },
   {
     errorName: 'XPathLookupError',
     errorMsg: 'An error occurred while searching for an element by XPath.',
-    errorCode: 19,
+    error: 'invalid selector',
   },
   {
     errorName: 'TimeoutError',
     errorMsg: 'An operation did not complete before its timeout expired.',
     error: 'timeout',
-    errorCode: 21,
   },
   {
     errorName: 'NoSuchWindowError',
     errorMsg: 'A request to switch to a different window could not be satisfied because the window could not be found.',
     error: 'no such window',
-    errorCode: 23,
   },
   {
     errorName: 'InvalidCookieDomainError',
     errorMsg: 'An illegal attempt was made to set a cookie under a different domain than the current page.',
     error: 'invalid cookie domain',
-    errorCode: 24,
   },
   {
     errorName: 'InvalidCoordinatesError',
@@ -140,53 +128,51 @@ const errorsList: ErrorListItem[] = [
     errorName: 'UnableToSetCookieError',
     errorMsg: `A request to set a cookie's value could not be satisfied.`,
     error: 'unable to set cookie',
-    errorCode: 25,
   },
   {
     errorName: 'UnexpectedAlertOpenError',
     errorMsg: 'A modal dialog was open, blocking this operation',
     error: 'unexpected alert open',
-    errorCode: 26,
   },
   {
     errorName: 'NoAlertOpenError',
     errorMsg: 'An attempt was made to operate on a modal dialog when one was not open.',
-    errorCode: 27,
+    error: 'no such alert',
   },
   {
     errorName: 'ScriptTimeoutError',
     errorMsg: 'A script did not complete before its timeout expired.',
     error: 'script timeout',
-    errorCode: 28,
   },
   {
     errorName: 'InvalidElementCoordinatesError',
     errorMsg: 'The coordinates provided to an interactions operation are invalid.',
-    errorCode: 29,
+    error: 'invalid coordinates',
   },
-  {errorName: 'IMENotAvailableError', errorMsg: 'IME was not available.', errorCode: 30},
+  {
+    errorName: 'IMENotAvailableError',
+    errorMsg: 'IME was not available.',
+    error: 'unsupported operation',
+  },
   {
     errorName: 'IMEEngineActivationFailedError',
     errorMsg: 'An IME engine could not be started.',
-    errorCode: 31,
+    error: 'unsupported operation',
   },
   {
     errorName: 'InvalidSelectorError',
     errorMsg: 'Argument was an invalid selector (e.g. XPath/CSS).',
     error: 'invalid selector',
-    errorCode: 32,
   },
   {
     errorName: 'SessionNotCreatedError',
     errorMsg: 'A new session could not be created.',
     error: 'session not created',
-    errorCode: 33,
   },
   {
     errorName: 'MoveTargetOutOfBoundsError',
     errorMsg: 'Target provided for a move action is out of bounds.',
     error: 'move target out of bounds',
-    errorCode: 34,
   },
   {
     errorName: 'NoSuchAlertError',
@@ -203,13 +189,6 @@ const errorsList: ErrorListItem[] = [
     errorName: 'NotYetImplementedError',
     errorMsg: 'Method has not yet been implemented',
     error: 'unknown method',
-    errorCode: 405,
-  },
-  {
-    errorName: 'UnknownCommandError',
-    errorMsg:
-      'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
-    error: 'unknown command',
   },
   {
     errorName: 'UnknownMethodError',
@@ -225,63 +204,22 @@ const errorsList: ErrorListItem[] = [
 
 describe('errors', function () {
   for (const error of errorsList) {
-    it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
+    it(error.errorName + ' should have a W3C error code and message', function () {
       const ErrClass = (errors as any)[error.errorName];
       const errInstance = new ErrClass();
-      if (error.errorCode) {
-        assert.strictEqual(errInstance.jsonwpCode, error.errorCode);
-      } else {
-        assert.strictEqual(errInstance.error, error.error);
-      }
+      assert.strictEqual(errInstance.error, error.error);
       assert.strictEqual(errInstance.message, error.errorMsg);
     });
   }
-});
-
-describe('errorFromMJSONWPStatusCode', function () {
-  for (const error of errorsList) {
-    if (error.errorName !== 'NotYetImplementedError') {
-      it((error.errorCode ?? error.errorName) + ' should return correct error', function () {
-        if (error.errorCode) {
-          assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode).jsonwpCode, error.errorCode);
-          assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode).message, error.errorMsg);
-          if (![13, 33].includes(error.errorCode)) {
-            assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode, 'abcd').jsonwpCode, error.errorCode);
-            assert.strictEqual(errorFromMJSONWPStatusCode(error.errorCode, 'abcd').message, 'abcd');
-          }
-        } else {
-          assert.strictEqual(
-            isErrorType(errorFromMJSONWPStatusCode((error as any).errorCode), errors.UnknownError),
-            true,
-          );
-        }
-      });
-    }
-  }
-  it('should throw unknown error for unknown code', function () {
-    assert.strictEqual(errorFromMJSONWPStatusCode(99).jsonwpCode, 13);
-    assert.strictEqual(
-      errorFromMJSONWPStatusCode(99).message,
-      'An unknown server-side error occurred while processing the command.',
-    );
-  });
 });
 
 describe('errorFromW3CJsonCode', function () {
   for (const error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorName + ' should return correct error', function () {
-        const w3cError = error.error;
-        if (w3cError) {
-          const err = errorFromW3CJsonCode(w3cError, error.errorMsg);
-          assert.strictEqual(err.error, error.error);
-          assert.ok(err.message.includes(error.errorMsg));
-        } else {
-          assert.strictEqual(
-            isErrorType(errorFromW3CJsonCode(error.error ?? 'unknown error', error.errorMsg), errors.UnknownError),
-            true,
-          );
-        }
+        const err = errorFromW3CJsonCode(error.error, error.errorMsg);
+        assert.strictEqual(err.error, error.error);
+        assert.ok(err.message.includes(error.errorMsg));
       });
     }
   }
@@ -299,6 +237,7 @@ describe('w3c Status Codes', function () {
       ['NoSuchDriverError', 404],
       ['NoSuchFrameError', 404],
       ['NoSuchShadowRootError', 404],
+      ['DetachedShadowRootError', 404],
       ['NoAlertOpenError', 404],
       ['NoSuchWindowError', 404],
       ['StaleElementReferenceError', 404],
@@ -306,9 +245,9 @@ describe('w3c Status Codes', function () {
       ['MoveTargetOutOfBoundsError', 500],
       ['NoSuchCookieError', 404],
       ['NoSuchElementError', 404],
-      ['ScriptTimeoutError', 408],
+      ['ScriptTimeoutError', 500],
       ['SessionNotCreatedError', 500],
-      ['TimeoutError', 408],
+      ['TimeoutError', 500],
       ['UnableToSetCookieError', 500],
       ['UnableToCaptureScreen', 500],
       ['UnexpectedAlertOpenError', 500],
@@ -360,7 +299,7 @@ describe('.getResponseForW3CError', function () {
     assert.match(message!, /bar/);
     assert.ok(stacktrace!.includes(basename));
   });
-  it('should translate JSONWP errors', function () {
+  it('should translate errors from a W3C error signature', function () {
     const [httpStatus, httpResponseBody] = getResponseForW3CError(new errors.NoSuchElementError('My custom message'));
     assert.strictEqual(httpStatus, 404);
     const {error, message, stacktrace} = httpResponseBody.value;
@@ -371,41 +310,38 @@ describe('.getResponseForW3CError', function () {
 });
 
 describe('.getActualError', function () {
-  describe('MJSONWP', function () {
-    it('should map a status code 7 no such element error as a NoSuchElementError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'does not matter',
-        status: 7,
-      }).getActualError();
-      assert.strictEqual(isErrorType(actualError, errors.NoSuchElementError), true);
+  for (const data of [{text: 'Unsaved changes'}, {}, {details: {items: [1, null, false]}}]) {
+    it(`should preserve optional error data ${JSON.stringify(data)} through a proxy round trip`, function () {
+      const value = {error: 'unexpected alert open', message: 'alert', stacktrace: 'remote stack', data};
+      const proxyError = new errors.ProxyRequestError('Proxy failed', JSON.stringify({value}), 500);
+      assert.deepStrictEqual(getResponseForW3CError(proxyError.getActualError()), [500, {value}]);
     });
-    it('should map a status code 10, StaleElementReferenceError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'Does not matter',
-        status: 10,
-      }).getActualError();
-      assert.strictEqual(isErrorType(actualError, errors.StaleElementReferenceError), true);
-    });
-    it('should map an unknown error to UnknownError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: 'Does not matter',
-        status: -100,
-      }).getActualError();
-      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
-    });
-    it('should parse a JSON string', function () {
-      const actualError = new errors.ProxyRequestError(
-        'Error message does not matter',
-        JSON.stringify({
-          value: 'Does not matter',
-          status: -100,
-        }),
-      ).getActualError();
-      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
-    });
+  }
+
+  it('should serialize data supplied by a local driver without changing BiDi errors', function () {
+    const error = new errors.UnexpectedAlertOpenError('alert');
+    error.data = {text: 'Unsaved changes'};
+    assert.deepStrictEqual(getResponseForW3CError(error)[1].value.data, error.data);
+    assert.equal(Object.hasOwn(error.bidiErrObject(1), 'data'), false);
+  });
+
+  it('should omit error data when none was supplied', function () {
+    const error = errorFromW3CJsonCode('unexpected alert open', 'alert', 'remote stack');
+    assert.equal(Object.hasOwn(getResponseForW3CError(error)[1].value, 'data'), false);
   });
 
   describe('W3C', function () {
+    it('should preserve a downstream detached shadow root response', function () {
+      const value = {
+        error: 'detached shadow root',
+        message: 'Shadow root has been detached',
+        stacktrace: 'downstream stacktrace',
+      };
+      const actualError = new errors.ProxyRequestError('Proxy request failed', {value}, 404).getActualError();
+      assert.ok(isErrorType(actualError, errors.DetachedShadowRootError));
+      assert.deepStrictEqual(getResponseForW3CError(actualError), [404, {value}]);
+    });
+
     it('should map a 404 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError(
         'Error message does not matter',
@@ -453,6 +389,13 @@ describe('.getActualError', function () {
         HTTPStatusCodes.BAD_REQUEST,
       ).getActualError();
       assert.strictEqual(isErrorType(actualError, errors.StaleElementReferenceError), true);
+    });
+    it('should map to UnknownError when the downstream response is not W3C-shaped', function () {
+      const actualError = new errors.ProxyRequestError('Error message does not matter', {
+        value: 'does not matter',
+        status: 7,
+      }).getActualError();
+      assert.strictEqual(isErrorType(actualError, errors.UnknownError), true);
     });
   });
 });

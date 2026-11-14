@@ -37,31 +37,10 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = {
   automationName: {
     isString: true,
   },
-  autoLaunch: {
-    isBoolean: true,
-  },
-  udid: {
-    isString: true,
-  },
-  orientation: {
-    inclusion: ['LANDSCAPE', 'PORTRAIT'],
-  },
-  autoWebview: {
-    isBoolean: true,
-  },
   noReset: {
     isBoolean: true,
   },
   fullReset: {
-    isBoolean: true,
-  },
-  language: {
-    isString: true,
-  },
-  locale: {
-    isString: true,
-  },
-  eventTimings: {
     isBoolean: true,
   },
   printPageSourceOnFindFailure: {

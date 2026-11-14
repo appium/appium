@@ -1,6 +1,6 @@
-export {FakePlugin} from './plugin';
+export {FakePlugin} from './plugin.js';
 
-// Handle smoke test flag
-if (require.main === module && process.argv[2] === '--smoke-test') {
+// Handle the smoke test flag only when invoked directly.
+if (import.meta.main && process.argv[2] === '--smoke-test') {
   process.exit(0);
 }

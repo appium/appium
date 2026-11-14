@@ -1,42 +1,50 @@
 import assert from 'node:assert/strict';
 import {promises as fs} from 'node:fs';
-import {describe, it, beforeEach, afterEach, before} from 'node:test';
+import path from 'node:path';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
 import type {DriverType, PluginType} from '@appium/types';
-import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types';
-import type {SinonSandbox} from 'sinon';
+import type {ExtManifest, ExtPackageJson, ManifestData} from 'appium/types/index.js';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
-import {APPIUM_VER} from '../../../lib/helpers/build';
-import {resolveFixture, rewiremock} from '../../helpers';
-import {initMocks} from './mocks';
-import type {MockAppiumSupport, MockPackageChanged} from './mocks';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants.js';
+import {APPIUM_VER} from '../../../lib/helpers/build.js';
+import {resolveFixture} from '../../helpers.js';
+import {applyExtensionMocks, initMocks, resetMockDefaults} from './mocks.js';
+import type {InitMocksResult, MockAppiumSupport, MockPackageChanged} from './mocks.js';
 
 describe('Manifest', function () {
-  let sandbox: SinonSandbox;
   let yamlFixture: string;
+  let mocks: InitMocksResult;
   let MockPackageChanged: MockPackageChanged;
   let MockAppiumSupport: MockAppiumSupport;
+  let migrateStub: ReturnType<InitMocksResult['sandbox']['stub']>;
   let Manifest: any;
+  let importCounter = 0;
 
+  // See the comment on `applyExtensionMocks` in mocks.ts for why `Manifest` is dynamically
+  // re-imported fresh every test rather than statically at the top of this file.
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
+    mocks = initMocks();
+    MockPackageChanged = mocks.MockPackageChanged;
+    MockAppiumSupport = mocks.MockAppiumSupport;
+    migrateStub = mocks.sandbox.stub().resolves();
+    applyExtensionMocks(mocks);
+    mock.module('../../../lib/extension/manifest/migrations.js', {
+      namedExports: {migrate: migrateStub},
+    });
   });
 
-  beforeEach(function () {
-    let overrides: ReturnType<typeof initMocks>['overrides'];
-    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
+  after(function () {
+    mock.reset();
+  });
+
+  beforeEach(async function () {
+    resetMockDefaults(mocks);
+    migrateStub.resolves();
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
-      ...overrides,
-      '../../../lib/extension/manifest-migrations': {migrate: sandbox.stub().resolves()},
-    }));
-
-    Manifest.getInstance.cache = new Map();
-  });
-
-  afterEach(function () {
-    sandbox.restore();
+    const mod = await import(`../../../lib/extension/manifest/manifest.js?t=${importCounter++}`);
+    ({Manifest} = mod);
   });
 
   describe('class method', function () {
@@ -112,7 +120,7 @@ describe('Manifest', function () {
 
     describe('read()', function () {
       beforeEach(function () {
-        sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
+        mocks.sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
       describe('when the file does not yet exist', function () {
@@ -140,6 +148,36 @@ describe('Manifest', function () {
         });
       });
 
+      describe('when the file is valid YAML but does not match the manifest envelope shape', function () {
+        let logWarnStub: ReturnType<InitMocksResult['sandbox']['stub']>;
+
+        beforeEach(async function () {
+          MockAppiumSupport.fs.readFile.resolves('drivers: not-an-object\nplugins: {}\n');
+          const {log} = await import('../../../lib/logger.js');
+          logWarnStub = mocks.sandbox.stub(log, 'warn');
+        });
+
+        afterEach(function () {
+          logWarnStub.restore();
+        });
+
+        it('should not reject, and should reset to the initial manifest data', async function () {
+          const data = await manifest.read();
+          assert.deepStrictEqual(data.drivers, {});
+          assert.deepStrictEqual(data.plugins, {});
+        });
+
+        it('should log a warning', async function () {
+          await manifest.read();
+          assert.strictEqual(logWarnStub.calledOnce, true);
+        });
+
+        it('should write the reset data back to disk', async function () {
+          await manifest.read();
+          assert.strictEqual(MockAppiumSupport.fs.writeFile.calledOnce, true);
+        });
+      });
+
       describe('when the manifest path cannot be determined', function () {
         beforeEach(function () {
           MockAppiumSupport.env.resolveManifestPath.rejects(new Error('Could not determine manifest path'));
@@ -161,7 +199,7 @@ describe('Manifest', function () {
 
       describe('when the file already exists', function () {
         beforeEach(async function () {
-          sandbox.spy(manifest, 'write');
+          mocks.sandbox.spy(manifest, 'write');
           await manifest.read();
         });
 
@@ -180,7 +218,7 @@ describe('Manifest', function () {
             MockAppiumSupport.env.hasAppiumDependency.resolves(true);
             MockPackageChanged.isPackageChanged.resolves({
               isChanged: true,
-              writeHash: sandbox.stub(),
+              writeHash: mocks.sandbox.stub(),
               hash: 'foasdif',
               oldHash: 'sdjifh',
             });
@@ -201,7 +239,7 @@ describe('Manifest', function () {
 
     describe('write()', function () {
       beforeEach(function () {
-        sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
+        mocks.sandbox.stub(manifest, 'syncWithInstalledExtensions').resolves();
       });
 
       describe('when called after `read()`', function () {
@@ -490,10 +528,29 @@ describe('Manifest', function () {
 
       describe('when the underlying implementation emits "error"', function () {
         beforeEach(function () {
-          MockAppiumSupport.fs.glob.rejects(new Error('bogus'));
+          MockAppiumSupport.fs.readdir.rejects(new Error('bogus'));
         });
         it('should reject', async function () {
           await assert.rejects(manifest.syncWithInstalledExtensions(), /bogus/);
+        });
+      });
+
+      describe('when node_modules contains dot-prefixed entries', function () {
+        const nodeModulesDir = path.join('/some/path', 'node_modules');
+        const scopedDir = path.join(nodeModulesDir, '@scope');
+
+        beforeEach(function () {
+          MockAppiumSupport.fs.readdir.withArgs(nodeModulesDir).resolves(['.hidden-driver', 'normal-driver', '@scope']);
+          MockAppiumSupport.fs.readdir.withArgs(scopedDir).resolves(['.hidden-scoped', 'visible-scoped']);
+        });
+
+        it('should not probe dot-prefixed package directories', async function () {
+          await manifest.syncWithInstalledExtensions();
+          const probedPaths = MockAppiumSupport.fs.exists.getCalls().map((call: any) => call.args[0] as string);
+          assert.ok(!probedPaths.some((p) => p.includes('.hidden-driver')));
+          assert.ok(!probedPaths.some((p) => p.includes('.hidden-scoped')));
+          assert.ok(probedPaths.some((p) => p.includes('normal-driver')));
+          assert.ok(probedPaths.some((p) => p.includes('visible-scoped')));
         });
       });
     });

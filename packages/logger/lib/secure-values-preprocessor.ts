@@ -1,5 +1,5 @@
-import type {LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule} from './types';
-import {escapeRegExp, isPlainObject} from './utils';
+import type {LogFilter, LogFilterRegex, LogFiltersConfig, SecureValuePreprocessingRule} from './types.js';
+import {escapeRegExp, isPlainObject} from './utils/index.js';
 
 export const DEFAULT_SECURE_REPLACER = '**SECURE**';
 
@@ -93,7 +93,7 @@ export class SecureValuesPreprocessor {
       } else if (typeof source === 'string') {
         rawRules.push(String(source));
       } else {
-        issues.push(`'${source}' must be a valid log filtering rule`);
+        issues.push(`${JSON.stringify(source)} must be a valid log filtering rule`);
       }
     }
     this._rules = [];

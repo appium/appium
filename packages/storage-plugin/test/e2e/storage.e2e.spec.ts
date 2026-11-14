@@ -4,12 +4,11 @@ import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import {fileURLToPath} from 'node:url';
 
+import {httpGet, httpPost} from '@appium/driver-test-support';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {fs, node, tempDir} from '@appium/support';
-import axios from 'axios';
 import {exec} from 'teen_process';
 import {remote as wdio} from 'webdriverio';
-import {WebSocket} from 'ws';
 
 const BUFFER_SIZE = 0xffff;
 const THIS_PLUGIN_DIR = node.getModuleRootSync('@appium/storage-plugin', fileURLToPath(import.meta.url))!;
@@ -61,13 +60,13 @@ describe('StoragePlugin', function () {
     const baseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/appium/storage`;
     driver.addCommand(
       'addStorageItem',
-      async (name: string, sha1: string) => (await axios.post(`${baseUrl}/add`, {name, sha1})).data.value,
+      async (name: string, sha1: string) => (await httpPost(`${baseUrl}/add`, {name, sha1})).data.value,
     );
-    driver.addCommand('listStorageItems', async () => (await axios.get(`${baseUrl}/list`)).data.value);
-    driver.addCommand('resetStorageItems', async () => (await axios.post(`${baseUrl}/reset`)).data.value);
+    driver.addCommand('listStorageItems', async () => (await httpGet(`${baseUrl}/list`)).data.value);
+    driver.addCommand('resetStorageItems', async () => (await httpPost(`${baseUrl}/reset`)).data.value);
     driver.addCommand(
       'deleteStorageItem',
-      async (name: string) => (await axios.post(`${baseUrl}/delete`, {name})).data.value,
+      async (name: string) => (await httpPost(`${baseUrl}/delete`, {name})).data.value,
     );
   });
 
@@ -104,33 +103,41 @@ describe('StoragePlugin', function () {
 
   it('should still serve the deprecated /storage endpoints', async function () {
     const deprecatedBaseUrl = `http://${TEST_HOST}:${WDIO_OPTS.port}/storage`;
-    const {data} = await axios.get(`${deprecatedBaseUrl}/list`);
+    const {data} = await httpGet(`${deprecatedBaseUrl}/list`);
     assert.strictEqual(data.value.length, 0);
   });
 
   async function addFileToStorage(sourcePath: string, name: string): Promise<void> {
     const hash = await fs.hash(sourcePath);
-    const {size} = await fs.stat(sourcePath);
-    const {
-      ws: {events, stream},
-    } = await driver.addStorageItem(name, hash, sourcePath);
-    const streamWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${stream}`);
-    const eventsWs = new WebSocket(`ws://${TEST_HOST}:${WDIO_OPTS.port}${events}`);
-    try {
-      await new Promise<void>((resolve, reject) => {
-        streamWs.once('error', reject);
-        eventsWs.once('error', reject);
-        eventsWs.once('message', async (data: Buffer | string) => {
-          let strData: string;
-          if (Buffer.isBuffer(data)) {
-            strData = data.toString();
-          } else if (typeof data === 'string') {
-            strData = data;
-          } else {
+    const addResult = await driver.addStorageItem(name, hash, sourcePath);
+    await uploadToStorage(WDIO_OPTS.port as number, addResult, sourcePath);
+  }
+});
+
+/** Streams the file to the `stream` web socket from the `add` response and waits for the success event. */
+async function uploadToStorage(
+  port: number,
+  {ws: {events, stream}}: {ws: {events: string; stream: string}},
+  sourcePath: string,
+): Promise<void> {
+  const {size} = await fs.stat(sourcePath);
+  const streamWs = new WebSocket(`ws://${TEST_HOST}:${port}${stream}`);
+  const eventsWs = new WebSocket(`ws://${TEST_HOST}:${port}${events}`);
+  try {
+    await new Promise<void>((resolve, reject) => {
+      streamWs.addEventListener('error', () => reject(new Error('streamWs connection error')), {once: true});
+      eventsWs.addEventListener('error', () => reject(new Error('eventsWs connection error')), {once: true});
+      eventsWs.addEventListener(
+        'message',
+        async (event) => {
+          const data = event.data;
+          // Native WebSocket.data for a text frame is always a plain string (never a Buffer),
+          // unlike 'ws', so only the string case needs handling here.
+          if (typeof data !== 'string') {
             return;
           }
           try {
-            const {value} = JSON.parse(strData);
+            const {value} = JSON.parse(data);
             if (value?.success) {
               resolve();
             } else {
@@ -139,8 +146,12 @@ describe('StoragePlugin', function () {
           } catch {
             // ignore
           }
-        });
-        streamWs.once('open', async () => {
+        },
+        {once: true},
+      );
+      streamWs.addEventListener(
+        'open',
+        async () => {
           const fhandle = await fs.openFile(sourcePath, 'r');
           try {
             let bytesRead = 0;
@@ -157,11 +168,56 @@ describe('StoragePlugin', function () {
             await fhandle.close();
             streamWs.close();
           }
-        });
-      });
-    } finally {
-      streamWs.close();
-      eventsWs.close();
-    }
+        },
+        {once: true},
+      );
+    });
+  } finally {
+    streamWs.close();
+    eventsWs.close();
   }
+}
+
+describe('StoragePlugin with a server base path', function () {
+  const BASE_PATH = '/wd/hub';
+  let port: number;
+  const {setup, teardown} = pluginE2EHarness({
+    host: TEST_HOST,
+    appiumHome: APPIUM_HOME,
+    driverName: 'fake',
+    driverSource: 'local',
+    driverSpec: FAKE_DRIVER_DIR,
+    pluginName: 'storage',
+    pluginSource: 'local',
+    pluginSpec: THIS_PLUGIN_DIR,
+    serverArgs: {basePath: BASE_PATH},
+  });
+  before(async function () {
+    const {server} = await setup();
+    port = (server.address() as AddressInfo).port;
+  });
+  after(async function () {
+    await teardown();
+  });
+
+  it('should serve the endpoints and web sockets under the base path only', async function () {
+    const baseUrl = `http://${TEST_HOST}:${port}`;
+    const {data: listData} = await httpGet(`${baseUrl}${BASE_PATH}/appium/storage/list`);
+    assert.ok(Array.isArray(listData.value));
+    await assert.rejects(httpGet(`${baseUrl}/appium/storage/list`));
+
+    const name = 'app.xml';
+    const hash = await fs.hash(TEST_FAKE_APP);
+    const {data} = await httpPost(`${baseUrl}${BASE_PATH}/appium/storage/add`, {name, sha1: hash});
+    assert.ok(data.value.ws.stream.startsWith(`${BASE_PATH}/appium/storage/add/`));
+    assert.ok(data.value.ws.events.startsWith(`${BASE_PATH}/appium/storage/add/`));
+    await uploadToStorage(port, data.value, TEST_FAKE_APP);
+
+    const {data: items} = await httpGet(`${baseUrl}${BASE_PATH}/appium/storage/list`);
+    assert.deepStrictEqual(
+      items.value.map(({name}: {name: string}) => name),
+      [name],
+    );
+    await httpPost(`${baseUrl}${BASE_PATH}/appium/storage/reset`);
+  });
 });

@@ -146,7 +146,8 @@ export class Doctor {
         this.log.info(`### Skipped fix ###`);
         return;
       } else {
-        this.log.warn(`${err}`.replace(/\n$/g, ''));
+        const message = err instanceof Error ? err.message : String(err);
+        this.log.warn(`${message}`.replace(/\n$/g, ''));
         this.log.info(`### Fix did not succeed ###`);
         return;
       }

@@ -1,19 +1,28 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
+import {getResponseForW3CError} from '@appium/base-driver';
 import type {BaseDriverCapConstraints, Capabilities, Constraints, NSCapabilities, W3CCapabilities} from '@appium/types';
 
-import type {InvalidCaps} from '../../../lib/helpers/capability';
+import type {InvalidCaps} from '../../../lib/helpers/capability.js';
 import {
   insertAppiumPrefixes,
   parseCapsForInnerDriver,
   pullSettings,
   removeAppiumPrefixes,
-} from '../../../lib/helpers/capability';
-import {BASE_CAPS, W3C_CAPS} from '../../helpers';
+} from '../../../lib/helpers/capability.js';
+import {BASE_CAPS, W3C_CAPS} from '../../helpers.js';
 
 describe('helpers/capability', function () {
   describe('parseCapsForInnerDriver()', function () {
+    for (const caps of [null, [], {alwaysMatch: []}, {firstMatch: []}, {firstMatch: [null]}]) {
+      it(`should classify malformed capability structure ${JSON.stringify(caps)} as invalid argument`, function () {
+        const result = parseCapsForInnerDriver(caps as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
+        const [status, body] = getResponseForW3CError(result.error);
+        assert.equal(status, 400);
+        assert.equal(body.value.error, 'invalid argument');
+      });
+    }
     it('should return an error if only JSONWP provided', function () {
       const res = parseCapsForInnerDriver(BASE_CAPS as unknown as W3CCapabilities<Constraints>) as InvalidCaps;
       assert.ok(res.error);
@@ -43,6 +52,36 @@ describe('helpers/capability', function () {
         ...insertAppiumPrefixes(BASE_CAPS),
       });
     });
+    describe('with a driver that only supports Android', function () {
+      const constraints = {
+        platformName: {presence: true, isString: true, inclusionCaseInsensitive: ['Android']},
+      } as const satisfies Constraints;
+      const parse = (firstMatch: Record<string, unknown>[]) =>
+        parseCapsForInnerDriver(
+          {alwaysMatch: {'appium:deviceName': 'Pixel'}, firstMatch} as unknown as W3CCapabilities<typeof constraints>,
+          constraints,
+          {'appium:newCommandTimeout': 60} as NSCapabilities<typeof constraints>,
+        );
+
+      it('should apply default capabilities to a later firstMatch candidate', function () {
+        const {desiredCaps} = parse([{platformName: 'iOS'}, {platformName: 'Android'}]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 60});
+      });
+      it('should apply a default capability when another firstMatch candidate already set it', function () {
+        const {desiredCaps} = parse([
+          {platformName: 'iOS', 'appium:newCommandTimeout': 120},
+          {platformName: 'Android'},
+        ]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 60});
+      });
+      it('should keep the value a matching firstMatch candidate already set', function () {
+        const {desiredCaps} = parse([
+          {platformName: 'iOS'},
+          {platformName: 'Android', 'appium:newCommandTimeout': 120},
+        ]);
+        assert.deepStrictEqual(desiredCaps, {deviceName: 'Pixel', platformName: 'Android', newCommandTimeout: 120});
+      });
+    });
     it('should allow valid default capabilities', function () {
       const res = parseCapsForInnerDriver(
         W3C_CAPS,
@@ -63,9 +102,8 @@ describe('helpers/capability', function () {
         },
       );
       const errRes = res as unknown as {
-        error: {jsonwpCode: number; error: string; w3cStatus: number};
+        error: {error: string; w3cStatus: number};
       };
-      assert.strictEqual(errRes.error.jsonwpCode, 61);
       assert.strictEqual(errRes.error.error, 'invalid argument');
       assert.strictEqual(errRes.error.w3cStatus, 400);
     });
@@ -83,8 +121,7 @@ describe('helpers/capability', function () {
         firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
       } as W3CCapabilities<{hello: {presence: true}}>;
       const res = parseCapsForInnerDriver(w3cCaps, {hello: {presence: true}});
-      const error = (res as {error?: {jsonwpCode: number; error: string; w3cStatus: number}}).error;
-      assert.strictEqual(error!.jsonwpCode, 61);
+      const error = (res as {error?: {error: string; w3cStatus: number}}).error;
       assert.strictEqual(error!.error, 'invalid argument');
       assert.strictEqual(error!.w3cStatus, 400);
     });
@@ -118,6 +155,21 @@ describe('helpers/capability', function () {
   });
 
   describe('insertAppiumPrefixes()', function () {
+    it('should retain the namespace of extension keys that resemble standard names', function () {
+      const result = parseCapsForInnerDriver({
+        alwaysMatch: {
+          platformName: 'aNdRoId',
+          'appium:PlatformName': 'custom',
+          'vendor:BrowserName': 'custom browser',
+        },
+      } as W3CCapabilities<BaseDriverCapConstraints>);
+      assert.deepStrictEqual(result.processedW3CCapabilities!.alwaysMatch, {
+        platformName: 'aNdRoId',
+        'appium:PlatformName': 'custom',
+        'vendor:BrowserName': 'custom browser',
+      });
+    });
+
     it('should apply prefixes to non-standard capabilities', function () {
       assert.deepStrictEqual(
         insertAppiumPrefixes({

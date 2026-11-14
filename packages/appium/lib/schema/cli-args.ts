@@ -2,13 +2,18 @@ import {util} from '@appium/support';
 import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
 
-import type {ArgumentDefinitions} from '../cli/args';
-import {kebabCase} from '../utils';
-import type {ArgSpec} from './arg-spec';
-import {parseCsvLine, transformers} from './cli-transformers';
-import {formatErrors} from './format-errors';
-import type {AppiumCliTransformerName, AppiumJSONSchemaKeywords} from './keywords';
-import {flattenSchema, validate} from './schema';
+import {kebabCase} from '../utils/index.js';
+import type {ArgSpec} from './arg-spec.js';
+import {
+  parseCsvLine,
+  transformers,
+  type AppiumCliTransformerName,
+  type AppiumJSONSchemaKeywords,
+} from './cli-transformers.js';
+import {formatErrors} from './format-errors.js';
+import {flattenSchema, validate} from './schema.js';
+
+export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
 
 type AppiumJSONSchema = AppiumJSONSchemaKeywords & JSONSchema7;
 type ArgDef = [[string] | [string, string], ArgumentOptions];
@@ -64,7 +69,12 @@ function getSchemaValidator<Coerced>(
     if (util.isEmpty(errors)) {
       return coerced;
     }
-    throw new ArgumentTypeError('\n\n' + formatErrors(errors, value, {schemaId}));
+    // the error formatter needs the parsed data (not the raw string) to locate errors inside objects
+    const data = util.isPlainObject(coerced) ? coerced : value;
+    const formattedErrors = formatErrors(errors, data, {schemaId});
+    const formattedErrorsStr =
+      typeof formattedErrors === 'string' ? formattedErrors : formattedErrors.map((e) => e.error).join(', ');
+    throw new ArgumentTypeError('\n\n' + formattedErrorsStr);
   };
 }
 
@@ -104,13 +114,15 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.OBJECT: {
-      argTypeFunction = (value: string) => {
+      argTypeFunction = getSchemaValidator(argSpec, (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
-          throw new ArgumentTypeError(`'${util.truncateString(String(o), {length: 100})}' must be a plain object`);
+          throw new ArgumentTypeError(
+            `'${util.truncateString(JSON.stringify(o), {length: 100})}' must be a plain object`,
+          );
         }
         return o;
-      };
+      });
       break;
     }
     case TYPENAMES.ARRAY: {
@@ -131,7 +143,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
     }
     case TYPENAMES.NULL:
     default: {
-      throw new TypeError(`Schema property "${arg}": \`${type}\` type unknown or disallowed`);
+      throw new TypeError(`Schema property "${arg}": \`${JSON.stringify(type)}\` type unknown or disallowed`);
     }
   }
 

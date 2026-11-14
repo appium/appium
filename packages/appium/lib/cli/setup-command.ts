@@ -5,12 +5,12 @@ import type {
   CliCommandSetupSubcommand,
   CliExtensionCommand,
   CliExtensionSubcommand,
-} from 'appium/types';
+} from 'appium/types/index.js';
 
-import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants';
-import type {ExtensionConfig} from '../extension/extension-config';
-import {log} from '../logger';
-import {runExtensionCommand} from './extension';
+import {DESKTOP_BROWSERS, DESKTOP_DRIVERS, MOBILE_DRIVERS} from '../constants.js';
+import type {ExtensionConfig} from '../extension/extension-config.js';
+import {log} from '../logger.js';
+import {runExtensionCommand} from './extension.js';
 
 /**
  * Subcommands of preset for setup
@@ -31,7 +31,7 @@ const PRESET_PAIRS = Object.freeze({
 } as const);
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
-const DRIVERS_ONLY_WINDOWS = ['windows'];
+const DRIVERS_ONLY_WINDOWS = ['wincore'];
 
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.

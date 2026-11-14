@@ -3,9 +3,9 @@ import {describe, it, before, after} from 'node:test';
 
 import {fs, tempDir} from '@appium/support';
 
-import {EXT_SUBCOMMAND_RUN as RUN, PLUGIN_TYPE} from '../../lib/constants';
-import {FAKE_PLUGIN_DIR} from '../helpers';
-import {installLocalExtension, runAppiumJson} from './e2e-helpers';
+import {EXT_SUBCOMMAND_RUN as RUN, PLUGIN_TYPE} from '../../lib/constants.js';
+import {FAKE_PLUGIN_DIR} from '../helpers.js';
+import {installLocalExtension, runAppiumJson} from './e2e-helpers.js';
 
 describe('Plugin CLI', function () {
   let appiumHome: string;

@@ -1,30 +1,37 @@
 import assert from 'node:assert/strict';
 import type {ChildProcess} from 'node:child_process';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Writable} from 'node:stream';
-import {describe, it, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach, before, after, mock} from 'node:test';
 
-import {console, fs, npm, system} from '@appium/support';
+import * as support from '@appium/support';
+import {fs} from '@appium/support';
 import type {AppiumLogger} from '@appium/types';
-import type {ExtManifest} from 'appium/types';
+import type {ExtManifest} from 'appium/types/index.js';
 import * as semver from 'semver';
-import type {SinonSandbox, SinonStub} from 'sinon';
+import type {SinonSandbox, SinonSpy, SinonStub} from 'sinon';
 import sinon from 'sinon';
 
-import DriverCliCommand from '../../../lib/cli/driver-command';
-import {ExtensionCliCommand, injectAppiumSymlinks} from '../../../lib/cli/extension-command';
-import type {ExtensionConfig} from '../../../lib/cli/extension-command';
-import PluginCliCommand from '../../../lib/cli/plugin-command';
-import {DriverConfig} from '../../../lib/extension/driver-config';
-import {Manifest} from '../../../lib/extension/manifest';
-import {PluginConfig} from '../../../lib/extension/plugin-config';
-import {appiumPackageRoot} from '../../../lib/utils';
-import {FAKE_DRIVER_DIR} from '../../helpers';
+import DriverCliCommand from '../../../lib/cli/driver-command.js';
+import {ExtensionCliCommand} from '../../../lib/cli/extension-command.js';
+import type {
+  ExtensionConfig,
+  injectAppiumSymlinks as injectAppiumSymlinksStatic,
+} from '../../../lib/cli/extension-command.js';
+import PluginCliCommand from '../../../lib/cli/plugin-command.js';
+import {DriverConfig} from '../../../lib/extension/driver-config.js';
+import {Manifest} from '../../../lib/extension/manifest/manifest.js';
+import {PluginConfig} from '../../../lib/extension/plugin-config.js';
+import {appiumPackageRoot, npm} from '../../../lib/utils/index.js';
+import {FAKE_DRIVER_DIR} from '../../helpers.js';
 
 /**
  * Relative path from actual `package.json` of `FakeDriver` for the `fake-stdin` script
  */
-const FAKE_STDIN_SCRIPT = require(`${FAKE_DRIVER_DIR}/package.json`).appium.scripts['fake-stdin'];
+const FAKE_STDIN_SCRIPT = JSON.parse(readFileSync(path.join(FAKE_DRIVER_DIR, 'package.json'), 'utf8')).appium.scripts[
+  'fake-stdin'
+];
 
 let sandbox: SinonSandbox;
 
@@ -97,11 +104,12 @@ describe('ExtensionCommand', function () {
       const appiumHome = path.resolve('appium-home-for-test');
       let ec: ExtensionCliCommand;
       let config: DriverConfig | PluginConfig;
+      let installedExtensions: Record<string, ExtManifest<'driver'>>;
       let uninstallStub: SinonStub;
       let removeStub: SinonStub;
       let checkUpdateStub: SinonStub;
       let updateStub: SinonStub;
-      let getInstallPathSpy: sinon.SinonSpy;
+      let getInstallPathSpy: SinonSpy;
       let existsStub: SinonStub;
       let readFileStub: SinonStub;
 
@@ -155,11 +163,10 @@ describe('ExtensionCommand', function () {
 
       beforeEach(function () {
         sandbox = sinon.createSandbox();
-        const logger = sandbox.createStubInstance(console.CliConsole);
-        logger.decorate.callsFake((message) => message);
-        sandbox.stub(console, 'CliConsole').returns(logger);
         const manifest = sandbox.createStubInstance(Manifest);
         sandbox.stub(manifest, 'appiumHome').get(() => appiumHome);
+        installedExtensions = {};
+        manifest.getExtensionData.returns(installedExtensions);
         if (type === 'driver') {
           config = DriverConfig.create(manifest);
           ec = new DriverCliCommand({config, json: true});
@@ -167,7 +174,16 @@ describe('ExtensionCommand', function () {
           config = PluginConfig.create(manifest);
           ec = new PluginCliCommand({config, json: true});
         }
-        config.installedExtensions = {short: extension(pkgName), scoped: extension(scopedPkgName)};
+        // avoids the decorated-message symbol prefix that would break the exact-string assertions below
+        (ec as any).log = {
+          decorate: (message: string) => message,
+          log: sandbox.stub(),
+          ok: sandbox.stub(),
+          info: sandbox.stub(),
+          warn: sandbox.stub(),
+          error: sandbox.stub(),
+        };
+        Object.assign(installedExtensions, {short: extension(pkgName), scoped: extension(scopedPkgName)});
         uninstallStub = sandbox.stub(npm, 'uninstallPackage').resolves();
         removeStub = sandbox.stub(config, 'removeExtension').resolves();
         checkUpdateStub = sandbox.stub(ec as any, 'checkForExtensionUpdate').resolves({
@@ -378,6 +394,70 @@ describe('ExtensionCommand', function () {
         await assert.rejects(findCompatible(), /none of its versions are compatible/);
       });
     });
+
+    describe(`${type} _warnIfServerIncompatible()`, function () {
+      const pkgName = `appium-test-${type}`;
+      let ec: ExtensionCliCommand;
+      let warnStub: SinonStub;
+
+      beforeEach(function () {
+        sandbox = sinon.createSandbox();
+        const manifest = sandbox.createStubInstance(Manifest);
+        warnStub = sandbox.stub();
+        const config = type === 'driver' ? DriverConfig.create(manifest) : PluginConfig.create(manifest);
+        ec =
+          type === 'driver'
+            ? new DriverCliCommand({config: config as any, json: true})
+            : new PluginCliCommand({config: config as any, json: true});
+        (ec as any).log = {decorate: (message: string) => message, info: sandbox.stub(), warn: warnStub};
+      });
+
+      afterEach(function () {
+        sandbox.restore();
+      });
+
+      const warn = (pkg: object) => (ec as any)._warnIfServerIncompatible('/some/path', {name: pkgName, ...pkg});
+
+      it('should warn with the minimum server version if the peer range is not satisfied', function () {
+        warn({peerDependencies: {appium: '^999.1.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(warnStub.args[0][0], /requires the Appium server \^999\.1\.0/);
+        assert.match(warnStub.args[0][0], /at least 999\.1\.0/);
+      });
+
+      it('should not suggest a server upgrade if the server is newer than the supported range', function () {
+        warn({peerDependencies: {appium: '^1.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(
+          warnStub.args[0][0],
+          /Use a server version matching \^1\.0\.0 or wait for an extension release that supports /,
+        );
+        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server/);
+      });
+
+      it('should give a neutral advice if the server falls into a gap of the supported range', function () {
+        warn({peerDependencies: {appium: '^1.0.0 || ^999.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+        assert.match(warnStub.args[0][0], /Use a server version matching \^1\.0\.0 \|\| \^999\.0\.0\.$/);
+        assert.doesNotMatch(warnStub.args[0][0], /Upgrade the server|wait for an extension release/);
+      });
+
+      it('should also consider the regular dependency', function () {
+        warn({dependencies: {appium: '^999.0.0'}});
+        sinon.assert.calledOnce(warnStub);
+      });
+
+      it('should not warn if the range is satisfied or not declared', function () {
+        warn({peerDependencies: {appium: '*'}});
+        warn({});
+        sinon.assert.notCalled(warnStub);
+      });
+
+      it('should not warn if the declared value is not a semver range', function () {
+        warn({peerDependencies: {appium: 'github:appium/appium'}});
+        sinon.assert.notCalled(warnStub);
+      });
+    });
   }
 
   describe('injectAppiumSymlinks', function () {
@@ -385,12 +465,34 @@ describe('ExtensionCommand', function () {
     let fsSymlinkStub: SinonStub;
     let isWindowsStub: SinonStub;
     let logger: AppiumLogger;
+    let injectAppiumSymlinks: typeof injectAppiumSymlinksStatic;
+    let importCounter = 0;
 
-    beforeEach(function () {
+    // `system` (unlike `fs`) is an ES module namespace object on `@appium/support`'s public
+    // surface (frozen), so sinon can't stub `system.isWindows` directly. Mock `@appium/support`
+    // with a plain, stubbable replacement for `system` instead. `extension-command.js` is
+    // already statically imported at the top of this file (before this mock exists), so it
+    // must be re-imported with a cache-busting query to pick up the mock.
+    before(function () {
+      isWindowsStub = sinon.stub();
+      // `default` is destructured out: on Node 22, passing a `default` key through
+      // `namedExports` makes `mock.module()` generate invalid synthetic module source.
+      const {default: _unusedDefault, ...supportWithoutDefault} = support;
+      mock.module('@appium/support', {
+        namedExports: {...supportWithoutDefault, system: {...support.system, isWindows: isWindowsStub}},
+      });
+    });
+
+    after(function () {
+      mock.reset();
+    });
+
+    beforeEach(async function () {
       sandbox = sinon.createSandbox();
       fsExistsStub = sandbox.stub(fs, 'exists');
       fsSymlinkStub = sandbox.stub(fs, 'symlink');
-      isWindowsStub = sandbox.stub(system, 'isWindows');
+      isWindowsStub.reset();
+      isWindowsStub.returns(false);
       logger = {
         info: sandbox.stub(),
         warn: sandbox.stub(),
@@ -398,7 +500,8 @@ describe('ExtensionCommand', function () {
         debug: sandbox.stub(),
       } as unknown as AppiumLogger;
 
-      isWindowsStub.returns(false);
+      const mod = await import(`../../../lib/cli/extension-command.js?t=${importCounter++}`);
+      ({injectAppiumSymlinks} = mod);
     });
 
     afterEach(function () {

@@ -3,10 +3,10 @@ import {beforeEach, describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
 
-import {BaseDriver} from '../../../../lib';
+import {BaseDriver} from '../../../../lib/index.js';
 
 describe('bidi commands -', function () {
-  let driver: BaseDriver<any, any, any, any, any, any>;
+  let driver: BaseDriver<any, any, any, any, any>;
 
   beforeEach(function () {
     driver = new BaseDriver({} as InitialOpts);
@@ -41,7 +41,7 @@ describe('bidi commands -', function () {
       assert.deepEqual(driver.bidiEventSubs, {});
     });
 
-    it('should support unsubscribing by event names without confusing events and IDs', async function () {
+    it('should preserve the legacy event form without confusing events and IDs', async function () {
       const {subscription} = await driver.bidiSubscribe(['log.entryAdded'], ['a', 'b']);
       await driver.executeBidiCommand('session.unsubscribe', {events: ['log.entryAdded'], contexts: ['a']});
       assert.deepEqual(driver.bidiEventSubs, {'log.entryAdded': ['b']});
@@ -51,7 +51,7 @@ describe('bidi commands -', function () {
 
     it('should reject mixed ID and event requests before mutating subscriptions', async function () {
       const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
-      for (const extra of [{events: ['log.entryAdded']}, {contexts: ['a']}, {contexts: []}]) {
+      for (const extra of [{events: ['log.entryAdded']}, {contexts: ['a']}]) {
         await assert.rejects(
           driver.executeBidiCommand('session.unsubscribe', {subscriptions: [subscription], ...extra}),
           /cannot be combined/,
@@ -71,7 +71,7 @@ describe('bidi commands -', function () {
       assert.deepEqual(driver.bidiEventSubs, {});
     });
 
-    it('should default event-based unsubscribe to the global context', async function () {
+    it('should default legacy unsubscribe to the global context', async function () {
       await driver.bidiSubscribe(['log.entryAdded']);
       await driver.bidiUnsubscribe(['log.entryAdded']);
       assert.deepEqual(driver.bidiEventSubs, {});

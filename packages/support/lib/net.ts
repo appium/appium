@@ -1,15 +1,50 @@
+import type {WriteStream} from 'node:fs';
+import {createServer, isIPv6, Socket, type AddressInfo} from 'node:net';
+import type {Readable} from 'node:stream';
+import {pipeline} from 'node:stream/promises';
+
 import type {HTTPHeaders} from '@appium/types';
-import axios, {type AxiosBasicCredentials, type Method, type RawAxiosRequestConfig} from 'axios';
-import FormData from 'form-data';
-import Ftp from 'jsftp';
+import axios, {type Method, type RawAxiosRequestConfig} from 'axios';
 
-import {fs} from './fs';
-import log from './logger';
-import {Timer} from './timing';
-import {isPlainObject, toReadableSizeString} from './util';
+import {fs} from './fs.js';
+import {
+  closeStream,
+  DEFAULT_FILE_FIELD_NAME,
+  DEFAULT_TIMEOUT_MS,
+  toAxiosAuth,
+  uploadFileToHttp,
+} from './internal/index.js';
+import log from './logger.js';
+import {Timer} from './timing.js';
+import {isPlainObject, toReadableSizeString} from './util.js';
 
-const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
-const DEFAULT_FILE_FIELD_NAME = 'file';
+/**
+ * Close codes defined by RFC 6455, section 7.4.1 (https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1)
+ * and the IANA registry (https://www.iana.org/assignments/websocket/websocket.xhtml#close-code-number).
+ * RESERVED, NO_STATUS_RECEIVED, ABNORMAL_CLOSURE and TLS_HANDSHAKE are reported by close events
+ * but must not be sent in a close frame.
+ */
+export const WebSocketCloseCode = {
+  NORMAL_CLOSURE: 1000,
+  GOING_AWAY: 1001,
+  PROTOCOL_ERROR: 1002,
+  UNSUPPORTED_DATA: 1003,
+  RESERVED: 1004,
+  NO_STATUS_RECEIVED: 1005,
+  ABNORMAL_CLOSURE: 1006,
+  INVALID_PAYLOAD: 1007,
+  POLICY_VIOLATION: 1008,
+  MESSAGE_TOO_BIG: 1009,
+  MANDATORY_EXTENSION: 1010,
+  INTERNAL_ERROR: 1011,
+  SERVICE_RESTART: 1012,
+  TRY_AGAIN_LATER: 1013,
+  BAD_GATEWAY: 1014,
+  TLS_HANDSHAKE: 1015,
+} as const;
+// RFC 6455, section 7.4.2: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.2
+export const MIN_APPLICATION_CLOSE_CODE = 3000;
+export const MAX_APPLICATION_CLOSE_CODE = 4999;
 
 /** Common options for {@linkcode uploadFile} and {@linkcode downloadFile}. */
 export interface NetOptions {
@@ -52,24 +87,136 @@ export interface HttpUploadOptions extends NetOptions {
   fileFieldName?: string;
   /**
    * Additional form fields. Only considered if `fileFieldName` is set.
+   * `Buffer` values are not supported - native FormData always sends a `Blob`/`Buffer` value
+   * as a file attachment, not a plain field; pass a `string` instead, or a `Blob` if a file
+   * attachment is actually intended.
    */
   formFields?: Record<string, unknown> | [string, unknown][];
 }
 
-/**
- * Options for {@linkcode uploadFile} when the remote uses the `ftp` protocol.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- * Use HTTP(S) upload instead.
- */
-export interface FtpUploadOptions extends NetOptions {}
-
-/** @deprecated Use {@linkcode FtpUploadOptions} instead. */
-export type NotHttpUploadOptions = FtpUploadOptions;
-
-type AuthLike = AuthCredentials | AxiosBasicCredentials;
-
 type HttpRemoteUri = `http://${string}` | `https://${string}`;
-type FtpRemoteUri = `ftp://${string}`;
+
+/**
+ * Formats a hostname for interpolation into a URL authority.
+ *
+ * Brackets bare IPv6 literals; leaves IPv4 addresses, DNS names, and already-bracketed
+ * hosts unchanged. This does not validate or normalize the hostname or a complete URL.
+ *
+ * @param hostname - Hostname without a scheme, port, or path
+ * @returns Hostname with brackets if it is a bare IPv6 literal
+ */
+export function formatHostnameForUrl(hostname: string): string {
+  return isIPv6(hostname) ? `[${hostname}]` : hostname;
+}
+
+const DEFAULT_PORT_CHECK_HOST = '127.0.0.1';
+const DEFAULT_PORT_CHECK_TIMEOUT_MS = 400;
+const MAX_PORT = 65535;
+
+/** Status of a TCP port as reported by {@linkcode checkPortStatus}. */
+export type PortStatus = 'open' | 'closed';
+
+/** Options for {@linkcode checkPortStatus}. */
+export interface PortCheckOptions {
+  /** Host to probe. Defaults to `127.0.0.1` */
+  host?: string;
+  /** Connection timeout per probe in milliseconds. Defaults to 400 */
+  timeoutMs?: number;
+}
+
+/** Options for {@linkcode getFreePort}. */
+export interface FreePortOptions extends PortCheckOptions {
+  /**
+   * Host to bind to if `port` is omitted (defaults to all interfaces),
+   * or to probe otherwise (defaults to `127.0.0.1`)
+   */
+  host?: string;
+  /** A single port, or an inclusive `[startPort, endPort]` range to try in order. Defaults to any OS-assigned port */
+  port?: number | [startPort: number, endPort: number];
+}
+
+/**
+ * Checks whether something accepts TCP connections on the given port.
+ *
+ * `open` means a service is listening; `closed` means the connection was refused
+ * or timed out.
+ *
+ * @param port - Port to probe
+ * @param options - Probe options
+ * @throws {RangeError} If the port is not an integer in 1..65535
+ * @throws {Error} If the socket fails for any reason other than a refused connection or a timeout
+ */
+export async function checkPortStatus(
+  port: number,
+  {host = DEFAULT_PORT_CHECK_HOST, timeoutMs = DEFAULT_PORT_CHECK_TIMEOUT_MS}: PortCheckOptions = {},
+): Promise<PortStatus> {
+  if (!isValidPort(port)) {
+    throw new RangeError(`Invalid port ${port}`);
+  }
+  return await new Promise<PortStatus>((resolve, reject) => {
+    const socket = new Socket();
+    let status: PortStatus = 'closed';
+    let error: Error | undefined;
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => {
+      status = 'open';
+      socket.destroy();
+    });
+    socket.once('timeout', () => socket.destroy());
+    socket.once('error', (err: NodeJS.ErrnoException) => {
+      if (err.code !== 'ECONNREFUSED') {
+        error = err;
+      }
+    });
+    socket.once('close', () => (error ? reject(error) : resolve(status)));
+    socket.connect(port, host);
+  });
+}
+
+/** Thrown by {@linkcode getFreePort} when every requested port is in use. */
+export class NoFreePortError extends Error {
+  /**
+   * @param startPort - First port of the scanned range
+   * @param endPort - Last port of the scanned range
+   */
+  constructor(
+    readonly startPort: number,
+    readonly endPort: number,
+  ) {
+    super(`No free port available in range ${startPort}..${endPort}`);
+    this.name = 'NoFreePortError';
+  }
+}
+
+/**
+ * Finds a free port.
+ *
+ * Without `port` the OS picks the port (by binding to port 0). Otherwise the given port, or the
+ * ports of the given range in order, are probed with {@linkcode checkPortStatus} and the first
+ * one that nothing is listening on is returned.
+ * The port may be taken by another process after this call returns.
+ *
+ * @param options - Bind options, or probe options if `port` is given; `timeoutMs` applies to each probe
+ * @returns A port number that was free at the time of the call
+ * @throws {RangeError} If the port or range is invalid
+ * @throws {NoFreePortError} If every requested port is in use
+ * @throws {Error} If binding or probing fails, see {@linkcode checkPortStatus}
+ */
+export async function getFreePort({host, timeoutMs, port}: FreePortOptions = {}): Promise<number> {
+  if (port === undefined) {
+    return await listenOnAnyPort(host);
+  }
+  const [startPort, endPort] = Array.isArray(port) ? port : [port, port];
+  if (!isValidPort(startPort) || !isValidPort(endPort) || startPort > endPort) {
+    throw new RangeError(`Invalid port range ${startPort}..${endPort}`);
+  }
+  for (let candidate = startPort; candidate <= endPort; candidate++) {
+    if ((await checkPortStatus(candidate, {host, timeoutMs})) === 'closed') {
+      return candidate;
+    }
+  }
+  throw new NoFreePortError(startPort, endPort);
+}
 
 /** Uploads the given file to a remote location via HTTP(S). */
 export async function uploadFile(
@@ -77,16 +224,6 @@ export async function uploadFile(
   remoteUri: HttpRemoteUri,
   uploadOptions?: HttpUploadOptions,
 ): Promise<void>;
-/**
- * Uploads the given file to a remote location via FTP.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- * Use HTTP(S) upload instead.
- */
-export async function uploadFile(
-  localPath: string,
-  remoteUri: FtpRemoteUri,
-  uploadOptions?: FtpUploadOptions,
-): Promise<void>;
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
@@ -95,7 +232,7 @@ export async function uploadFile(
 export async function uploadFile(
   localPath: string,
   remoteUri: string,
-  uploadOptions: HttpUploadOptions | FtpUploadOptions = {},
+  uploadOptions: HttpUploadOptions = {},
 ): Promise<void> {
   if (!(await fs.exists(localPath))) {
     throw new Error(`'${localPath}' does not exist or is not accessible`);
@@ -108,27 +245,24 @@ export async function uploadFile(
     log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
   }
   const timer = new Timer().start();
-  if (isHttpUploadOptions(uploadOptions, url)) {
-    // mirror the default applied in uploadFileToHttp: only an absent name becomes the multipart
-    // default, so an explicitly falsy one still means a raw body that needs Content-Length
-    const fileFieldName =
-      uploadOptions.fileFieldName === undefined ? DEFAULT_FILE_FIELD_NAME : uploadOptions.fileFieldName;
-    if (!fileFieldName) {
-      uploadOptions.headers = {
-        ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
-        'Content-Length': size,
-      };
-    }
-    await uploadFileToHttp(fs.createReadStream(localPath), url, uploadOptions);
-  } else if (isFtpUploadOptions(uploadOptions, url)) {
-    await uploadFileToFtp(fs.createReadStream(localPath), url, uploadOptions);
-  } else {
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     throw new Error(
       `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
         `Unsupported remote protocol '${url.protocol}'. ` +
-        `Only http/https and ftp/ftps protocols are supported.`,
+        `Only http/https protocols are supported.`,
     );
   }
+  // Matches uploadFileToHttp()'s own default: only an absent name becomes the multipart default,
+  // so an explicitly falsy one (e.g. `null`) still means a raw body that needs Content-Length.
+  const fileFieldName =
+    uploadOptions.fileFieldName === undefined ? DEFAULT_FILE_FIELD_NAME : uploadOptions.fileFieldName;
+  if (!fileFieldName) {
+    uploadOptions.headers = {
+      ...(isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
+      'Content-Length': size,
+    };
+  }
+  await uploadFileToHttp({localPath, url, options: uploadOptions, log});
   if (isMetered) {
     log.info(
       `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
@@ -136,8 +270,6 @@ export async function uploadFile(
     );
   }
 }
-
-// #region Private helpers
 
 /**
  * Downloads the given file via HTTP(S).
@@ -165,34 +297,36 @@ export async function downloadFile(
   }
 
   const timer = new Timer().start();
-  let responseLength: number;
+  let responseStream: Readable | undefined;
+  let writer: WriteStream | undefined;
+  let destinationOpened = false;
   try {
-    const writer = fs.createWriteStream(dstPath);
-    const {data: responseStream, headers: responseHeaders} = await axios(requestOpts);
-    responseLength = parseInt(String(responseHeaders['content-length'] ?? '0'), 10);
-    (responseStream as NodeJS.ReadableStream).pipe(writer);
-
-    await new Promise<void>((resolve, reject) => {
-      (responseStream as NodeJS.ReadableStream).once('error', reject);
-      writer.once('finish', () => resolve());
-      writer.once('error', (e: Error) => {
-        (responseStream as NodeJS.ReadableStream).unpipe(writer);
-        reject(e);
-      });
+    const response = await axios(requestOpts);
+    responseStream = response.data as Readable;
+    // opening the file first would leave an empty destination behind when the request fails
+    writer = fs.createWriteStream(dstPath);
+    writer.once('open', () => {
+      destinationOpened = true;
     });
+    // The HTTP stream detects truncated transfers. Axios may decompress the body,
+    // so the saved size cannot be compared with the wire Content-Length.
+    await pipeline(responseStream, writer);
   } catch (err) {
+    if (writer) {
+      responseStream?.destroy();
+      await closeStream(writer);
+      if (destinationOpened) {
+        // Never recursively remove a caller-supplied path, including one that failed to open.
+        await fs.unlink(dstPath).catch((cleanupError) => {
+          log.warn(`Cannot remove incomplete download at '${dstPath}': ${cleanupError}`);
+        });
+      }
+    }
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`Cannot download the file from ${remoteUrl}: ${message}`, {cause: err});
   }
 
   const {size} = await fs.stat(dstPath);
-  if (responseLength && size !== responseLength) {
-    await fs.rimraf(dstPath);
-    throw new Error(
-      `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
-        `differs from the one in Content-Length response header (${responseLength} bytes)`,
-    );
-  }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
     log.debug(
@@ -206,135 +340,18 @@ export async function downloadFile(
   }
 }
 
-function toAxiosAuth(auth: AuthLike | undefined): AxiosBasicCredentials | null {
-  if (!auth || !isPlainObject(auth)) {
-    return null;
-  }
-
-  const username = 'username' in auth ? auth.username : auth.user;
-  const password = 'password' in auth ? auth.password : auth.pass;
-  if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
-    return null;
-  }
-  return {username, password};
+function isValidPort(port: number): boolean {
+  return Number.isInteger(port) && port >= 1 && port <= MAX_PORT;
 }
 
-async function uploadFileToHttp(
-  localFileStream: NodeJS.ReadableStream,
-  parsedUri: URL,
-  uploadOptions: HttpUploadOptions = {},
-): Promise<void> {
-  const {
-    method = 'POST',
-    timeout = DEFAULT_TIMEOUT_MS,
-    headers,
-    auth,
-    fileFieldName = DEFAULT_FILE_FIELD_NAME,
-    formFields,
-  } = uploadOptions;
-  const {href} = parsedUri;
-
-  const requestOpts: RawAxiosRequestConfig = {
-    url: href,
-    method,
-    timeout,
-    maxContentLength: Infinity,
-    maxBodyLength: Infinity,
-  };
-  const axiosAuth = toAxiosAuth(auth);
-  if (axiosAuth) {
-    requestOpts.auth = axiosAuth;
-  }
-  if (fileFieldName) {
-    const form = new FormData();
-    if (formFields) {
-      let pairs: [string, unknown][] = [];
-      if (Array.isArray(formFields)) {
-        pairs = formFields as [string, unknown][];
-      } else if (isPlainObject(formFields)) {
-        pairs = Object.entries(formFields);
-      }
-      for (const [key, value] of pairs) {
-        if (key.toLowerCase() !== fileFieldName?.toLowerCase()) {
-          form.append(key, value as string | Buffer);
-        }
-      }
-    }
-    // AWS S3 POST upload requires this to be the last field; do not move before formFields.
-    form.append(fileFieldName, localFileStream);
-    requestOpts.headers = {
-      ...(isPlainObject(headers) ? headers : {}),
-      ...form.getHeaders(),
-    };
-    requestOpts.data = form;
-  } else {
-    if (isPlainObject(headers)) {
-      requestOpts.headers = headers;
-    }
-    requestOpts.data = localFileStream;
-  }
-  log.debug(
-    `Performing ${method} to ${href} with options (excluding data): ` +
-      JSON.stringify(
-        (() => {
-          const requestOptsWithoutData = {...requestOpts} as Record<string, unknown>;
-          delete requestOptsWithoutData.data;
-          return requestOptsWithoutData;
-        })(),
-      ),
-  );
-
-  const {status, statusText} = await axios(requestOpts);
-  log.info(`Server response: ${status} ${statusText}`);
-}
-
-/** @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version. */
-async function uploadFileToFtp(
-  localFileStream: string | Buffer | NodeJS.ReadableStream,
-  parsedUri: URL,
-  uploadOptions: FtpUploadOptions = {},
-): Promise<void> {
-  const {auth} = uploadOptions;
-  const {protocol, hostname, port, pathname} = parsedUri;
-
-  const ftpOpts: {host: string; port: number; user?: string; pass?: string} = {
-    host: hostname ?? '',
-    port: port !== undefined && port !== '' ? Number.parseInt(port, 10) : 21,
-  };
-  if (auth?.user && auth?.pass) {
-    ftpOpts.user = auth.user;
-    ftpOpts.pass = auth.pass;
-  }
-  log.debug(`${protocol.slice(0, -1)} upload options: ${JSON.stringify(ftpOpts)}`);
-  return await new Promise<void>((resolve, reject) => {
-    new Ftp(ftpOpts).put(localFileStream, pathname, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
+/** Asks the OS for a port by binding a temporary server to port 0. */
+async function listenOnAnyPort(host?: string): Promise<number> {
+  return await new Promise<number>((resolve, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, host, () => {
+      const {port} = server.address() as AddressInfo;
+      server.close((err) => (err ? reject(err) : resolve(port)));
     });
   });
 }
-
-function isHttpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is HttpUploadOptions {
-  try {
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Returns true if the URL is FTP, i.e. the options are for FTP upload.
- * @deprecated FTP upload via jsftp is deprecated and will be removed in a future major version.
- */
-function isFtpUploadOptions(opts: HttpUploadOptions | FtpUploadOptions, url: URL): opts is FtpUploadOptions {
-  try {
-    return url.protocol === 'ftp:';
-  } catch {
-    return false;
-  }
-}
-
-// #endregion

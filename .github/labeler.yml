@@ -43,6 +43,11 @@ labels:
     matcher:
       files: ['packages/appium/**']
 
+  - label: '@appium/http-server'
+    sync: true
+    matcher:
+      files: ['packages/http-server/**']
+
   - label: '@appium/base-driver'
     sync: true
     matcher:
@@ -67,11 +72,6 @@ labels:
     sync: true
     matcher:
       files: ['packages/driver-test-support/**']
-
-  - label: '@appium/eslint-config-appium-ts'
-    sync: true
-    matcher:
-      files: ['packages/eslint-config-appium-ts/**']
 
   - label: '@appium/oxc-config'
     sync: true

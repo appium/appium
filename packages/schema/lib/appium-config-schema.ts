@@ -38,18 +38,13 @@ export const AppiumConfigJsonSchema = {
             },
           ],
         },
-        'allow-cors': {
-          description: 'Whether the Appium server should allow web browser connections from any host',
-          title: 'allow-cors config',
-          type: 'boolean',
-          default: false,
-        },
         'allow-insecure': {
           appiumCliTransformer: 'csv',
           default: [],
           description:
             'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'allow-insecure config',
@@ -63,6 +58,15 @@ export const AppiumConfigJsonSchema = {
           type: 'boolean',
           default: false,
         },
+        'app-url-rules': {
+          $comment:
+            'The actual rules are defined in $defs/appUrlRules, since inline `properties` are reserved for extension config sections',
+          allOf: [{$ref: '#/$defs/appUrlRules'}],
+          description:
+            'Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.',
+          title: 'app-url-rules config',
+          type: 'object',
+        },
         'base-path': {
           appiumCliAliases: ['pa'],
           default: '',
@@ -70,26 +74,29 @@ export const AppiumConfigJsonSchema = {
           title: 'base-path config',
           type: 'string',
         },
-        'callback-address': {
-          appiumCliAliases: ['ca'],
-          description: 'Callback IP address (default: same as "address")',
-          title: 'callback-address config',
-          type: 'string',
-        },
-        'callback-port': {
-          appiumCliAliases: ['cp'],
-          default: 4723,
-          description: 'Callback port (default: same as "port")',
-          maximum: 65535,
-          minimum: 1,
-          title: 'callback-port config',
+        'bidi-heartbeat-interval': {
+          default: 15,
+          description:
+            'Number of seconds between WebSocket ping frames sent to each BiDi client. A connection that misses two consecutive pongs is terminated. A value of 0 disables the heartbeat.',
+          minimum: 0,
+          title: 'bidi-heartbeat-interval config',
           type: 'integer',
         },
-        'debug-log-spacing': {
-          default: false,
-          description: 'Add exaggerated spacing in logs to help with visual inspection',
-          title: 'debug-log-spacing config',
-          type: 'boolean',
+        'bidi-max-buffered-bytes': {
+          default: 33554432,
+          description:
+            'Maximum number of bytes the server may keep buffered for a single BiDi connection that is not reading fast enough. A connection that stays above this limit for longer than "bidi-max-buffered-ms" (or exceeds twice the limit) is closed with the code 1013. A value of 0 disables the limit, as well as skipping of droppable events.',
+          minimum: 0,
+          title: 'bidi-max-buffered-bytes config',
+          type: 'integer',
+        },
+        'bidi-max-buffered-ms': {
+          default: 30000,
+          description:
+            'Number of milliseconds a BiDi connection may stay above "bidi-max-buffered-bytes" before it is closed. A value of 0 closes the connection as soon as the limit is exceeded.',
+          minimum: 0,
+          title: 'bidi-max-buffered-ms config',
+          type: 'integer',
         },
         'default-capabilities': {
           $comment: 'TODO',
@@ -106,6 +113,7 @@ export const AppiumConfigJsonSchema = {
           description:
             'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
           items: {
+            minLength: 1,
             type: 'string',
           },
           title: 'deny-insecure config',
@@ -161,7 +169,7 @@ export const AppiumConfigJsonSchema = {
         },
         'log-level': {
           appiumCliDest: 'loglevel',
-          default: 'debug',
+          default: 'info',
           description: 'Log level (console[:file])',
           enum: [
             'info',
@@ -232,13 +240,6 @@ export const AppiumConfigJsonSchema = {
           title: 'no-perms-check config',
           type: 'boolean',
         },
-        nodeconfig: {
-          $comment: 'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
-          description:
-            'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-          title: 'nodeconfig config',
-          type: 'object',
-        },
         plugin: {
           description: 'Plugin-specific configuration. Keys should correspond to plugin package names',
           properties: {} as Record<string, JSONSchema7>,
@@ -289,24 +290,11 @@ export const AppiumConfigJsonSchema = {
           appiumCliDest: 'sslKeyPath',
           type: 'string',
         },
-        'strict-caps': {
-          default: false,
-          description:
-            'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-          title: 'strict-caps config',
-          type: 'boolean',
-        },
         tmp: {
           appiumCliDest: 'tmpDir',
           description:
-            'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
+            'Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().',
           title: 'tmp config',
-          type: 'string',
-        },
-        'trace-dir': {
-          description:
-            'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-          title: 'trace-dir config',
           type: 'string',
         },
         'use-drivers': {
@@ -366,6 +354,47 @@ export const AppiumConfigJsonSchema = {
   title: 'Appium Configuration',
   type: 'object',
   $defs: {
+    appUrlRules: {
+      type: 'object',
+      description: 'Rules that remote application URLs must satisfy',
+      properties: {
+        allow: {
+          description:
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        deny: {
+          description:
+            'Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.',
+          items: {
+            type: 'string',
+          },
+          type: 'array',
+          uniqueItems: true,
+        },
+        httpsOnly: {
+          description: 'Whether only "https:" URLs are accepted',
+          type: 'boolean',
+          default: false,
+        },
+        allowCredentials: {
+          description: 'Whether URLs containing a username and/or a password are accepted',
+          type: 'boolean',
+          default: true,
+        },
+        maxRedirects: {
+          description:
+            'Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.',
+          type: 'integer',
+          minimum: 0,
+        },
+      },
+      additionalProperties: false,
+    },
     logFilterText: {
       type: 'object',
       description: 'Log filter with plain text',

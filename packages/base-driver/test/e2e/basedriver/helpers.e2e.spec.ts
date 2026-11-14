@@ -1,19 +1,17 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import path from 'node:path';
-import {after, before, describe, it} from 'node:test';
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {getTestPort, TEST_HOST} from '@appium/driver-test-support';
-import {fs, node} from '@appium/support';
+import {fs, node, tempDir} from '@appium/support';
 import {sleep} from 'asyncbox';
-import contentDisposition from 'content-disposition';
-import finalhandler from 'finalhandler';
-import serveStatic from 'serve-static';
 
-import {configureApp} from '../../../lib/basedriver/helpers';
+import {appUrlRules} from '../../../lib/basedriver/helpers/app-url-rules.js';
+import {configureApp} from '../../../lib/basedriver/helpers/index.js';
 
 const FIXTURE_ROOT = path.resolve(
-  node.getModuleRootSync('@appium/base-driver', __filename)!,
+  node.getModuleRootSync('@appium/base-driver', import.meta.filename)!,
   'test',
   'e2e',
   'fixtures',
@@ -21,6 +19,17 @@ const FIXTURE_ROOT = path.resolve(
 
 function getFixture(file: string): string {
   return path.resolve(FIXTURE_ROOT, file);
+}
+
+async function findNamedFiles(root: string, fileName: string): Promise<string[]> {
+  const found: string[] = [];
+  for (const entry of await fs.readdir(root)) {
+    const candidate = path.join(root, entry, fileName);
+    if (await fs.exists(candidate)) {
+      found.push(candidate);
+    }
+  }
+  return found;
 }
 
 describe('app download and configuration', function () {
@@ -63,31 +72,66 @@ describe('app download and configuration', function () {
         let server: HttpServerWithAsyncClose;
 
         before(function () {
-          const serve = serveStatic(FIXTURE_ROOT, {
-            index: false,
-            setHeaders: (res, filePath) => {
-              if (!res.getHeader('Content-Disposition')) {
-                res.setHeader('Content-Disposition', contentDisposition(filePath));
-              }
-            },
-          });
-
           const httpServer = http.createServer(function (req, res) {
+            if (req.url?.includes('/cut/')) {
+              res.writeHead(200, {
+                'Content-Type': 'application/vnd.android.package-archive',
+                'Content-Length': '1000',
+                'Content-Disposition': 'attachment; filename="incomplete-download.apk"',
+              });
+              res.write(Buffer.alloc(64));
+              setTimeout(() => res.destroy(), 100);
+              return;
+            }
             if (req.url?.indexOf('missing') !== -1) {
               res.writeHead(404);
               res.end();
               return;
             }
-            const params = new URLSearchParams(new URL(req.url ?? '', 'http://localhost').search);
-            const contentType = params.get('content-type');
+            // `/redirect-to?url=<url>` redirects to an arbitrary (absolute) URL
+            if (req.url?.startsWith('/redirect-to?')) {
+              const location = new URL(req.url, 'http://localhost').searchParams.get('url') ?? '/';
+              res.writeHead(302, {Location: location});
+              res.end();
+              return;
+            }
+            // `/redirect/<n>/<file>` redirects `n` times before serving `<file>`
+            const redirectMatch = /^\/redirect\/(\d+)\/(.+)$/.exec(req.url ?? '');
+            if (redirectMatch) {
+              const hopsLeft = parseInt(redirectMatch[1], 10) - 1;
+              const location = hopsLeft > 0 ? `/redirect/${hopsLeft}/${redirectMatch[2]}` : `/${redirectMatch[2]}`;
+              res.writeHead(302, {Location: location});
+              res.end();
+              return;
+            }
+            const reqUrl = new URL(req.url ?? '', 'http://localhost');
+            const contentType = reqUrl.searchParams.get('content-type');
             if (contentType !== null) {
               res.setHeader('content-type', contentType);
             }
-            const disposition = params.get('disposition');
+            const disposition = reqUrl.searchParams.get('disposition');
             if (disposition !== null) {
               res.setHeader('Content-Disposition', disposition);
             }
-            serve(req, res, finalhandler(req, res));
+            // serve a fixture file directly; no need for a full static file server here
+            const filePath = path.join(FIXTURE_ROOT, decodeURIComponent(reqUrl.pathname));
+            if (path.relative(FIXTURE_ROOT, filePath).startsWith('..')) {
+              res.writeHead(403);
+              res.end();
+              return;
+            }
+            fs.readFile(filePath)
+              .then((data) => {
+                if (!res.getHeader('Content-Disposition')) {
+                  res.setHeader('Content-Disposition', `attachment; filename="${path.basename(filePath)}"`);
+                }
+                res.writeHead(200);
+                res.end(data);
+              })
+              .catch(() => {
+                res.writeHead(404);
+                res.end();
+              });
           });
           const close = httpServer.close.bind(httpServer);
           // Replace close with async version; type assertion needed for method replacement
@@ -148,6 +192,23 @@ describe('app download and configuration', function () {
           const contents = await fs.readFile(newAppPath, 'utf8');
           assert.strictEqual(contents, 'this is not really an apk\n');
         });
+        it('should remove an incomplete app download', async function () {
+          const fileName = 'incomplete-download.apk';
+          const originalTmpDir = process.env.APPIUM_TMP_DIR;
+          const tempRoot = await tempDir.openDir();
+          process.env.APPIUM_TMP_DIR = tempRoot;
+          try {
+            await assert.rejects(configureApp(`${serverUrl}/cut/${fileName}`, '.apk'), /Cannot fetch the application/);
+            assert.deepEqual(await findNamedFiles(tempRoot, fileName), []);
+          } finally {
+            if (originalTmpDir === undefined) {
+              delete process.env.APPIUM_TMP_DIR;
+            } else {
+              process.env.APPIUM_TMP_DIR = originalTmpDir;
+            }
+            await fs.rimraf(tempRoot);
+          }
+        });
         it('should handle zip file that cannot be downloaded', async function () {
           await assert.rejects(configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app'));
         });
@@ -163,6 +224,145 @@ describe('app download and configuration', function () {
             configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app'),
             /does not exist or is not accessible/,
           );
+        });
+        it('should follow redirects', async function () {
+          const newAppPath = await configureApp(`${serverUrl}/redirect/2/FakeAndroidApp.apk`, '.apk');
+          assert.ok(newAppPath.includes('.apk'));
+          const contents = await fs.readFile(newAppPath, 'utf8');
+          assert.strictEqual(contents, 'this is not really an apk\n');
+        });
+        describe('with app URL rules', function () {
+          afterEach(function () {
+            appUrlRules.configure();
+          });
+
+          it('should download an app whose URL satisfies the rules', async function () {
+            appUrlRules.configure({allow: [new URL(serverUrl).hostname], maxRedirects: 2});
+            const newAppPath = await configureApp(`${serverUrl}/redirect/2/FakeAndroidApp.apk`, '.apk');
+            assert.ok(newAppPath.includes('.apk'));
+            const contents = await fs.readFile(newAppPath, 'utf8');
+            assert.strictEqual(contents, 'this is not really an apk\n');
+          });
+          it('should apply address rules to dynamically resolved hostnames', async function () {
+            appUrlRules.configure({allow: ['127.0.0.0/8']});
+            const newAppPath = await configureApp(`http://localhost:${port}/FakeAndroidApp.apk`, '.apk');
+            assert.ok(newAppPath.includes('.apk'));
+          });
+          it('should reject a URL not matching any allow rule', async function () {
+            appUrlRules.configure({allow: ['apps.example.com']});
+            await assert.rejects(
+              configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
+              /is not allowed by the server configuration/,
+            );
+          });
+          it('should reject a URL matching a deny rule', async function () {
+            appUrlRules.configure({deny: [new URL(serverUrl).hostname]});
+            await assert.rejects(
+              configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
+              /is not allowed by the server configuration/,
+            );
+          });
+          it('should reject a non-https URL if httpsOnly is set', async function () {
+            appUrlRules.configure({httpsOnly: true});
+            await assert.rejects(
+              configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk'),
+              /is not allowed by the server configuration/,
+            );
+          });
+          it('should reject a URL with credentials if allowCredentials is false', async function () {
+            appUrlRules.configure({allowCredentials: false});
+            await assert.rejects(
+              configureApp(`http://user:pass@${TEST_HOST}:${port}/FakeAndroidApp.apk`, '.apk'),
+              /is not allowed by the server configuration/,
+            );
+          });
+          it('should reject a redirect to a URL violating the rules', async function () {
+            appUrlRules.configure({deny: ['localhost']});
+            const target = encodeURIComponent(`http://localhost:${port}/FakeAndroidApp.apk`);
+            await assert.rejects(
+              configureApp(`${serverUrl}/redirect-to?url=${target}`, '.apk'),
+              /is not allowed by the server configuration/,
+            );
+          });
+          describe('with an HTTP proxy', function () {
+            const env = {...process.env};
+            let proxyPort: number;
+            let proxyServer: http.Server;
+            let proxiedUrls: string[];
+
+            before(async function () {
+              proxyPort = await getTestPort();
+              proxiedUrls = [];
+              // a minimal forward proxy for plain HTTP requests
+              proxyServer = http.createServer((req, res) => {
+                proxiedUrls.push(req.url ?? '');
+                const proxied = http.request(
+                  req.url ?? '',
+                  {method: req.method, headers: req.headers},
+                  (proxiedRes) => {
+                    res.writeHead(proxiedRes.statusCode ?? 500, proxiedRes.headers);
+                    proxiedRes.pipe(res);
+                  },
+                );
+                proxied.on('error', (e) => {
+                  res.writeHead(502);
+                  res.end(e.message);
+                });
+                req.pipe(proxied);
+              });
+              await new Promise<void>((resolve) => proxyServer.listen(proxyPort, resolve));
+            });
+            beforeEach(function () {
+              proxiedUrls.length = 0;
+              process.env.HTTP_PROXY = `http://${TEST_HOST}:${proxyPort}`;
+              delete process.env.NO_PROXY;
+              delete process.env.no_proxy;
+            });
+            afterEach(function () {
+              for (const key of Object.keys(process.env)) {
+                if (!(key in env)) {
+                  delete process.env[key];
+                }
+              }
+              Object.assign(process.env, env);
+            });
+            after(async function () {
+              await new Promise<void>((resolve) => proxyServer.close(() => resolve()));
+            });
+
+            it('should download an app through the proxy if only hostname rules are configured', async function () {
+              appUrlRules.configure({allow: ['localhost']});
+              const newAppPath = await configureApp(`http://localhost:${port}/FakeAndroidApp.apk`, '.apk');
+              assert.ok(newAppPath.includes('.apk'));
+              assert.deepStrictEqual(proxiedUrls, [`http://localhost:${port}/FakeAndroidApp.apk`]);
+            });
+            it('should reject a download through the proxy if address rules are configured', async function () {
+              appUrlRules.configure({deny: ['127.0.0.0/8', '::1/128']});
+              await assert.rejects(
+                configureApp(`http://localhost:${port}/FakeAndroidApp.apk`, '.apk'),
+                /is not allowed by the server configuration/,
+              );
+              assert.deepStrictEqual(proxiedUrls, []);
+            });
+            it('should reject a redirect through the proxy if address rules are configured', async function () {
+              appUrlRules.configure({deny: ['10.0.0.0/8']});
+              process.env.NO_PROXY = TEST_HOST;
+              const target = encodeURIComponent(`http://localhost:${port}/FakeAndroidApp.apk`);
+              await assert.rejects(
+                configureApp(`${serverUrl}/redirect-to?url=${target}`, '.apk'),
+                /is not allowed by the server configuration/,
+              );
+              assert.deepStrictEqual(proxiedUrls, []);
+            });
+          });
+          it('should reject a download exceeding maxRedirects', async function () {
+            appUrlRules.configure({maxRedirects: 1});
+            await assert.rejects(configureApp(`${serverUrl}/redirect/2/FakeAndroidApp.apk`, '.apk'), /redirect/i);
+          });
+          it('should reject any redirect if maxRedirects is 0', async function () {
+            appUrlRules.configure({maxRedirects: 0});
+            await assert.rejects(configureApp(`${serverUrl}/redirect/1/FakeAndroidApp.apk`, '.apk'), /Cannot download/);
+          });
         });
         it('should treat an unknown mime type as an app', async function () {
           const newAppPath = await configureApp(

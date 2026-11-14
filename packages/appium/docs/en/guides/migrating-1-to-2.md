@@ -31,10 +31,6 @@ installing it only installs the core Appium server, without any drivers.
 
 When it comes to installing Appium 2 drivers, there are several approaches you can take:
 
-* Add the `--drivers` flag when installing Appium, for example:
-```bash
-npm i -g appium --drivers=xcuitest,uiautomator2
-```
 * Use the [Appium Extension CLI](../reference/cli/extensions.md), for example:
 ```bash
 appium driver install uiautomator2
@@ -201,8 +197,12 @@ and [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/m
 (MJSONWP) were used instead.
 
 In Appium 1, all of these protocols were supported, so that older Selenium/Appium clients could
-still communicate with newer Appium servers. Appium 2 removes support for JSONWP/MJSONWP and is now
-only compatible with the W3C WebDriver Protocol.
+still communicate with newer Appium servers. Appium 2 removes support for JSONWP/MJSONWP (including
+legacy `TouchAction` and `MultiAction` endpoints) and is now only compatible with the W3C WebDriver
+Protocol. Multi-touch and pointer gestures should be performed using the W3C
+[Perform Actions](../reference/api/webdriver.md#performactions) API (see the
+[Automating Gestures](./gestures.md) guide) or driver-specific
+[Execute Methods](./execute-methods.md).
 
 !!! info "Actions Needed"
 

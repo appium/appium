@@ -19,7 +19,7 @@ Appium, called `BaseDriver`. You could have something very close to a "working" 
 very simple lines of code:
 
 ```js
-import BaseDriver from '@appium/base-driver'
+import {BaseDriver} from '@appium/base-driver'
 
 class MyNewDriver extends BaseDriver {
 }

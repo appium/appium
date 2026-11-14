@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.2](https://github.com/appium/appium/compare/@appium/tsconfig@2.0.0-beta.1...@appium/tsconfig@2.0.0-beta.2) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+
+### Features
+
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([ddc1d55](https://github.com/appium/appium/commit/ddc1d555dbf04d1cdd4dfd79139e48b1b077817b))
+
+
+## [2.0.0-beta.1](https://github.com/appium/appium/compare/@appium/tsconfig@2.0.0-beta.0...@appium/tsconfig@2.0.0-beta.1) (2026-10-05)
+
+**Note:** Version bump only for package @appium/tsconfig
+
+
+
+
+
+## [2.0.0-beta.0](https://github.com/appium/appium/compare/@appium/tsconfig@1.2.1...@appium/tsconfig@2.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([3516e50](https://github.com/appium/appium/commit/3516e50ce6d022f4c0dc539071c593bf2983325f))
+
+
 ## [1.2.1](https://github.com/appium/appium/compare/@appium/tsconfig@1.2.0...@appium/tsconfig@1.2.1) (2026-08-24)
 
 **Note:** Version bump only for package @appium/tsconfig

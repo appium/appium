@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it, before, after} from 'node:test';
 
-import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 export function findElementTests(context: {port: number}) {
   describe('finding elements', function () {

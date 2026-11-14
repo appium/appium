@@ -1,5 +1,3 @@
-'use strict';
-
 // @ts-check
 
 /**
@@ -7,7 +5,6 @@
  *
  * @see https://npm.im/@appium/base-plugin
  * @example
- * const { BasePlugin } = require('appium/plugin');
+ * import { BasePlugin } from 'appium/plugin.js';
  */
-
-module.exports = require('@appium/base-plugin');
+export * from '@appium/base-plugin';

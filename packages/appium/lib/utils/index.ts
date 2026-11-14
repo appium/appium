@@ -1,6 +1,19 @@
-export {adler32} from './hash';
-export {isPackageChanged} from './is-package-changed';
-export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed';
+export {
+  DEFAULT_APPIUM_HOME,
+  MANIFEST_BASENAME,
+  MANIFEST_RELATIVE_PATH,
+  findAppiumDependencyPackage,
+  hasAppiumDependency,
+  resolveAppiumHome,
+  resolveManifestLockfilePath,
+  resolveManifestPath,
+  withManifestLock,
+} from './env.js';
+export {adler32} from './hash.js';
+export {isPackageChanged} from './is-package-changed.js';
+export type {IsPackageChangedOptions, IsPackageChangedResult} from './is-package-changed.js';
+export {npm, resolveFrom} from './npm.js';
+export type {ExecOpts, InstallPackageOpts, NpmExecResult, NpmInstallReceipt} from './npm.js';
 export {
   bindAll,
   camelCase,
@@ -17,7 +30,6 @@ export {
   pull,
   setPath,
   zip,
-} from './object';
-export {packageDidChange} from './package-changed';
-export {appiumPackageRoot, npmPackage} from './package-json';
-export {resolveFrom} from './resolve-from';
+} from './object.js';
+export {packageDidChange} from './package-changed.js';
+export {appiumPackageRoot, npmPackage} from './package-json.js';

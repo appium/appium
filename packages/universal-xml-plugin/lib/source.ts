@@ -3,7 +3,7 @@ import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map.js';
 import NODE_MAP from './node-map.js';
-import * as TRANSFORMS from './transformers.js';
+import {TRANSFORMS} from './transformers.js';
 import type {
   NodesAndAttributes,
   TransformMetadata,
@@ -97,7 +97,7 @@ export function transformNode(
         throw new Error(`Index path is required but node found with no 'index' attribute`);
       }
 
-      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX]}`;
+      thisIndexPath = `${parentPath || ''}/${nodeObj[IDX_PREFIX] as string}`;
       nodeObj[IDX_PATH_PREFIX] = thisIndexPath;
     }
 

@@ -1,6 +1,9 @@
 # Appium
 
-> Appium is an open-source framework for UI automation of many app platforms - mobile (iOS, Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS, Android TV, Samsung) and more - driven over the W3C WebDriver protocol.
+Appium is an open-source framework for UI automation of many app platforms - mobile (iOS,
+Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS,
+Android TV, Samsung), smartwatch (watchOS, Android Wear) and more - driven over the W3C WebDriver
+protocol.
 
 Appium is split into four parts: the Appium server, which defines the core APIs; drivers, which
 implement connectivity to a specific platform; clients, which implement Appium's API in a specific
@@ -9,14 +12,12 @@ anything you need the server, at least one driver, and a client.
 
 Notes for tools generating Appium code from this documentation:
 
-- Appium 3 is the current major version, and these pages describe Appium 3. Appium 2 is still
-  supported but is documented separately, under its own version of this site, reachable from the
-  version selector. Appium 1 is no longer supported: `DesiredCapabilities`, `MobileBy`, the
-  `findElementByAccessibilityId` family of methods, and the `/wd/hub` server base path are all
-  Appium 1 era patterns - the default base path has been `/` since Appium 2.
+- Appium 4 is the current major version, and these pages describe Appium 4. Older Appium versions
+  are not supported, but the documentation for Appium 2 and 3 is still available under their own
+  versions of this site, reachable from the version selector.
 - Drivers are not bundled with the server. Install them explicitly, for example
   `appium driver install uiautomator2` or `appium driver install xcuitest`.
-- Appium 3 requires Node.js in the range `^20.19.0 || ^22.12.0 || >=24.0.0`, and npm 10 or newer.
+- Appium 4 requires Node.js in the range `^22.22.2 || ^24.15.0 || >=26.0.0`, and npm 10 or newer.
 - Standard W3C capabilities are written without a prefix. `platformName`, `browserName` and
   `browserVersion` are the ones used most often with Appium, and the rest of the specification's
   set - `acceptInsecureCerts`, `pageLoadStrategy`, `timeouts`, `webSocketUrl` and so on - is also
@@ -32,10 +33,14 @@ Notes for tools generating Appium code from this documentation:
 - Beyond the small common set documented here, capabilities, execute methods, settings and locator
   strategies are defined by each driver and documented on that driver's own site. Refer users to
   the driver's documentation rather than guessing names.
-- Appium 3 removed many endpoints that were deprecated in Appium 2. Check the Appium 3 migration
-  guide before using an endpoint carried over from older code.
-- `GET /sessions` was removed. Session discovery is now `GET /appium/sessions`, and requires
-  starting the server with `--allow-insecure=*:session_discovery`.
+- If upgrading to a new major version of Appium, always check all relevant migration guides. Every
+  major version has its own dedicated migration guide.
+- Appium 4 moves to ESM-only packaging and no longer supports the Windows driver. Refer users to
+  the WinCore driver instead.
+- Appium 4 replaces the `--allow-cors` server flag with `--allow-insecure=*:cors`. Do not use the
+  former flag anymore.
+- Appium 3 and 4 removed various deprecated endpoints. Check the respective migration guides before
+  using an endpoint carried over from older code.
 - In Appium 3, every `--allow-insecure` feature name must carry a scope prefix: either a driver
   name (`uiautomator2:adb_shell`) or the wildcard (`*:adb_shell`).
 - WebDriver BiDi support is opt-in per session, via the standard `webSocketUrl` capability.
@@ -66,7 +71,7 @@ Which driver you install determines which platform you can automate, and the dri
 documentation is the authoritative source for its capabilities and commands.
 
 - [The Appium Ecosystem](https://appium.io/docs/en/latest/ecosystem/): index of officially-supported and community-supported Appium projects.
-- [Appium Drivers](https://appium.io/docs/en/latest/ecosystem/drivers/): every known driver with its install command and documentation link. Official drivers include UiAutomator2 and Espresso (Android), XCUITest (iOS, iPadOS, tvOS, watchOS), Mac2 (macOS), Windows, Chromium, Gecko and Safari.
+- [Appium Drivers](https://appium.io/docs/en/latest/ecosystem/drivers/): every known driver with its install command and documentation link. Official drivers include UiAutomator2 and Espresso (Android), XCUITest (iOS, iPadOS, tvOS, watchOS), Mac2 (macOS), WinCore, Chromium, Gecko and Safari. Appium 2 and 3 feature the Windows driver instead of WinCore.
 - [Appium Clients](https://appium.io/docs/en/latest/ecosystem/clients/): official clients for Java, Python, Ruby and .NET, plus community clients including WebdriverIO, Nightwatch.js, Robot Framework, Rust and Swift.
 - [Appium Plugins](https://appium.io/docs/en/latest/ecosystem/plugins/): optional extensions that modify or extend server behaviour. Not required for standard automation.
 - [Appium-Related Tools](https://appium.io/docs/en/latest/ecosystem/tools/): tools for installation, test development and inspection, such as Appium Inspector, and tools for driving Appium from an AI agent, such as the Appium MCP server and the Appium agent skills.
@@ -79,9 +84,10 @@ documentation is the authoritative source for its capabilities and commands.
 - [Capabilities](https://appium.io/docs/en/latest/reference/session/caps/): the full list of capabilities recognized by the Appium server and base driver, and therefore supported by every driver.
 - [Session Settings](https://appium.io/docs/en/latest/guides/settings/): parameters that, unlike capabilities, can be adjusted while a session is running.
 - [Execute Methods](https://appium.io/docs/en/latest/guides/execute-methods/): the `mobile:` command convention that drivers use to expose commands beyond the WebDriver spec, with examples in every official client language.
+- [Automating Gestures](https://appium.io/docs/en/latest/guides/gestures/): approaches for automating gestures, including several examples for various touch gestures using the W3C Actions API.
 - [Managing Contexts](https://appium.io/docs/en/latest/guides/context/): switching between native and webview modes with the Get Contexts, Get Current Context and Set Context commands.
 - [Caching of Application Bundles](https://appium.io/docs/en/latest/guides/caching/): how the base driver caches application builds, and how to use it for faster suite execution.
-- [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): startup and command timing information, retrieved from the `POST /session/:sessionId/appium/events` endpoint. The `appium:eventTimings` capability described on that page is not required for the endpoint to work, and is being removed in Appium 4.
+- [Retrieving Event Timings](https://appium.io/docs/en/latest/guides/event-timing/): startup and command timing information, retrieved from the `POST /session/:sessionId/appium/events` endpoint.
 
 ## Server configuration and the command line
 
@@ -93,13 +99,13 @@ documentation is the authoritative source for its capabilities and commands.
 - [The Appium Config File](https://appium.io/docs/en/latest/guides/config/): supplying server arguments through a config file instead of the command line. CLI arguments take precedence.
 - [Filtering the Appium Log](https://appium.io/docs/en/latest/guides/log-filters/): redacting passwords, device identifiers and other sensitive values from server logs with `--log-filters`.
 - [Header Handling](https://appium.io/docs/en/latest/guides/headers/): request ID tracking through the `x-request-id` header.
-- [SSL/TLS/SPDY Support](https://appium.io/docs/en/latest/guides/tls/): starting the server with secure connections enabled.
+- [SSL/TLS Support](https://appium.io/docs/en/latest/guides/tls/): starting the server with secure connections enabled.
 - [Appium and Selenium Grid](https://appium.io/docs/en/latest/guides/grid/): relaying commands from a Selenium Grid to an Appium server.
 
 ## Security
 
-- [Appium Server Security](https://appium.io/docs/en/latest/guides/security/): the insecure-feature mechanism, and the `--allow-insecure`, `--deny-insecure` and `--relaxed-security` flags. In Appium 3 every feature name requires a scope prefix.
-- [Insecure Features](https://appium.io/docs/en/latest/reference/cli/insecure-features/): the features defined at the server and official-plugin level, including `session_discovery` and `execute_driver_script`. Drivers define their own in their own documentation.
+- [Appium Server Security](https://appium.io/docs/en/latest/guides/security/): the insecure-feature mechanism with the `--allow-insecure`, `--deny-insecure` and `--relaxed-security` flags, and configuration options for application URL rules.
+- [Insecure Features](https://appium.io/docs/en/latest/reference/cli/insecure-features/): the features defined at the server and official-plugin level, including `session_discovery`, `cors`, and `execute_driver_script`. Drivers define their own in their own documentation.
 
 ## API endpoints
 
@@ -113,6 +119,7 @@ documentation is the authoritative source for its capabilities and commands.
 
 ## Migrating between major versions
 
+- [Migrating to Appium 4](https://appium.io/docs/en/latest/guides/migrating-3-to-4/): breaking changes from Appium 3 to 4 - the Node 22 minimum, ESM-only requirement, removed endpoints, the Windows driver replacement, and more.
 - [Migrating to Appium 3](https://appium.io/docs/en/latest/guides/migrating-2-to-3/): every breaking change from Appium 2 to 3 - the Node 20 minimum, removed and modified endpoints, the mandatory `--allow-insecure` scope prefix, and the move from `GET /sessions` to `GET /appium/sessions`.
 - [Migrating to Appium 2](https://appium.io/docs/en/latest/guides/migrating-1-to-2/): the Appium 1 to 2 changes, including drivers becoming separately installed extensions and the default base path changing from `/wd/hub` to `/`.
 

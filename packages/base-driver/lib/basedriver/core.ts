@@ -2,7 +2,6 @@ import os from 'node:os';
 
 import {util} from '@appium/support';
 import type {
-  AppiumLogger,
   Constraints,
   Core,
   Driver,
@@ -13,18 +12,18 @@ import type {
   Protocol,
   RouteMatcher,
   StringRecord,
+  TimeoutValue,
 } from '@appium/types';
-import AsyncLock from 'async-lock';
+import {AsyncLock} from 'asyncbox';
 
-import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
-import {errors} from '../protocol';
-import {DeviceSettings} from './device-settings';
-import {ExtensionCore} from './extension-core';
-import * as helpers from './helpers';
-
-const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
+import {DEFAULT_BASE_PATH, NEW_COMMAND_TIMEOUT_MS, PROTOCOLS, W3C_TIMEOUTS_MS} from '../constants.js';
+import {errors, GET_STATUS_COMMAND} from '../protocol/index.js';
+import {DeviceSettings} from './device-settings.js';
+import {ExtensionCore} from './extension-core.js';
+import * as helpers from './helpers/index.js';
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+const QUEUE_EXEMPT_COMMANDS: ReadonlySet<string> = new Set([GET_STATUS_COMMAND]);
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -39,16 +38,11 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    */
   static baseVersion = helpers.BASEDRIVER_VER;
 
-  sessionId: string | null;
-
+  sessionId: string | null = null;
   sessionCreationTimestampMs!: number;
-
   opts: DriverOpts<C>;
-
   initialOpts: InitialOpts;
-
-  helpers: typeof helpers;
-
+  helpers: typeof helpers = helpers;
   /**
    * basePath is used for several purposes, for example in setting up
    * proxying to other drivers, since we need to know what the base path
@@ -57,52 +51,38 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * execution by the routeConfiguringFunction, which is necessarily run as
    * the entrypoint for any Appium server
    */
-  basePath: string;
-
-  relaxedSecurityEnabled: boolean;
-
-  allowInsecure: string[];
-
-  denyInsecure: string[];
-
-  newCommandTimeoutMs: number;
-
-  implicitWaitMs: number;
-
-  locatorStrategies: string[];
-
-  webLocatorStrategies: string[];
-
-  managedDrivers: Driver[];
-
-  noCommandTimer: NodeJS.Timeout | null;
-
-  shutdownUnexpectedly: boolean;
-
+  basePath: string = DEFAULT_BASE_PATH;
+  relaxedSecurityEnabled: boolean = false;
+  allowInsecure: string[] = [];
+  denyInsecure: string[] = [];
+  newCommandTimeoutMs: number = NEW_COMMAND_TIMEOUT_MS;
+  scriptTimeoutMs: TimeoutValue = W3C_TIMEOUTS_MS.SCRIPT;
+  pageLoadTimeoutMs: TimeoutValue = W3C_TIMEOUTS_MS.PAGE_LOAD;
+  implicitWaitMs: TimeoutValue = W3C_TIMEOUTS_MS.IMPLICIT_WAIT;
+  locatorStrategies: string[] = [];
+  webLocatorStrategies: string[] = [];
+  managedDrivers: Driver[] = [];
+  noCommandTimer: NodeJS.Timeout | null = null;
+  shutdownUnexpectedly: boolean = false;
   shouldValidateCaps: boolean;
-
   /**
    * settings should be instantiated by drivers which extend BaseDriver, but
    * we set it to an empty DeviceSettings instance here to make sure that the
    * default settings are applied even if an extending driver doesn't utilize
    * the settings functionality itself
    */
-  settings: DeviceSettings<Settings>;
-
+  settings: DeviceSettings<Settings> = new DeviceSettings();
   protocol?: Protocol;
 
-  protected _eventHistory: EventHistory;
+  protected _eventHistory: EventHistory = {commands: []};
+  protected commandsQueueGuard: AsyncLock = new AsyncLock();
 
   /**
-   * TODO: remove this._log and use this.log instead
+   * @param opts - the initial driver options
+   * @param shouldValidateCaps - whether capabilities should be validated on session creation
    */
-  protected _log: AppiumLogger;
-
-  protected commandsQueueGuard: AsyncLock;
-
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     super();
-    this._log = this.log; // TODO: remove references to this._log and use this.log instead
 
     // setup state
     this.opts = opts as DriverOpts<C>;
@@ -116,35 +96,6 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
     // keeping track of initial opts
     this.initialOpts = {...opts};
-
-    this.sessionId = null;
-    this.helpers = helpers;
-    this.basePath = DEFAULT_BASE_PATH;
-    this.relaxedSecurityEnabled = false;
-    this.allowInsecure = [];
-    this.denyInsecure = [];
-    this.newCommandTimeoutMs = NEW_COMMAND_TIMEOUT_MS;
-    this.implicitWaitMs = 0;
-    this.locatorStrategies = [];
-    this.webLocatorStrategies = [];
-    this.managedDrivers = [];
-    this.noCommandTimer = null;
-    this._eventHistory = {commands: []};
-    this.shutdownUnexpectedly = false;
-    this.commandsQueueGuard = new AsyncLock();
-    this.settings = new DeviceSettings();
-  }
-
-  /**
-   * This property is used by AppiumDriver to store the data of the
-   * specific driver sessions. This data can be later used to adjust
-   * properties for driver instances running in parallel.
-   * Override it in inherited driver classes if necessary.
-   *
-   * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
-   */
-  get driverData() {
-    return {};
   }
 
   /**
@@ -162,11 +113,20 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     return true;
   }
 
-  /*
+  /**
+   * Command names which bypass the commands queue by default, so they can be answered without
+   * waiting behind other commands (e.g. `getStatus`, which clients may poll while a long-running
+   * command is in progress). Override for inherited classes to add/remove exemptions.
+   */
+  get queueExemptCommands(): ReadonlySet<string> {
+    return QUEUE_EXEMPT_COMMANDS;
+  }
+
+  /**
    * make eventHistory a property and return a cloned object so a consumer can't
    * inadvertently change data outside of logEvent
    */
-  get eventHistory() {
+  get eventHistory(): EventHistory {
     return structuredClone(this._eventHistory);
   }
 
@@ -191,19 +151,19 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * The function may accept one argument, which is the actual error instance, which
    * caused the driver to shut down.
    */
-  onUnexpectedShutdown(handler: (...args: any[]) => void) {
+  onUnexpectedShutdown(handler: (...args: any[]) => void): void {
     this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
   }
 
   /**
    * API method for driver developers to log timings for important events
    */
-  logEvent(eventName: string) {
+  logEvent(eventName: string): void {
     if (eventName === 'commands') {
       throw new Error('Cannot log commands directly');
     }
     if (typeof eventName !== 'string') {
-      throw new Error(`Invalid eventName ${eventName}`);
+      throw new Error(`Invalid eventName ${JSON.stringify(eventName)}`);
     }
     if (!this._eventHistory[eventName]) {
       this._eventHistory[eventName] = [];
@@ -218,41 +178,41 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * @privateRemarks Overridden in appium driver, but here so that individual drivers can be
    * tested with clients that poll
    */
-  async getStatus() {
+  async getStatus(): Promise<any> {
     return {};
   }
 
   /**
-   * method required by MJSONWP in order to determine whether it should
-   * respond with an invalid session response
+   * method required by the protocol handler in order to determine whether it
+   * should respond with an invalid session response
    */
   sessionExists(sessionId: string): boolean {
-    if (!sessionId) return false; // eslint-disable-line curly
+    if (!sessionId) {
+      return false;
+    }
     return sessionId === this.sessionId;
   }
 
   /**
-   * method required by MJSONWP in order to determine if the command should
-   * be proxied directly to the driver
+   * method required by the protocol handler in order to determine if the
+   * command should be proxied directly to the driver
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   driverForSession(sessionId: string): Core<Constraints> | null {
+    void sessionId;
     return this as Core<Constraints>;
   }
 
-  isMjsonwpProtocol() {
-    return this.protocol === PROTOCOLS.MJSONWP;
-  }
-
-  isW3CProtocol() {
+  /**
+   * Whether the current session is using the W3C WebDriver protocol
+   */
+  isW3CProtocol(): boolean {
     return this.protocol === PROTOCOLS.W3C;
   }
 
-  setProtocolMJSONWP() {
-    this.protocol = PROTOCOLS.MJSONWP;
-  }
-
-  setProtocolW3C() {
+  /**
+   * Mark the current session as using the W3C WebDriver protocol
+   */
+  setProtocolW3C(): void {
     this.protocol = PROTOCOLS.W3C;
   }
 
@@ -313,7 +273,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    *
    * @param name - name of feature/command
    */
-  assertFeatureEnabled(name: string) {
+  assertFeatureEnabled(name: string): void {
     if (!this.isFeatureEnabled(name)) {
       throw new Error(
         `Potentially insecure feature '${name}' has not been ` +
@@ -324,7 +284,14 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     }
   }
 
-  validateLocatorStrategy(strategy: string, webContext = false) {
+  /**
+   * Assert that a given locator strategy is supported by this driver, and throw otherwise
+   *
+   * @param strategy - the locator strategy
+   * @param webContext - whether the current context is a web context, in which case
+   * `webLocatorStrategies` are also considered valid
+   */
+  validateLocatorStrategy(strategy: string, webContext = false): void {
     let validStrategies = this.locatorStrategies;
     this.log.debug(`Valid locator strategies for this request: ${validStrategies.join(', ')}`);
 
@@ -337,18 +304,36 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /**
+   * Whether this driver is currently proxying commands for the given session to an upstream
+   * server. Should be overridden by drivers which support proxying.
+   *
+   * @param sessionId - the current sessionId
+   */
   proxyActive(sessionId: string): boolean {
+    void sessionId;
     return false;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /**
+   * The list of route/method pairs which should not be proxied even when {@linkcode proxyActive}
+   * is true. Should be overridden by drivers which support proxying.
+   *
+   * @param sessionId - the current sessionId
+   */
   getProxyAvoidList(sessionId: string): RouteMatcher[] {
+    void sessionId;
     return [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  /**
+   * Whether this driver is capable of proxying commands for the given session. Should be
+   * overridden by drivers which support proxying.
+   *
+   * @param sessionId - the current sessionId
+   */
   canProxy(sessionId: string): boolean {
+    void sessionId;
     return false;
   }
 
@@ -365,8 +350,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    *
    * @returns whether the route should be avoided
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   proxyRouteIsAvoided(sessionId: string, method: HTTPMethod, url: string, body?: any): boolean {
+    void body;
     for (const avoidSchema of this.getProxyAvoidList(sessionId)) {
       if (!Array.isArray(avoidSchema) || avoidSchema.length !== 2) {
         throw new Error('Proxy avoidance must be a list of pairs');
@@ -387,17 +372,27 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   }
 
   /**
-   * @param {Driver} driver
+   * Register a driver managed by this driver (e.g. a driver spun up internally to handle a
+   * sub-part of the automation), so that it can receive settings updates and be shut down
+   * alongside the managing driver.
+   *
+   * @param driver - the managed driver instance
    */
-  addManagedDriver(driver: Driver) {
+  addManagedDriver(driver: Driver): void {
     this.managedDrivers.push(driver);
   }
 
-  getManagedDrivers() {
+  /**
+   * @returns The list of drivers managed by this driver
+   */
+  getManagedDrivers(): Driver[] {
     return this.managedDrivers;
   }
 
-  async clearNewCommandTimeout() {
+  /**
+   * Clear the New Command Timeout, if one is currently running
+   */
+  async clearNewCommandTimeout(): Promise<void> {
     if (this.noCommandTimer) {
       clearTimeout(this.noCommandTimer);
       this.noCommandTimer = null;

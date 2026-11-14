@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
-import {mkdir, writeFile} from 'node:fs/promises';
+import {promises as fsPromises} from 'node:fs';
+import {mkdir, symlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
 
-import {fs, system, tempDir} from '../../lib';
+import {fs, system, tempDir} from '../../lib/index.js';
+import {Walker} from '../../lib/internal/index.js';
 
 const TEST_TIMEOUT = 10000;
 
 describe('fs', {timeout: TEST_TIMEOUT}, function () {
-  const existingPath = __filename;
+  const existingPath = import.meta.filename;
   let sandbox: ReturnType<typeof createSandbox>;
 
   beforeEach(function () {
@@ -23,7 +25,7 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
 
   describe('mkdir()', function () {
-    const dirName = path.resolve(__dirname, 'tmp');
+    const dirName = path.resolve(import.meta.dirname, 'tmp');
 
     it('should make a directory that does not exist', async function () {
       await fs.rimraf(dirName);
@@ -45,13 +47,13 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
 
   it('hasAccess()', async function () {
     assert.ok(await fs.exists(existingPath));
-    const nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
+    const nonExistingPath = path.resolve(import.meta.dirname, 'wrong-specs.js');
     assert.ok(!(await fs.hasAccess(nonExistingPath)));
   });
 
   it('exists()', async function () {
     assert.ok(await fs.exists(existingPath));
-    const nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
+    const nonExistingPath = path.resolve(import.meta.dirname, 'wrong-specs.js');
     assert.ok(!(await fs.exists(nonExistingPath)));
   });
 
@@ -93,6 +95,54 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
     await fs.rimraf(newPath);
     assert.strictEqual(await fs.exists(newPath), false);
   });
+
+  it('rimraf() forwards retry options while retaining removal defaults', async function () {
+    const rmStub = sandbox.stub(fsPromises, 'rm').resolves();
+    await fs.rimraf('locked-directory', {maxRetries: 3, retryDelay: 100});
+    sandbox.assert.calledOnceWithExactly(rmStub, 'locked-directory', {
+      recursive: true,
+      force: true,
+      maxRetries: 3,
+      retryDelay: 100,
+    });
+  });
+
+  for (const remove of [fs.rimraf, fs.rimrafSync]) {
+    describe(remove.name, function () {
+      it('removes nested contents when options are omitted', async function () {
+        const root = await tempDir.openDir();
+        await mkdir(path.join(root, 'nested'));
+        await writeFile(path.join(root, 'nested', 'file.txt'), 'content');
+        await remove(root);
+        assert.strictEqual(await fs.exists(root), false);
+      });
+
+      it('does not throw for a missing path when options are omitted', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.doesNotReject(async () => remove(missing));
+      });
+
+      it('keeps force enabled even if a JavaScript caller passes false', async function () {
+        const missing = path.join(await tempDir.openDir(), 'missing');
+        await assert.doesNotReject(async () => {
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(missing, {force: false});
+        });
+      });
+
+      it('keeps recursive enabled even if a JavaScript caller passes false', async function () {
+        const root = await tempDir.openDir();
+        try {
+          await writeFile(path.join(root, 'file.txt'), 'content');
+          // @ts-expect-error JavaScript callers can still supply excluded options.
+          await remove(root, {recursive: false});
+          assert.strictEqual(await fs.exists(root), false);
+        } finally {
+          await fs.rimraf(root);
+        }
+      });
+    });
+  }
 
   it('sanitizeName()', function () {
     assert.strictEqual(
@@ -165,101 +215,81 @@ describe('fs', {timeout: TEST_TIMEOUT}, function () {
   });
   it('glob()', async function () {
     const glob = '*.spec.js';
-    const tests = await fs.glob(glob, {cwd: __dirname});
+    const tests = await fs.glob(glob, {cwd: import.meta.dirname});
     assert.ok(Array.isArray(tests));
+    assert.ok(tests.length > 2);
+  });
+  it('glob() with lazy', async function () {
+    const glob = '*.spec.js';
+    const tests: string[] = [];
+    for await (const test of fs.glob(glob, {cwd: import.meta.dirname, lazy: true})) {
+      tests.push(test);
+    }
     assert.ok(tests.length > 2);
   });
 
   describe('walkDir()', function () {
+    it('should reject and destroy the walker on ENOENT', {timeout: 2000}, async function () {
+      const error = Object.assign(new Error('Cannot stat an entry'), {code: 'ENOENT'});
+      const destroy = sandbox.spy(Walker.prototype, 'destroy');
+      sandbox.stub(Walker.prototype, '_read').callsFake(function (this: Walker) {
+        this.emit('error', error, {path: import.meta.dirname});
+      });
+
+      await assert.rejects(
+        fs.walkDir(import.meta.dirname, true, () => false),
+        error,
+      );
+
+      assert.equal(destroy.calledOnce, true);
+    });
+
+    it(
+      'should skip a self-referencing link and visit healthy files',
+      {skip: system.isWindows(), timeout: 2000},
+      async function () {
+        const root = await tempDir.openDir();
+        try {
+          await symlink('loop', path.join(root, 'loop'));
+          const healthyFile = path.join(root, 'z-healthy.txt');
+          await writeFile(healthyFile, 'healthy');
+          const visited: string[] = [];
+
+          assert.equal(
+            await fs.walkDir(root, true, async (item) => {
+              visited.push(item);
+              return false;
+            }),
+            null,
+          );
+          assert.deepEqual(visited.sort(), [root, healthyFile].sort());
+        } finally {
+          await fs.rimraf(root);
+        }
+      },
+    );
+
     it('walkDir recursive', async function () {
       assert.notStrictEqual(
-        await fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
+        await fs.walkDir(import.meta.dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`)),
         null,
       );
     });
     it('should walk all elements recursive', async function () {
-      assert.strictEqual(await fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, () => undefined), null);
+      // `test/e2e` (rather than `test/e2e/fixture`) is used here so the walked directory's
+      // existence in `build/` doesn't depend on `test/e2e/fixture` happening to contain a
+      // `.json`/`.js` fixture for tsc to compile — it now only holds non-TS assets.
+      assert.strictEqual(await fs.walkDir(path.join(import.meta.dirname, '..', 'e2e'), true, () => undefined), null);
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');
       const stub = sandbox.stub().rejects(err);
-      await assert.rejects(fs.walkDir(__dirname, true, stub), err);
+      await assert.rejects(fs.walkDir(import.meta.dirname, true, stub), err);
       assert.strictEqual(stub.calledOnce, true);
     });
     it('should traverse non-recursively', async function () {
-      const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));
+      const filePath = await fs.walkDir(import.meta.dirname, false, (item) => item.endsWith('logger/helpers.js'));
       assert.strictEqual(filePath, null);
-    });
-  });
-
-  describe('findRoot()', function () {
-    describe('when not provided an argument', function () {
-      it('should throw', function () {
-        assert.throws(() => (fs.findRoot as any)(), TypeError);
-      });
-    });
-
-    describe('when provided a relative path', function () {
-      it('should throw', function () {
-        assert.throws(() => fs.findRoot('./foo'), TypeError);
-      });
-    });
-
-    describe('when provided an empty string', function () {
-      it('should throw', function () {
-        assert.throws(() => fs.findRoot(''), TypeError);
-      });
-    });
-
-    describe('when provided an absolute path', function () {
-      describe('when the path has a parent `package.json`', function () {
-        it('should locate the dir with the closest `package.json`', function () {
-          assert.strictEqual(typeof fs.findRoot(__dirname), 'string');
-        });
-      });
-
-      describe('when the path does not have a parent `package.json`', function () {
-        it('should throw', function () {
-          assert.throws(() => fs.findRoot('/'), Error);
-        });
-      });
-    });
-  });
-
-  describe('readPackageJsonFrom()', function () {
-    describe('when not provided an argument', function () {
-      it('should throw', function () {
-        assert.throws(() => (fs.readPackageJsonFrom as any)(), {
-          name: 'TypeError',
-          message: /non-empty, absolute path/,
-        });
-      });
-    });
-
-    describe('when provided a relative path', function () {
-      it('should throw', function () {
-        assert.throws(() => fs.readPackageJsonFrom('./foo'), TypeError);
-      });
-    });
-
-    describe('when provided an empty string', function () {
-      it('should throw', function () {
-        assert.throws(() => fs.readPackageJsonFrom(''), TypeError);
-      });
-    });
-
-    describe('when provided an absolute path', function () {
-      describe('when the path does not have a parent `package.json`', function () {
-        it('should throw', function () {
-          assert.throws(() => fs.readPackageJsonFrom('/'), Error);
-        });
-      });
-
-      describe('when the path has a parent `package.json`', function () {
-        it('should read the `package.json` found in the root dir', function () {
-          assert.strictEqual(typeof fs.readPackageJsonFrom(__dirname), 'object');
-        });
-      });
     });
   });
 });

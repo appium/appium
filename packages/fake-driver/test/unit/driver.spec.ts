@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
-import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import {describe, it, beforeEach, afterEach} from 'node:test';
 
 import type {Constraints, W3CDriverCaps} from '@appium/types';
+import {NEW_COMMAND_TIMEOUT_MS, W3C_TIMEOUTS_MS} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import {createSandbox} from 'sinon';
 
-import {FakeDriver} from '../../lib';
-import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import {FakeDriver} from '../../lib/index.js';
+import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 describe('FakeDriver unit suite', function () {
   let d: FakeDriver;
@@ -64,9 +65,9 @@ describe('FakeDriver unit suite', function () {
     assert.notDeepStrictEqual(sessionId1, sessionId2);
   });
 
-  it('should get the current session', async function () {
+  it('should get the current session capabilities', async function () {
     const [, caps] = await d.createSession(w3cCaps);
-    assert.strictEqual(caps, await d.getSession());
+    assert.deepStrictEqual((await d.getAppiumSessionCapabilities()).capabilities, caps);
   });
 
   it('should fulfill an unexpected driver quit promise', async function () {
@@ -103,7 +104,7 @@ describe('FakeDriver unit suite', function () {
     });
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
   });
 
   it('should allow new commands after done shutting down', async function () {
@@ -123,15 +124,15 @@ describe('FakeDriver unit suite', function () {
     void d.startUnexpectedShutdown(new Error('We crashed'));
     await p;
 
-    await assert.rejects(d.executeCommand('getSession'), /shut down/);
+    await assert.rejects(d.executeCommand('getStatus'), /shut down/);
     await sleep(500);
 
-    await d.executeCommand('createSession', null, null, structuredClone(w3cCaps));
+    await d.executeCommand('createSession', structuredClone(w3cCaps));
     await d.deleteSession();
   });
 
-  it('should distinguish between W3C and JSONWP session', async function () {
-    await d.executeCommand('createSession', null, null, {
+  it('should set the protocol to W3C on session creation', async function () {
+    await d.executeCommand('createSession', {
       alwaysMatch: {
         ...defaultCaps,
         platformName: 'Fake',
@@ -164,9 +165,11 @@ describe('FakeDriver unit suite', function () {
 
     beforeEach(function () {
       d = new FakeDriver();
-      sandbox.stub(d, 'getStatus').callsFake(async () => {
+      // getWindowHandle (rather than getStatus) is used here because getStatus is exempt from
+      // the commands queue by default, which would make these ordering assertions meaningless
+      sandbox.stub(d, 'getWindowHandle').callsFake(async () => {
         await sleep(waitMs);
-        return Date.now();
+        return String(Date.now());
       });
       sandbox.stub(d, 'deleteSession').callsFake(async () => {
         await sleep(waitMs);
@@ -180,11 +183,11 @@ describe('FakeDriver unit suite', function () {
 
     it('should queue commands and.executeCommand/respond in the order received', async function () {
       const numCmds = 10;
-      const cmds: Promise<number>[] = [];
+      const cmds: Promise<string>[] = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      const results = (await Promise.all(cmds)) as number[];
+      const results = (await Promise.all(cmds)) as string[];
       for (let i = 1; i < numCmds; i++) {
         if (results[i] <= results[i - 1]) {
           throw new Error('Got result out of order');
@@ -194,12 +197,12 @@ describe('FakeDriver unit suite', function () {
 
     it('should handle errors correctly when queuing', async function () {
       const numCmds = 10;
-      const cmds: Promise<number | void>[] = [];
+      const cmds: Promise<string | void>[] = [];
       for (let i = 0; i < numCmds; i++) {
         if (i === 5) {
           cmds.push(d.executeCommand('deleteSession'));
         } else {
-          cmds.push(d.executeCommand('getStatus'));
+          cmds.push(d.executeCommand('getWindowHandle'));
         }
       }
       const results = await Promise.allSettled(cmds);
@@ -227,16 +230,16 @@ describe('FakeDriver unit suite', function () {
 
     it('should not care if queue empties for a bit', async function () {
       const numCmds = 10;
-      let cmds: Promise<number>[] = [];
+      let cmds: Promise<string>[] = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      (await Promise.all(cmds)) as number[];
+      (await Promise.all(cmds)) as string[];
       cmds = [];
       for (let i = 0; i < numCmds; i++) {
-        cmds.push(d.executeCommand('getStatus'));
+        cmds.push(d.executeCommand('getWindowHandle'));
       }
-      const results = (await Promise.all(cmds)) as number[];
+      const results = (await Promise.all(cmds)) as string[];
       for (let i = 1; i < numCmds; i++) {
         if (results[i] <= results[i - 1]) {
           throw new Error('Got result out of order');
@@ -246,48 +249,86 @@ describe('FakeDriver unit suite', function () {
   });
 
   describe('timeouts', function () {
-    before(async function () {
-      await d.createSession(w3cCaps);
-    });
-    describe('command', function () {
-      it('should exist by default', function () {
-        assert.strictEqual(d.newCommandTimeoutMs, 60000);
-      });
-      it('should be settable through `timeouts`', async function () {
-        await d.timeouts('command', 20);
-        assert.strictEqual(d.newCommandTimeoutMs, 20);
-      });
-    });
-    describe('implicit', function () {
-      it('should not exist by default', function () {
-        assert.strictEqual(d.implicitWaitMs, 0);
-      });
-      it('should be settable through `timeouts`', async function () {
-        await d.timeouts('implicit', 20);
-        assert.strictEqual(d.implicitWaitMs, 20);
-      });
-    });
-  });
-
-  describe('timeouts (W3C)', function () {
     beforeEach(async function () {
       await d.createSession(w3cCaps);
     });
     afterEach(async function () {
       await d.deleteSession();
     });
-    it('should get timeouts that we set', async function () {
-      await d.timeouts(undefined, undefined, undefined, undefined, 1000);
-      assert.strictEqual((await d.getTimeouts()).implicit, 1000);
-      await d.timeouts('command', 2000);
-      assert.deepStrictEqual(await d.getTimeouts(), {
-        implicit: 1000,
-        command: 2000,
+    describe('default values', function () {
+      it('should have a default value for script timeout', function () {
+        assert.strictEqual(d.scriptTimeoutMs, W3C_TIMEOUTS_MS.SCRIPT);
       });
-      await d.timeouts(undefined, undefined, undefined, undefined, 3000);
-      assert.deepStrictEqual(await d.getTimeouts(), {
-        implicit: 3000,
-        command: 2000,
+      it('should have a default value for page load timeout', function () {
+        assert.strictEqual(d.pageLoadTimeoutMs, W3C_TIMEOUTS_MS.PAGE_LOAD);
+      });
+      it('should have a default value for implicit wait timeout', function () {
+        assert.strictEqual(d.implicitWaitMs, W3C_TIMEOUTS_MS.IMPLICIT_WAIT);
+      });
+      it('should have a default value for command timeout', function () {
+        assert.strictEqual(d.newCommandTimeoutMs, NEW_COMMAND_TIMEOUT_MS);
+      });
+    });
+    describe('set using JSONWP format', function () {
+      it('should allow setting script timeout', async function () {
+        await d.timeouts('script', 20);
+        assert.strictEqual(d.scriptTimeoutMs, 20);
+      });
+      it('should allow setting page load timeout', async function () {
+        await d.timeouts('page load', 20);
+        assert.strictEqual(d.pageLoadTimeoutMs, 20);
+      });
+      it('should allow setting implicit wait timeout', async function () {
+        await d.timeouts('implicit', 20);
+        assert.strictEqual(d.implicitWaitMs, 20);
+      });
+      it('should allow setting command timeout', async function () {
+        await d.timeouts('command', 20);
+        assert.strictEqual(d.newCommandTimeoutMs, 20);
+      });
+    });
+    describe('set using W3C format', function () {
+      it('should allow setting script timeout', async function () {
+        await d.timeouts(undefined, undefined, 20);
+        assert.strictEqual(d.scriptTimeoutMs, 20);
+      });
+      it('should allow setting page load timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, 20);
+        assert.strictEqual(d.pageLoadTimeoutMs, 20);
+      });
+      it('should allow setting implicit wait timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, undefined, 20);
+        assert.strictEqual(d.implicitWaitMs, 20);
+      });
+      it('should allow setting command timeout', async function () {
+        await d.timeouts(undefined, undefined, undefined, undefined, undefined, 20);
+        assert.strictEqual(d.newCommandTimeoutMs, 20);
+      });
+    });
+    describe('retrieval', function () {
+      it('should retrieve default timeouts if unset', async function () {
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: W3C_TIMEOUTS_MS.PAGE_LOAD,
+          implicit: W3C_TIMEOUTS_MS.IMPLICIT_WAIT,
+          command: NEW_COMMAND_TIMEOUT_MS,
+        });
+      });
+      it('should retrieve modified timeouts if changed', async function () {
+        await d.timeouts(undefined, undefined, undefined, 2000, 1000);
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: 2000,
+          implicit: 1000,
+          command: NEW_COMMAND_TIMEOUT_MS,
+        });
+        await d.timeouts('command', 3000);
+        assert.deepStrictEqual(await d.getTimeouts(), {
+          script: W3C_TIMEOUTS_MS.SCRIPT,
+          pageLoad: 2000,
+          implicit: 1000,
+          command: 3000,
+        });
       });
     });
   });
@@ -399,7 +440,7 @@ describe('FakeDriver unit suite', function () {
     beforeEach(async function () {
       beforeStartTime = Date.now();
       d.shouldValidateCaps = false;
-      await d.executeCommand('createSession', null, null, {
+      await d.executeCommand('createSession', {
         alwaysMatch: {...defaultCaps},
         firstMatch: [{}],
       });
@@ -452,18 +493,6 @@ describe('FakeDriver unit suite', function () {
       assert.strictEqual(d.eventHistory.bar.length, 2);
       assert.strictEqual(typeof d.eventHistory.bar[1], 'number');
       assert.strictEqual(d.eventHistory.bar[1] >= d.eventHistory.bar[0], true);
-    });
-    describe('getSession decoration', function () {
-      it('should decorate getSession response if opt-in cap is provided', async function () {
-        let res = await d.getSession();
-        assert.ok(!res.events);
-
-        (d.caps as Record<string, unknown>).eventTimings = true;
-        res = await d.getSession();
-        assert.ok(res.events);
-        assert.ok(res.events?.newSessionRequested);
-        assert.strictEqual(typeof res.events?.newSessionRequested[0], 'number');
-      });
     });
   });
 });
@@ -524,33 +553,12 @@ describe('.isFeatureEnabled', function () {
 });
 
 describe('FakeDriver', function () {
-  it('should not start a session when a unique session is already running', async function () {
-    const d1 = new FakeDriver();
-    const [uniqueSession] = await d1.createSession(null as any, null as any, {
-      alwaysMatch: {
-        ...structuredClone(W3C_PREFIXED_CAPS),
-        'appium:uniqueApp': true,
-      },
-      firstMatch: [{}],
-    });
-    assert.strictEqual(typeof uniqueSession, 'string');
-    const d2 = new FakeDriver();
-    const otherSessionData = [d1.driverData];
-    try {
-      await assert.rejects(
-        d2.createSession(null as any, null as any, structuredClone(W3C_CAPS), otherSessionData),
-        /unique/,
-      );
-    } finally {
-      await d1.deleteSession(uniqueSession);
-    }
-  });
   it('should start a new session when another non-unique session is running', async function () {
     const d1 = new FakeDriver();
-    const [session1Id] = await d1.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session1Id] = await d1.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session1Id, 'string');
     const d2 = new FakeDriver();
-    const [session2Id] = await d2.createSession(null as any, null as any, structuredClone(W3C_CAPS));
+    const [session2Id] = await d2.createSession(structuredClone(W3C_CAPS));
     assert.strictEqual(typeof session2Id, 'string');
     assert.notStrictEqual(session1Id, session2Id);
     await d1.deleteSession(session1Id);

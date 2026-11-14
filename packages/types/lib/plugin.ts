@@ -1,10 +1,7 @@
-import type {AsyncReturnType} from 'type-fest';
-
-import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps';
-import type {DriverCommand, ExternalDriver} from './driver';
-import type {AppiumLogger} from './logger';
-import type {UpdateServerCallback} from './server';
-import type {Class, StringRecord} from './util';
+import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps.js';
+import type {DriverCommand, ExternalDriver} from './driver.js';
+import type {UpdateServerCallback} from './server.js';
+import type {Class, StringRecord} from './util.js';
 /**
  * The interface describing the constructor and static properties of a Plugin.
  */
@@ -53,7 +50,7 @@ export interface PluginStatic<P extends Plugin> {
 export type DriverCommandToPluginCommand<
   DC extends DriverCommand,
   TArgs extends readonly any[] = Parameters<DC>,
-  TReturn = AsyncReturnType<DC>,
+  TReturn = Awaited<ReturnType<DC>>,
   NextRetval = unknown,
 > = PluginCommand<ExternalDriver, TArgs, TReturn, NextRetval>;
 
@@ -68,13 +65,9 @@ export interface Plugin {
    */
   name: string;
   /**
-   * A logger with prefix identifying the plugin
-   */
-  logger: AppiumLogger;
-  /**
    * CLI args for this plugin (if any are accepted and provided).
    */
-  cliArgs: Record<string, any>;
+  cliArgs: Readonly<Record<string, any>>;
   /**
    * Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.
    */

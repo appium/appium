@@ -1,30 +1,30 @@
 import assert from 'node:assert/strict';
 import {Agent} from 'node:http';
-import {describe, it, before, after, type TestContext, beforeEach, afterEach} from 'node:test';
+import {describe, it, before, after, beforeEach, afterEach} from 'node:test';
 
 import {createAppiumURL, getTestPort} from '@appium/driver-test-support';
+import {server} from '@appium/http-server';
 import type {
   AppiumServer,
   BaseNSCapabilities,
   Capabilities,
   Constraints,
-  SingularSessionData,
+  RequireAtLeastOne,
   W3CCapabilities,
 } from '@appium/types';
-import {DeviceSettings, routeConfiguringFunction, server} from 'appium/driver';
+import {DeviceSettings, routeConfiguringFunction} from 'appium/driver.js';
 import {sleep} from 'asyncbox';
 import axios from 'axios';
 import type {AxiosResponse, RawAxiosRequestConfig} from 'axios';
 import sinon from 'sinon';
-import type {RequireAtLeastOne} from 'type-fest';
 
-import {FakeDriver, startServer} from '../../lib/index';
-import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers';
-import {alertTests} from './alert.e2e.spec';
-import {contextTests} from './context.e2e.spec';
-import {elementTests as elementInteractionTests} from './element-interaction.e2e.spec';
-import {findElementTests} from './find-element.e2e.spec';
-import {generalTests} from './general.e2e.spec';
+import {FakeDriver, startServer} from '../../lib/index.js';
+import {BASE_CAPS, deleteSession, initSession, TEST_HOST, W3C_PREFIXED_CAPS} from '../helpers.js';
+import {alertTests} from './alert.e2e.spec.js';
+import {contextTests} from './context.e2e.spec.js';
+import {elementTests as elementInteractionTests} from './element-interaction.e2e.spec.js';
+import {findElementTests} from './find-element.e2e.spec.js';
+import {generalTests} from './general.e2e.spec.js';
 
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 
@@ -53,7 +53,6 @@ interface SessionHelpers<CommandData = unknown, ResponseData = any> {
   ) => Promise<ResponseData>;
   startSession: (data: NewSessionData, config?: RawAxiosRequestConfig) => Promise<NewSessionResponse>;
   endSession: (sessionId: string) => Promise<AxiosResponse<{value: {error?: string} | null}, {validateStatus: null}>>;
-  getSession: (sessionId: string) => Promise<SingularSessionData>;
 }
 
 describe(`FakeDriver E2E`, function () {
@@ -61,7 +60,6 @@ describe(`FakeDriver E2E`, function () {
   let d: FakeDriver;
   let newSessionURL: string;
   let startSession: SessionHelpers['startSession'];
-  let getSession: SessionHelpers['getSession'];
   let endSession: SessionHelpers['endSession'];
   let getCommand: SessionHelpers['getCommand'];
   let postCommand: SessionHelpers['postCommand'];
@@ -77,10 +75,10 @@ describe(`FakeDriver E2E`, function () {
       port,
       hostname: address,
       cliArgs: {} as any,
+      extraMethodMap: FakeDriver.newMethodMap,
     });
     const helpers = createSessionHelpers(port, address);
     startSession = helpers.startSession;
-    getSession = helpers.getSession;
     endSession = helpers.endSession;
     getCommand = helpers.getCommand;
     postCommand = helpers.postCommand;
@@ -91,12 +89,7 @@ describe(`FakeDriver E2E`, function () {
   });
 
   describe('session handling', function () {
-    it('should handle idempotency while creating sessions', async function (ctx: TestContext) {
-      // TODO: Fix this test for Node 24+
-      if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        return ctx.skip();
-      }
-
+    it('should handle idempotency while creating sessions', async function () {
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735
       const httpAgent = new Agent({keepAlive: true});
 
@@ -118,19 +111,14 @@ describe(`FakeDriver E2E`, function () {
         sessionIds.push(sessionId);
         times++;
       } while (times < 2);
-      assert.strictEqual([...new Set(sessionIds)].length, 1);
+      assert.strictEqual(new Set(sessionIds).size, 1);
 
       const {status, data} = await endSession(sessionIds[0]);
       assert.strictEqual(status, 200);
       assert.strictEqual(data.value, null);
     });
 
-    it('should handle idempotency while creating parallel sessions', async function (ctx: TestContext) {
-      // TODO: Fix this test for Node 24+
-      if (parseInt(process.versions.node.split('.')[0], 10) >= 24) {
-        return ctx.skip();
-      }
-
+    it('should handle idempotency while creating parallel sessions', async function () {
       // workaround for https://github.com/node-fetch/node-fetch/issues/1735
       const httpAgent = new Agent({keepAlive: true});
 
@@ -155,7 +143,7 @@ describe(`FakeDriver E2E`, function () {
         times++;
       } while (times < 2);
       const sessionIds = (await Promise.all(reqs)).map((r) => r.sessionId);
-      assert.strictEqual([...new Set(sessionIds)].length, 1);
+      assert.strictEqual(new Set(sessionIds).size, 1);
 
       const {status, data} = await endSession(sessionIds[0]);
       assert.strictEqual(status, 200);
@@ -224,7 +212,7 @@ describe(`FakeDriver E2E`, function () {
         value: 'foo',
       });
       await sleep(400);
-      const value = await getSession(sessionId);
+      const value = await getCommand(sessionId, 'appium/capabilities');
       assert.strictEqual(value.error, 'invalid session id');
       assert.strictEqual(d.sessionId, null);
       const resp = (await endSession(newSession.sessionId)).data.value;
@@ -252,8 +240,8 @@ describe(`FakeDriver E2E`, function () {
         value: 'foo',
       });
       await sleep(400);
-      const value = await getSession(d.sessionId!);
-      assert.strictEqual(value.platformName, defaultCaps.platformName);
+      const value = await getCommand(d.sessionId!, 'appium/capabilities');
+      assert.strictEqual(value.capabilities.platformName, defaultCaps.platformName);
       const resp = (await endSession(newSession.sessionId)).data.value;
       assert.strictEqual(resp, null);
 
@@ -269,7 +257,7 @@ describe(`FakeDriver E2E`, function () {
         value: 'foo',
       });
       await sleep(400);
-      const value = await getSession(sessionId!);
+      const value = await getCommand(sessionId!, 'appium/capabilities');
       assert.strictEqual((value as any).error, 'invalid session id');
       assert.strictEqual(d.sessionId, null);
       const resp = (await endSession(newSession.sessionId)).data.value as {error?: string};
@@ -331,51 +319,6 @@ describe(`FakeDriver E2E`, function () {
       await shutdownEventPromise;
     });
   });
-
-  describe('event timings', function () {
-    let session: NewSessionResponse | undefined;
-    let res: SingularSessionData;
-
-    describe('when not provided the eventTimings cap', function () {
-      before(async function () {
-        session = await startSession({capabilities: {alwaysMatch: defaultCaps}});
-        res = await getSession(session.sessionId);
-      });
-
-      after(async function () {
-        if (session) {
-          await endSession(session.sessionId);
-        }
-      });
-
-      it('should not respond with events', function () {
-        assert.strictEqual(res.events, undefined);
-      });
-    });
-
-    describe('when provided the eventTimings cap', function () {
-      before(async function () {
-        session = await startSession({
-          capabilities: {alwaysMatch: {...defaultCaps, 'appium:eventTimings': true}},
-        });
-        res = await getSession(session.sessionId);
-      });
-
-      after(async function () {
-        if (session) {
-          await endSession(session.sessionId);
-        }
-      });
-
-      it('should add a newSessionRequested event', function () {
-        assert.strictEqual(typeof res.events?.newSessionRequested?.[0], 'number');
-      });
-
-      it('should add a newSessionStarted event', function () {
-        assert.strictEqual(typeof res.events?.newSessionRequested?.[0], 'number');
-      });
-    });
-  });
 });
 
 describe('FakeDriver - via HTTP', function () {
@@ -432,13 +375,16 @@ describe('FakeDriver - via HTTP', function () {
       await axios.delete(`http://${TEST_HOST}:${port}/session/${value.sessionId}`);
     });
 
-    it('should fail if given unsupported desiredCapabilities', async function () {
-      await assert.rejects(
-        axios.post(`http://${TEST_HOST}:${port}/session`, {
+    it('should return invalid argument if given unsupported desiredCapabilities', async function () {
+      const {status, data} = await axios.post(
+        `http://${TEST_HOST}:${port}/session`,
+        {
           desiredCapabilities: W3C_PREFIXED_CAPS,
-        }),
-        /500/,
+        },
+        {validateStatus: null},
       );
+      assert.strictEqual(status, 400);
+      assert.strictEqual(data.value.error, 'invalid argument');
     });
   });
 });
@@ -490,12 +436,5 @@ function createSessionHelpers<CommandData = unknown, ResponseData = any>(
       await axios.delete(createSessionURL(sessionId), {
         validateStatus: null,
       }),
-    getSession: async (sessionId) => {
-      const response = await axios({
-        url: createSessionURL(sessionId),
-        validateStatus: null,
-      });
-      return response.data?.value;
-    },
   };
 }

@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import type {DriverType, PluginType} from '@appium/types';
-import type {CliExtensionSubcommand} from 'appium/types';
+import type {CliExtensionSubcommand} from 'appium/types/index.js';
 import {ArgumentParser} from 'argparse';
 import type {SubArgumentParserOptions, SubparsersAction} from 'argparse';
 
@@ -16,12 +16,12 @@ import {
   PLUGIN_TYPE,
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND,
-} from '../constants';
-import {APPIUM_VER} from '../helpers/build';
-import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema';
-import {setPath} from '../utils';
-import {getExtensionArgs, getServerArgs} from './args';
-import type {ArgumentDefinitions} from './args';
+} from '../constants.js';
+import {APPIUM_VER} from '../helpers/build.js';
+import type {ArgumentDefinitions} from '../schema/index.js';
+import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema/index.js';
+import {setPath} from '../utils/index.js';
+import {getExtensionArgs, getServerArgs} from './args.js';
 import {
   DEFAULT_PLUGINS,
   determinePlatformName,
@@ -30,7 +30,7 @@ import {
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_RESET,
-} from './setup-command';
+} from './setup-command.js';
 
 export const EXTRA_ARGS = 'extraArgs';
 
@@ -268,24 +268,25 @@ export class ArgParser {
       dest: `setupCommand`,
     });
 
+    const defaultPluginsString = DEFAULT_PLUGINS.join(', ');
     const parserSpecs = [
       {
         command: SUBCOMMAND_MOBILE,
         help:
           `The preset for mobile devices ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_MOBILE).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_BROWSER,
         help:
           `The preset for desktop browsers ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_BROWSER).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_DESKTOP,
         help:
           `The preset for desktop applications ` +
-          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${DEFAULT_PLUGINS})`,
+          `(drivers: ${getPresetDrivers(SUBCOMMAND_DESKTOP).join(',')}; plugins: ${defaultPluginsString})`,
       },
       {
         command: SUBCOMMAND_RESET,

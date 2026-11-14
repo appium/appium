@@ -16,12 +16,4 @@ export const MJSONWP_ROUTES = {
   '/session/:sessionId/contexts': {
     GET: {command: 'getContexts', deprecated: true},
   },
-  '/session/:sessionId/network_connection': {
-    GET: {command: 'getNetworkConnection', deprecated: true},
-    POST: {
-      command: 'setNetworkConnection',
-      payloadParams: {unwrap: 'parameters', required: ['type']},
-      deprecated: true,
-    },
-  },
 } as const satisfies MethodMap<Driver>;

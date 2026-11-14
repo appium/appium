@@ -1,5 +1,5 @@
 // @ts-nocheck
-module.exports = {
+export default {
   notFind: function () { // eslint-disable-line object-shorthand
     return [];
   }

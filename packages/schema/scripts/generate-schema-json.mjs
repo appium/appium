@@ -8,7 +8,6 @@
  */
 
 import {mkdir, writeFile} from 'node:fs/promises';
-import {createRequire} from 'node:module';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 const info = 'ℹ';
@@ -43,24 +42,23 @@ const SCHEMA_SRC = path.join(SCHEMA_ROOT, 'build', 'lib', 'appium-config-schema.
 const OUTPUT_PATH = path.join(OUTPUT_DIR, JSON_FILENAME);
 
 async function write() {
-  /** @type {typeof import('../lib/appium-config-schema').AppiumConfigJsonSchema} */
+  /** @type {typeof import('../lib/appium-config-schema.js').AppiumConfigJsonSchema} */
   let schema;
   try {
-    // Use createRequire to require CommonJS module from ESM
-    const require = createRequire(import.meta.url);
-    ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
+    ({AppiumConfigJsonSchema: schema} = await import(pathToFileURL(SCHEMA_SRC).href));
   } catch (e) {
     throw new Error(`${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`, {cause: e});
   }
 
-  const json = JSON.stringify(schema, null, 2);
+  const json = `${JSON.stringify(schema, null, 2)}\n`;
 
   try {
     await mkdir(OUTPUT_DIR, {recursive: true});
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`, {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${message}`, {
       cause: err,
     });
   }
@@ -78,6 +76,6 @@ async function main() {
 }
 
 // Check if this module is being run directly
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main();
+if (import.meta.main) {
+  void main();
 }

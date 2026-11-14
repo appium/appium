@@ -1,26 +1,17 @@
 import {util} from '@appium/support';
 
-import {duplicateKeys} from '../basedriver/helpers';
-import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
+import {PROTOCOLS} from '../constants.js';
 
 /**
- * Preprocesses the resulting value for API responses,
- * so they have keys for both W3C and JSONWP protocols.
+ * Preprocesses the resulting value for API responses.
  * The argument value is NOT mutated.
  *
  * @param resValue - The actual response value
  * @returns Either modified value or the same one if nothing has been modified
  */
 export function formatResponseValue(resValue: object | undefined): object | null {
-  if (resValue === undefined) {
-    // convert undefined to null
-    return null;
-  }
-  // If the MJSONWP element key format (ELEMENT) was provided,
-  // add a duplicate key (element-6066-11e4-a52e-4f735466cecf)
-  // If the W3C element key format (element-6066-11e4-a52e-4f735466cecf)
-  // was provided, add a duplicate key (ELEMENT)
-  return duplicateKeys(resValue, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY);
+  // convert undefined to null
+  return resValue === undefined ? null : resValue;
 }
 
 /**
@@ -38,4 +29,62 @@ export function ensureW3cResponse(responseBody: Record<string, unknown>): Record
   delete result.status;
   delete result.sessionId;
   return result;
+}
+
+/** Shared by every copy of this package. Enumerable so a spread or `Object.assign` clone keeps it. */
+const RESPONSE_ENVELOPE = Symbol.for('appium.responseEnvelope');
+
+/** Frozen objects cannot take the symbol. This copy still remembers them. */
+const responseEnvelopes = new WeakSet<object>();
+
+type ProtocolResponse = {
+  protocol?: typeof PROTOCOLS.W3C | typeof PROTOCOLS.MJSONWP | null;
+  value?: unknown;
+  error?: unknown;
+};
+
+/**
+ * Marks a response Appium built. A command result such as `{protocol: 'W3C', value: 5}` is not marked.
+ * Only Appium's umbrella driver calls this. A driver returns the value or throws.
+ * The mark is visible to another copy of this package, and to a spread or `Object.assign` clone.
+ * A frozen object is remembered only by this copy.
+ *
+ * @param envelope - Response object Appium just built
+ * @returns The same object
+ */
+export function markResponseEnvelope<T extends object>(envelope: T): T {
+  responseEnvelopes.add(envelope);
+  try {
+    Object.defineProperty(envelope, RESPONSE_ENVELOPE, {
+      value: true,
+      enumerable: true,
+    });
+  } catch {
+    // frozen or sealed
+  }
+  return envelope;
+}
+
+/**
+ * Whether `value` is a driver response envelope rather than command data.
+ * Marked responses qualify, as does `{protocol, error}` when `protocol` is `W3C` or `MJSONWP`
+ * and `error` is an Error.
+ * `{protocol: 'W3C', value: 5}` is command data.
+ *
+ * @param value - Command result or already wrapped handler result
+ * @returns `true` when the caller should read `value` / `error` instead of returning the object
+ */
+export function isProtocolResponseEnvelope(value: unknown): value is ProtocolResponse {
+  if (!util.isPlainObject(value)) {
+    return false;
+  }
+  const marker = Object.getOwnPropertyDescriptor(value, RESPONSE_ENVELOPE);
+  if (responseEnvelopes.has(value) || marker?.value === true) {
+    return true;
+  }
+  if (!(value.error instanceof Error)) {
+    return false;
+  }
+  const protocol = value.protocol;
+  return protocol === PROTOCOLS.W3C || protocol === PROTOCOLS.MJSONWP;
 }

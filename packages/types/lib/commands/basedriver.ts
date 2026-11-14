@@ -1,9 +1,10 @@
-import type {DriverCaps, W3CDriverCaps} from '../capabilities';
-import type {Constraints} from '../constraints';
-import type {Element, StringRecord} from '../util';
+import type {DriverCaps, W3CDriverCaps} from '../capabilities.js';
+import type {Constraints} from '../constraints.js';
+import type {Timeouts, TimeoutValue} from '../standard-caps.js';
+import type {Element, StringRecord} from '../util.js';
 
 export interface IBidiCommands {
-  bidiSubscribe(events: string[], contexts?: string[]): Promise<{subscription: string}>;
+  bidiSubscribe(events: string[], contexts?: string[], userContexts?: string[]): Promise<{subscription: string}>;
   bidiUnsubscribe(events?: string[], contexts?: string[], subscriptions?: string[]): Promise<void>;
   bidiStatus(): Promise<DriverStatus>;
 }
@@ -19,18 +20,26 @@ export interface ITimeoutCommands {
    * Set the various timeouts associated with a session
    * @see {@link https://w3c.github.io/webdriver/#set-timeouts}
    *
-   * @param type - used only for the old (JSONWP) command, the type of the timeout
-   * @param ms - used only for the old (JSONWP) command, the ms for the timeout
-   * @param script - the number in ms for the script timeout, used for the W3C command
-   * @param pageLoad - the number in ms for the pageLoad timeout, used for the W3C command
-   * @param implicit - the number in ms for the implicit wait timeout, used for the W3C command
+   * @param type - the type of the timeout (deprecated)
+   * @param ms - the ms for the timeout (deprecated)
+   * @param script - the script timeout in ms, or null to disable the timeout
+   * @param pageLoad - the page load timeout in ms, or null to disable the timeout
+   * @param implicit - the implicit wait timeout in ms, or null to disable the timeout
+   * @param command - the number in ms for the Appium-specific command timeout
    */
   timeouts(
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
     type?: string,
+    /**
+     * @deprecated set `script`, `pageLoad`, `implicit` or `command` directly
+     */
     ms?: number | string,
-    script?: number,
-    pageLoad?: number,
-    implicit?: number | string,
+    script?: TimeoutValue,
+    pageLoad?: TimeoutValue,
+    implicit?: TimeoutValue,
+    command?: number,
   ): Promise<void>;
 
   /**
@@ -41,11 +50,25 @@ export interface ITimeoutCommands {
   setNewCommandTimeout(ms: number): void;
 
   /**
+   * A helper method (not a command) used to set the script timeout value
+   *
+   * @param ms - the script timeout in ms, or null to disable the timeout
+   */
+  setScriptTimeout(ms: TimeoutValue): void;
+
+  /**
+   * A helper method (not a command) used to set the page load timeout value
+   *
+   * @param ms - the page load timeout in ms, or null to disable the timeout
+   */
+  setPageLoadTimeout(ms: TimeoutValue): void;
+
+  /**
    * A helper method (not a command) used to set the implicit wait value
    *
-   * @param ms - the implicit wait in ms
+   * @param ms - the implicit wait in ms, or null to disable the timeout
    */
-  setImplicitWait(ms: number): void;
+  setImplicitWait(ms: TimeoutValue): void;
 
   /**
    * Periodically retry an async function up until the currently set implicit wait timeout
@@ -62,35 +85,7 @@ export interface ITimeoutCommands {
    *
    * @returns A map of timeout names to ms values
    */
-  getTimeouts(): Promise<Record<string, number>>;
-
-  /**
-   * Set the implicit wait value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  implicitWaitW3C(ms: number): Promise<void>;
-
-  /**
-   * Set the page load timeout value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  pageLoadTimeoutW3C(ms: number): Promise<void>;
-
-  /**
-   * Set the script timeout value that was sent in via the W3C protocol
-   *
-   * @param ms - the timeout in ms
-   */
-  scriptTimeoutW3C(ms: number): Promise<void>;
-
-  /**
-   * Set Appium's new command timeout
-   *
-   * @param ms - the timeout in ms
-   */
-  newCommandTimeout(ms: number): Promise<void>;
+  getTimeouts(): Promise<Timeouts & {command: number}>;
 
   /**
    * Get a timeout value from a number or a string
@@ -162,7 +157,7 @@ export interface IFindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
 
   /**
-   * Find a list of all UI elements matching a given a locator strategy and a selector
+   * Find a list of all UI elements matching a given locator strategy and a selector
    * @see {@link https://w3c.github.io/webdriver/#find-elements}
    *
    * @param strategy - the locator strategy
@@ -187,7 +182,7 @@ export interface IFindCommands {
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
 
   /**
-   * Find a list of all UI elements matching a given a locator strategy and a selector. Only
+   * Find a list of all UI elements matching a given locator strategy and a selector. Only
    * look for elements among the set of descendants of a given element
    * @see {@link https://w3c.github.io/webdriver/#find-elements-from-element}
    *
@@ -227,12 +222,13 @@ export interface IFindCommands {
    * @param strategy - the locator strategy
    * @param selector - the selector
    * @param mult - whether or not we want to find multiple elements
-   * @param context - the element to use as the search context basis if desiredCapabilities
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
    *
    * @returns A single element or list of elements
    */
   findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
   findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
+  findElOrEls(strategy: string, selector: string, mult: boolean, context?: any): Promise<Element[] | Element>;
 
   /**
    * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
@@ -241,7 +237,7 @@ export interface IFindCommands {
    * @param strategy - the locator strategy
    * @param selector - the selector
    * @param mult - whether or not we want to find multiple elements
-   * @param context - the element to use as the search context basis if desiredCapabilities
+   * @param context - the id of the element to scope the search to, if searching within a specific element's descendants
    *
    * @returns A single element or list of elements
    */
@@ -298,7 +294,7 @@ export interface LogDef {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: (driver: any) => Promise<unknown> | unknown;
+  getter: (driver: any) => unknown;
 }
 
 export interface ISettingsCommands<T extends object = object> {
@@ -319,28 +315,12 @@ export interface ISettingsCommands<T extends object = object> {
 }
 
 /**
- * Tuple shape of the deprecated multi-argument overload of {@linkcode ISessionHandler.createSession}.
- * Shared with {@linkcode BaseDriver.createSession}'s implementation so the parameter list only
- * needs to be written out once.
- *
- * @deprecated Use the single-argument overload of {@linkcode ISessionHandler.createSession}
- * instead.
- */
-export type LegacyCreateSessionArgs<C extends Constraints> = [
-  w3cCaps1: W3CDriverCaps<C>,
-  w3cCaps2?: W3CDriverCaps<C>,
-  w3cCaps3?: W3CDriverCaps<C>,
-  driverData?: DriverData[],
-];
-
-/**
  * An interface which creates and deletes sessions.
  */
 export interface ISessionHandler<
   C extends Constraints = Constraints,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 > {
   /**
    * Start a new automation session
@@ -350,17 +330,6 @@ export interface ISessionHandler<
    * @returns The capabilities object representing the created session
    */
   createSession(w3cCapabilities: W3CDriverCaps<C>): Promise<CreateResult>;
-  /**
-   * @deprecated Historically this method accepted the same W3C capabilities object in up to three
-   * positions to support the retired JSONWP protocol. These positions are intended to carry the
-   * same value; if they differ, which one wins is unspecified. Use the single-argument overload
-   * of {@linkcode createSession} instead. The `driverData` parameter is also deprecated; use
-   * {@linkcode IAppiumIpc} for cross-session coordination instead.
-   *
-   * @param legacyArgs - see {@linkcode LegacyCreateSessionArgs}
-   * @returns The capabilities object representing the created session
-   */
-  createSession(...legacyArgs: LegacyCreateSessionArgs<C>): Promise<CreateResult>;
 
   /**
    * Stop an automation session
@@ -369,21 +338,6 @@ export interface ISessionHandler<
    * @param sessionId - the id of the session that is to be deleted
    */
   deleteSession(sessionId?: string): Promise<DeleteResult | void>;
-  /**
-   * @deprecated The `driverData` parameter is unused by {@linkcode BaseDriver}; use
-   * {@linkcode IAppiumIpc} for cross-session coordination instead.
-   *
-   * @param sessionId - the id of the session that is to be deleted
-   * @param driverData - the driver data for other currently-running sessions
-   */
-  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult | void>;
-
-  /**
-   * Get the data for the current session
-   *
-   * @returns A session data object
-   */
-  getSession(): Promise<SingularSessionData<C, SessionData>>;
 
   /**
    * Get the capabilities of the current session
@@ -402,28 +356,6 @@ export type DefaultCreateSessionResult<C extends Constraints> = [sessionId: stri
  * @see {@linkcode ISessionHandler}
  */
 export type DefaultDeleteSessionResult = void;
-
-/**
- * Custom session data for a driver.
- *
- * @deprecated Use {@linkcode IAppiumIpc} for cross-session coordination instead.
- */
-export type DriverData = Record<string, unknown>;
-
-/**
- * Data returned by {@linkcode ISessionHandler.getSession}.
- *
- * @typeParam C - The driver's capability constraints
- * @typeParam T - Any extra data the driver stuffs in here
- * @privateRemarks The content of this object looks implementation-specific and in practice is not well-defined.  It's _possible_ to fully type this in the future.
- */
-export type SingularSessionData<
-  C extends Constraints = Constraints,
-  T extends StringRecord = StringRecord,
-> = DriverCaps<C> & {
-  events?: EventHistory;
-  error?: string;
-} & T;
 
 /**
  * Data returned by `AppiumDriver.getAppiumSessions`
@@ -454,7 +386,6 @@ export type IImplementedCommands<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord,
 > = IBidiCommands &
   ILogCommands &
   IFindCommands &
@@ -462,4 +393,4 @@ export type IImplementedCommands<
   ITimeoutCommands &
   IEventCommands &
   IExecuteCommands &
-  ISessionHandler<C, CreateResult, DeleteResult, SessionData>;
+  ISessionHandler<C, CreateResult, DeleteResult>;

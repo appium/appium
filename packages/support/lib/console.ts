@@ -1,8 +1,9 @@
 import {Console as NodeConsole} from 'node:console';
-import {Writable} from 'node:stream';
 import {type InspectOptions, styleText as nodeStyleText} from 'node:util';
 
-import type {JsonValue} from 'type-fest';
+import type {JsonValue} from '@appium/types';
+
+import {isUnicodeSupported, NullWritable, streamSupportsColor, stripAnsi} from './internal/index.js';
 
 /** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
 export type TextStyle =
@@ -44,12 +45,6 @@ export type TextStyle =
   | 'cyanBright'
   | 'whiteBright';
 
-// CSI (Control Sequence Introducer) and OSC (Operating System Command) per ECMA-48.
-const ANSI_CSI_RE = // eslint-disable-next-line no-control-regex
-  /\x1b\[[0-?]*[ -/]*[@-~]/g;
-const ANSI_OSC_RE = // eslint-disable-next-line no-control-regex
-  /\x1b\][^\x07]*(?:\x07|\x1b\\)/g;
-
 /** Applies terminal styling via Node's `util.styleText`. */
 export function styleText(style: TextStyle, text: string): string {
   const format = style === 'grey' ? 'gray' : style;
@@ -58,45 +53,10 @@ export function styleText(style: TextStyle, text: string): string {
 
 /** Removes ANSI escape sequences (CSI and OSC) from a string. */
 export function stripColors(text: string): string {
-  return text.replace(ANSI_OSC_RE, '').replace(ANSI_CSI_RE, '');
-}
-
-function isUnicodeSupported(): boolean {
-  if (process.env.TERM === 'dumb') {
-    return false;
-  }
-  if (process.platform === 'win32') {
-    return Boolean(
-      process.env.CI ||
-      process.env.WT_SESSION ||
-      process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm' ||
-      process.env.TERM_PROGRAM === 'vscode',
-    );
-  }
-  return true;
+  return stripAnsi(text);
 }
 
 const UNICODE = isUnicodeSupported();
-
-/** Returns whether stderr should use ANSI color by default. */
-function stderrSupportsColor(stream: {isTTY?: boolean} = process.stderr): boolean {
-  const {env} = process;
-  if (env.NO_COLOR !== undefined || env.NODE_DISABLE_COLORS !== undefined) {
-    return false;
-  }
-  const {FORCE_COLOR: forceColor} = env;
-  if (forceColor !== undefined) {
-    const normalized = forceColor.toLowerCase();
-    return normalized !== '0' && normalized !== 'false';
-  }
-  if (env.TERM === 'dumb') {
-    return false;
-  }
-  if (!stream.isTTY) {
-    return false;
-  }
-  return true;
-}
 
 const logSymbols = {
   info: UNICODE ? 'ℹ' : 'i',
@@ -111,7 +71,7 @@ export interface ConsoleOpts {
   jsonMode?: boolean;
   /** If _falsy_, do not use fancy symbols. */
   useSymbols?: boolean;
-  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks `NO_COLOR`, `FORCE_COLOR`, `TERM`, and stderr TTY. Ignored if `useSymbols` is `false`. */
+  /** If _falsy_, do not use color output. If _truthy_, forces color output. By default, checks `NO_COLOR`, `FORCE_COLOR`, `TERM`, and stdout TTY. Ignored if `useSymbols` is `false`. */
   useColor?: boolean;
 }
 
@@ -119,22 +79,11 @@ export interface ConsoleOpts {
 type SymbolKey = keyof typeof logSymbols;
 
 /**
- * Stream to nowhere. Used when we want to disable any output other than JSON output.
- */
-class NullWritable extends Writable {
-  /* eslint-disable promise/prefer-await-to-callbacks -- Node stream callback API */
-  override _write(chunk: unknown, encoding: BufferEncoding, callback: (error?: Error | null) => void): void {
-    setImmediate(callback);
-  }
-  /* eslint-enable promise/prefer-await-to-callbacks */
-}
-
-/**
  * A particular console/logging class for Appium's CLI.
  *
  * - By default, uses some fancy symbols
- * - Writes to `STDERR`, generally.
- * - In "JSON mode", `STDERR` is squelched. Use {@linkcode CliConsole.json} to write the JSON.
+ * - Writes to `STDOUT`, except for {@linkcode CliConsole#error}, which writes to `STDERR`.
+ * - In "JSON mode", regular output is squelched. Use {@linkcode CliConsole.json} to write the JSON to `STDOUT`.
  *
  * DO NOT extend this to do anything other than what it already does. Download a library or something.
  */
@@ -146,15 +95,19 @@ export class CliConsole {
     error: 'red',
   };
 
-  readonly #console: InstanceType<typeof NodeConsole>;
-  readonly #useSymbols: boolean;
-  readonly #useColor: boolean;
+  private readonly console: InstanceType<typeof NodeConsole>;
+  private readonly jsonConsole: InstanceType<typeof NodeConsole>;
+  private readonly useSymbols: boolean;
+  private readonly useColor: boolean;
 
   constructor(opts: ConsoleOpts = {}) {
     const {jsonMode = false, useSymbols = true, useColor} = opts;
-    this.#console = new NodeConsole(process.stdout, jsonMode ? new NullWritable() : process.stderr);
-    this.#useSymbols = Boolean(useSymbols);
-    this.#useColor = Boolean(useColor ?? stderrSupportsColor(process.stderr));
+    const nullStream = new NullWritable();
+    this.console = new NodeConsole(jsonMode ? nullStream : process.stdout, jsonMode ? nullStream : process.stderr);
+    // json() must always reach real STDOUT, even in JSON mode where `console` is squelched.
+    this.jsonConsole = new NodeConsole(process.stdout, nullStream);
+    this.useSymbols = Boolean(useSymbols);
+    this.useColor = Boolean(useColor ?? streamSupportsColor(process.stdout));
   }
 
   /**
@@ -163,12 +116,12 @@ export class CliConsole {
    * Returns `undefined` if `msg` is `undefined`.
    */
   decorate(msg: string | undefined, symbol?: SymbolKey): string | undefined {
-    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.#useSymbols) {
+    if (typeof msg !== 'string' || typeof symbol !== 'string' || !this.useSymbols) {
       return msg;
     }
 
     let newMsg = `${logSymbols[symbol]} ${msg}`;
-    if (this.#useColor) {
+    if (this.useColor) {
       newMsg = styleText(CliConsole.symbolToColor[symbol], newMsg);
     }
     return newMsg;
@@ -180,17 +133,17 @@ export class CliConsole {
    * You probably don't want to call this more than once before exiting (since that will output invalid JSON).
    */
   json(value: JsonValue): void {
-    this.#console.log(JSON.stringify(value));
+    this.jsonConsole.log(JSON.stringify(value));
   }
 
-  /** General logging function. */
+  /** General logging function. Writes to `STDOUT`. */
   log(message?: string, ...args: unknown[]): void {
-    this.#console.error(message, ...args);
+    this.console.log(message, ...args);
   }
 
   /** A "success" message */
   ok(message?: string, ...args: unknown[]): void {
-    this.#console.error(this.decorate(message, 'success'), ...args);
+    this.log(this.decorate(message, 'success'), ...args);
   }
 
   /** Alias for {@linkcode CliConsole.log} */
@@ -200,7 +153,7 @@ export class CliConsole {
 
   /** Wraps {@link console.dir} */
   dump(item: unknown, opts?: InspectOptions): void {
-    this.#console.dir(item, opts);
+    this.console.dir(item, opts);
   }
 
   /** An "info" message */
@@ -213,9 +166,9 @@ export class CliConsole {
     this.log(this.decorate(message, 'warning'), ...args);
   }
 
-  /** An "error" message */
+  /** An "error" message. Writes to `STDERR`. */
   error(message?: string, ...args: unknown[]): void {
-    this.log(this.decorate(message, 'error'), ...args);
+    this.console.error(this.decorate(message, 'error'), ...args);
   }
 }
 

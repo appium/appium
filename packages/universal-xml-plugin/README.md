@@ -29,6 +29,23 @@ appium --use-plugins=universal-xml
 Once the plugin is running, it will intercept and transform the app source retrieved by the Get Page
 Source command, as well as element node/attribute names provided in Find Element-related commands.
 
+### Turning translation off and on
+
+Translation is on by default. To get the driver's original page source, or to run XPath queries
+against the original node/attribute names, turn it off during a session with the
+`universalXml: setEnabled` [execute method](https://appium.io/docs/en/latest/guides/execute-methods/),
+and turn it back on the same way. `universalXml: isEnabled` returns the current state.
+
+```js
+// WebdriverIO
+await driver.executeScript('universalXml: setEnabled', [{enabled: false}]);
+// page source and XPath queries are now passed through unchanged
+await driver.executeScript('universalXml: setEnabled', [{enabled: true}]);
+await driver.executeScript('universalXml: isEnabled', []); // true
+```
+
+The setting applies only to the current session. Every new session starts with translation on.
+
 ## API
 
 [Refer to the Appium documentation](https://appium.io/docs/en/latest/reference/api/plugins/#universal-xml-plugin).

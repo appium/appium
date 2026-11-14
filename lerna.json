@@ -2,9 +2,6 @@
   "$schema": "https://json.schemastore.org/lerna",
   "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
-    "add": {
-      "exact": true
-    },
     "publish": {
       "message": "chore: publish"
     },
@@ -14,8 +11,7 @@
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
-      "allowBranch": ["master", "appium4"],
-      "exact": true
+      "allowBranch": ["master", "appium4"]
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],

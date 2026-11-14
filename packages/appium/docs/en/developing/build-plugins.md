@@ -257,7 +257,7 @@ throw new errors.NoSuchElementError();
 ### Log messages to the Appium log
 
 You can always use `console.log`, of course, but Appium provides a nice logger for you as
-`this.logger` (it has `.info`, `.debug`, `.log`, `.warn`, `.error` methods on it for differing log
+`this.log` (it has `.info`, `.debug`, `.warn`, `.error` methods on it for differing log
 levels). If you want to create an Appium logger outside of a plugin context (say in a script or
 helper file), you can always construct your own too:
 
@@ -476,7 +476,7 @@ capability.
 
 You probably don't normally need to update the Appium server object (which is an
 [Express](https://expressjs.com/) server having already been
-[configured](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.ts)
+[configured](https://github.com/appium/appium/blob/master/packages/http-server/lib/server.ts)
 in a variety of ways). But, for example, you could add new routes to the server to support your
 plugin's requirements. To update the server you must implement the `static async updateServer`
 method in your class. This method takes three parameters:

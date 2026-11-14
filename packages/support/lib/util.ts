@@ -1,48 +1,33 @@
 import {randomUUID} from 'node:crypto';
-import os from 'node:os';
-import path from 'node:path';
 import stream from 'node:stream';
 import {isDeepStrictEqual, promisify} from 'node:util';
 
 import {asyncmap} from 'asyncbox';
-import B from 'bluebird';
-import pluralizeLib from 'pluralize';
 import * as semver from 'semver';
 import {parse as shellParse, quote as shellQuote} from 'shell-quote';
 
-import {fs} from './fs';
-import {createBase64EncodeStream} from './internal';
+import {fs} from './fs.js';
+import {
+  createBase64EncodeStream,
+  GiB,
+  isSubPath,
+  isPlainObject,
+  KiB,
+  MiB,
+  pluralize,
+  type PluralizeOptions,
+} from './internal/index.js';
 export {shellParse};
 import type {Element} from '@appium/types';
 import * as _lockfile from 'lockfile';
-import {v1 as uuidV1Lib, v3 as uuidV3Lib, v5 as uuidV5Lib} from 'uuid';
+
+export {GiB, isPlainObject, isSubPath, KiB, MiB, pluralize, type PluralizeOptions};
 
 /** W3C WebDriver element identifier key used in element objects. */
 export const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
 
-/** Size of one kibibyte in bytes (1024). */
-export const KiB = 1024;
-/** Size of one mebibyte in bytes (1024 * 1024). */
-export const MiB = KiB * 1024;
-/** Size of one gibibyte in bytes (1024 * 1024 * 1024). */
-export const GiB = MiB * 1024;
-
 /** A string which is never `''`. */
 export type NonEmptyString<T extends string = string> = T extends '' ? never : T;
-
-/**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v1.
- */
-export function uuidV1(...args: Parameters<typeof uuidV1Lib>): ReturnType<typeof uuidV1Lib> {
-  return uuidV1Lib(...args);
-}
-
-/**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v3.
- */
-export function uuidV3(...args: Parameters<typeof uuidV3Lib>): ReturnType<typeof uuidV3Lib> {
-  return uuidV3Lib(...args);
-}
 
 /**
  * Generates a v4 UUID using Node.js crypto.
@@ -51,13 +36,6 @@ export function uuidV3(...args: Parameters<typeof uuidV3Lib>): ReturnType<typeof
  */
 export function uuidV4(): string {
   return randomUUID();
-}
-
-/**
- * @deprecated This helper is slated for removal. Please migrate callers away from UUID v5.
- */
-export function uuidV5(...args: Parameters<typeof uuidV5Lib>): ReturnType<typeof uuidV5Lib> {
-  return uuidV5Lib(...args);
 }
 
 /**
@@ -108,25 +86,13 @@ export function memoize<Fn extends (...args: any[]) => any>(
 }
 
 /**
- * Returns true if the value is a plain object (Object prototype or null prototype).
- *
- * @param value - Value to check
- * @returns `true` if the value is a plain object
- */
-export function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (value === null || typeof value !== 'object') {
-    return false;
-  }
-  const prototype = Object.getPrototypeOf(value);
-  return prototype === null || prototype === Object.prototype;
-}
-
-/**
  * Returns true when the value has no elements/properties.
  *
  * @param value - Value to check
  * @returns `true` if the value is empty
  */
+export function isEmpty(value: unknown[] | null | undefined): value is [] | null | undefined;
+export function isEmpty(value: unknown): boolean;
 export function isEmpty(value: unknown): boolean {
   if (value == null) {
     return true;
@@ -214,7 +180,7 @@ export function escapeSpace(str: string): string {
  * @param quoteEscape - Optional character to escape, or `false` to skip
  * @returns Escaped string, or original value if `str` is not a string
  */
-export function escapeSpecialChars(str: string | unknown, quoteEscape?: string | false): string | unknown {
+export function escapeSpecialChars(str: unknown, quoteEscape?: string | false): unknown {
   if (typeof str !== 'string') {
     return str;
   }
@@ -237,72 +203,17 @@ export function escapeSpecialChars(str: string | unknown, quoteEscape?: string |
 }
 
 /**
- * Returns the first non-internal IPv4 address of the machine, if any.
- *
- * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
- * @returns The local IPv4 address, or `undefined` if none found
- */
-export function localIp(): string | undefined {
-  const ifaces = os.networkInterfaces();
-  for (const addrs of Object.values(ifaces)) {
-    if (!addrs) {
-      continue;
-    }
-    for (const iface of addrs) {
-      if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
-      }
-    }
-  }
-  return undefined;
-}
-
-/**
- * Creates a promise that resolves after a delay and can be cancelled via `.cancel()`.
- *
- * @deprecated This helper is slated for removal. Please migrate callers away from Bluebird.
- * @param ms - Delay in milliseconds before the promise resolves
- * @returns A Bluebird promise with a `cancel()` method; cancel rejects with CancellationError
- */
-export function cancellableDelay(ms: number): B<void> & {cancel: () => void} {
-  let timer: NodeJS.Timeout;
-  let resolve: () => void;
-  let reject: (err: Error) => void;
-
-  const delay = new B<void>((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-    timer = setTimeout(() => resolve(), ms);
-  });
-
-  (delay as B<void> & {cancel: () => void}).cancel = function () {
-    clearTimeout(timer);
-    reject(new B.CancellationError());
-  };
-  return delay as B<void> & {cancel: () => void};
-}
-
-/**
- * Resolves each root path with the given path segments, returning an array of absolute paths.
- *
- * @deprecated This helper is slated for removal. Consider implementing this functionality on your side.
- * @param roots - Base directory paths to resolve against
- * @param args - Path segments to join with each root (e.g. 'foo', 'bar' → root/foo/bar)
- * @returns Array of absolute paths, one per root
- */
-export function multiResolve(roots: string[], ...args: string[]): string[] {
-  return roots.map((root) => path.resolve(root, ...args));
-}
-
-/**
  * Parses a value as JSON if it is a string; otherwise returns the value as-is.
  *
  * @param obj - String (to parse) or other value (returned unchanged)
  * @returns Parsed object or original value
  */
 export function safeJsonParse<T>(obj: unknown): T {
+  if (typeof obj !== 'string') {
+    return obj as T;
+  }
   try {
-    return JSON.parse(obj as string) as T;
+    return JSON.parse(obj) as T;
   } catch {
     return obj as T;
   }
@@ -379,10 +290,7 @@ export function wrapElement(elementId: string): Element {
  * @param predicate - Optional filter: undefined (drop undefined values), scalar (value match), or function
  * @returns New object with only the properties that pass the predicate
  */
-export function filterObject<T extends Record<string, unknown>>(
-  obj: T,
-  predicate?: ((value: unknown, obj: T) => boolean) | unknown,
-): Partial<T> {
+export function filterObject<T extends Record<string, unknown>>(obj: T, predicate?: unknown): Partial<T> {
   const newObj = {...obj} as Record<string, unknown>;
   let pred: (v: unknown, o: T) => boolean;
   if (predicate === undefined) {
@@ -424,30 +332,7 @@ export function toReadableSizeString(bytes: number | string): string {
 }
 
 /**
- * Checks whether the given path is a subpath of the given root folder.
- *
- * @param originalPath - The absolute file or folder path to test
- * @param root - The absolute root folder path
- * @param forcePosix - If true, interpret paths in POSIX format (e.g. on Windows)
- * @returns `true` if `originalPath` is under `root` or is equal to it
- * @throws {Error} If either path is not absolute
- */
-export function isSubPath(originalPath: string, root: string, forcePosix: boolean | null = null): boolean {
-  const pathObj = forcePosix ? path.posix : path;
-  for (const p of [originalPath, root]) {
-    if (!pathObj.isAbsolute(p)) {
-      throw new Error(`'${p}' is expected to be an absolute path`);
-    }
-  }
-  // An empty relative path means both arguments point to the same location.
-  // Comparing the strings instead would accept any sibling whose name starts
-  // with the root folder name, like '/root-backup' for the '/root' root.
-  const relativePath = pathObj.relative(root, originalPath);
-  return relativePath !== '..' && !relativePath.startsWith(`..${pathObj.sep}`) && !pathObj.isAbsolute(relativePath);
-}
-
-/**
- * Checks whether the given paths refer to the same file system entity (same inode).
+ * Checks whether the given paths refer to the same file system entity (same device and inode).
  * All paths must exist.
  *
  * @param path1 - First path
@@ -466,8 +351,8 @@ export async function isSameDestination(path1: string, path2: string, ...pathN: 
     return true;
   }
 
-  const mapCb = async (x: string) => (await fs.stat(x, {bigint: true})).ino;
-  return areAllItemsEqual(await asyncmap(allPaths, mapCb));
+  const stats = await asyncmap(allPaths, (p) => fs.stat(p, {bigint: true}));
+  return stats[0].ino !== 0n && stats.every(({dev, ino}) => dev === stats[0].dev && ino === stats[0].ino);
 }
 
 /**
@@ -492,12 +377,6 @@ export function coerceVersion(ver: string, strict = true): string | null {
 }
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
-
-/** Options for pluralize(). */
-export interface PluralizeOptions {
-  /** If true, prefix the result with the count (e.g. "3 ducks"). */
-  inclusive?: boolean;
-}
 
 /** Options for toInMemoryBase64(). */
 export interface EncodingOptions {
@@ -547,7 +426,7 @@ export function compareVersions(ver1: string, operator: string, ver2: string): b
   const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
   const v1 = coerceVersion(ver1, true);
   const v2 = coerceVersion(ver2, true);
-  const result = semver.satisfies(v1, `${semverOperator}${v2}`);
+  const result = semver.satisfies(v1, `${semverOperator}${v2}`, {includePrerelease: true});
   return operator === '!=' ? !result : result;
 }
 
@@ -558,37 +437,7 @@ export function compareVersions(ver1: string, operator: string, ver2: string): b
  * @returns Quoted string suitable for shell parsing
  */
 export function quote(args: string | string[]): string {
-  return (Array.isArray(args) ? args : [args])
-    .map((arg) => {
-      // shell-quote escapes ! inside double quotes when the argument contains an
-      // apostrophe. Non-interactive POSIX shells preserve that extra backslash.
-      // Temporary workaround; remove once the dependency includes the released fix:
-      // https://github.com/KazuCocoa/shell-quote/commit/9a70e24
-      // Keep the regression tests when switching back to shellQuote.
-      if (typeof arg === 'string' && arg.includes("'") && arg.includes('!')) {
-        return `'${arg.replace(/'/g, `'"'"'`)}'`;
-      }
-      return shellQuote([arg]);
-    })
-    .join(' ');
-}
-
-/**
- * Returns the plural or singular form of a word appropriate to the count (e.g. "duck" + 1 → "duck", + 2 → "ducks").
- *
- * @param word - The word to pluralize (or singularize when count is 1)
- * @param count - The count used to choose singular vs plural
- * @param options - Options object or boolean: use `inclusive: true` (or `true`) to prefix with the number (e.g. "3 ducks")
- * @returns The correctly inflected word, optionally prefixed with the count
- */
-export function pluralize(word: string, count: number, options: PluralizeOptions | boolean = {}): string {
-  let inclusive = false;
-  if (typeof options === 'boolean') {
-    inclusive = options;
-  } else if (typeof options?.inclusive === 'boolean') {
-    inclusive = options.inclusive;
-  }
-  return pluralizeLib(word, count, inclusive);
+  return shellQuote(Array.isArray(args) ? args : [args]);
 }
 
 /**

@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const appium = require('./build/lib/main.js');
+import * as appium from './build/lib/main.js';
 
-if (require.main === module) {
-  appium.main();
+// Node identifies the entry module even when invoked through an installed bin symlink.
+if (import.meta.main) {
+  void appium.main();
 }
 
-module.exports = appium;
+export * from './build/lib/main.js';

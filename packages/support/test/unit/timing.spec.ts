@@ -3,7 +3,7 @@ import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {createSandbox} from 'sinon';
 
-import {timing} from '../../lib';
+import {timing} from '../../lib/index.js';
 
 describe('timing', function () {
   let processMock: ReturnType<ReturnType<typeof createSandbox>['mock']>;

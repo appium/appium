@@ -24,25 +24,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'allow-cors',
-      defaultValue: false,
-      dest: 'allowCors',
-      extName: undefined,
-      extType: undefined,
-      name: 'allow-cors',
-      rawDest: 'allowCors',
-      ref: 'appium.json#/properties/server/properties/allow-cors',
-    },
-    schema: {
-      default: false,
-      description:
-        'Whether the Appium server should allow web browser connections from any host',
-      title: 'allow-cors config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'allow-insecure',
       defaultValue: [],
       dest: 'allowInsecure',
@@ -81,63 +62,6 @@ export default [
         'Base path to use as the prefix for all webdriver routes running on the server',
       title: 'base-path config',
       type: 'string',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'callback-address',
-      defaultValue: undefined,
-      dest: 'callbackAddress',
-      extName: undefined,
-      extType: undefined,
-      name: 'callback-address',
-      rawDest: 'callbackAddress',
-      ref: 'appium.json#/properties/server/properties/callback-address',
-    },
-    schema: {
-      appiumCliAliases: ['ca'],
-      description: 'Callback IP address (default: same as "address")',
-      title: 'callback-address config',
-      type: 'string',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'callback-port',
-      defaultValue: 4723,
-      dest: 'callbackPort',
-      extName: undefined,
-      extType: undefined,
-      name: 'callback-port',
-      rawDest: 'callbackPort',
-      ref: 'appium.json#/properties/server/properties/callback-port',
-    },
-    schema: {
-      appiumCliAliases: ['cp'],
-      default: 4723,
-      description: 'Callback port (default: same as "port")',
-      maximum: 65535,
-      minimum: 1,
-      title: 'callback-port config',
-      type: 'integer',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'debug-log-spacing',
-      defaultValue: false,
-      dest: 'debugLogSpacing',
-      extName: undefined,
-      extType: undefined,
-      name: 'debug-log-spacing',
-      rawDest: 'debugLogSpacing',
-      ref: 'appium.json#/properties/server/properties/debug-log-spacing',
-    },
-    schema: {
-      default: false,
-      description: 'Add exaggerated spacing in logs to help with visual inspection',
-      title: 'debug-log-spacing config',
-      type: 'boolean',
     },
   },
   {
@@ -263,7 +187,7 @@ export default [
   {
     argSpec: {
       arg: 'log-level',
-      defaultValue: 'debug',
+      defaultValue: 'info',
       dest: 'loglevel',
       extName: undefined,
       extType: undefined,
@@ -273,7 +197,7 @@ export default [
     },
     schema: {
       appiumCliDest: 'loglevel',
-      default: 'debug',
+      default: 'info',
       description: 'Log level (console[:file])',
       enum: [
         'info',
@@ -376,26 +300,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'nodeconfig',
-      defaultValue: undefined,
-      dest: 'nodeconfig',
-      extName: undefined,
-      extType: undefined,
-      name: 'nodeconfig',
-      rawDest: 'nodeconfig',
-      ref: 'appium.json#/properties/server/properties/nodeconfig',
-    },
-    schema: {
-      $comment:
-        'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
-      description:
-        'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-      title: 'nodeconfig config',
-      type: 'object',
-    },
-  },
-  {
-    argSpec: {
       arg: 'port',
       defaultValue: 4723,
       dest: 'port',
@@ -455,25 +359,6 @@ export default [
   },
   {
     argSpec: {
-      arg: 'strict-caps',
-      defaultValue: false,
-      dest: 'strictCaps',
-      extName: undefined,
-      extType: undefined,
-      name: 'strict-caps',
-      rawDest: 'strictCaps',
-      ref: 'appium.json#/properties/server/properties/strict-caps',
-    },
-    schema: {
-      default: false,
-      description:
-        'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-      title: 'strict-caps config',
-      type: 'boolean',
-    },
-  },
-  {
-    argSpec: {
       arg: 'tmp',
       defaultValue: undefined,
       dest: 'tmpDir',
@@ -488,24 +373,6 @@ export default [
       description:
         'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
       title: 'tmp config',
-      type: 'string',
-    },
-  },
-  {
-    argSpec: {
-      arg: 'trace-dir',
-      defaultValue: undefined,
-      dest: 'traceDir',
-      extName: undefined,
-      extType: undefined,
-      name: 'trace-dir',
-      rawDest: 'traceDir',
-      ref: 'appium.json#/properties/server/properties/trace-dir',
-    },
-    schema: {
-      description:
-        'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-      title: 'trace-dir config',
       type: 'string',
     },
   },

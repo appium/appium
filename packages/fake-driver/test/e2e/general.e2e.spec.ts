@@ -3,7 +3,7 @@ import {describe, it, before, after} from 'node:test';
 
 import type {ActionSequence} from '@appium/types';
 
-import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers';
+import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers.js';
 
 export function generalTests(context: {port: number}) {
   describe('generic actions', function () {
@@ -17,21 +17,10 @@ export function generalTests(context: {port: number}) {
       return await deleteSession(driver);
     });
 
-    it.skip('should set geolocation', async function () {
-      // TODO unquarantine when WD fixes what it sends the server
-      await driver.setGeoLocation({latitude: -30, longitude: 30});
-    });
-    it('should get geolocation', async function () {
-      const geo = await driver.getGeoLocation();
-      assert.ok(geo.latitude !== undefined && geo.latitude !== null);
-      assert.ok(geo.longitude !== undefined && geo.longitude !== null);
-    });
     it('should get app source', async function () {
       const source = await driver.getPageSource();
       assert.ok(source.includes('<MockNavBar id="nav"'));
     });
-    // TODO do we want to test driver.pageIndex? probably not
-
     it('should get the orientation', async function () {
       assert.strictEqual(await driver.getOrientation(), 'PORTRAIT');
     });
@@ -61,18 +50,17 @@ export function generalTests(context: {port: number}) {
       await assert.rejects(driver.setTimeout({implicit: 'foo' as any}), /values are not valid/);
     });
 
-    // skip these until basedriver supports these timeouts
-    it.skip('should set async script timeout', async function () {
+    it('should set async script timeout', async function () {
       await driver.setTimeout({script: 1000});
     });
-    it.skip('should not set invalid async script timeout', async function () {
+    it('should not set invalid async script timeout', async function () {
       await assert.rejects(driver.setTimeout({script: 'foo' as any}), /values are not valid/);
     });
 
-    it.skip('should set page load timeout', async function () {
+    it('should set page load timeout', async function () {
       await driver.setTimeout({pageLoad: 1000});
     });
-    it.skip('should not set page load script timeout', async function () {
+    it('should not set page load script timeout', async function () {
       await assert.rejects(driver.setTimeout({pageLoad: 'foo' as any}), /values are not valid/);
     });
 

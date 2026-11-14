@@ -25,18 +25,11 @@ POST /session
 
 Creates a new WebDriver session.
 
-Appium implements a modified version of this endpoint for historical reasons. While the W3C
-endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, as this was
-required by the legacy JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no longer
-supported, and any of the 3 parameters can be used to specify the W3C capabilities.
-
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`w3cCapabilities1?`|Capabilities of the new session|`W3CDriverCaps`|
-|`w3cCapabilities2?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
-|`w3cCapabilities?`|Another location for the new session capabilities (legacy)|`W3CDriverCaps`|
+|`capabilities?`|Capabilities of the new session|`W3CDriverCaps`|
 
 #### Response
 
@@ -91,14 +84,19 @@ GET /session/:sessionId/timeouts
 
 Retrieves the timeout values of the current session.
 
+Appium implements a modified version of this endpoint, by also returning the value of the `command`
+timeout for supported drivers and contexts.
+
 #### Response
 
 `GetTimeoutsResult` - an object with the following properties:
 
 |Name|Description|Type|
 |--|--|--|
-|`command`|Command timeout|number|
-|`implicit`|Implicit wait timeout|number|
+|`script`|Script timeout|number or null|
+|`pageLoad`|Page load timeout|number or null|
+|`implicit`|Implicit wait timeout|number or null|
+|`command`|Appium command timeout|number|
 
 ### timeouts
 
@@ -110,13 +108,17 @@ POST /session/:sessionId/timeouts
 
 Sets the timeout values of the current session.
 
+Appium implements a modified version of this endpoint by adding the optional `command` parameter
+for supported drivers and contexts.
+
 #### Parameters
 
 |Name|Description|Type|
 |--|--|--|
-|`implicit?`|Implicit wait timeout (in milliseconds)|number|
-|`pageLoad?`|Page load timeout (in milliseconds)|number|
-|`script?`|Script timeout (in milliseconds)|number|
+|`script?`|Script timeout (in milliseconds)|number or null|
+|`implicit?`|Implicit wait timeout (in milliseconds)|number or null|
+|`pageLoad?`|Page load timeout (in milliseconds)|number or null|
+|`command?`|Appium command timeout (in milliseconds)|number|
 
 #### Response
 
@@ -954,7 +956,7 @@ POST /session/:sessionId/actions
 
 > WebDriver documentation: [Perform Actions](https://w3c.github.io/webdriver/#perform-actions)
 
-Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions).
+Performs a sequence of [actions](https://w3c.github.io/webdriver/#actions). See the [Automating Gestures](../../guides/gestures.md) guide for multi-language examples.
 
 #### Parameters
 

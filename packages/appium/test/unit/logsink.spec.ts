@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {parseWebhookUri} from '../../lib/logsink';
+import {parseWebhookUri} from '../../lib/logsink.js';
 
 describe('parseWebhookUri', function () {
   it('should parse an http webhook with a path', function () {
@@ -27,6 +27,21 @@ describe('parseWebhookUri', function () {
       host: 'example.com',
       port: 8443,
       path: '/a/b?x=1',
+      ssl: true,
+    });
+  });
+
+  it('should give winston a connectable host for an ipv6 url', function () {
+    assert.deepStrictEqual(parseWebhookUri('http://[::1]:9003/logs'), {
+      host: '::1',
+      port: 9003,
+      path: '/logs',
+      ssl: false,
+    });
+    assert.deepStrictEqual(parseWebhookUri('https://[2001:db8::1]/a'), {
+      host: '2001:db8::1',
+      port: 443,
+      path: '/a',
       ssl: true,
     });
   });

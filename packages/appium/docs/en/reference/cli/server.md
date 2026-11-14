@@ -30,12 +30,13 @@ appium
 |`--allow-cors`|Allow web browser connections from any host|boolean|`false`|
 |`--allow-insecure`|List of [insecure features](../../guides/security.md) that should be allowed in this server's sessions. Individual features can be overridden by `--deny-insecure`. Has no effect in combination with `--relaxed-security`.|array<string>|`[]`|
 |`--allow-unknown-args`|Do not exit if unrecognized command-line arguments are passed to the server; ignore them instead. Useful when the Appium CLI is wrapped by external tooling that appends extra flags.|boolean|`false`|
+|`--app-url-rules`|Rules that remote application URLs (e.g. in the `appium:app` capability) must satisfy before the server downloads them. See the [Restricting Remote App URLs](../../guides/security.md#restricting-remote-app-urls) guide for details. Can be a path to a JSON file or raw JSON.|object||
 |`--base-path`, `-pa`|Base path to use as the prefix for all webdriver routes running on the server|string|`""`|
-|`--callback-address`, `-ca`|Callback IP address|string|same as `--address`|
-|`--callback-port`, `-cp`|Callback port|integer|`4723`|
 |`--config`|Path to an [Appium configuration JSON file](../../guides/config.md)|string||
-|`--debug-log-spacing`|Add exaggerated spacing in logs to help with visual inspection|boolean|`false`|
-|`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities|object||
+|`--bidi-heartbeat-interval`|Interval (in seconds) between WebSocket pings sent to each [BiDi](../api/bidi.md) client. A connection that misses two consecutive pongs is terminated. Disabled if set to `0`.|integer|`15`|
+|`--bidi-max-buffered-bytes`|Maximum number of bytes the server may keep buffered for a BiDi connection whose client is not reading fast enough. A connection that stays above the limit for longer than `--bidi-max-buffered-ms`, or exceeds twice the limit, is closed with the code `1013`. Disabled if set to `0`, which also turns off skipping of droppable events.|integer|`33554432`|
+|`--bidi-max-buffered-ms`|Time (in milliseconds) a BiDi connection may stay above `--bidi-max-buffered-bytes` before it is closed. If set to `0`, the connection is closed as soon as the limit is exceeded.|integer|`30000`|
+|`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
 |`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
@@ -44,7 +45,7 @@ appium
 |`--local-timezone`|Use local timezone for log timestamps|boolean|`false`|
 |`--log`, `-g`|Path to a file where the server logs should be output. This does not affect output on the console.|string||
 |`--log-filters`|List of log filtering rules. See the [log filtering guide](../../guides/log-filters.md) for details.|array||
-|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`debug`|
+|`--log-level`|The log level for the server logs. Supported values are `debug`, `info`, `warn`, or `error`. Combining two supported values using a colon (e.g. `warn:debug`) allows to set separate log levels for the console and file outputs, respectively.|string|`info`|
 |`--log-format`|The log format of the server logs. Supported values are `text`, `json`, or `pretty_json`. Setting the value to `json` disables colors.|string|`text`|
 |`--log-no-colors`|Disable colors in the server log|boolean|`false`|
 |`--log-timestamp`|Show timestamps in the server log|boolean|`false`|
@@ -52,7 +53,6 @@ appium
 |`--max-ipc-data-size`|Maximum byte size of IPC message objects.|integer|`1048576` (1MB)|
 |`--max-ipc-topics`|Maximum number of IPC topics per session.|integer|`1000`|
 |`--no-perms-check`|Skip various permission checks on the server startup|boolean|`false`|
-|`--nodeconfig`|JSON configuration for registering Appium as a node with Selenium Grid 3|object||
 |`--plugin`|Plugin-specific configuration. Keys should correspond to plugin package names|object||
 |`--plugins-import-chunk-size`|Maximum number of plugins that can be imported in parallel on server startup|number|`7`|
 |`--port`, `-p`|Port to listen on|integer|`4723`|
@@ -61,11 +61,44 @@ appium
 |`--shutdown-timeout`|Timeout (in milliseconds) for waiting on all active connections to close, when shutting down the server|number|`5000`|
 |`--ssl-cert-path`|Absolute path to the `.cert` file if TLS is used. Must be provided together with `--ssl-key-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
 |`--ssl-key-path`|Absolute path to the `.key` file if TLS is used. Must be provided together with `--ssl-cert-path`. See the [SSL/TLS/SPDY Support guide](../../guides/tls.md) for details.|string||
-|`--strict-caps`|Prevent creation of new client sessions that use unsupported capabilities|boolean|`false`|
 |`--tmp`|Absolute path to the directory used for temporary files|string|[`os.tmpdir()`](https://nodejs.org/api/os.html#ostmpdir)|
 |`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
 |`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
+
+### Default Capabilities
+
+Capabilities set with `--default-capabilities` are added to the received capabilities before a
+driver is matched. This is Appium's own defaulting behavior, not something defined by the W3C
+WebDriver specification.
+
+* A value the client sends in `alwaysMatch`, or in a given `firstMatch` candidate, takes precedence
+  over the server default
+* Defaults fill missing keys in each `firstMatch` candidate separately. A value in one candidate
+  does not stop the default from being applied to another candidate
+* A key sent in both `alwaysMatch` and `firstMatch` is still rejected by the usual capability
+  validation. Server defaults do not change that
+
+For example, with these server defaults:
+
+```json
+{"appium:newCommandTimeout": 60}
+```
+
+and these received capabilities:
+
+```json
+{
+  "alwaysMatch": {"appium:deviceName": "Pixel"},
+  "firstMatch": [
+    {"platformName": "iOS", "appium:newCommandTimeout": 120},
+    {"platformName": "Android"}
+  ]
+}
+```
+
+the iOS candidate keeps `appium:newCommandTimeout` of `120`, and the Android candidate gets the
+default `60`. The session uses the value from whichever candidate it is created with.
 
 ### Info Options
 

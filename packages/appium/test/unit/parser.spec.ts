@@ -4,12 +4,15 @@ import os from 'node:os';
 import path from 'node:path';
 import {describe, it, beforeEach, before, after} from 'node:test';
 
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {ArgParser, getParser} from '../../lib/cli/parser';
-import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
-import {INSTALL_TYPES} from '../../lib/extension/extension-config';
-import * as schema from '../../lib/schema/schema';
-import {resolveFixture} from '../helpers';
+import fakeDriverSchema from '@appium/fake-driver/build/lib/fake-driver-schema.js';
+
+import {readConfigFile} from '../../lib/bootstrap/config-file.js';
+import {ArgParser, getParser} from '../../lib/cli/parser.js';
+import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js';
+import {INSTALL_TYPES} from '../../lib/extension/manifest/index.js';
+import {stripColorCodes} from '../../lib/logsink.js';
+import * as schema from '../../lib/schema/schema.js';
+import {resolveFixture} from '../helpers.js';
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
@@ -57,8 +60,18 @@ describe('parser', function () {
         }
       });
 
-      // TODO: figure out how best to suppress color in error message
       describe('invalid arguments', function () {
+        /** Schema validation errors are colorized when stdout is a TTY; strip that before matching. */
+        function throwsUncolored(fn: () => unknown, regex: RegExp) {
+          assert.throws(() => {
+            try {
+              fn();
+            } catch (e) {
+              throw new Error(stripColorCodes((e as Error).message), {cause: e});
+            }
+          }, regex);
+        }
+
         it('should throw an error with unknown argument', function () {
           assert.throws(() => {
             p.parseArgs(['--apple']);
@@ -68,21 +81,15 @@ describe('parser', function () {
         // FIXME: this test will not work until we restore the formatting restriction to the address validation
         // see #18716
         it.skip('should throw an error for an invalid value ("hostname")', function () {
-          assert.throws(() => {
-            p.parseArgs(['--address', '-42']);
-          }, /must match format "hostname"/i);
+          throwsUncolored(() => p.parseArgs(['--address', '-42']), /must match format "hostname"/i);
         });
 
         it('should throw an error for an invalid value ("uri")', function () {
-          assert.throws(() => {
-            p.parseArgs(['--webhook', 'blub']);
-          }, /must match format "uri"/i);
+          throwsUncolored(() => p.parseArgs(['--webhook', 'blub']), /must match format "uri"/i);
         });
 
         it('should throw an error for an invalid value (using "enum")', function () {
-          assert.throws(() => {
-            p.parseArgs(['--log-level', '-42']);
-          }, /must be equal to one of the allowed values/i);
+          throwsUncolored(() => p.parseArgs(['--log-level', '-42']), /must be equal to one of the allowed values/i);
         });
 
         it('should throw an error for incorrectly formatted arg (matching "dest")', function () {
@@ -90,6 +97,30 @@ describe('parser', function () {
             p.parseArgs(['--loglevel', '-42']);
           }, /unrecognized arguments: --loglevel/i);
         });
+      });
+
+      it('should parse app URL rules correctly from a string', function () {
+        const appUrlRules = {allow: ['*.example.com', '10.0.0.0/8'], httpsOnly: true, maxRedirects: 0};
+        const args = p.parseArgs(['--app-url-rules', JSON.stringify(appUrlRules)]);
+        assert.deepStrictEqual(args.appUrlRules, appUrlRules);
+      });
+
+      it('should throw an error with invalid arg to app URL rules', function () {
+        const throwsUncolored = (args: string[], regex: RegExp) =>
+          assert.throws(() => {
+            try {
+              p.parseArgs(['--app-url-rules', ...args]);
+            } catch (e) {
+              throw new Error(stripColorCodes((e as Error).message), {cause: e});
+            }
+          }, regex);
+        throwsUncolored(['42'], /'42' must be a plain object/);
+        throwsUncolored(['[]'], /'\[\]' must be a plain object/);
+        throwsUncolored(['does/not/exist.json'], /invalid.+value: 'does\/not\/exist\.json'/);
+        throwsUncolored(['{"unknownRule": true}'], /unknownRule is not expected to be here/);
+        throwsUncolored(['{"httpsOnly": "yes"}'], /type must be boolean/);
+        throwsUncolored(['{"maxRedirects": -1}'], /minimum must be >= 0/);
+        throwsUncolored(['{"allow": "example.com"}'], /type must be array/);
       });
 
       it('should parse default capabilities correctly from a string', function () {
@@ -198,14 +229,7 @@ describe('parser', function () {
     describe('extension arguments', function () {
       beforeEach(async function () {
         schema.resetSchema();
-        // we have to require() here because babel will not compile stuff in node_modules
-        // (even if it's in the monorepo; there may be a way around this)
-        // anyway, if we do that, we need to use the `default` prop.
-        await schema.registerSchema(
-          DRIVER_TYPE,
-          'fake',
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
-        );
+        await schema.registerSchema(DRIVER_TYPE, 'fake', fakeDriverSchema);
         await schema.finalizeSchema();
         p = await getParser(true);
       });

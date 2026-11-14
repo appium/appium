@@ -3,6 +3,138 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.6...@appium/support@8.0.0-beta.7) (2026-11-13)
+
+### Features
+
+* **support:** add port helpers to net ([#23156](https://github.com/appium/appium/issues/23156)) ([d5d90c5](https://github.com/appium/appium/commit/d5d90c5d9373eedb96525105c25069b85f13dcbc))
+
+
+## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.5...@appium/support@8.0.0-beta.6) (2026-10-31)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** compareVersions() in @appium/support now orders prerelease versions correctly (2.0.0-beta.1 &gt; 1.9.9, 2.0.0-beta.1 &lt; 2.0.0). Before, it returned false for these.
+
+### Features
+
+* **support:** accept removal options in rimraf helpers ([#23105](https://github.com/appium/appium/issues/23105)) ([ed13ec7](https://github.com/appium/appium/commit/ed13ec7c9bfa3793f3b0f414e5f456fdf72d98bf))
+
+### Bug Fixes
+
+* **support:** compare prerelease versions by semantic precedence ([#23116](https://github.com/appium/appium/issues/23116)) ([96c275f](https://github.com/appium/appium/commit/96c275f841a925f4b3b19f7886e1b20c62aeb7f3))
+* **support:** distinguish destinations on different devices ([#23115](https://github.com/appium/appium/issues/23115)) ([e61d420](https://github.com/appium/appium/commit/e61d420d15a3c5fdcd84996ad5686a0fe63b9b58))
+* **support:** handle circular arrays in getObjectSize ([#23111](https://github.com/appium/appium/issues/23111)) ([efb5217](https://github.com/appium/appium/commit/efb52173ddc5d87206b8366891b836b066e940f2))
+* **support:** preserve non-string values in safeJsonParse ([#23110](https://github.com/appium/appium/issues/23110)) ([971fa8b](https://github.com/appium/appium/commit/971fa8b58cf8f8feb27d05f682a32dbb54ee6c00))
+
+
+## [8.0.0-beta.5](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.4...@appium/support@8.0.0-beta.5) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** ExtractAllOptions.useSystemUnzip is removed.
+* **support:** Non-UTF-8-flagged file names now default to utf8 instead of cp437, and cp437 decoding is no longer supported (modern archives use UTF-8). Such archives must be recreated or converted; fileNamesEncoding only accepts Node.js BufferEncodings.
+
+### Features
+
+* **support:** Add zip streaming support ([#23083](https://github.com/appium/appium/issues/23083)) ([52c92d6](https://github.com/appium/appium/commit/52c92d6acd72d93ee9fc428b0ff473ae60bc52f4))
+* **support:** Remove system unzip from extractAllTo ([#23091](https://github.com/appium/appium/issues/23091)) ([0f1a761](https://github.com/appium/appium/commit/0f1a76184b78ee3d60652b9a610c808213196f7c))
+
+### Bug Fixes
+
+* **support:** prevent zip extraction through symlink chains ([#23002](https://github.com/appium/appium/issues/23002)) ([8e42cbc](https://github.com/appium/appium/commit/8e42cbc82d95da690b73399782f750043464352d))
+
+### Performance Improvements
+
+* **support:** Further optimize zip extraction ([#23087](https://github.com/appium/appium/issues/23087)) ([c7e3b46](https://github.com/appium/appium/commit/c7e3b46f1a735a48ef1c57193946e007eb4caca1))
+* **support:** Speed up zip extraction ([#23078](https://github.com/appium/appium/issues/23078)) ([34e368e](https://github.com/appium/appium/commit/34e368e666f1a3b0fb85ab7c12bea7df3ce1124a))
+
+
+## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.3...@appium/support@8.0.0-beta.4) (2026-10-18)
+
+### Bug Fixes
+
+* **support:** move source symlinks without following their targets ([#22954](https://github.com/appium/appium/issues/22954)) ([81dc35d](https://github.com/appium/appium/commit/81dc35dc6b34caed8acd189c756d1faddffbf1e0))
+* **support:** preserve case-only moves on Windows ([#22958](https://github.com/appium/appium/issues/22958)) ([7b13975](https://github.com/appium/appium/commit/7b139753406062ccd0ddcc33ba06508d404a852a))
+* **support:** reject all directory walk errors ([#22956](https://github.com/appium/appium/issues/22956)) ([6bae658](https://github.com/appium/appium/commit/6bae658c4bfdfd00d50bebb182a5fcf1b7558a5d))
+
+
+## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.2...@appium/support@8.0.0-beta.3) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* **support:** do not drop directories while fs.mv moves a folder ([#22913](https://github.com/appium/appium/issues/22913)) ([aed3af9](https://github.com/appium/appium/commit/aed3af95381b67ece2a0f08bd4125b2a09dafd4d))
+
+
+## [8.0.0-beta.2](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.1...@appium/support@8.0.0-beta.2) (2026-10-05)
+
+### Bug Fixes
+
+* **support:** accept transparently decompressed downloads ([#22886](https://github.com/appium/appium/issues/22886)) ([4de1a3e](https://github.com/appium/appium/commit/4de1a3e62c1493edc1e4aa5f540debd2e61d3e65))
+* **support:** do not leave a file behind when downloadFile fails ([#22836](https://github.com/appium/appium/issues/22836)) ([15ecc71](https://github.com/appium/appium/commit/15ecc718c4b14c5a449bb7ca309b7efad875ed96))
+* **support:** preserve directories on failed downloads ([#22864](https://github.com/appium/appium/issues/22864)) ([29a60d6](https://github.com/appium/appium/commit/29a60d6e935b23a64a250562689f914da7b37082))
+* **support:** preserve symlinks inside moved directories ([#22880](https://github.com/appium/appium/issues/22880)) ([6c9c930](https://github.com/appium/appium/commit/6c9c930cbedc1f0f5ce528b42818954bfdab41d4))
+
+
+## [8.0.0-beta.1](https://github.com/appium/appium/compare/@appium/support@8.0.0-beta.0...@appium/support@8.0.0-beta.1) (2026-09-27)
+
+### Bug Fixes
+
+* **support:** narrow fs.glob overload for default withFileTypes/lazy ([#22795](https://github.com/appium/appium/issues/22795)) ([09a04f4](https://github.com/appium/appium/commit/09a04f48831e17b9b7f3b8dc0a72f0df5096ae51))
+* **support:** preserve exclamation marks with apostrophes ([#22816](https://github.com/appium/appium/issues/22816)) ([#22822](https://github.com/appium/appium/issues/22822)) ([fb89bb7](https://github.com/appium/appium/commit/fb89bb74235d0d7e5bc16768500338933fcb1607))
+
+
+## [8.0.0-beta.0](https://github.com/appium/appium/compare/@appium/support@7.2.7...@appium/support@8.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **support:** Any script or tool that consumes Appium CLI output (driver/plugin list/install/update, doctor, etc.) and relies on the previous stream layout will need to be updated. Previously, non-JSON human-readable output (info/success/warning messages) was written to STDERR, with STDOUT reserved almost exclusively for --json output. Now that output goes to STDOUT, and only actual errors go to STDERR.
+* **support:** Scripts that discarded STDOUT (1&gt;/dev/null) to suppress &quot;chatter&quot; while relying on STDERR for status text will now see that text on STDOUT instead.
+* **support:** Scripts that captured STDERR to detect/log informational or success messages will no longer see them there — only genuine errors will appear on STDERR. --json output and error behavior are unaffected: --json continues to write clean JSON to STDOUT only, and errors continue to go to STDERR.
+* **support:** @appium/logger&#x27;s Log class changes its default output stream from STDERR to STDOUT for all levels except error, and adds an errorStream/stderrLevel pair of properties. Any code that set .stream on a Log instance expecting it to capture all levels (including error) will now need to also set .errorStream to the same target.
+* **support:** @appium/support&#x27;s fs.glob option shape changed from the glob package&#x27;s GlobOptions to a smaller, @appium/support-owned GlobOptions interface. Supported fields: cwd, withFileTypes, absolute, lazy. Options like nodir/ignore/nocase are no longer supported directly — callers needing directory filtering can pass withFileTypes: true and filter on .isFile()/.isDirectory(); callers needing path exclusion can filter the returned array by pattern.
+* **support:** move npm-related helpers into appium package (#22721)
+* **logger:** @appium/logger and @appium/support no longer export a default log — import the named log export instead.
+* **logger:** AppiumLogger#errorAndThrow has been removed; use errorWithException instead.
+* **logger:** Logger#enableProgress, disableProgress, progressEnabled, enableUnicode, disableUnicode have been removed; they were already permanently disabled no-ops.
+* **support:** npm.installPackage now takes a hasAppiumDependency boolean computed by the caller instead of importing the check itself, avoiding a support -&gt; appium dependency.
+* **support:** The env export is removed from @appium/support.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* **support:** remove node.requirePackage()
+* **support:** remove system.macOsxVersion()
+* **support:** The following @appium/support exports have been removed: process (getProcessIds, killProcess), mkdirp, imageUtil (requireSharp, cropBase64Image), mjpeg (MJpegStream), net&#x27;s FTP upload
+support (FtpUploadOptions, NotHttpUploadOptions; uploadFile only supports http/https now), util&#x27;s uuidV1/uuidV3/uuidV5/localIp/cancellableDelay/multiResolve, and fs&#x27;s readPackageJsonFrom/findRoot/ F_OK/R_OK/W_OK/X_OK.
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([3516e50](https://github.com/appium/appium/commit/3516e50ce6d022f4c0dc539071c593bf2983325f))
+* **support:** move env/APPIUM_HOME resolution into appium package ([#22708](https://github.com/appium/appium/issues/22708)) ([8db8e57](https://github.com/appium/appium/commit/8db8e5748e26a7150cacbea09ba3ec52c5ce3fc0))
+* **support:** remove deprecated APIs ([#22678](https://github.com/appium/appium/issues/22678)) ([e8ee716](https://github.com/appium/appium/commit/e8ee71685b4c21116e61c88fd8d2f0e39fac2edb))
+* **support:** remove requirePackage and macOsxVersion ([#22684](https://github.com/appium/appium/issues/22684)) ([835119d](https://github.com/appium/appium/commit/835119d1ce5068ee7579f59ed66a8582b239cbf5))
+
+### Bug Fixes
+
+* address code review cleanups (plist, env memoize, test reuse) ([#22740](https://github.com/appium/appium/issues/22740)) ([0df8834](https://github.com/appium/appium/commit/0df883463812d57d44a0d6d80e9b88f124361934))
+* **appium:** lock the extension manifest while driver/plugin commands run ([#22767](https://github.com/appium/appium/issues/22767)) ([a73644f](https://github.com/appium/appium/commit/a73644fb4f4e7b0363117ac1262d7018094b42ff))
+* **support:** replace bplist-creator/bplist-parser with plist v5 ([#22705](https://github.com/appium/appium/issues/22705)) ([8e8c00e](https://github.com/appium/appium/commit/8e8c00e6dbd13057501954d79d632a452da33a9a))
+* **support:** route non-error CLI console output to stdout ([#22742](https://github.com/appium/appium/issues/22742)) ([4eb4d7f](https://github.com/appium/appium/commit/4eb4d7f317a685d681b6cf4e25c15b617a8cc7df))
+
+### Code Refactoring
+
+* **logger:** remove default exports and dead logging APIs ([#22719](https://github.com/appium/appium/issues/22719)) ([fe24f52](https://github.com/appium/appium/commit/fe24f527a4412ed86c7b5e5afe0c6e26dc569e6b))
+* **support:** move npm-related helpers into appium package ([#22721](https://github.com/appium/appium/issues/22721)) ([d82d496](https://github.com/appium/appium/commit/d82d496f9e80d6628abface3b623601a6f9791f9))
+* **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([add1615](https://github.com/appium/appium/commit/add161560701ac7fb2bc372ddefd9317146fbae8))
 ## [7.2.9](https://github.com/appium/appium/compare/@appium/support@7.2.8...@appium/support@7.2.9) (2026-10-27)
 
 ### Bug Fixes

@@ -6,7 +6,8 @@ import {getLogger} from '../build/lib/logger.js';
 
 const log = getLogger('cli');
 
-// eslint-disable-next-line promise/prefer-await-to-callbacks
-main().catch((err) => {
+try {
+  await main();
+} catch (err) {
   log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);
-});
+}

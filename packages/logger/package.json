@@ -1,6 +1,6 @@
 {
   "name": "@appium/logger",
-  "version": "2.0.12",
+  "version": "3.0.0-beta.2",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "A Universal Logger For The Appium Ecosystem",
   "keywords": [
@@ -33,8 +33,16 @@
     "tsconfig.json",
     "CHANGELOG.md"
   ],
+  "type": "module",
   "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -44,10 +52,10 @@
     "test:unit": "node --test --enable-source-maps --test-timeout=5000 \"./build/test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "lru-cache": "11.5.3"
+    "lru-cache": "^11.5.2"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
   }
 }

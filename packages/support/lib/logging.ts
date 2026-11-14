@@ -1,4 +1,4 @@
-import globalLog, {type Logger, markSensitive as _markSensitive} from '@appium/logger';
+import {log as globalLog, type Logger, markSensitive as _markSensitive} from '@appium/logger';
 import type {AppiumLogger, AppiumLoggerContext, AppiumLoggerLevel, AppiumLoggerPrefix} from '@appium/types';
 
 export const LEVELS: readonly AppiumLoggerLevel[] = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
@@ -39,9 +39,6 @@ export function getLogger(prefix: AppiumLoggerPrefix | null = null): AppiumLogge
     errorWithException(...args: any[]) {
       this.error(...args);
       return args[0] instanceof Error ? args[0] : new Error(args.join('\n'));
-    },
-    errorAndThrow(...args: any[]) {
-      throw this.errorWithException(...args);
     },
     updateAsyncContext(contextInfo: AppiumLoggerContext, replace = false) {
       this.unwrap().updateAsyncStorage?.(contextInfo, replace);
@@ -119,5 +116,3 @@ function getFinalPrefix(prefix: AppiumLoggerPrefix | null | undefined, shouldLog
   )}]`;
   return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
-
-export default log;

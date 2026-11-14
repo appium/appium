@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin';
+import {type DriverLike, FakePlugin as _FakePlugin} from '../../lib/plugin.js';
 
 interface MockResponse {
   send: (body: string) => void;
@@ -10,7 +10,7 @@ interface MockResponse {
 // Let's not use the actual FakePlugin because it runs a timer and we don't want to worry about
 // needing to clean up timers so that unit test processes can exit!
 class FakePlugin extends _FakePlugin {
-  _clockRunning = false;
+  override _clockRunning = false;
 }
 
 class FakeExpress {

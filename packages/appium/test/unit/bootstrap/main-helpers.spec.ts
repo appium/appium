@@ -5,9 +5,9 @@ import {console as supportConsole} from '@appium/support';
 import type {SinonSandbox, SinonSpy} from 'sinon';
 import {createSandbox} from 'sinon';
 
-import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers';
-import {getBuildInfo} from '../../../lib/helpers/build';
-import {log as logger} from '../../../lib/logger';
+import {inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers.js';
+import {getBuildInfo} from '../../../lib/helpers/build.js';
+import {log as logger} from '../../../lib/logger.js';
 
 describe('bootstrap/main-helpers', function () {
   let sandbox: SinonSandbox;

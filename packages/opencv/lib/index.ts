@@ -3,6 +3,13 @@ import {Buffer} from 'node:buffer';
 import sharp from 'sharp';
 
 import {OpenCvAutoreleasePool} from './autorelease-pool.js';
+import {
+  InvalidArgumentError,
+  NoImageMatchesError,
+  NoImageOccurrencesError,
+  OpenCvError,
+  OpenCvNotInitializedError,
+} from './errors.js';
 import type {
   Match,
   MatchComputationResult,
@@ -19,6 +26,14 @@ import type {
 } from './types.js';
 
 let cv: OpenCVBindings | undefined;
+
+export {
+  InvalidArgumentError,
+  NoImageMatchesError,
+  NoImageOccurrencesError,
+  OpenCvError,
+  OpenCvNotInitializedError,
+} from './errors.js';
 
 export const DEFAULT_MATCH_THRESHOLD = 0.5;
 export const MATCH_NEIGHBOUR_THRESHOLD = 10;
@@ -92,7 +107,8 @@ export async function initOpenCv(): Promise<void> {
  * @param img2Data - The data of the second image packed into a NodeJS buffer
  * @param options - Set of matching options (see {@link MatchingOptions})
  * @returns Matching result containing count, totalCount, points, rects, and optionally visualization
- * @throws {Error} If `detectorName` or `matchFunc` value is unknown, or if no matches can be found between images
+ * @throws {Error} If `detectorName` or `matchFunc` value is unknown
+ * @throws {NoImageMatchesError} If no matches can be found between images
  *
  * @example
  * ```ts
@@ -112,20 +128,20 @@ export async function getImagesMatches(
   await initOpenCv();
 
   if (!cv) {
-    throw new Error('OpenCV is not initialized.');
+    throw new OpenCvNotInitializedError();
   }
 
   const pool = new OpenCvAutoreleasePool();
   try {
     const {detectorName = 'ORB', visualize = false, goodMatchesFactor, matchFunc = 'BruteForce'} = options;
     if (!(detectorName in AVAILABLE_DETECTORS)) {
-      throw new Error(
+      throw new InvalidArgumentError(
         `'${detectorName}' detector is unknown. ` +
           `Only ${JSON.stringify(Object.keys(AVAILABLE_DETECTORS))} detectors are supported.`,
       );
     }
     if (!(matchFunc in AVAILABLE_MATCHING_FUNCTIONS)) {
-      throw new Error(
+      throw new InvalidArgumentError(
         `'${matchFunc}' matching function is unknown. ` +
           `Only ${JSON.stringify(Object.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`,
       );
@@ -148,7 +164,7 @@ export async function getImagesMatches(
     matcher.match(result1.descriptor, result2.descriptor, matchesVec);
     const totalCount = matchesVec.size();
     if (totalCount < 1) {
-      throw new Error(
+      throw new NoImageMatchesError(
         `Could not find any matches between images. Double-check orientation, ` +
           `resolution, or use another detector or matching function.`,
       );
@@ -251,7 +267,7 @@ export async function getImagesSimilarity(
   await initOpenCv();
 
   if (!cv) {
-    throw new Error('OpenCV is not initialized.');
+    throw new OpenCvNotInitializedError();
   }
 
   const {method = DEFAULT_MATCHING_METHOD, visualize = false} = options;
@@ -264,7 +280,7 @@ export async function getImagesSimilarity(
     const template = pool.add(templateRaw);
     const reference = pool.add(referenceRaw);
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
-      throw new Error(
+      throw new InvalidArgumentError(
         'Both images are expected to have the same size in order to ' + 'calculate the similarity score.',
       );
     }
@@ -323,7 +339,7 @@ export async function getImagesSimilarity(
  * @param partialImgData - The data of the partial image packed into a NodeJS buffer
  * @param options - Set of occurrence calculation options (see {@link OccurrenceOptions})
  * @returns Occurrence result containing rect (region of the partial image occurrence on the full image), score (similarity score as float in range [0.0, 1.0]), optionally visualization, and optionally multiple (array of matching results when multiple option is enabled)
- * @throws {Error} If no occurrences of the partial image can be found in the full image
+ * @throws {NoImageOccurrencesError} If no occurrences of the partial image can be found in the full image
  *
  * @example
  * ```ts
@@ -343,7 +359,7 @@ export async function getImageOccurrence(
   await initOpenCv();
 
   if (!cv) {
-    throw new Error('OpenCV is not initialized.');
+    throw new OpenCvNotInitializedError();
   }
 
   const {
@@ -365,8 +381,10 @@ export async function getImageOccurrence(
     const results: Array<{score: number; rect: Rect; visualization?: Buffer}> = [];
     let visualization: Buffer | null = null;
 
+    const matchingMethod = toMatchingMethod(method);
+
     try {
-      cv.matchTemplate(fullImg, partialImg, matched, toMatchingMethod(method));
+      cv.matchTemplate(fullImg, partialImg, matched, matchingMethod);
       const minMax = cv.minMaxLoc(matched);
 
       if (multiple) {
@@ -407,12 +425,13 @@ export async function getImageOccurrence(
       }
 
       if (results.length === 0) {
-        // Below error message, `Cannot find any occurrences` is referenced in find by image
         throw new Error(`Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`);
       }
     } catch (e: any) {
-      // Below error message, `Cannot find any occurrences` is referenced in find by image
-      throw new Error(
+      if (e instanceof OpenCvError) {
+        throw e;
+      }
+      throw new NoImageOccurrencesError(
         `Cannot find any occurrences of the partial image in the full image. ` +
           `Original error: ${e?.message || String(e)}`,
         {cause: e},
@@ -450,24 +469,59 @@ export async function getImageOccurrence(
   }
 }
 
+/**
+ * Smallest rectangle that contains every matched point.
+ * No points yields an empty rectangle at the origin. One point yields a zero-size rectangle there.
+ *
+ * @param matchedPoints - Points from one side of a feature match
+ * @returns The bounding rectangle
+ */
+export function calculateMatchedRect(matchedPoints: Point[]): Rect {
+  if (matchedPoints.length === 0) {
+    return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+  }
+
+  let minX = matchedPoints[0].x;
+  let minY = matchedPoints[0].y;
+  let maxX = minX;
+  let maxY = minY;
+  for (const point of matchedPoints) {
+    minX = Math.min(minX, point.x);
+    minY = Math.min(minY, point.y);
+    maxX = Math.max(maxX, point.x);
+    maxY = Math.max(maxY, point.y);
+  }
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
 // Private helper functions
 
 function toMatchingMethod(name: string): number {
   if (!MATCHING_METHODS.includes(name as TemplateMatchingMethod)) {
-    throw new Error(
+    throw new InvalidArgumentError(
       `The matching method '${name}' is unknown. ` +
-        `Only the following matching methods are supported: ${MATCHING_METHODS}`,
+        `Only the following matching methods are supported: ${MATCHING_METHODS.join(', ')}`,
     );
   }
   if (!cv) {
-    throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
+    throw new OpenCvNotInitializedError('OpenCV is not initialized. Call initOpenCv() first.');
   }
   return cv[name];
 }
 
 function detectAndCompute(img: any, detector: any): MatchComputationResult {
   if (!cv) {
-    throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
+    throw new OpenCvNotInitializedError('OpenCV is not initialized. Call initOpenCv() first.');
   }
   const keyPoints = new cv.KeyPointVector();
   const descriptor = new cv.Mat();
@@ -479,53 +533,13 @@ function detectAndCompute(img: any, detector: any): MatchComputationResult {
   };
 }
 
-function calculateMatchedRect(matchedPoints: Point[]): Rect {
-  if (matchedPoints.length < 2) {
-    return {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    };
-  }
-
-  const pointsSortedByDistance = matchedPoints
-    .map((point) => [Math.sqrt(point.x * point.x + point.y * point.y), point] as [number, Point])
-    .sort((pair1, pair2) => pair1[0] - pair2[0])
-    .map((pair) => pair[1]);
-  const firstPoint = pointsSortedByDistance[0];
-  const lastPoint = pointsSortedByDistance.at(-1);
-  if (!firstPoint || !lastPoint) {
-    return {
-      x: 0,
-      y: 0,
-      width: 0,
-      height: 0,
-    };
-  }
-  const topLeftPoint = {
-    x: firstPoint.x <= lastPoint.x ? firstPoint.x : lastPoint.x,
-    y: firstPoint.y <= lastPoint.y ? firstPoint.y : lastPoint.y,
-  };
-  const bottomRightPoint = {
-    x: firstPoint.x >= lastPoint.x ? firstPoint.x : lastPoint.x,
-    y: firstPoint.y >= lastPoint.y ? firstPoint.y : lastPoint.y,
-  };
-  return {
-    x: topLeftPoint.x,
-    y: topLeftPoint.y,
-    width: bottomRightPoint.x - topLeftPoint.x,
-    height: bottomRightPoint.y - topLeftPoint.y,
-  };
-}
-
 function highlightRegion(mat: any, region: Rect): any {
   if (region.width <= 0 || region.height <= 0) {
     return mat;
   }
 
   if (!cv) {
-    throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
+    throw new OpenCvNotInitializedError('OpenCV is not initialized. Call initOpenCv() first.');
   }
 
   const pool = new OpenCvAutoreleasePool();
@@ -556,7 +570,7 @@ async function cvMatToPng(mat: any): Promise<Buffer> {
 
 async function cvMatFromImage(img: Buffer): Promise<any> {
   if (!cv) {
-    throw new Error('OpenCV is not initialized. Call initOpenCv() first.');
+    throw new OpenCvNotInitializedError('OpenCV is not initialized. Call initOpenCv() first.');
   }
   const {data, info} = await sharp(img).ensureAlpha().raw().toBuffer({resolveWithObject: true});
   const {width, height} = info;

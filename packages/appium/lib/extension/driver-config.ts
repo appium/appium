@@ -1,12 +1,12 @@
-import {util} from '@appium/support';
+import {errors} from '@appium/base-driver';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
-import type {ExtManifest, ExtName, ExtRecord} from 'appium/types';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
-import {DRIVER_TYPE} from '../constants';
-import {log} from '../logger';
-import type {ExtManifestProblem} from './extension-config';
-import {ExtensionConfig} from './extension-config';
-import type {Manifest} from './manifest';
+import {DRIVER_TYPE} from '../constants.js';
+import {log} from '../logger.js';
+import {ExtensionConfig} from './extension-config.js';
+import {manifestValidator} from './manifest/index.js';
+import type {ExtManifestProblem, Manifest} from './manifest/index.js';
 
 export type MatchedDriver = {
   driver: DriverClass;
@@ -81,51 +81,26 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;
-      throw new Error(msg, {cause: err});
+      throw new errors.SessionNotCreatedError(msg, err);
     }
   }
 
   protected override getConfigProblems(extManifest: ExtManifest<DriverType>, extName: string): ExtManifestProblem[] {
     void extName;
-    const problems: ExtManifestProblem[] = [];
-    const {platformNames, automationName} = extManifest;
+    const problems = manifestValidator.getDriverManifestProblems(extManifest);
+    // `?.`, not destructuring: a corrupted entry may be null/non-object (already reported above).
+    const automationName = (extManifest as unknown as Record<string, unknown> | null | undefined)?.automationName;
 
-    if (!Array.isArray(platformNames)) {
-      problems.push({
-        err: 'Missing or incorrect supported platformNames list.',
-        val: platformNames,
-      });
-    } else if (util.isEmpty(platformNames)) {
-      problems.push({
-        err: 'Empty platformNames list.',
-        val: platformNames,
-      });
-    } else {
-      for (const pName of platformNames) {
-        if (typeof pName !== 'string') {
-          problems.push({
-            err: 'Incorrectly formatted platformName.',
-            val: pName,
-          });
-        }
+    // Only track actual strings — `undefined` would make every automationName-less entry a "duplicate".
+    if (typeof automationName === 'string') {
+      if (this.knownAutomationNames.has(automationName)) {
+        problems.push({
+          err: 'Multiple drivers claim support for the same automationName',
+          val: automationName,
+        });
       }
+      this.knownAutomationNames.add(automationName);
     }
-
-    if (typeof automationName !== 'string') {
-      problems.push({
-        err: 'Missing or incorrect automationName',
-        val: automationName,
-      });
-    }
-
-    if (this.knownAutomationNames.has(automationName as string)) {
-      problems.push({
-        err: 'Multiple drivers claim support for the same automationName',
-        val: automationName,
-      });
-    }
-
-    this.knownAutomationNames.add(automationName as string);
 
     return problems;
   }

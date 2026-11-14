@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString} from '../../lib/utils';
+import {ansiBeep, ansiColor, escapeRegExp, isPlainObject, setBlocking, unleakString} from '../../lib/utils/index.js';
 
 describe('utils', function () {
   describe('ansiColor', function () {
@@ -104,7 +104,7 @@ describe('utils', function () {
 
     it('should convert an object to a string', function () {
       for (const obj of [{}, null, undefined, [], 0]) {
-        assert.strictEqual(unleakString(obj as any), `${obj}`);
+        assert.strictEqual(unleakString(obj as any), `${obj as any}`);
       }
     });
   });

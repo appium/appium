@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {adler32} from '../../../lib/utils/hash';
+import {adler32} from '../../../lib/utils/hash.js';
 
 describe('utils/hash', function () {
   describe('adler32()', function () {

@@ -1,10 +1,9 @@
-import bplistCreate from 'bplist-creator';
-import {parseBuffer} from 'bplist-parser';
-import {build as plistBuild, parse as plistParse, type PlistValue} from 'plist';
+import {build as plistBuild, buildBinary, parse as plistParse, parseBinary, type PlistValue} from 'plist';
 
-import {fs} from './fs';
-import log from './logger';
-import {truncateString} from './util';
+import {fs} from './fs.js';
+import {toBufferDeep, toBufferIfBinaryLike} from './internal/index.js';
+import log from './logger.js';
+import {truncateString} from './util.js';
 
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
@@ -73,7 +72,7 @@ export async function updatePlistFile(
     throw new Error(`Could not update plist: ${(err as Error).message}`, {cause: err});
   }
   Object.assign(obj as Record<string, unknown>, updatedFields);
-  const newPlist = binary ? bplistCreate(obj) : plistBuild(obj as PlistValue);
+  const newPlist = binary ? createBinaryPlist(obj) : plistBuild(obj as PlistValue);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
@@ -91,7 +90,7 @@ export async function updatePlistFile(
  * @returns Plist in the form of a binary buffer
  */
 export function createBinaryPlist(data: object): Buffer {
-  return bplistCreate(data);
+  return Buffer.from(buildBinary(data as PlistValue));
 }
 
 /**
@@ -101,7 +100,7 @@ export function createBinaryPlist(data: object): Buffer {
  * @returns Array of parsed root objects (typically one element)
  */
 export function parseBinaryPlist(data: Buffer): object[] {
-  return parseBuffer(data);
+  return [toBufferDeep(parseBinary(data)) as object];
 }
 
 /**
@@ -128,30 +127,17 @@ export function parsePlist(data: string | Buffer | Uint8Array | ArrayBuffer): ob
   if (typeof data === 'string') {
     return data.startsWith(BPLIST_IDENTIFIER.TEXT)
       ? parseBinaryPlistRoot(Buffer.from(data))
-      : (plistParse(data) as object);
+      : (toBufferDeep(plistParse(data)) as object);
   }
 
   const binaryLikeData = toBufferIfBinaryLike(data);
   if (binaryLikeData) {
     return BPLIST_IDENTIFIER.BUFFER.compare(binaryLikeData, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
       ? parseBinaryPlistRoot(binaryLikeData)
-      : (plistParse(binaryLikeData.toString()) as object);
+      : (toBufferDeep(plistParse(binaryLikeData.toString())) as object);
   }
 
-  throw new Error(`Unknown type of plist, data: ${truncateString(String(data), {length: 200})}`);
-}
-
-function toBufferIfBinaryLike(data: unknown): Buffer | null {
-  if (Buffer.isBuffer(data)) {
-    return data;
-  }
-  if (data instanceof Uint8Array) {
-    return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
-  }
-  if (data instanceof ArrayBuffer) {
-    return Buffer.from(data);
-  }
-  return null;
+  throw new Error(`Unknown type of plist, data: ${truncateString(String(data as unknown), {length: 200})}`);
 }
 
 function parseBinaryPlistRoot(data: Buffer): object {

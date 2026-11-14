@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.0-beta.8](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.7...@appium/execute-driver-plugin@8.0.0-beta.8) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+
+### Features
+
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([ddc1d55](https://github.com/appium/appium/commit/ddc1d555dbf04d1cdd4dfd79139e48b1b077817b))
+
+
+## [8.0.0-beta.7](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.6...@appium/execute-driver-plugin@8.0.0-beta.7) (2026-10-31)
 ## [7.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@7.0.1...@appium/execute-driver-plugin@7.0.2) (2026-10-27)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin
@@ -11,12 +23,78 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+## [8.0.0-beta.6](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.5...@appium/execute-driver-plugin@8.0.0-beta.6) (2026-10-26)
+
+### Bug Fixes
+
+* **execute-driver-plugin:** return null when a script result refers to itself ([#23085](https://github.com/appium/appium/issues/23085)) ([1db7aa9](https://github.com/appium/appium/commit/1db7aa9eb73943cc387da28f16d99b8cc1b6392d))
+
+
+## [8.0.0-beta.5](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.4...@appium/execute-driver-plugin@8.0.0-beta.5) (2026-10-18)
 ## [7.0.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@7.0.0...@appium/execute-driver-plugin@7.0.1) (2026-09-24)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin
 
 
 
+
+
+## [8.0.0-beta.4](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.3...@appium/execute-driver-plugin@8.0.0-beta.4) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+* **execute-driver-plugin:** bracket IPv6 server hosts for webdriverio ([#22912](https://github.com/appium/appium/issues/22912)) ([dbae73b](https://github.com/appium/appium/commit/dbae73b92180c457936c1d040ad9684cdd842b8e))
+
+
+## [8.0.0-beta.3](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.2...@appium/execute-driver-plugin@8.0.0-beta.3) (2026-10-05)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
+## [8.0.0-beta.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.1...@appium/execute-driver-plugin@8.0.0-beta.2) (2026-09-27)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
+## [8.0.0-beta.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0-beta.0...@appium/execute-driver-plugin@8.0.0-beta.1) (2026-09-19)
+
+### Bug Fixes
+
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([b09efc3](https://github.com/appium/appium/commit/b09efc31c6967bbcf2c4314db9d2a0b6454fa8fb))
+
+
+## [8.0.0-beta.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@7.0.0...@appium/execute-driver-plugin@8.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** align timeouts endpoints closer to W3C standard (#22776)
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* **base-driver:** @appium/base-driver no longer exports statusCodes or getSummaryByCode (the jsonwp-status module was removed).
+* **base-driver:** errorFromMJSONWPStatusCode (aliased as errorFromCode) has been removed; use errorFromW3CJsonCode for W3C error-signature mapping.
+* **base-driver:** ProtocolError instances no longer have a jsonwpCode property.
+* **base-driver:** WebDriverProxy (formerly JWProxy) no longer proxies to or interprets responses from downstream servers speaking the legacy MJSONWP protocol; the ProtocolConverter class, COMMAND_URLS_CONFLICTS, and the downstreamProtocol getter/setter have been removed. Downstream automation servers must speak W3C WebDriver.
+* **base-driver:** Responses no longer duplicate element references under the legacy ELEMENT key; only the W3C element-6066-11e4-a52e-4f735466cecf key is present. The MJSONWP_ELEMENT_KEY constant has been removed.
+* **base-driver:** determineProtocol has been removed, and drivers can no longer produce the legacy {sessionId, status, value} response shape; all responses are now W3C-shaped regardless of how the client formatted its createSession capabilities.
+* **base-driver:** DriverCore#setProtocolMJSONWP() has been removed.
+* **base-driver:** The deprecated JWProxy export has been removed; use WebDriverProxy instead. Its source also moved from lib/jsonwp-proxy/proxy.js to lib/wd-proxy/proxy.js.
+* **base-driver:** DriverCore#isMjsonwpProtocol() has been removed.
+
+### Features
+
+* **base-driver:** align timeouts endpoints closer to W3C standard ([#22776](https://github.com/appium/appium/issues/22776)) ([93115d1](https://github.com/appium/appium/commit/93115d195773b011306ffb2e6d7d6cc935df0148))
+* **base-driver:** remove legacy (M)JSONWP protocol support ([#22681](https://github.com/appium/appium/issues/22681)) ([0b83e77](https://github.com/appium/appium/commit/0b83e77e7a1c24a885d9895a99db30281cf4acea))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
+
+### Bug Fixes
+
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([bcf1c57](https://github.com/appium/appium/commit/bcf1c579997b8dbb8292b1a77583aeef40b11ba4))
 
 
 ## [7.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@6.0.7...@appium/execute-driver-plugin@7.0.0) (2026-08-24)

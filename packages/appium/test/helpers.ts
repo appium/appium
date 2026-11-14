@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
-import net from 'node:net';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {isDeepStrictEqual} from 'node:util';
 
-import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
+import {net} from '@appium/support';
 
-import {insertAppiumPrefixes} from '../lib/helpers/capability';
+import {insertAppiumPrefixes} from '../lib/helpers/capability.js';
 
 const TEST_HOST = '127.0.0.1';
 
-const FAKE_DRIVER_DIR = path.dirname(require.resolve('@appium/fake-driver/package.json'));
-const FAKE_PLUGIN_DIR = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
+const FAKE_DRIVER_DIR = path.dirname(fileURLToPath(import.meta.resolve('@appium/fake-driver/package.json')));
+const FAKE_PLUGIN_DIR = path.dirname(fileURLToPath(import.meta.resolve('@appium/fake-plugin/package.json')));
 
 /** This is the monorepo root. */
 const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');
@@ -35,25 +35,15 @@ const W3C_CAPS = {
   firstMatch: [{}],
 };
 
-let TEST_PORT: number | undefined;
-
-async function getPort(): Promise<number> {
-  const server = net.createServer();
-  return await new Promise((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(0, () => {
-      const address = server.address();
-      if (!address || typeof address === 'string') {
-        server.close(() => reject(new Error('Could not resolve a free port')));
-        return;
-      }
-      server.close((err) => (err ? reject(err) : resolve(address.port)));
-    });
-  });
-}
+let TEST_PORT: Promise<number> | undefined;
 
 async function getTestPort(): Promise<number> {
-  return (TEST_PORT ??= await getPort());
+  TEST_PORT ??= net.getFreePort().catch((err: unknown) => {
+    // do not cache a failed lookup
+    TEST_PORT = undefined;
+    throw err;
+  });
+  return await TEST_PORT;
 }
 
 function resolveFixture(filename: string, ...pathParts: string[]): string {
@@ -67,9 +57,6 @@ function assertArrayIncludesDeep(array: readonly unknown[], expected: unknown): 
   assert.ok(array.some((item) => isDeepStrictEqual(item, expected)));
 }
 
-overrideEntryPoint(module);
-addPlugin(plugins.nodejs);
-
 export {
   APPIUM_ROOT,
   assertArrayIncludesDeep,
@@ -79,7 +66,6 @@ export {
   getTestPort,
   PROJECT_ROOT,
   resolveFixture,
-  rewiremock,
   TEST_FAKE_APP,
   TEST_HOST,
   W3C_CAPS,

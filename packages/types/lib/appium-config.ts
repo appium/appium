@@ -10,10 +10,6 @@
  */
 export type AddressConfig = string;
 /**
- * Whether the Appium server should allow web browser connections from any host
- */
-export type AllowCorsConfig = boolean;
-/**
  * Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.
  */
 export type AllowInsecureConfig = string[];
@@ -22,21 +18,25 @@ export type AllowInsecureConfig = string[];
  */
 export type AllowUnknownArgsConfig = boolean;
 /**
+ * Rules that remote application URLs (e.g. in the "appium:app" capability) must satisfy before the server downloads them. Session creation is rejected if a URL violates any rule. If a string, a path to a JSON file containing the rules, or raw JSON.
+ */
+export type AppUrlRulesConfig = AppUrlRules;
+/**
  * Base path to use as the prefix for all webdriver routes running on the server
  */
 export type BasePathConfig = string;
 /**
- * Callback IP address (default: same as "address")
+ * Number of seconds between WebSocket ping frames sent to each BiDi client. A connection that misses two consecutive pongs is terminated. A value of 0 disables the heartbeat.
  */
-export type CallbackAddressConfig = string;
+export type BidiHeartbeatIntervalConfig = number;
 /**
- * Callback port (default: same as "port")
+ * Maximum number of bytes the server may keep buffered for a single BiDi connection that is not reading fast enough. A connection that stays above this limit for longer than "bidi-max-buffered-ms" (or exceeds twice the limit) is closed with the code 1013. A value of 0 disables the limit, as well as skipping of droppable events.
  */
-export type CallbackPortConfig = number;
+export type BidiMaxBufferedBytesConfig = number;
 /**
- * Add exaggerated spacing in logs to help with visual inspection
+ * Number of milliseconds a BiDi connection may stay above "bidi-max-buffered-bytes" before it is closed. A value of 0 closes the connection as soon as the limit is exceeded.
  */
-export type DebugLogSpacingConfig = boolean;
+export type BidiMaxBufferedMsConfig = number;
 /**
  * Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.
  */
@@ -152,17 +152,9 @@ export type CertFilePath = string;
  */
 export type KeyFilePath = string;
 /**
- * Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device
- */
-export type StrictCapsConfig = boolean;
-/**
- * Absolute path to directory Appium can use to manage temp files. Defaults to C:\Windows\Temp on Windows and /tmp otherwise.
+ * Absolute path to directory Appium can use to manage temp files. Defaults to the system temp directory returned by Node.js os.tmpdir().
  */
 export type TmpConfig = string;
-/**
- * Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments
- */
-export type TraceDirConfig = string;
 /**
  * A list of drivers to activate. By default, all installed drivers will be activated.
  */
@@ -199,13 +191,13 @@ export interface AppiumConfiguration {
  */
 export interface ServerConfig {
   address?: AddressConfig;
-  "allow-cors"?: AllowCorsConfig;
   "allow-insecure"?: AllowInsecureConfig;
   "allow-unknown-args"?: AllowUnknownArgsConfig;
+  "app-url-rules"?: AppUrlRulesConfig;
   "base-path"?: BasePathConfig;
-  "callback-address"?: CallbackAddressConfig;
-  "callback-port"?: CallbackPortConfig;
-  "debug-log-spacing"?: DebugLogSpacingConfig;
+  "bidi-heartbeat-interval"?: BidiHeartbeatIntervalConfig;
+  "bidi-max-buffered-bytes"?: BidiMaxBufferedBytesConfig;
+  "bidi-max-buffered-ms"?: BidiMaxBufferedMsConfig;
   "default-capabilities"?: DefaultCapabilitiesConfig;
   "deny-insecure"?: DenyInsecureConfig;
   driver?: DriverConfig;
@@ -222,7 +214,6 @@ export interface ServerConfig {
   "drivers-import-chunk-size"?: DriversImportChunkSizeConfig;
   "long-stacktrace"?: LongStacktraceConfig;
   "no-perms-check"?: NoPermsCheckConfig;
-  nodeconfig?: NodeconfigConfig;
   plugin?: PluginConfig;
   port?: PortConfig;
   "relaxed-security"?: RelaxedSecurityConfig;
@@ -230,14 +221,37 @@ export interface ServerConfig {
   "session-override"?: SessionOverrideConfig;
   "ssl-cert-path"?: CertFilePath;
   "ssl-key-path"?: KeyFilePath;
-  "strict-caps"?: StrictCapsConfig;
   tmp?: TmpConfig;
-  "trace-dir"?: TraceDirConfig;
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
   "max-ipc-data-size"?: MaxIpcDataSizeConfig;
   "max-ipc-topics"?: MaxIpcTopicsConfig;
+}
+/**
+ * Rules that remote application URLs must satisfy
+ */
+export interface AppUrlRules {
+  /**
+   * Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match at least one.
+   */
+  allow?: string[];
+  /**
+   * Hostname patterns (picomatch glob syntax, e.g. "*.example.com"), IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected.
+   */
+  deny?: string[];
+  /**
+   * Whether only "https:" URLs are accepted
+   */
+  httpsOnly?: boolean;
+  /**
+   * Whether URLs containing a username and/or a password are accepted
+   */
+  allowCredentials?: boolean;
+  /**
+   * Maximum number of HTTP redirects to follow while downloading the application. Set to 0 to reject any redirect.
+   */
+  maxRedirects?: number;
 }
 /**
  * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.
@@ -269,12 +283,6 @@ export interface LogFilterRegex {
    * Regex pattern to match
    */
   pattern: string;
-  [k: string]: unknown;
-}
-/**
- * Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself
- */
-export interface NodeconfigConfig {
   [k: string]: unknown;
 }
 /**

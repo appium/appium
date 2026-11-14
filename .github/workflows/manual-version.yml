@@ -47,4 +47,4 @@ jobs:
           if [ "${{ github.ref_name }}" = "$BETA_BRANCH" ]; then
             BETA_FLAGS="--conventional-prerelease --preid beta"
           fi
-          npx lerna version --exact --yes $BETA_FLAGS
+          npx lerna version --yes $BETA_FLAGS

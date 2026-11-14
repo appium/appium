@@ -15,12 +15,7 @@ const APPIUM_PACKAGE_README = path.join(ROOT_PACKAGES_DIR, 'appium', 'README.md'
 const COMMON_FIELDS_TO_COPY = ['author', 'license', 'bugs', 'homepage'];
 const LOGGER_COMMON_FIELDS_TO_COPY = ['author', 'bugs', 'homepage'];
 
-const KEYWORD_EXCLUDED_PACKAGES = new Set([
-  'eslint-config-appium-ts',
-  'oxc-config',
-  'semantic-release-config',
-  'types',
-]);
+const KEYWORD_EXCLUDED_PACKAGES = new Set(['oxc-config', 'semantic-release-config', 'types']);
 // Package names in this set will not receive the LICENSE file from the root,
 // as they have their own license terms (e.g., ISC for logger).
 const LICENSE_EXCLUDED_PACKAGES = new Set(['logger']);
@@ -49,9 +44,8 @@ async function writeJson(filepath, data) {
  * @returns {Promise<string[]>} An array of package directory paths.
  */
 async function getPackageDirs() {
-  return (await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true}))
-    .map((pkgJsonPath) => path.dirname(pkgJsonPath))
-    .sort();
+  const pkgJsonPaths = await fs.glob('*/package.json', {cwd: ROOT_PACKAGES_DIR, absolute: true});
+  return pkgJsonPaths.map((pkgJsonPath) => path.dirname(pkgJsonPath)).sort();
 }
 
 /**
@@ -66,12 +60,40 @@ function copyFields(source, destination, fields) {
   }
 }
 
+const DEP_FIELDS = ['dependencies', 'devDependencies', 'optionalDependencies'];
+
+/**
+ * "Final" packages (appium, drivers, plugins) pin monorepo deps exactly; libraries use `~`.
+ * @param {Object} packageJson
+ * @returns {boolean}
+ */
+function isFinalPackage(packageJson) {
+  return packageJson.name === 'appium' || Boolean(packageJson.appium);
+}
+
+/**
+ * Lerna rewrites bumped monorepo deps as `^x.y.z`; restore the range policy.
+ * @param {Object} packageJson
+ * @param {Set<string>} localNames
+ */
+function normalizeLocalDeps(packageJson, localNames) {
+  const prefix = isFinalPackage(packageJson) ? '' : '~';
+  for (const field of DEP_FIELDS) {
+    for (const [name, range] of Object.entries(packageJson[field] ?? {})) {
+      if (localNames.has(name) && range.startsWith('^')) {
+        packageJson[field][name] = `${prefix}${range.slice(1)}`;
+      }
+    }
+  }
+}
+
 /**
  * Synchronize specific fields from the root package.json to a package's package.json.
  * @param {Object} rootPackageJson
  * @param {string} packageDir
+ * @param {Set<string>} localNames names of all monorepo packages
  */
-async function syncPackageJsonFields(rootPackageJson, packageDir) {
+async function syncPackageJsonFields(rootPackageJson, packageDir, localNames) {
   const packageJsonPath = path.join(packageDir, 'package.json');
   const packageJson = await readJson(packageJsonPath);
   const packageName = path.basename(packageDir);
@@ -81,6 +103,8 @@ async function syncPackageJsonFields(rootPackageJson, packageDir) {
     packageJson,
     packageName === 'logger' ? LOGGER_COMMON_FIELDS_TO_COPY : COMMON_FIELDS_TO_COPY,
   );
+
+  normalizeLocalDeps(packageJson, localNames);
 
   if (!KEYWORD_EXCLUDED_PACKAGES.has(packageName)) {
     packageJson.keywords = rootPackageJson.keywords;
@@ -101,8 +125,11 @@ async function main() {
   const packageDirs = await getPackageDirs();
   log.debug(`Found ${packageDirs.length} package directories`);
 
+  const localNames = new Set(
+    await Promise.all(packageDirs.map(async (dir) => (await readJson(path.join(dir, 'package.json'))).name)),
+  );
   const syncPackageJsonFieldsPromises = packageDirs.map((packageDir) =>
-    syncPackageJsonFields(rootPackageJson, packageDir),
+    syncPackageJsonFields(rootPackageJson, packageDir, localNames),
   );
   const licenseCopyPromises = packageDirs
     .filter((packageDir) => !LICENSE_EXCLUDED_PACKAGES.has(path.basename(packageDir)))

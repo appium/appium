@@ -2,46 +2,9 @@ import {randomUUID} from 'node:crypto';
 import _fs from 'node:fs';
 import path from 'node:path';
 
-import {exec} from 'teen_process';
-
-import log from './logger';
-import {isWindows} from './system';
+import {sizeOf} from './internal/index.js';
 
 const OBJECTS_MAPPING = new WeakMap<object, string>();
-
-/**
- * Utility function to extend node functionality, allowing us to require
- * modules that are installed globally. If the package cannot be required,
- * this will attempt to link the package and then re-require it
- *
- * @param packageName - the name of the package to be required
- * @returns The package object
- * @throws {Error} If the package is not found locally or globally
- */
-export async function requirePackage(packageName: string): Promise<unknown> {
-  try {
-    log.debug(`Loading local package '${packageName}'`);
-    return require(packageName);
-  } catch (err) {
-    log.debug(`Failed to load local package '${packageName}': ${(err as Error).message}`);
-  }
-
-  try {
-    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
-    log.debug(`Loading global package '${globalPackageName}'`);
-    return require(globalPackageName);
-  } catch (err) {
-    log.debug(`Failed to load global package '${packageName}': ${(err as Error).message}`);
-  }
-
-  try {
-    await linkGlobalPackage(packageName);
-    log.debug(`Retrying load of linked package '${packageName}'`);
-    return require(packageName);
-  } catch (err) {
-    throw log.errorWithException(`Unable to load package '${packageName}': ${(err as Error).message}`);
-  }
-}
 
 /**
  * Calculate the in-depth size in memory of the provided object.
@@ -51,7 +14,7 @@ export async function requirePackage(packageName: string): Promise<unknown> {
  * @returns Object size in bytes.
  */
 export function getObjectSize(obj: unknown): number {
-  return getCalculator(new WeakSet())(obj);
+  return sizeOf(obj);
 }
 
 /**
@@ -104,7 +67,7 @@ export function deepFreeze<T>(object: T): T {
  *
  * @param moduleName - The name of the module as it is written in package.json
  * @param filePath - Full path to any of files that `moduleName` contains. Use
- * `__filename` to find the root of the module where this helper is called.
+ * `import.meta.filename` to find the root of the module where this helper is called.
  * @returns Full path to the module root, or null if not found
  */
 export function getModuleRootSync(moduleName: string, filePath: string): string | null {
@@ -127,99 +90,3 @@ export function getModuleRootSync(moduleName: string, filePath: string): string 
   }
   return null;
 }
-
-// #region Private
-
-const ECMA_SIZES = Object.freeze({
-  STRING: 2,
-  BOOLEAN: 4,
-  NUMBER: 8,
-});
-
-type SizeCalculator = (obj: unknown) => number;
-
-async function linkGlobalPackage(packageName: string): Promise<void> {
-  try {
-    log.debug(`Linking package '${packageName}'`);
-    const cmd = isWindows() ? 'npm.cmd' : 'npm';
-    await exec(cmd, ['link', packageName], {timeout: 20000});
-  } catch (err) {
-    const e = err as Error & {stderr?: string};
-    const msg = `Unable to load package '${packageName}', linking failed: ${e.message}`;
-    log.debug(msg);
-    if (e.stderr) {
-      log.debug(e.stderr);
-    }
-    throw new Error(msg, {cause: err});
-  }
-}
-
-function extractAllProperties(obj: object): (string | symbol)[] {
-  const stringProperties: (string | symbol)[] = [];
-  for (const prop in obj) {
-    stringProperties.push(prop);
-  }
-  if (typeof Object.getOwnPropertySymbols === 'function') {
-    stringProperties.push(...Object.getOwnPropertySymbols(obj));
-  }
-  return stringProperties;
-}
-
-function _getSizeOfObject(seen: WeakSet<object>, object: object): number {
-  if (object == null) {
-    return 0;
-  }
-
-  let bytes = 0;
-  const properties = extractAllProperties(object);
-  const calc = getCalculator(seen);
-  for (const key of properties) {
-    const val = (object as Record<string | symbol, unknown>)[key];
-    if (typeof val === 'object' && val != null) {
-      if (seen.has(val as object)) {
-        continue;
-      }
-      seen.add(val as object);
-    }
-
-    bytes += calc(key);
-    try {
-      bytes += calc(val);
-    } catch (ex) {
-      if (ex instanceof RangeError) {
-        bytes = 0;
-      }
-    }
-  }
-
-  return bytes;
-}
-
-function getCalculator(seen: WeakSet<object>): SizeCalculator {
-  return function calculator(obj: unknown): number {
-    if (Buffer.isBuffer(obj)) {
-      return (obj as Buffer).length;
-    }
-
-    switch (typeof obj) {
-      case 'string':
-        return obj.length * ECMA_SIZES.STRING;
-      case 'boolean':
-        return ECMA_SIZES.BOOLEAN;
-      case 'number':
-        return ECMA_SIZES.NUMBER;
-      case 'symbol':
-        return typeof Symbol.keyFor === 'function' && Symbol.keyFor(obj)
-          ? (Symbol.keyFor(obj) as string).length * ECMA_SIZES.STRING
-          : (obj.toString().length - 8) * ECMA_SIZES.STRING;
-      case 'object':
-        return Array.isArray(obj)
-          ? obj.map(getCalculator(seen)).reduce((acc, curr) => acc + curr, 0)
-          : _getSizeOfObject(seen, obj as object);
-      default:
-        return 0;
-    }
-  };
-}
-
-// #endregion

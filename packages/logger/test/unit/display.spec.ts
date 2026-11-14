@@ -2,7 +2,7 @@ import {describe, it, beforeEach} from 'node:test';
 
 import {waitForCondition} from 'asyncbox';
 
-import {Log} from '../../lib/log';
+import {Log} from '../../lib/log.js';
 
 describe('display', function () {
   let log: Log;
@@ -13,7 +13,7 @@ describe('display', function () {
     beforeEach(function () {
       actual = '';
       log = new Log();
-      (log as any).write = (msg: string) => {
+      (log as any).write = (_stream: unknown, msg: string) => {
         actual += msg;
       };
     });

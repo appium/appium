@@ -1,30 +1,27 @@
-import net from 'node:net';
-
-import type {ServerOpts} from '@appium/base-driver';
+import type {ServerOpts} from '@appium/http-server';
 import {util} from '@appium/support';
 import type {AppiumServer} from '@appium/types';
-import type {Args, CliCommand, CliCommandServer, CliCommandSetupSubcommand, CliExtensionSubcommand} from 'appium/types';
+import type {
+  Args,
+  CliCommand,
+  CliCommandServer,
+  CliCommandSetupSubcommand,
+  CliExtensionSubcommand,
+} from 'appium/types/index.js';
 
-import {getActiveDrivers, getActivePlugins} from '../extension';
-import {log as logger} from '../logger';
-import registerNode from './grid-v3-register';
-import type {InitResult, ServerInitData} from './init-types';
-import {
-  buildServerOpts,
-  createAppiumServer,
-  determineAppiumHomeSource,
-  logServerAddress,
-  logStartupInfo,
-} from './main-helpers';
+import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
+import {log as logger} from '../logger.js';
+import type {InitResult, ServerInitData} from './init-types.js';
+import {buildServerOpts, createAppiumServer, determineAppiumHomeSource, logStartupInfo} from './main-helpers.js';
 
 const MAX_SERVER_PROCESS_LISTENERS = 100;
 
 /**
- * Starts the Appium HTTP server after {@link AppiumInitializer.init}: loads drivers/plugins, binds, grid register, signals.
+ * Starts the Appium HTTP server after {@link AppiumInitializer.init}: loads drivers/plugins, binds, signals.
  */
 export class AppiumMainRunner {
   /**
-   * For server init: builds listeners, registers with Grid 3 if configured, and returns the server.
+   * For server init: builds listeners and returns the server.
    * For non-server commands, `initResult` is empty and this resolves to `undefined`.
    *
    * @param initResult - Output of {@link AppiumInitializer.init}
@@ -55,6 +52,8 @@ export class AppiumMainRunner {
     await logStartupInfo(parsedArgs);
 
     appiumDriver.configureGlobalFeatures();
+    // the rules are enforced by the shared app download helper of every driver
+    appiumDriver.helpers.setAppUrlRules(parsedArgs.appUrlRules);
 
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);
@@ -71,12 +70,10 @@ export class AppiumMainRunner {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
     }
 
-    this.warnIfCorsEnabled(parsedArgs);
+    this.warnIfCorsEnabled(serverOpts);
     appiumDriver.server = server;
 
-    await this.registerGridOrClose(server, parsedArgs, normalizedBasePath);
     this.attachSignalHandlers(appiumDriver, server);
-    this.logListeningUrl(server, parsedArgs, normalizedBasePath);
 
     driverConfig.print();
     pluginConfig.print([...pluginClasses.values()]);
@@ -104,28 +101,13 @@ export class AppiumMainRunner {
     }
   }
 
-  private warnIfCorsEnabled(parsedArgs: ServerInitData['parsedArgs']): void {
-    if (parsedArgs.allowCors) {
+  private warnIfCorsEnabled(serverOpts: ServerOpts): void {
+    if (serverOpts.allowCors) {
       logger.warn(
         'You have enabled CORS requests from any host. Be careful not ' +
           'to visit sites which could maliciously try to start Appium ' +
           'sessions on your machine',
       );
-    }
-  }
-
-  private async registerGridOrClose(
-    server: AppiumServer,
-    parsedArgs: ServerInitData['parsedArgs'],
-    normalizedBasePath: string,
-  ): Promise<void> {
-    try {
-      if (parsedArgs.nodeconfig) {
-        await registerNode(parsedArgs.nodeconfig, parsedArgs.address, parsedArgs.port, normalizedBasePath);
-      }
-    } catch (err: unknown) {
-      await server.close();
-      throw err;
     }
   }
 
@@ -144,15 +126,5 @@ export class AppiumMainRunner {
         }
       });
     }
-  }
-
-  private logListeningUrl(
-    server: AppiumServer,
-    parsedArgs: ServerInitData['parsedArgs'],
-    normalizedBasePath: string,
-  ): void {
-    const protocol = server.isSecure() ? 'https' : 'http';
-    const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
-    logServerAddress(`${protocol}://${address}:${parsedArgs.port}${normalizedBasePath}`);
   }
 }

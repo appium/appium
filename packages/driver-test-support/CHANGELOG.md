@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.6...@appium/driver-test-support@4.0.0-beta.7) (2026-11-13)
 ## [3.0.2](https://github.com/appium/appium/compare/@appium/driver-test-support@3.0.1...@appium/driver-test-support@3.0.2) (2026-10-27)
 
 **Note:** Version bump only for package @appium/driver-test-support
@@ -11,12 +12,63 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+## [4.0.0-beta.6](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.5...@appium/driver-test-support@4.0.0-beta.6) (2026-10-31)
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/driver-test-support@3.0.0...@appium/driver-test-support@3.0.1) (2026-09-24)
 
 **Note:** Version bump only for package @appium/driver-test-support
 
 
 
+
+
+## [4.0.0-beta.5](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.4...@appium/driver-test-support@4.0.0-beta.5) (2026-10-26)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [4.0.0-beta.4](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.3...@appium/driver-test-support@4.0.0-beta.4) (2026-10-18)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [4.0.0-beta.3](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.2...@appium/driver-test-support@4.0.0-beta.3) (2026-10-09)
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([c5ddcef](https://github.com/appium/appium/commit/c5ddcef8940dfa5fac8d180bed65dc80ba8fafab))
+
+
+## [4.0.0-beta.2](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.1...@appium/driver-test-support@4.0.0-beta.2) (2026-10-05)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [4.0.0-beta.1](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.0...@appium/driver-test-support@4.0.0-beta.1) (2026-09-27)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [4.0.0-beta.0](https://github.com/appium/appium/compare/@appium/driver-test-support@3.0.0...@appium/driver-test-support@4.0.0-beta.0) (2026-09-19)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([9f4a11e](https://github.com/appium/appium/commit/9f4a11e7190290986d01743557e90e6e44f87638))
 
 
 ## [3.0.0](https://github.com/appium/appium/compare/@appium/driver-test-support@2.0.1...@appium/driver-test-support@3.0.0) (2026-08-24)

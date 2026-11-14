@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "5.0.2",
+  "version": "6.0.0-beta.8",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
@@ -50,16 +50,20 @@
     "test:e2e": "node --test --enable-source-maps --test-force-exit --test-concurrency=1 --test-timeout=20000 \"./build/test/e2e/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/opencv": "5.0.2",
-    "@appium/support": "7.2.9",
+    "@appium/opencv": "6.0.0-beta.7",
+    "@appium/support": "8.0.0-beta.7",
+    "asyncbox": "6.6.0",
     "lru-cache": "11.5.3",
     "sharp": "0.35.5"
   },
+  "devDependencies": {
+    "@appium/types": "2.0.0-beta.6"
+  },
   "peerDependencies": {
-    "appium": "^3.0.0-beta.0"
+    "appium": "^4.0.0-beta.0"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0",
     "npm": ">=10"
   },
   "appium": {

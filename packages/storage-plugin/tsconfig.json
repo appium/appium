@@ -17,6 +17,7 @@
   "include": ["lib", "test"],
   "references": [
     {"path": "../base-plugin"},
+    {"path": "../driver-test-support"},
     {"path": "../logger"},
     {"path": "../support"},
     {"path": "../types"},

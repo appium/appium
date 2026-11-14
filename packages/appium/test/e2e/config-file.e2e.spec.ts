@@ -3,17 +3,16 @@ import {describe, it, afterEach, beforeEach, type TestContext} from 'node:test';
 
 import {system, util} from '@appium/support';
 
-import {readConfigFile} from '../../lib/bootstrap/config-file';
-import {DRIVER_TYPE} from '../../lib/constants';
-import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import extSchema from '../fixtures/driver-schema';
-import {resolveFixture} from '../helpers';
+import {readConfigFile} from '../../lib/bootstrap/config-file.js';
+import {DRIVER_TYPE} from '../../lib/constants.js';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema.js';
+import extSchema from '../fixtures/driver-schema.js';
+import {resolveFixture} from '../helpers.js';
 
 const resolveConfigFixture = (name: string) => resolveFixture('config', name);
 
 describe('config file behavior', function () {
   const GOOD_FILEPATH = resolveConfigFixture('appium-config-good.json');
-  const BAD_NODECONFIG_FILEPATH = resolveConfigFixture('appium-config-bad-nodeconfig.json');
   const BAD_FILEPATH = resolveConfigFixture('appium-config-bad.json');
   const INVALID_JSON_FILEPATH = resolveConfigFixture('appium-config-invalid.json');
   const SECURITY_ARRAY_FILEPATH = resolveConfigFixture('appium-config-security-array.json');
@@ -39,12 +38,8 @@ describe('config file behavior', function () {
           config: {
             server: {
               address: '0.0.0.0',
-              allowCors: false,
               allowInsecure: [],
               basePath: '/',
-              callbackAddress: '0.0.0.0',
-              callbackPort: 31337,
-              debugLogSpacing: false,
               defaultCapabilities: {},
               denyInsecure: [],
               keepAliveTimeout: 600,
@@ -55,15 +50,10 @@ describe('config file behavior', function () {
               logTimestamp: false,
               longStacktrace: false,
               noPermsCheck: false,
-              nodeconfig: {
-                foo: 'bar',
-              },
               port: 31337,
               relaxedSecurityEnabled: true,
               sessionOverride: false,
-              strictCaps: false,
               tmpDir: '/tmp',
-              traceDir: '/tmp/appium-instruments',
               useDrivers: [],
               usePlugins: ['all'],
               webhook: 'http://0.0.0.0/hook',
@@ -71,23 +61,6 @@ describe('config file behavior', function () {
           },
           filepath: GOOD_FILEPATH,
           errors: [],
-        });
-      });
-
-      describe('`server.nodeconfig` behavior', function () {
-        describe('when a string', function () {
-          it('should return errors', async function () {
-            const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
-            assert.strictEqual(result.errors?.[0]?.instancePath, '/server/nodeconfig');
-          });
-        });
-
-        describe('when an object', function () {
-          it('should return a valid config object', async function () {
-            const result = await readConfigFile(GOOD_FILEPATH);
-            assert.ok(Object.hasOwn(result, 'errors'));
-            assert.strictEqual(result.errors?.length, 0);
-          });
         });
       });
 
@@ -151,12 +124,8 @@ describe('config file behavior', function () {
             appiumHome: 'foo',
             server: {
               address: '0.0.0.0',
-              allowCors: 1,
               allowInsecure: {},
               basePath: '/',
-              callbackAddress: '0.0.0.0',
-              callbackPort: 43243234,
-              debugLogSpacing: false,
               defaultCapabilities: {},
               denyInsecure: [],
               keepAliveTimeout: 0,
@@ -167,20 +136,17 @@ describe('config file behavior', function () {
               logTimestamp: false,
               longStacktrace: false,
               noPermsCheck: false,
-              nodeconfig: {},
               port: '31337',
               relaxedSecurityEnabled: false,
               sessionOverride: false,
-              strictCaps: false,
               tmpDir: '/tmp',
-              traceDir: '/tmp/appium-instruments',
               useDrivers: [],
               usePlugins: ['all'],
               webhook: 'http://0.0.0.0/hook',
             },
           });
           assert.strictEqual(result.filepath, BAD_FILEPATH);
-          assert.strictEqual(result.errors?.length, 7);
+          assert.strictEqual(result.errors?.length, 5);
           assert.ok(
             result.errors?.some((error) =>
               util.isEqual(error, {

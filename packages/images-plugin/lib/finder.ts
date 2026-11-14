@@ -1,7 +1,9 @@
+import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
+import {ConditionUnmetError} from 'asyncbox';
 import {LRUCache} from 'lru-cache';
-import sharp from 'sharp';
+import sharp, {type Sharp} from 'sharp';
 
 import {compareImages} from './compare.js';
 import {
@@ -27,24 +29,25 @@ const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Checks if one rect fully contains another
- *
- * @param templateRect The bounding rect
- * @param rect The rect to be checked for containment
- * @returns True if templateRect contains rect
- */
-function containsRect(templateRect: Rect, rect: Rect): boolean {
-  return (
-    templateRect.x <= rect.x &&
-    templateRect.y <= rect.y &&
-    rect.width <= templateRect.x + templateRect.width - rect.x &&
-    rect.height <= templateRect.y + templateRect.height - rect.y
-  );
-}
+const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
-const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
-const CONDITION_UNMET_PATTERN = /Condition unmet/;
+type ImageMatchOptions = {
+  multiple: boolean;
+  containerRect: Rect | null;
+};
+
+type WaitForMatchesOptions = ImageMatchOptions & {
+  ignoreDefaultImageTemplateScale: boolean;
+};
+
+type CreateImageElementsOptions = ImageMatchOptions & {
+  shouldCheckStaleness: boolean;
+};
+
+type ScreenshotForImageFind = Screenshot & {
+  scale?: ScreenshotScale;
+  crop?: Rect | null;
+};
 
 export class ImageElementFinder {
   private _imgElCache: LRUCache<string, ImageElement>;
@@ -91,144 +94,44 @@ export class ImageElementFinder {
     }: FindByImageOptions = {},
   ): Promise<Element | Element[] | ImageElement> {
     const settings: ImageSettings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
-    const {
-      imageMatchThreshold: threshold,
-      imageMatchMethod,
-      fixImageTemplateSize,
-      fixImageTemplateScale,
-      defaultImageTemplateScale,
-      getMatchedImageResult: visualize,
-    } = settings;
-
-    log.info(`Finding image element with match threshold ${threshold}`);
-    if (!driver.getWindowRect && !Object.hasOwn(driver, 'getWindowSize')) {
+    log.info(`Finding image element with match threshold ${settings.imageMatchThreshold}`);
+    if (!driver.getWindowRect) {
       throw new Error("This driver does not support the required 'getWindowRect' command");
     }
-    let screenSize: Size;
-    if (driver.getWindowRect) {
-      const screenRect = await driver.getWindowRect();
-      screenSize = {
-        width: screenRect.width,
-        height: screenRect.height,
-      };
-    } else {
-      // TODO: Drop the deprecated endpoint
-      // @ts-expect-error - deprecated getWindowSize method
-      screenSize = await driver.getWindowSize();
-    }
+    const screenRect = await driver.getWindowRect();
+    const screenSize: Size = {
+      width: screenRect.width,
+      height: screenRect.height,
+    };
 
     // someone might have sent in a template that's larger than the screen
     // dimensions. If so let's check and cut it down to size since the algorithm
     // will not work unless we do. But because it requires some potentially
     // expensive commands, only do this if the user has requested it in settings.
-    if (fixImageTemplateSize) {
+    if (settings.fixImageTemplateSize) {
       template = await this.ensureTemplateSize(template, {
         width: containerRect ? containerRect.width : screenSize.width,
         height: containerRect ? containerRect.height : screenSize.height,
       });
     }
 
-    const results: OccurrenceResultWithVisualization[] = [];
-    let didFixTemplateImageScale = false;
-    const performLookup = async (): Promise<boolean> => {
-      try {
-        const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
-
-        if (!didFixTemplateImageScale) {
-          template = await this.fixImageTemplateScale(template, {
-            defaultImageTemplateScale,
-            ignoreDefaultImageTemplateScale,
-            fixImageTemplateScale,
-            ...(scale || {}),
-          });
-          // We do not want `template` to be mutated multiple times when the
-          // wrapping lambda is retried
-          didFixTemplateImageScale = true;
-        }
-
-        const comparisonOpts: any = {
-          threshold,
-          visualize,
-          multiple,
-        };
-        if (imageMatchMethod) {
-          comparisonOpts.method = imageMatchMethod;
-        }
-
-        const pushIfOk = (el: any): boolean => {
-          const result: OccurrenceResultWithVisualization = {
-            rect: el.rect,
-            score: el.score,
-            visualization: el.visualization,
-          };
-          if (containerRect && !containsRect(containerRect, result.rect)) {
-            log.debug(
-              `The matched element rectangle ${JSON.stringify(result.rect)} is not located ` +
-                `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`,
-            );
-            return false;
-          }
-          results.push(result);
-          return true;
-        };
-
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
-        return (Array.isArray(elOrEls) ? elOrEls : [elOrEls]).some(pushIfOk);
-      } catch (err: any) {
-        // if compareImages fails, we'll get a specific error, but we should
-        // retry, so trap that and just return false to trigger the next round of
-        // implicitly waiting. For other errors, throw them to get out of the
-        // implicit wait loop
-        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
-          return false;
-        }
-        throw err;
-      }
-    };
-
-    try {
-      await driver.implicitWaitForCondition(performLookup);
-    } catch (err: any) {
-      // this `implicitWaitForCondition` method will throw a 'Condition unmet'
-      // error if an element is not found eventually. In that case, we will
-      // handle the element not found response below. In the case where get some
-      // _other_ kind of error, it means something blew up totally apart from the
-      // implicit wait timeout. We should not mask that error and instead throw
-      // it straightaway
-      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
-        throw err;
-      }
-    }
-
-    if (results.length === 0) {
+    const lookup = await this.waitForMatches(template, driver, screenSize, settings, {
+      multiple,
+      ignoreDefaultImageTemplateScale,
+      containerRect,
+    });
+    if (lookup.matches.length === 0) {
       if (multiple) {
         return [];
       }
       throw new errors.NoSuchElementError();
     }
 
-    const elements = results.map(({rect, score, visualization}) => {
-      log.info(`Image template matched: ${JSON.stringify(rect)}`);
-      return new ImageElement({
-        template,
-        rect,
-        score,
-        match: visualization ? Buffer.from(visualization, 'base64') : null,
-        finder: this,
-        containerRect,
-      });
+    return this.createImageElements(lookup.matches, lookup.template, {
+      shouldCheckStaleness,
+      multiple,
+      containerRect,
     });
-
-    // if we're just checking staleness, return straightaway so we don't add
-    // a new element to the cache. shouldCheckStaleness does not support multiple
-    // elements, since it is a purely internal mechanism
-    if (shouldCheckStaleness) {
-      return elements[0];
-    }
-
-    const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
-
-    return multiple ? registeredElements : registeredElements[0];
   }
 
   /**
@@ -275,13 +178,15 @@ export class ImageElementFinder {
    *
    * @param driver
    * @param screenSize - The original size of the screen
+   * @param containerRect - When set, the screenshot is cropped to this rectangle
    *
-   * @returns PNG screenshot and ScreenshotScale
+   * @returns PNG screenshot, its scale, and the cropped rectangle when `containerRect` is set
    */
   async getScreenshotForImageFind(
     driver: ExternalDriver,
     screenSize: Size,
-  ): Promise<Screenshot & {scale?: ScreenshotScale}> {
+    containerRect?: Rect | null,
+  ): Promise<ScreenshotForImageFind> {
     if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
@@ -289,12 +194,29 @@ export class ImageElementFinder {
     const {fixImageFindScreenshotDims} = settings;
 
     const screenshot = Buffer.from(await driver.getScreenshot(), 'base64');
+    const applyContainer = async (
+      image: Buffer,
+      scale?: ScreenshotScale,
+      source?: {img: Sharp; size: Size},
+    ): Promise<ScreenshotForImageFind> => {
+      const out: ScreenshotForImageFind = {screenshot: image};
+      if (scale) {
+        out.scale = scale;
+      }
+      if (!containerRect) {
+        return out;
+      }
+      const cropped = await this.cropScreenshot(source?.img ?? sharp(image), containerRect, source?.size);
+      out.screenshot = cropped?.image ?? image;
+      out.crop = cropped?.rect ?? null;
+      return out;
+    };
 
     // if the user has requested not to correct for aspect or size differences
     // between the screenshot and the screen, just return the screenshot now
     if (!fixImageFindScreenshotDims) {
       log.info(`Not verifying screenshot dimensions match screen`);
-      return {screenshot};
+      return await applyContainer(screenshot);
     }
 
     if (screenSize.width < 1 || screenSize.height < 1) {
@@ -302,7 +224,7 @@ export class ImageElementFinder {
         `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
           `not seem to be valid. No changes will be applied to the screenshot`,
       );
-      return {screenshot};
+      return await applyContainer(screenshot);
     }
 
     // otherwise, do some verification on the screenshot to make sure it matches
@@ -310,9 +232,21 @@ export class ImageElementFinder {
     log.info('Verifying screenshot size and aspect ratio');
 
     let imgObj = sharp(screenshot);
-    let {width: shotWidth, height: shotHeight} = await imgObj.metadata();
+    let shotWidth: number | undefined;
+    let shotHeight: number | undefined;
+    try {
+      ({width: shotWidth, height: shotHeight} = await imgObj.metadata());
+    } catch (err) {
+      if (!containerRect) {
+        throw err;
+      }
+      throw invalidScreenshotError(err);
+    }
 
     if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
+      if (containerRect) {
+        throw invalidScreenshotError();
+      }
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
           `not seem to be valid. No changes will be applied to the screenshot`,
@@ -324,7 +258,10 @@ export class ImageElementFinder {
       // the height and width of the screenshot and the device screen match, which
       // means we should be safe when doing template matches
       log.info('Screenshot size matched screen size');
-      return {screenshot};
+      return await applyContainer(screenshot, undefined, {
+        img: imgObj,
+        size: {width: shotWidth, height: shotHeight},
+      });
     }
 
     // otherwise, if they don't match, it could spell problems for the accuracy
@@ -402,10 +339,16 @@ export class ImageElementFinder {
       scale.yScale *= (1.0 * screenSize.height) / shotHeight;
     }
 
-    return {
-      screenshot: await imgObj.toBuffer(),
-      scale,
-    };
+    if (!containerRect) {
+      return {screenshot: await imgObj.toBuffer(), scale};
+    }
+    // sharp runs extract before resize, so crop the resized pixels without encoding them first
+    const {data, info} = await imgObj.raw().toBuffer({resolveWithObject: true});
+    const size = {width: info.width, height: info.height};
+    return await applyContainer(data, scale, {
+      img: sharp(data, {raw: {...size, channels: info.channels}}),
+      size,
+    });
   }
 
   /**
@@ -481,4 +424,156 @@ export class ImageElementFinder {
     });
     return await imgObj.toBuffer();
   }
+
+  /**
+   * Matches the template against screenshots until a match is accepted or the implicit wait ends.
+   *
+   * @returns The accepted matches and the template they were matched with
+   */
+  private async waitForMatches(
+    template: Buffer,
+    driver: ExternalDriver,
+    screenSize: Size,
+    settings: ImageSettings,
+    {multiple, ignoreDefaultImageTemplateScale, containerRect}: WaitForMatchesOptions,
+  ): Promise<{matches: OccurrenceResultWithVisualization[]; template: Buffer}> {
+    const matches: OccurrenceResultWithVisualization[] = [];
+    let didFixTemplateImageScale = false;
+    const performLookup = async (): Promise<boolean> => {
+      try {
+        // the best match on the whole screen may be outside the container, so only search inside it
+        const {screenshot, scale, crop} = await this.getScreenshotForImageFind(driver, screenSize, containerRect);
+        if (crop === null) {
+          return false;
+        }
+
+        if (!didFixTemplateImageScale) {
+          template = await this.fixImageTemplateScale(template, {
+            defaultImageTemplateScale: settings.defaultImageTemplateScale,
+            ignoreDefaultImageTemplateScale,
+            fixImageTemplateScale: settings.fixImageTemplateScale,
+            ...scale,
+          });
+          // We do not want `template` to be mutated multiple times when the
+          // wrapping lambda is retried
+          didFixTemplateImageScale = true;
+        }
+
+        const comparisonOpts: any = {
+          threshold: settings.imageMatchThreshold,
+          visualize: settings.getMatchedImageResult,
+          multiple,
+        };
+        if (settings.imageMatchMethod) {
+          comparisonOpts.method = settings.imageMatchMethod;
+        }
+
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
+        const candidates = (Array.isArray(elOrEls) ? elOrEls : [elOrEls]) as OccurrenceResultWithVisualization[];
+        for (const el of candidates) {
+          matches.push({
+            rect: crop ? {...el.rect, x: el.rect.x + crop.x, y: el.rect.y + crop.y} : el.rect,
+            score: el.score,
+            visualization: el.visualization,
+          });
+        }
+        return candidates.length > 0;
+      } catch (err: any) {
+        // if compareImages fails, we'll get a specific error, but we should
+        // retry, so trap that and just return false to trigger the next round of
+        // implicitly waiting. For other errors, throw them to get out of the
+        // implicit wait loop
+        if (err instanceof NoImageOccurrencesError) {
+          return false;
+        }
+        throw err;
+      }
+    };
+
+    try {
+      await driver.implicitWaitForCondition(performLookup);
+    } catch (err: any) {
+      // `ConditionUnmetError` means nothing was found in time (handled below);
+      // the message fallback covers asyncbox < 6.6.0. Rethrow anything else.
+      if (!(err instanceof ConditionUnmetError || LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
+        throw err;
+      }
+    }
+    return {matches, template};
+  }
+
+  /**
+   * Creates image elements for accepted matches and registers them unless this is a staleness check.
+   *
+   * @returns WebDriver element(s), or the image element itself for a staleness check
+   */
+  private createImageElements(
+    matches: OccurrenceResultWithVisualization[],
+    template: Buffer,
+    {shouldCheckStaleness, multiple, containerRect}: CreateImageElementsOptions,
+  ): Element | Element[] | ImageElement {
+    const elements = matches.map(({rect, score, visualization}) => {
+      log.info(`Image template matched: ${JSON.stringify(rect)}`);
+      return new ImageElement({
+        template,
+        rect,
+        score,
+        match: visualization ? Buffer.from(visualization, 'base64') : null,
+        finder: this,
+        containerRect,
+      });
+    });
+
+    // if we're just checking staleness, return straightaway so we don't add
+    // a new element to the cache. shouldCheckStaleness does not support multiple
+    // elements, since it is a purely internal mechanism
+    if (shouldCheckStaleness) {
+      return elements[0];
+    }
+
+    const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
+    return multiple ? registeredElements : registeredElements[0];
+  }
+
+  /**
+   * Cuts the screenshot to the part inside the given rectangle.
+   *
+   * @returns The cropped image and the rectangle that was cut, or `null` when that rectangle is off screen
+   */
+  private async cropScreenshot(imgObj: Sharp, rect: Rect, size?: Size): Promise<{image: Buffer; rect: Rect} | null> {
+    let width = size?.width;
+    let height = size?.height;
+    if (!width || !height) {
+      try {
+        ({width, height} = await imgObj.metadata());
+      } catch (err) {
+        throw invalidScreenshotError(err);
+      }
+    }
+    if (!width || !height) {
+      throw invalidScreenshotError();
+    }
+    // Round outward so a fractional container edge is included.
+    const x = Math.max(0, Math.floor(rect.x));
+    const y = Math.max(0, Math.floor(rect.y));
+    const right = Math.min(width, Math.ceil(rect.x + rect.width));
+    const bottom = Math.min(height, Math.ceil(rect.y + rect.height));
+    if (right <= x || bottom <= y) {
+      log.debug(`The container rectangle ${JSON.stringify(rect)} is outside of the screenshot ${width}x${height}`);
+      return null;
+    }
+    const cropped = {x, y, width: right - x, height: bottom - y};
+    const image = await imgObj
+      .extract({left: x, top: y, width: cropped.width, height: cropped.height})
+      .png()
+      .toBuffer();
+    return {image, rect: cropped};
+  }
+}
+
+function invalidScreenshotError(cause?: unknown) {
+  return new errors.InvalidElementStateError(
+    'Screenshot width/height cannot be determined. Is it a valid image?',
+    cause instanceof Error ? cause : undefined,
+  );
 }

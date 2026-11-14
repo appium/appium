@@ -10,7 +10,7 @@ import {log as logger} from '../../helpers/logger.js';
  * @returns `true` if the value matches a dot-separated identifier pattern.
  */
 export function isPackageOrBundle(app: string): boolean {
-  return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
+  return /^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)+$/.test(app);
 }
 
 /**

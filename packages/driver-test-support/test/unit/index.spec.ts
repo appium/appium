@@ -14,6 +14,11 @@ describe('getTestPort()', function () {
     const port = await getTestPort();
     assert.ok(typeof port === 'number');
   });
+
+  it('should return distinct ports for concurrent calls', async function () {
+    const ports = await Promise.all(Array.from({length: 20}, () => getTestPort()));
+    assert.equal(new Set(ports).size, ports.length);
+  });
 });
 
 describe('createAppiumURL()', function () {

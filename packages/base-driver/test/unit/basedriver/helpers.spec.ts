@@ -12,11 +12,18 @@ describe('helpers', function () {
   describe('#isPackageOrBundle', function () {
     it('should accept packages and bundles', function () {
       assert.strictEqual(isPackageOrBundle('io.appium.testapp'), true);
+      assert.strictEqual(isPackageOrBundle('a.b.c'), true);
     });
     it('should not accept non-packages or non-bundles', function () {
       assert.strictEqual(isPackageOrBundle('foo'), false);
       assert.strictEqual(isPackageOrBundle('/path/to/an.app'), false);
       assert.strictEqual(isPackageOrBundle('/path/to/an.apk'), false);
+      assert.strictEqual(isPackageOrBundle('a..b'), false);
+    });
+    it('should not backtrack catastrophically on crafted input', function () {
+      const start = Date.now();
+      assert.strictEqual(isPackageOrBundle(`${'aaaa.'.repeat(50)}!`), false);
+      assert.ok(Date.now() - start < 100);
     });
   });
 

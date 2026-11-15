@@ -28,7 +28,7 @@ class TestPlugin implements Plugin {
         command: 'testMethod',
       },
     },
-  } as const satisfies MethodMap<TestPlugin, true>;
+  } as const satisfies MethodMap<TestPlugin>;
 
   public logger: AppiumLogger = {} as AppiumLogger;
 
@@ -59,10 +59,10 @@ const instance = new TestPlugin('test-plugin');
 expectAssignable<Plugin>(instance);
 expectAssignable<PluginExecuteMethodDef<TestPlugin>>(TestPlugin.executeMethodMap['test: method']);
 expectAssignable<ExecuteMethodMap<TestPlugin>>(TestPlugin.executeMethodMap);
-expectAssignable<PluginMethodDef<TestPlugin, false>>(TestPlugin.newMethodMap['/session/:sessionId/test'].GET);
 expectAssignable<PluginMethodDef<TestPlugin>>(TestPlugin.newMethodMap['/session/:sessionId/test'].GET);
-expectAssignable<MethodMap<TestPlugin, true>>(TestPlugin.newMethodMap);
+expectAssignable<PluginMethodDef<TestPlugin, true>>(TestPlugin.newMethodMap['/session/:sessionId/test'].GET);
 expectAssignable<MethodMap<TestPlugin>>(TestPlugin.newMethodMap);
+expectAssignable<MethodMap<TestPlugin, false>>(TestPlugin.newMethodMap);
 expectAssignable<PluginStatic<TestPlugin>>(TestPlugin);
 expectAssignable<PluginClass<TestPlugin>>(TestPlugin);
 expectAssignable<PluginClass>(TestPlugin);

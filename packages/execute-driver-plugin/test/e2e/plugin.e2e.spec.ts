@@ -162,8 +162,9 @@ describe('ExecuteDriverPlugin', function () {
         return await driver.$("~notfound");
       `;
       const {result} = await driver.executeDriverScript(script);
-      // wdio 10 sets a real Error here, which JSON-serializes to an empty object
-      assert.ok((result as any).error);
+      assert.strictEqual((result as any).error.error, 'no such element');
+      assert.match((result as any).error.message, /element could not be located/);
+      assert.ok((result as any).error.stacktrace.includes('NoSuchElementError:'));
       assert.strictEqual((result as any).selector, '~notfound');
       assert.strictEqual((result as any).sessionId, driver.sessionId);
     });

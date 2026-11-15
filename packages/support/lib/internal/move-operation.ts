@@ -67,7 +67,9 @@ export class MoveOperation {
     // File and symlink moves replace the destination entry itself.
     let toStat: BigIntStats | undefined;
     try {
-      toStat = await (fromStat.isDirectory() ? fsPromises.stat : fsPromises.lstat)(to, {bigint: true});
+      toStat = fromStat.isDirectory()
+        ? await fsPromises.stat(to, {bigint: true})
+        : await fsPromises.lstat(to, {bigint: true});
     } catch (err) {
       if (!isErrnoException(err) || err.code !== 'ENOENT') {
         throw err;

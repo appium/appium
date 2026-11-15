@@ -5,6 +5,9 @@ import type {JsonValue} from '@appium/types';
 
 import {isUnicodeSupported, NullWritable, streamSupportsColor, stripAnsi} from './internal/index.js';
 
+/** @deprecated Has no effect in recent Node.js versions. Will be removed in a future release. */
+export type DeprecatedTextStyle = 'framed' | 'overlined';
+
 /** ANSI styles supported by Node's `util.styleText`. `grey` is accepted as an alias for `gray`. */
 export type TextStyle =
   | 'reset'
@@ -35,20 +38,19 @@ export type TextStyle =
   | 'bgMagenta'
   | 'bgCyan'
   | 'bgWhite'
-  | 'framed'
-  | 'overlined'
   | 'redBright'
   | 'greenBright'
   | 'yellowBright'
   | 'blueBright'
   | 'magentaBright'
   | 'cyanBright'
-  | 'whiteBright';
+  | 'whiteBright'
+  | DeprecatedTextStyle;
 
 /** Applies terminal styling via Node's `util.styleText`. */
 export function styleText(style: TextStyle, text: string): string {
   const format = style === 'grey' ? 'gray' : style;
-  return nodeStyleText(format, text);
+  return nodeStyleText(format as Parameters<typeof nodeStyleText>[0], text);
 }
 
 /** Removes ANSI escape sequences (CSI and OSC) from a string. */

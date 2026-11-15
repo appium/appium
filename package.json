@@ -105,7 +105,7 @@
     "lerna": "10.1.1",
     "npm-run-all2": "9.0.4",
     "sinon": "22.1.0",
-    "teen_process": "4.2.1",
+    "teen_process": "4.2.2",
     "tsd": "0.33.0",
     "typescript": "6.0.3",
     "webdriverio": "9.32.0",

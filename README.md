@@ -43,6 +43,7 @@ programming languages, which means there is an entire ecosystem of related softw
 The Appium team only provides support for the most recent version of Appium. If you wish to upgrade from
 an older major Appium version, please refer to the migration guides:
 
+* [Appium v3 to v4](https://appium.io/docs/en/latest/guides/migrating-3-to-4/)
 * [Appium v2 to v3](https://appium.io/docs/en/latest/guides/migrating-2-to-3/)
 * [Appium v1 to v2](https://appium.io/docs/en/latest/guides/migrating-1-to-2/)
 

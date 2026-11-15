@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/appium/appium/compare/@appium/fake-plugin@4.4.3...@appium/fake-plugin@5.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+* **base-driver:** @appium/base-driver&#x27;s default export (BaseDriver) and @appium/base-driver&#x27;s basedriver/helpers.js default export are removed; use the named exports instead. The appium/driver.js and driver.d.ts re-exports of the default are removed accordingly.
+* **base-driver:** BaseDriver.reset() is removed; it was unused, not part of any protocol route or the Driver interface, and had no callers in this monorepo or any driver package that was checked.
+* **base-driver:** BaseDriver&#x27;s constructor is removed in favor of inherited DriverCore construction; opts is no longer a required constructor argument (it now defaults to {}, matching DriverCore).
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([48452fe](https://github.com/appium/appium/commit/48452fea9e92d52b0d3fa50cb75b4a6b1b01d56e))
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([421cc21](https://github.com/appium/appium/commit/421cc21a05098a2cd6fc45bd89f09f0e617ead9c))
+
+### Bug Fixes
+
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c128858](https://github.com/appium/appium/commit/c128858a0858c8e1fd0fcd90e716bd379ad6b223))
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([942fc70](https://github.com/appium/appium/commit/942fc700e781cd28e759e0ac2662e5f9e0a48d40))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+* use native ESM entrypoint detection ([#22868](https://github.com/appium/appium/issues/22868)) ([393a4f1](https://github.com/appium/appium/commit/393a4f1e15ed22556afab901e37db34a32d69c42))
+
+### Code Refactoring
+
+* **base-driver:** replace command mixin with explicit named exports ([#22741](https://github.com/appium/appium/issues/22741)) ([1f6de6f](https://github.com/appium/appium/commit/1f6de6f1239f60d508aff999941c9876995a437e))
+
+
 ## [5.0.0-beta.8](https://github.com/appium/appium/compare/@appium/fake-plugin@5.0.0-beta.7...@appium/fake-plugin@5.0.0-beta.8) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/plugin-test-support@3.0.2...@appium/plugin-test-support@4.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+
+### Bug Fixes
+
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([942fc70](https://github.com/appium/appium/commit/942fc700e781cd28e759e0ac2662e5f9e0a48d40))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+
+
 ## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/plugin-test-support@4.0.0-beta.6...@appium/plugin-test-support@4.0.0-beta.7) (2026-11-13)
 ## [3.0.2](https://github.com/appium/appium/compare/@appium/plugin-test-support@3.0.1...@appium/plugin-test-support@3.0.2) (2026-10-27)
 

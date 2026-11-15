@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0](https://github.com/appium/appium/compare/@appium/images-plugin@5.0.2...@appium/images-plugin@6.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([421cc21](https://github.com/appium/appium/commit/421cc21a05098a2cd6fc45bd89f09f0e617ead9c))
+
+### Bug Fixes
+
+* Address several TODOs ([#22762](https://github.com/appium/appium/issues/22762)) ([0b440da](https://github.com/appium/appium/commit/0b440da7450418e3354c9e8f9bc63600e4f9c091))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+* **images-plugin:** find an image element inside its container when a better match is outside ([#23135](https://github.com/appium/appium/issues/23135)) ([0834281](https://github.com/appium/appium/commit/08342813351c5f8a9b9983698f62547957f46d3d))
+* **images-plugin:** rethrow feature comparison errors besides a missing match ([#23107](https://github.com/appium/appium/issues/23107)) ([f04f087](https://github.com/appium/appium/commit/f04f08725d834a28485fd28f0bc193f60bfd91cb))
+* **images-plugin:** return every image match from findElements ([#22926](https://github.com/appium/appium/issues/22926)) ([9035a0b](https://github.com/appium/appium/commit/9035a0b769a08c250cd4595d99e7865044f8c6b4))
+
+
 ## [6.0.0-beta.8](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0-beta.7...@appium/images-plugin@6.0.0-beta.8) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES

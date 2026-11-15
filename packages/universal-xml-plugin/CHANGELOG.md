@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@3.0.3...@appium/universal-xml-plugin@4.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([421cc21](https://github.com/appium/appium/commit/421cc21a05098a2cd6fc45bd89f09f0e617ead9c))
+* **universal-xml-plugin:** add execute methods to toggle translation ([#22862](https://github.com/appium/appium/issues/22862)) ([35d9128](https://github.com/appium/appium/commit/35d912825dbeb40c3207e2177129291660877ce2)), closes [#21630](https://github.com/appium/appium/issues/21630)
+
+### Bug Fixes
+
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **deps:** bump fast-xml-parser and nx undici for security advisories ([e39c23d](https://github.com/appium/appium/commit/e39c23db57e81996ee19e80e50678913ab02178b))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+* **universal-xml-plugin:** keep the enabled attribute in transformed source ([#22911](https://github.com/appium/appium/issues/22911)) ([adc2dbd](https://github.com/appium/appium/commit/adc2dbdc29465d2e1f9aec8affe8afc26a689db0))
+* **universal-xml-plugin:** report a malformed XPath as invalid selector ([#23108](https://github.com/appium/appium/issues/23108)) ([1afcac1](https://github.com/appium/appium/commit/1afcac1eed2e24af596282f7de83ed068ce3d0b2))
+* **universal-xml-plugin:** skip XML transformation when context is not NATIVE_APP ([#23095](https://github.com/appium/appium/issues/23095)) ([a2ce7a2](https://github.com/appium/appium/commit/a2ce7a2dee6a847fe084d4cce20a456539ddfb50))
+
+
 ## [4.0.0-beta.8](https://github.com/appium/appium/compare/@appium/universal-xml-plugin@4.0.0-beta.7...@appium/universal-xml-plugin@4.0.0-beta.8) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES

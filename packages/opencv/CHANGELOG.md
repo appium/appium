@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0](https://github.com/appium/appium/compare/@appium/opencv@5.0.2...@appium/opencv@6.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+
+### Bug Fixes
+
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **images-plugin:** rethrow feature comparison errors besides a missing match ([#23107](https://github.com/appium/appium/issues/23107)) ([f04f087](https://github.com/appium/appium/commit/f04f08725d834a28485fd28f0bc193f60bfd91cb))
+* **opencv:** bound every matched point in getImagesMatches rectangles ([#23120](https://github.com/appium/appium/issues/23120)) ([94bf3bb](https://github.com/appium/appium/commit/94bf3bb022a685e7c22c7a24fc4a4afdd703bdb9))
+
+
 ## [6.0.0-beta.7](https://github.com/appium/appium/compare/@appium/opencv@6.0.0-beta.6...@appium/opencv@6.0.0-beta.7) (2026-11-13)
 ## [5.0.2](https://github.com/appium/appium/compare/@appium/opencv@5.0.1...@appium/opencv@5.0.2) (2026-10-27)
 

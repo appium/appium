@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/base-plugin@3.3.7...@appium/base-plugin@4.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* **base-plugin:** Plugin#logger has been removed; use Plugin#log instead.
+* **base-plugin:** @appium/base-plugin no longer exports BasePlugin as the default export; use the named BasePlugin export.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([48452fe](https://github.com/appium/appium/commit/48452fea9e92d52b0d3fa50cb75b4a6b1b01d56e))
+
+### Bug Fixes
+
+* use native ESM entrypoint detection ([#22868](https://github.com/appium/appium/issues/22868)) ([393a4f1](https://github.com/appium/appium/commit/393a4f1e15ed22556afab901e37db34a32d69c42))
+
+### Code Refactoring
+
+* **base-plugin:** remove deprecated legacy logger and default export ([#22718](https://github.com/appium/appium/issues/22718)) ([e4b61b7](https://github.com/appium/appium/commit/e4b61b73bd2ad7d50edd157e47e6cd4147947f53))
+
+
 ## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/base-plugin@4.0.0-beta.6...@appium/base-plugin@4.0.0-beta.7) (2026-11-13)
 ## [3.3.7](https://github.com/appium/appium/compare/@appium/base-plugin@3.3.6...@appium/base-plugin@3.3.7) (2026-11-14)
 

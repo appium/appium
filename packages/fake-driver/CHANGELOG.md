@@ -3,6 +3,89 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.0](https://github.com/appium/appium/compare/@appium/fake-driver@6.2.5...@appium/fake-driver@7.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* @appium/tsconfig now sets noImplicitOverride: true. Extensions extending this config must mark overriding members with override, otherwise tsc fails with TS4114.
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **appium:** Drivers must use base-driver with shared command activity tracking. Custom timeout implementations must delegate timer creation to super.startNewCommandTimeout(); legacy private-counter implementations are no longer protected by method overrides.
+
+* add fake driver/plugin example
+
+* remove from readme
+
+* Remove actions needed for driver updates in migration guide
+
+Removed the section detailing actions needed for driver updates related to shared command activity tracking.
+
+* refactor(base-driver): simplify shutdown promise handling
+
+* Add actions needed for custom startNewCommandTimeout
+
+Updated migration guide to include new requirements for custom command timeout implementations.
+* **base-driver:** @appium/base-driver no longer exports server, normalizeBasePath, configureServer, ServerOpts, ConfigureServerOpts, ConfigureHttpOpts, or StartServerOpts, and no longer depends on express/morgan/body-parser/ method-override/path-to-regexp. Use the new @appium/http-server package instead.
+* **base-driver:** appium/driver.js and driver.d.ts no longer re-export server/normalizeBasePath/configureServer/ServerOpts (or their types), and no longer use a blanket export *. Import from @appium/http-server directly if you were relying on this undocumented path.
+* **base-driver:** exempt getStatus from the commands queue by default (#22796)
+* **base-driver:** align timeouts endpoints closer to W3C standard (#22776)
+* types for the following commands have been removed: &#x60;getGeoLocation&#x60;, &#x60;setGeoLocation&#x60;, &#x60;getNetworkConnection&#x60;, &#x60;setNetworkConnection&#x60;. The &#x60;Location&#x60; type has also been removed.
+* **base-driver:** Dropped APIs: receive_async_response, element/:elementId GET stub, IME endpoints, orientation, location (geolocation), context/contexts, network_connection, and rotation.
+* **base-driver:** Dropped the allowCrossDomainAsyncExecute middleware + its dedicated test suite, which existed solely to CORS-enable the now-removed receive_async_response endpoint.
+* **base-driver:** @appium/base-driver&#x27;s default export (BaseDriver) and @appium/base-driver&#x27;s basedriver/helpers.js default export are removed; use the named exports instead. The appium/driver.js and driver.d.ts re-exports of the default are removed accordingly.
+* **base-driver:** BaseDriver.reset() is removed; it was unused, not part of any protocol route or the Driver interface, and had no callers in this monorepo or any driver package that was checked.
+* **base-driver:** BaseDriver&#x27;s constructor is removed in favor of inherited DriverCore construction; opts is no longer a required constructor argument (it now defaults to {}, matching DriverCore).
+* **base-driver:** ISessionHandler.createSession (@appium/types) and LegacyCreateSessionArgs — overload and type deleted, single-argument signature only.
+* **base-driver:** BaseDriver.createSession and AppiumDriver.createSession — collapsed to the single-argument mplementation; capability validation now checks the one argument directly instead of scanning three positions for the first W3C-shaped value.
+* **base-driver:** FakeDriver.createSession (and the base-driver e2e test double) — overrides updated to match.
+* **base-driver:** RelaxedCapsPlugin.createSession — this plugin existed specifically to normalize capabilities across the (now-gone) three positions; its hook is simplified to a single caps argument.
+* **base-driver:** POST /session wire route (w3c.ts) — payloadParams.optional no longer sends capabilities three times into the command args.
+* **base-driver:** BaseDriver.getSession, ISessionHandler.getSession, and the GET /session/:sessionId JSONWP route are gone. Use getAppiumSessionCapabilities to retrieve session capabilities and EventCommands.getLogEvents to retrieve event history instead.
+* **base-driver:** The appium:eventTimings capability is removed; it only ever controlled whether getSession&#x27;s response was decorated with event history, which getLogEvents already exposes unconditionally.
+* Core.driverData, DriverData, and the driverData parameter on ISessionHandler.createSession/deleteSession are gone. Any driver overriding get driverData() or relying on the umbrella driver passing sibling-session data into createSession/deleteSession needs to migrate off this mechanism.
+* FakeDriver no longer supports the uniqueApp capability.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* **base-driver:** align timeouts endpoints closer to W3C standard ([#22776](https://github.com/appium/appium/issues/22776)) ([7adc6fb](https://github.com/appium/appium/commit/7adc6fbbfcfad2423545db40016eda6afc79c452))
+* **base-driver:** exempt getStatus from the commands queue by default ([#22796](https://github.com/appium/appium/issues/22796)) ([6b64a4c](https://github.com/appium/appium/commit/6b64a4cd17337e2fbc6b3ce0e0220d6c4c7de49f))
+* **base-driver:** remove deprecated JSONWP/MJSONWP routes ([#22757](https://github.com/appium/appium/issues/22757)) ([c6f53b0](https://github.com/appium/appium/commit/c6f53b00227cfd5468ad05decd968d3220c213d2))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([48452fe](https://github.com/appium/appium/commit/48452fea9e92d52b0d3fa50cb75b4a6b1b01d56e))
+* enable noImplicitOverride in the shared tsconfig ([#23143](https://github.com/appium/appium/issues/23143)) ([421cc21](https://github.com/appium/appium/commit/421cc21a05098a2cd6fc45bd89f09f0e617ead9c))
+
+### Bug Fixes
+
+* Address several TODOs ([#22762](https://github.com/appium/appium/issues/22762)) ([0b440da](https://github.com/appium/appium/commit/0b440da7450418e3354c9e8f9bc63600e4f9c091))
+* adjust deprecated JSONWP/MJSONWP routes ([#22763](https://github.com/appium/appium/issues/22763)) ([a2e3bf2](https://github.com/appium/appium/commit/a2e3bf208978ce05d2aa167d3ea6cebbc3d0edb5))
+* **appium:** track idle timeout across plugin commands ([#22946](https://github.com/appium/appium/issues/22946)) ([c128858](https://github.com/appium/appium/commit/c128858a0858c8e1fd0fcd90e716bd379ad6b223))
+* **base-driver:** preserve capability invalid argument errors ([#22977](https://github.com/appium/appium/issues/22977)) ([62d24ed](https://github.com/appium/appium/commit/62d24ed035b85717d0b6ad561d45f20d0678483b)), closes [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([942fc70](https://github.com/appium/appium/commit/942fc700e781cd28e759e0ac2662e5f9e0a48d40))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+
+### Miscellaneous Chores
+
+* cleanup remaining code for removed JSONWP/MJSONWP methods ([#22765](https://github.com/appium/appium/issues/22765)) ([88d2995](https://github.com/appium/appium/commit/88d29954825fc1e692bbac6330304ea40890d34c))
+
+### Code Refactoring
+
+* **base-driver:** extract the HTTP/Express server into @appium/http-server ([#22800](https://github.com/appium/appium/issues/22800)) ([4a8c553](https://github.com/appium/appium/commit/4a8c553a11495ae8d0576c7463b68e285516c525))
+* **base-driver:** remove deprecated getSession command ([#22725](https://github.com/appium/appium/issues/22725)) ([96f116e](https://github.com/appium/appium/commit/96f116e6da8a1a3f83a61fed21e2f1a318d2c70f))
+* **base-driver:** remove deprecated multi-argument createSession overload ([#22730](https://github.com/appium/appium/issues/22730)) ([caf22c3](https://github.com/appium/appium/commit/caf22c3845edb1dd6c3b96abaec6c862069eeed2))
+* **base-driver:** replace command mixin with explicit named exports ([#22741](https://github.com/appium/appium/issues/22741)) ([1f6de6f](https://github.com/appium/appium/commit/1f6de6f1239f60d508aff999941c9876995a437e))
+* remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([33607d0](https://github.com/appium/appium/commit/33607d046f812f49cb1501faea865da1cb4e3cf2))
+
+
 ## [7.0.0-beta.8](https://github.com/appium/appium/compare/@appium/fake-driver@7.0.0-beta.7...@appium/fake-driver@7.0.0-beta.8) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES

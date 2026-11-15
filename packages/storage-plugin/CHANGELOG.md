@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.2...@appium/storage-plugin@3.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** The protected BaseDriver#commandsQueueGuard beyond promise-based acquire(key, fn) - it is now an asyncbox AsyncLock, so callback-style acquire() and the internal queues field are gone (use getQueueLength() / isBusy()).
+* **storage-plugin:** the storage routes (and the stream/events websocket paths) were always mounted at the server root, ignoring --base-path. They are now prefixed with the base path, e.g. /wd/hub/appium/storage/add.
+* **support:** @appium/support&#x27;s fs.glob option shape changed from the glob package&#x27;s GlobOptions to a smaller, @appium/support-owned GlobOptions interface. Supported fields: cwd, withFileTypes, absolute, lazy. Options like nodir/ignore/nocase are no longer supported directly — callers needing directory filtering can pass withFileTypes: true and filter on .isFile()/.isDirectory(); callers needing path exclusion can filter the returned array by pattern.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+
+### Bug Fixes
+
+* address code review cleanups (plist, env memoize, test reuse) ([#22740](https://github.com/appium/appium/issues/22740)) ([1a0fcad](https://github.com/appium/appium/commit/1a0fcad2a7ae7c8981bfc0180c31de13973e1a9c))
+* Address several TODOs ([#22762](https://github.com/appium/appium/issues/22762)) ([0b440da](https://github.com/appium/appium/commit/0b440da7450418e3354c9e8f9bc63600e4f9c091))
+* **base-driver:** use AsyncLock from asyncbox instead of async-lock ([#23066](https://github.com/appium/appium/issues/23066)) ([942fc70](https://github.com/appium/appium/commit/942fc700e781cd28e759e0ac2662e5f9e0a48d40))
+* declare dependencies that were only resolving via hoisting ([#22758](https://github.com/appium/appium/issues/22758)) ([5b06c47](https://github.com/appium/appium/commit/5b06c47bc635c645f2cfe45c01d50caffc944b7a))
+* **deps:** catch up peerDependencies to published beta.0; drop bootstrap_packages ([#22793](https://github.com/appium/appium/issues/22793)) ([65a26f4](https://github.com/appium/appium/commit/65a26f4b812338c53686b0b3c74797c76ed0fd4a))
+* **storage-plugin:** contain upload event socket errors ([#22963](https://github.com/appium/appium/issues/22963)) ([db855ec](https://github.com/appium/appium/commit/db855eca2cc07c31556ecfdc70797cb952772397))
+* **storage-plugin:** mount routes under the server base path ([#22906](https://github.com/appium/appium/issues/22906)) ([1b07819](https://github.com/appium/appium/commit/1b07819136e68746e3139267d68a44d9b206ec90))
+* **storage-plugin:** preserve pending upload sockets across retries ([#22948](https://github.com/appium/appium/issues/22948)) ([94ef71c](https://github.com/appium/appium/commit/94ef71cd4023693e6b9162264b966475a3b2a754))
+* **storage-plugin:** reject concurrent WebSocket uploads ([#22962](https://github.com/appium/appium/issues/22962)) ([d2e61ca](https://github.com/appium/appium/commit/d2e61ca4a577d83aa96e33d979fd9d34c5c2928a))
+* **storage-plugin:** reject reserved partial-file names ([#22959](https://github.com/appium/appium/issues/22959)) ([cc1f655](https://github.com/appium/appium/commit/cc1f655f7efaf00c0bcf0ad348d1d0e505ba2bf2))
+* **storage-plugin:** reject storage file names that start with a dot ([#22863](https://github.com/appium/appium/issues/22863)) ([753a7cf](https://github.com/appium/appium/commit/753a7cf46ae2f4a21e500123201df15a30f2be1f))
+
+### Code Refactoring
+
+* **support:** replace glob package with native node:fs glob ([#22735](https://github.com/appium/appium/issues/22735)) ([6d27cb3](https://github.com/appium/appium/commit/6d27cb39be20f8400394e921e53e975bda7f6109))
+
+
 ## [3.0.0-beta.8](https://github.com/appium/appium/compare/@appium/storage-plugin@3.0.0-beta.7...@appium/storage-plugin@3.0.0-beta.8) (2026-11-13)
 ## [2.0.2](https://github.com/appium/appium/compare/@appium/storage-plugin@2.0.1...@appium/storage-plugin@2.0.2) (2026-10-27)
 

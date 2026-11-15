@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/appium/appium/compare/@appium/oxc-config@1.1.3...@appium/oxc-config@2.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* **oxc-config:** enable 19 additional oxlint rules
+* **oxc-config:** enable 45 additional correctness rules
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* **oxc-config:** enable all oxlint correctness rules ([#22899](https://github.com/appium/appium/issues/22899)) ([ad85ead](https://github.com/appium/appium/commit/ad85ead383c8533ff3eb322e8995e5de29f4e13d))
+* **oxc-config:** enable plugins at the root level ([#22908](https://github.com/appium/appium/issues/22908)) ([6aad536](https://github.com/appium/appium/commit/6aad536574c14a0b8c40997e39d53ed7449611a5))
+
+
 ## [2.0.0-beta.3](https://github.com/appium/appium/compare/@appium/oxc-config@2.0.0-beta.2...@appium/oxc-config@2.0.0-beta.3) (2026-11-13)
 ## [1.1.3](https://github.com/appium/appium/compare/@appium/oxc-config@1.1.2...@appium/oxc-config@1.1.3) (2026-10-27)
 

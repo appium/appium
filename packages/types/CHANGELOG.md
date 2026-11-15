@@ -3,6 +3,107 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/appium/appium/compare/@appium/types@1.7.2...@appium/types@2.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* **base-driver:** a command result shaped like {protocol, value} is no longer unwrapped. It is returned as the command value. {protocol, error} is still thrown when error is an Error and protocol is W3C or MJSONWP.
+* **appium:** removed the --callback-address (-ca) server argument and the server.callback-address config property
+* **appium:** removed the --callback-port (-cp) server argument and the server.callback-port config property
+* **appium:** removed the --debug-log-spacing server argument and the server.debug-log-spacing config property
+* **appium:** removed the --strict-caps server argument and the server.strict-caps config property
+* **appium:** removed the --trace-dir server argument and the server.trace-dir config property
+* **types:** the locale, language, autoWebview, orientation and udid capabilities are no longer part of the standard capability constraints. They are not generic enough and must be defined by the corresponding drivers.
+* **types:** the deprecated appium:autoLaunch capability is no longer part of the standard capability constraints.
+* **storage-plugin:** the storage routes (and the stream/events websocket paths) were always mounted at the server root, ignoring --base-path. They are now prefixed with the base path, e.g. /wd/hub/appium/storage/add.
+* **base-driver:** exempt getStatus from the commands queue by default (#22796)
+* **base-driver:** align timeouts endpoints closer to W3C standard (#22776)
+* **base-driver:** PayloadParams[&#x27;validate&#x27;] no longer receives a protocol argument; its signature is now (obj: any) &#x3D;&gt; boolean | string | undefined. No implementation in this repo used the second argument.
+* **base-driver:** Removed the deprecated sessionId argument from generateDriverLogPrefix helper
+* types for the following commands have been removed: &#x60;getGeoLocation&#x60;, &#x60;setGeoLocation&#x60;, &#x60;getNetworkConnection&#x60;, &#x60;setNetworkConnection&#x60;. The &#x60;Location&#x60; type has also been removed.
+* **base-driver:** @appium/base-driver&#x27;s default export (BaseDriver) and @appium/base-driver&#x27;s basedriver/helpers.js default export are removed; use the named exports instead. The appium/driver.js and driver.d.ts re-exports of the default are removed accordingly.
+* **base-driver:** BaseDriver.reset() is removed; it was unused, not part of any protocol route or the Driver interface, and had no callers in this monorepo or any driver package that was checked.
+* **base-driver:** BaseDriver&#x27;s constructor is removed in favor of inherited DriverCore construction; opts is no longer a required constructor argument (it now defaults to {}, matching DriverCore).
+* **appium:** The --allow-cors CLI flag and allow-cors config file property have been removed. Use --allow-insecure&#x3D;*:cors (or --relaxed-security, optionally overridden with --deny-insecure&#x3D;*:cors) instead.
+* **base-driver:** ISessionHandler.createSession (@appium/types) and LegacyCreateSessionArgs — overload and type deleted, single-argument signature only.
+* **base-driver:** BaseDriver.createSession and AppiumDriver.createSession — collapsed to the single-argument mplementation; capability validation now checks the one argument directly instead of scanning three positions for the first W3C-shaped value.
+* **base-driver:** FakeDriver.createSession (and the base-driver e2e test double) — overrides updated to match.
+* **base-driver:** RelaxedCapsPlugin.createSession — this plugin existed specifically to normalize capabilities across the (now-gone) three positions; its hook is simplified to a single caps argument.
+* **base-driver:** POST /session wire route (w3c.ts) — payloadParams.optional no longer sends capabilities three times into the command args.
+* **base-driver:** BaseDriver.getSession, ISessionHandler.getSession, and the GET /session/:sessionId JSONWP route are gone. Use getAppiumSessionCapabilities to retrieve session capabilities and EventCommands.getLogEvents to retrieve event history instead.
+* **base-driver:** The appium:eventTimings capability is removed; it only ever controlled whether getSession&#x27;s response was decorated with event history, which getLogEvents already exposes unconditionally.
+* **logger:** @appium/logger and @appium/support no longer export a default log — import the named log export instead.
+* **logger:** AppiumLogger#errorAndThrow has been removed; use errorWithException instead.
+* **logger:** Logger#enableProgress, disableProgress, progressEnabled, enableUnicode, disableUnicode have been removed; they were already permanently disabled no-ops.
+* **base-plugin:** Plugin#logger has been removed; use Plugin#log instead.
+* **base-plugin:** @appium/base-plugin no longer exports BasePlugin as the default export; use the named BasePlugin export.
+* Core.driverData, DriverData, and the driverData parameter on ISessionHandler.createSession/deleteSession are gone. Any driver overriding get driverData() or relying on the umbrella driver passing sibling-session data into createSession/deleteSession needs to migrate off this mechanism.
+* FakeDriver no longer supports the uniqueApp capability.
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+* **base-driver:** @appium/base-driver no longer exports statusCodes or getSummaryByCode (the jsonwp-status module was removed).
+* **base-driver:** errorFromMJSONWPStatusCode (aliased as errorFromCode) has been removed; use errorFromW3CJsonCode for W3C error-signature mapping.
+* **base-driver:** ProtocolError instances no longer have a jsonwpCode property.
+* **base-driver:** WebDriverProxy (formerly JWProxy) no longer proxies to or interprets responses from downstream servers speaking the legacy MJSONWP protocol; the ProtocolConverter class, COMMAND_URLS_CONFLICTS, and the downstreamProtocol getter/setter have been removed. Downstream automation servers must speak W3C WebDriver.
+* **base-driver:** Responses no longer duplicate element references under the legacy ELEMENT key; only the W3C element-6066-11e4-a52e-4f735466cecf key is present. The MJSONWP_ELEMENT_KEY constant has been removed.
+* **base-driver:** determineProtocol has been removed, and drivers can no longer produce the legacy {sessionId, status, value} response shape; all responses are now W3C-shaped regardless of how the client formatted its createSession capabilities.
+* **base-driver:** DriverCore#setProtocolMJSONWP() has been removed.
+* **base-driver:** The deprecated JWProxy export has been removed; use WebDriverProxy instead. Its source also moved from lib/jsonwp-proxy/proxy.js to lib/wd-proxy/proxy.js.
+* **base-driver:** DriverCore#isMjsonwpProtocol() has been removed.
+* **appium:** The --nodeconfig server argument and the server.nodeconfig config file property no longer exist. Users who need to register with a Selenium Grid should use the Grid 4 relay feature instead (see the Grid guide).
+* require(&#x27;@appium/support&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/base-driver&#x27;) no longer works; drivers extending BaseDriver via require must switch to import.
+* require(&#x27;@appium/base-plugin&#x27;) no longer works; plugins extending BasePlugin via require must switch to import.
+* require(&#x27;appium&#x27;) no longer works; plugins extending the package via require must switch to import.
+* require(&#x27;@appium/fake-plugin&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/fake-driver&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/types&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/logger&#x27;) no longer works; consumers must import it instead.
+* require(&#x27;@appium/schema&#x27;) no longer works; consumers must import it instead.
+
+### Features
+
+* **appium:** add --app-url-rules server arg to restrict remote app URLs ([#22753](https://github.com/appium/appium/issues/22753)) ([c4061a2](https://github.com/appium/appium/commit/c4061a26c7c4db17049cf881fbd6e04b895c692d))
+* **appium:** add flow control for BiDi event delivery ([#23146](https://github.com/appium/appium/issues/23146)) ([5838aa3](https://github.com/appium/appium/commit/5838aa3b8c20d2ed87a6493921601bd7e3872fe0))
+* **appium:** remove Selenium Grid 3 support ([#22677](https://github.com/appium/appium/issues/22677)) ([2434f0d](https://github.com/appium/appium/commit/2434f0d85b1ba4559bbb3fb4a1a301ad37c1a35b))
+* **appium:** replace --allow-cors flag with --allow-insecure&#x3D;*:cors ([#22731](https://github.com/appium/appium/issues/22731)) ([f7b60eb](https://github.com/appium/appium/commit/f7b60eb7b9220ebb4c7de81f906a23019a3ce3ec))
+* **base-driver:** add definitions for all WebDriver BiDi commands ([#22770](https://github.com/appium/appium/issues/22770)) ([b38f59f](https://github.com/appium/appium/commit/b38f59faf13f0dd582dffc2aadcd5584a737834c))
+* **base-driver:** align timeouts endpoints closer to W3C standard ([#22776](https://github.com/appium/appium/issues/22776)) ([7adc6fb](https://github.com/appium/appium/commit/7adc6fbbfcfad2423545db40016eda6afc79c452))
+* **base-driver:** exempt getStatus from the commands queue by default ([#22796](https://github.com/appium/appium/issues/22796)) ([6b64a4c](https://github.com/appium/appium/commit/6b64a4cd17337e2fbc6b3ce0e0220d6c4c7de49f))
+* **base-driver:** remove legacy (M)JSONWP protocol support ([#22681](https://github.com/appium/appium/issues/22681)) ([f1a92cb](https://github.com/appium/appium/commit/f1a92cb2ecb4daf90e0c2b654eeb790034f52195))
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+* convert remaining monorepo packages to ESM-only ([#22674](https://github.com/appium/appium/issues/22674)) ([48452fe](https://github.com/appium/appium/commit/48452fea9e92d52b0d3fa50cb75b4a6b1b01d56e))
+* **types:** check execute method params against the command signature ([#22754](https://github.com/appium/appium/issues/22754)) ([5828363](https://github.com/appium/appium/commit/5828363366bffc26ff2ff27b869fc8c74857aa6f))
+* **types:** remove deprecated autoLaunch capability ([#22950](https://github.com/appium/appium/issues/22950)) ([49b7db7](https://github.com/appium/appium/commit/49b7db710c049ac3ddc63fd3f0ad099b62030510))
+* **types:** remove driver-specific capabilities from base constraints ([#22952](https://github.com/appium/appium/issues/22952)) ([b80ef37](https://github.com/appium/appium/commit/b80ef3762923acd4864ac5a3cc09d3450f6e457e))
+
+### Bug Fixes
+
+* **appium:** remove unused server arguments ([#23063](https://github.com/appium/appium/issues/23063)) ([77574be](https://github.com/appium/appium/commit/77574beba8585854ec8a9c10f75f1c82b2a96ba5))
+* **base-driver:** apply initial session timeouts ([#22983](https://github.com/appium/appium/issues/22983)) ([6b2cff1](https://github.com/appium/appium/commit/6b2cff10351ee0c28f5c3a2b15a548655a4159fe)), closes [#22966](https://github.com/appium/appium/issues/22966) [#22966](https://github.com/appium/appium/issues/22966)
+* **base-driver:** don&#x27;t implicitly allow sessionId/id params in bidi commands ([#22771](https://github.com/appium/appium/issues/22771)) ([460e8d1](https://github.com/appium/appium/commit/460e8d1b2935b01ed7a2070ed39ecf438732297b))
+* **base-driver:** keep command results that contain a protocol field ([#23121](https://github.com/appium/appium/issues/23121)) ([1abd4a4](https://github.com/appium/appium/commit/1abd4a44de78243fcbff81c8c96c6b97cb5407d0))
+* **base-driver:** reject unsupported BiDi user-context scopes ([#22877](https://github.com/appium/appium/issues/22877)) ([ede9323](https://github.com/appium/appium/commit/ede93230027102acfacfa9d3b77af791041a38eb))
+* **base-driver:** track and remove BiDi subscriptions by ID ([#22876](https://github.com/appium/appium/issues/22876)) ([f274404](https://github.com/appium/appium/commit/f2744044481517b7cb6d34f55fb5aa9dc6a3cc18))
+* **base-driver:** validate standard timeouts and preserve null values ([#22961](https://github.com/appium/appium/issues/22961)) ([330b8c9](https://github.com/appium/appium/commit/330b8c961da42b5cf7b15d8f6d6c35b08e479c2f))
+* **storage-plugin:** mount routes under the server base path ([#22906](https://github.com/appium/appium/issues/22906)) ([1b07819](https://github.com/appium/appium/commit/1b07819136e68746e3139267d68a44d9b206ec90))
+* **types:** align the logger peer dependency with Appium 4 ([#22866](https://github.com/appium/appium/issues/22866)) ([e99a914](https://github.com/appium/appium/commit/e99a91455cdcc69e3ff1763a288eb579b080a9e5))
+* **types:** declare express and ws as direct dependencies ([#22720](https://github.com/appium/appium/issues/22720)) ([52492fc](https://github.com/appium/appium/commit/52492fc771a3d1efb18ca74027576e073718cf57))
+
+### Miscellaneous Chores
+
+* cleanup remaining code for removed JSONWP/MJSONWP methods ([#22765](https://github.com/appium/appium/issues/22765)) ([88d2995](https://github.com/appium/appium/commit/88d29954825fc1e692bbac6330304ea40890d34c))
+
+### Code Refactoring
+
+* **base-driver:** remove deprecated getSession command ([#22725](https://github.com/appium/appium/issues/22725)) ([96f116e](https://github.com/appium/appium/commit/96f116e6da8a1a3f83a61fed21e2f1a318d2c70f))
+* **base-driver:** remove deprecated multi-argument createSession overload ([#22730](https://github.com/appium/appium/issues/22730)) ([caf22c3](https://github.com/appium/appium/commit/caf22c3845edb1dd6c3b96abaec6c862069eeed2))
+* **base-driver:** replace command mixin with explicit named exports ([#22741](https://github.com/appium/appium/issues/22741)) ([1f6de6f](https://github.com/appium/appium/commit/1f6de6f1239f60d508aff999941c9876995a437e))
+* **base-driver:** split basedriver helpers into a barrel ([#22764](https://github.com/appium/appium/issues/22764)) ([157a988](https://github.com/appium/appium/commit/157a988d5ff677d84398cb74adde904eeb00f6c6))
+* **base-plugin:** remove deprecated legacy logger and default export ([#22718](https://github.com/appium/appium/issues/22718)) ([e4b61b7](https://github.com/appium/appium/commit/e4b61b73bd2ad7d50edd157e47e6cd4147947f53))
+* **logger:** remove default exports and dead logging APIs ([#22719](https://github.com/appium/appium/issues/22719)) ([2d8f3b8](https://github.com/appium/appium/commit/2d8f3b889964a09e64b8d9f24fb72c98e04f8741))
+* remove deprecated driverData mechanism ([#22716](https://github.com/appium/appium/issues/22716)) ([33607d0](https://github.com/appium/appium/commit/33607d046f812f49cb1501faea865da1cb4e3cf2))
+
+
 ## [2.0.0-beta.6](https://github.com/appium/appium/compare/@appium/types@2.0.0-beta.5...@appium/types@2.0.0-beta.6) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES

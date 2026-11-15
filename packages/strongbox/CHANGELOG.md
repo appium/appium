@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/strongbox@2.0.1...@appium/strongbox@3.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+
+
 ## [3.0.0-beta.1](https://github.com/appium/appium/compare/@appium/strongbox@3.0.0-beta.0...@appium/strongbox@3.0.0-beta.1) (2026-10-05)
 
 **Note:** Version bump only for package @appium/strongbox

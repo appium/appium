@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/driver-test-support@3.0.2...@appium/driver-test-support@4.0.0) (2026-11-15)
+
+### ⚠ BREAKING CHANGES
+
+* the minimum supported Node.js engine is set to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0
+
+### Features
+
+* bump minimum supported Node.js engine to ^22.22.2 || ^24.15.0 || &gt;&#x3D;26.0.0 ([#22685](https://github.com/appium/appium/issues/22685)) ([8ad9193](https://github.com/appium/appium/commit/8ad9193115129e8bcae9fff7845dd753431ff687))
+
+### Bug Fixes
+
+* centralize URL hostname formatting and bracket IPv6 hosts ([#22914](https://github.com/appium/appium/issues/22914)) ([68d0739](https://github.com/appium/appium/commit/68d0739add964045dcd856d13ebddbab0ab877f5))
+
+
 ## [4.0.0-beta.7](https://github.com/appium/appium/compare/@appium/driver-test-support@4.0.0-beta.6...@appium/driver-test-support@4.0.0-beta.7) (2026-11-13)
 ## [3.0.2](https://github.com/appium/appium/compare/@appium/driver-test-support@3.0.1...@appium/driver-test-support@3.0.2) (2026-10-27)
 

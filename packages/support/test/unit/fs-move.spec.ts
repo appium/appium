@@ -167,3 +167,47 @@ describe('moving directories with symlinks', {skip: system.isWindows()}, functio
     assert.equal(await fsPromises.readFile(destination, 'utf8'), 'source');
   });
 });
+
+describe('moving an entry that differs only by case', function () {
+  const sandbox = createSandbox();
+  let root: string;
+
+  beforeEach(async function () {
+    root = await tempDir.openDir();
+  });
+
+  afterEach(async function () {
+    sandbox.restore();
+    await fs.rimraf(root);
+  });
+
+  it('changes the spelling of a file', async function () {
+    const source = path.join(root, 'Foo.txt');
+    const destination = path.join(root, 'foo.txt');
+    await fsPromises.writeFile(source, 'payload');
+    // on a case-insensitive volume both spellings resolve to the same entry
+    const sourceStat = await fsPromises.lstat(source, {bigint: true});
+    sandbox.stub(fsPromises, 'lstat').callThrough().withArgs(destination, {bigint: true}).resolves(sourceStat);
+
+    await fs.mv(source, destination);
+
+    assert.deepEqual(await fsPromises.readdir(root), ['foo.txt']);
+    assert.equal(await fsPromises.readFile(destination, 'utf8'), 'payload');
+  });
+
+  it('changes the spelling of a directory', async function () {
+    const source = path.join(root, 'App');
+    const destination = path.join(root, 'app');
+    await fsPromises.mkdir(source);
+    await fsPromises.writeFile(path.join(source, 'payload.txt'), 'payload');
+    // a directory destination is read with stat, and the rename still checks lstat
+    const sourceStat = await fsPromises.lstat(source, {bigint: true});
+    sandbox.stub(fsPromises, 'stat').callThrough().withArgs(destination, {bigint: true}).resolves(sourceStat);
+    sandbox.stub(fsPromises, 'lstat').callThrough().withArgs(destination, {bigint: true}).resolves(sourceStat);
+
+    await fs.mv(source, destination);
+
+    assert.deepEqual(await fsPromises.readdir(root), ['app']);
+    assert.equal(await fsPromises.readFile(path.join(destination, 'payload.txt'), 'utf8'), 'payload');
+  });
+});

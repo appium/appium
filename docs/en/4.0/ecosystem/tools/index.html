@@ -1690,6 +1690,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#benchfleet-appium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BenchFleet Appium
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#optics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3893,6 +3904,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#benchfleet-appium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BenchFleet Appium
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#optics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4081,6 +4103,15 @@ prerequisites for iOS or Android emulators or real devices.</p>
 <p>Supported by: <code>@AppiumTestDistribution</code></p>
 <div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>appium-installer
 </span></code></pre></div>
+<h3 id="benchfleet-appium"><a href="https://github.com/benchfleet/benchfleet-appium">BenchFleet Appium</a><a class="headerlink" href="#benchfleet-appium" title="Permanent link">&para;</a></h3>
+<p>BenchFleet Appium is a command-line tool for running existing Appium tests on real Android phones
+connected to a <a href="https://benchfleet.com">BenchFleet</a> Hub, a desktop app for managing many phones
+(Pro or Team plan). For each phone, the Hub starts an Appium server with the UiAutomator2 driver.
+The tool then runs your test command once per phone with that server's URL in <code>APPIUM_URL</code>, and
+collects each phone's JUnit report. iOS and BenchFleet's cloud phones are not supported yet.</p>
+<p>Supported by: <code>@benchfleet</code></p>
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>benchfleet-appium
+</span></code></pre></div>
 <h3 id="optics"><a href="https://github.com/mozarkai/optics-framework">Optics</a><a class="headerlink" href="#optics" title="Permanent link">&para;</a></h3>
 <p>Optics is an open-source test automation framework that uses Appium to drive Android, iOS,
 Android TV, Samsung Tizen and LG webOS apps (and Selenium or Playwright for web). Tests are written
@@ -4088,7 +4119,7 @@ as CSV or YAML keyword steps, and the same keywords are available as a Python li
 Framework library, an HTTP API and an MCP server. Element lookup falls back from XPath to visible
 text, OCR and image matching.</p>
 <p>Supported by: <code>@chinmayajha</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"optics-framework[mobile]"</span>
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"optics-framework[mobile]"</span>
 </span></code></pre></div>
 <h3 id="xpath-to-class-chain"><a href="https://github.com/domovou69/xpath-to-class-chain">XPath to Class Chain</a><a class="headerlink" href="#xpath-to-class-chain" title="Permanent link">&para;</a></h3>
 <p>XPath to Class Chain is a command-line tool for migrating iOS XPath locators in test code to
@@ -4096,7 +4127,7 @@ text, OCR and image matching.</p>
 converts with a warning those that only have a close one (such as grouped positions <code>(//X)[n]</code>),
 and skips the rest with a reason (for example, sibling or parent axes).</p>
 <p>Supported by: <code>@domovou69</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-class-chain
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-class-chain
 </span></code></pre></div>
 <h3 id="xpath-to-uiselector"><a href="https://github.com/domovou69/xpath-to-uiselector">XPath to UiSelector</a><a class="headerlink" href="#xpath-to-uiselector" title="Permanent link">&para;</a></h3>
 <p>XPath to UiSelector is a command-line tool for migrating Android XPath locators in test code to
@@ -4105,7 +4136,7 @@ equivalent, converts with a warning those that only have a close one (such as <c
 the rest with a reason. The strategy call is rewritten together with the string, for example
 <code>AppiumBy.xpath</code> becomes <code>AppiumBy.androidUIAutomator</code>.</p>
 <p>Supported by: <code>@domovou69</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-uiselector
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-uiselector
 </span></code></pre></div>
 
 
@@ -4127,7 +4158,7 @@ the rest with a reason. The strategy call is rewritten together with the string,
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="October 26, 2026 13:05:16 UTC"><span class="timeago" datetime="2026-10-26T13:05:16+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 26, 2026 13:05:16 UTC">2026-10-26</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="November 15, 2026 19:18:57 UTC"><span class="timeago" datetime="2026-11-15T19:18:57+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 15, 2026 19:18:57 UTC">2026-11-15</span>
   </span>
 
     

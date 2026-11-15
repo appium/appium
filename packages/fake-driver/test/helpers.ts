@@ -33,6 +33,7 @@ const WD_OPTS: Partial<Parameters<typeof wdio>[0]> = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
   logLevel: 'error',
+  strictSelectors: false,
 };
 
 async function initSession(w3cPrefixedCaps: StringRecord, wdioOpts: Partial<Parameters<typeof wdio>[0]> = {}) {

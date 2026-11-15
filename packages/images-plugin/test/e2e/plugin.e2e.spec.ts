@@ -31,6 +31,7 @@ type WebdriverIOConfig = Parameters<typeof wdio>[0];
 const WDIO_OPTS: WebdriverIOConfig = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
+  strictSelectors: false,
   capabilities: TEST_CAPS,
 };
 

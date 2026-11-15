@@ -18,6 +18,11 @@ on:
         required: true
         type: boolean
         default: false
+      graduate_prerelease:
+        description: 'Non-beta branches only: pass --conventional-graduate to lerna, to graduate packages from prerelease versions (e.g. 4.0.0-beta.N) to stable on the first release of a major.'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -59,6 +64,7 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
           RECOVER_MISSING_ONLY: ${{ inputs.recover_missing_only }}
           ALLOW_LEGACY_PEER_DEPS: ${{ inputs.allow_legacy_peer_deps }}
+          GRADUATE_PRERELEASE: ${{ inputs.graduate_prerelease }}
         run: |
           set -euo pipefail
 
@@ -82,6 +88,8 @@ jobs:
             DIST_TAG_FLAGS="--dist-tag beta"
             # `npm publish` takes --tag; --dist-tag is lerna-only
             NPM_TAG_FLAGS="--tag beta"
+          elif [ "$GRADUATE_PRERELEASE" = "true" ]; then
+            BETA_FLAGS="--conventional-graduate"
           fi
 
           # Prints "<pkg_name>@<pkg_version>" to stdout for each non-private workspace package

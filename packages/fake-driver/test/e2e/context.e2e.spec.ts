@@ -6,6 +6,8 @@ import {deleteSession, initSession, W3C_PREFIXED_CAPS} from '../helpers.js';
 export function contextTests(context: {port: number}) {
   describe('contexts, webviews, frames', function () {
     let driver: Awaited<ReturnType<typeof initSession>>;
+    // wdio 10 types only accept elements, but numeric frame ids are still passed through
+    const switchToFrame = (id: number | null) => driver.switchFrame(id as unknown as null);
     before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS, {port: context.port});
     });
@@ -29,14 +31,14 @@ export function contextTests(context: {port: number}) {
       assert.strictEqual(await (await driver.$('//*')).getTagName(), 'html');
     });
     it('should not switch to a frame that is not there', async function () {
-      await assert.rejects(driver.switchToFrame(2), /frame could not be found/);
+      await assert.rejects(switchToFrame(2), /frame could not be found/);
     });
     it('should switch to an iframe', async function () {
-      await driver.switchToFrame(1);
+      await switchToFrame(1);
       assert.strictEqual(await driver.getTitle(), 'Test iFrame');
     });
     it('should switch back to default frame', async function () {
-      await driver.switchToFrame(null);
+      await switchToFrame(null);
       assert.strictEqual(await driver.getTitle(), 'Test Webview');
     });
     it('should go back to native context', async function () {
@@ -45,7 +47,7 @@ export function contextTests(context: {port: number}) {
     });
     it('should not set a frame in a native context', async function () {
       await driver.switchContext('NATIVE_APP');
-      await assert.rejects(driver.switchToFrame(1), /could not be executed in the current context/);
+      await assert.rejects(switchToFrame(1), /could not be executed in the current context/);
     });
   });
 }

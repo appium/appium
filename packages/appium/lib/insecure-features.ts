@@ -46,16 +46,17 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * assign it to the driver instance
  *
  * @param driver - Driver instance receiving the security configuration.
- * @param driverName - Installed driver name used to look up the manifest's automationName;
+ * @param driverName - Active driver name used to look up its automationName;
  * not itself an insecure-feature scope.
  */
 export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
   // the docs tell users to scope a feature with the driver's automationName, which is also what
   // the driver itself compares against in `isFeatureEnabled`
-  const automationName = this.driverConfig?.installedExtensions?.[driverName]?.automationName;
+  const automationNames = this.driverConfig?.getAutomationNames() ?? {};
+  const automationName = automationNames[driverName];
   const knownAutomationNames = new Set(
-    Object.values(this.driverConfig?.installedExtensions ?? {})
-      .map(({automationName}) => automationName?.toLowerCase())
+    Object.values(automationNames)
+      .map((automationName) => automationName?.toLowerCase())
       .filter(Boolean),
   );
   if (automationName) {

@@ -1,4 +1,4 @@
-import type {DriverType, PluginType, ServerArgs, SetOptional} from '@appium/types';
+import type {DriverClass, DriverType, PluginType, ServerArgs, SetOptional} from '@appium/types';
 
 import type {InstallType} from './manifest/index.js';
 export type CliCommandServer = 'server';
@@ -107,6 +107,13 @@ export interface ProgrammaticArgs {
   showDebugInfo?: boolean;
 }
 
+/**
+ * A driver supplied directly to the programmatic Appium API. ESM namespace
+ * objects are accepted as well as a DriverClass so default/named exports from
+ * a driver package can be passed without relying on APPIUM_HOME discovery.
+ */
+export type EmbeddedDriverModule = DriverClass | Readonly<Record<string, unknown>>;
+
 export interface DriverExtArgs {
   driverCommand: CliExtensionSubcommand;
   driver?: string;
@@ -200,6 +207,14 @@ export type Args<
   Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
 > = Cmd extends CliCommandServer ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs> : ParsedArgs<Cmd, SubCmd>;
+
+/** Inputs to the programmatic main entry point; parsed CLI arguments remain string-only. */
+export type MainArgs<
+  Cmd extends CliCommand = CliCommandServer,
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
+> = Cmd extends CliCommandServer
+  ? Omit<Args<Cmd, SubCmd>, 'useDrivers'> & {useDrivers?: Array<string | EmbeddedDriverModule>}
+  : Args<Cmd, SubCmd>;
 
 /**
  * Shown by `appium --build-info`

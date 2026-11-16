@@ -137,6 +137,7 @@ describe('AppiumDriver', function () {
 
       // stub does not satisfy DriverConfig typing
       (appium as any).driverConfig = {
+        getAutomationNames: () => ({}),
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,
           version: '1.2.3',
@@ -734,6 +735,7 @@ describe('AppiumDriver', function () {
         // stub does not satisfy DriverConfig typing
         (appium as any).driverConfig = {
           installedExtensions: {[driverName]: {automationName}},
+          getAutomationNames: () => ({[driverName]: automationName}),
           findMatchingDriver: sandbox.stub().returns({
             driver: mockedDriverReturnerClass,
             version: '1.2.3',
@@ -920,6 +922,7 @@ describe('AppiumDriver', function () {
             'my-driver': {automationName: 'MyAutomation'},
             other: {automationName: 'MY-DRIVER'},
           },
+          getAutomationNames: () => ({'my-driver': 'MyAutomation', other: 'MY-DRIVER'}),
         };
         appium.configureGlobalFeatures();
         const driver = new BaseDriver();

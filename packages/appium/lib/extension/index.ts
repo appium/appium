@@ -1,6 +1,8 @@
+import path from 'node:path';
+
 import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
-import type {ExtClass} from 'appium/types/index.js';
+import type {EmbeddedDriverModule, ExtClass} from 'appium/types/index.js';
 import {asyncmap} from 'asyncbox';
 
 import {USE_ALL_PLUGINS} from '../constants.js';
@@ -95,20 +97,53 @@ export async function getActivePlugins(
  * Find any driver name which has been installed, and turn each one into its class, so we can send
  * them as objects to the server init in case they need to add methods/routes or update the server.
  * If the --drivers flag was given, this method only loads the given drivers.
+ *
+ * Besides names of installed drivers, `useDrivers` may contain the absolute path or `file:` URL of a
+ * driver package (or of any file in it), which is then used without being installed in `APPIUM_HOME`.
+ * See {@linkcode DriverConfig.addResolvedDriver}.
  */
 export async function getActiveDrivers(
   driverConfig: DriverConfig,
   maxParallelImports: number,
-  useDrivers: string[] = [],
+  useDrivers: Array<string | EmbeddedDriverModule> = [],
 ): Promise<DriverNameMap> {
+  const {driverNames, embeddedPairs} = await resolveDriverEntries(driverConfig, useDrivers);
+  const pairs = await importExtensions(
+    'driver',
+    driverConfig,
+    driverConfig.getActiveDriverNames(driverNames),
+    maxParallelImports,
+  );
+  return mergeDriverPairs(
+    [...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)],
+    driverConfig.hasProgrammaticDrivers,
+  );
+}
+
+/** Resolves selection inputs and registers programmatic drivers before applying precedence. */
+async function resolveDriverEntries(
+  driverConfig: DriverConfig,
+  useDrivers: Array<string | EmbeddedDriverModule>,
+): Promise<{driverNames: string[]; embeddedPairs: Array<[DriverClass, string]>}> {
   let filteredDriverNames: string[] = [];
+  const embeddedDrivers: DriverClass[] = [];
   if (util.isEmpty(useDrivers)) {
     filteredDriverNames = Object.keys(driverConfig.installedExtensions);
   } else {
-    for (const driverName of useDrivers) {
-      if (driverName in driverConfig.installedExtensions) {
-        filteredDriverNames.push(driverName);
+    for (const entry of useDrivers) {
+      if (typeof entry !== 'string') {
+        embeddedDrivers.push(unwrapEmbeddedDriver(entry));
+        continue;
+      }
+      const driverName = entry;
+      if (isDriverLocation(driverName)) {
+        filteredDriverNames.push(await driverConfig.addResolvedDriver(driverName));
       } else {
+        filteredDriverNames.push(driverName);
+      }
+    }
+    for (const driverName of filteredDriverNames) {
+      if (!(driverName in driverConfig.installedExtensions)) {
         const suffix = util.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
           : `Only the following ${
@@ -118,8 +153,62 @@ export async function getActiveDrivers(
       }
     }
   }
-  const pairs = await importExtensions('driver', driverConfig, filteredDriverNames, maxParallelImports);
-  return new Map(pairs as Array<[DriverClass, string]>);
+  // Resolve package overrides first so embedded identity checks see the final metadata,
+  // independently of the caller's input order.
+  const embeddedPairs: Array<[DriverClass, string]> = embeddedDrivers.map((driver) => [
+    driver,
+    driverConfig.addEmbeddedDriver(driver),
+  ]);
+  return {driverNames: filteredDriverNames, embeddedPairs};
+}
+
+/** Merges loaded drivers without allowing one constructor to acquire conflicting identities. */
+function mergeDriverPairs(pairs: Array<[DriverClass, string]>, rejectConflictingNames: boolean): DriverNameMap {
+  const activeDrivers: DriverNameMap = new Map();
+  for (const [driver, driverName] of pairs) {
+    const existingName = activeDrivers.get(driver);
+    if (rejectConflictingNames && existingName !== undefined && existingName !== driverName) {
+      throw new TypeError(
+        `Driver class '${driver.name}' cannot be activated as both '${existingName}' and '${driverName}'`,
+      );
+    }
+    activeDrivers.set(driver, driverName);
+  }
+  return activeDrivers;
+}
+
+/** Whether a `useDrivers` entry is the location of a driver package rather than a driver name */
+function isDriverLocation(useDriversEntry: string): boolean {
+  return useDriversEntry.startsWith('file:') || path.isAbsolute(useDriversEntry);
+}
+
+function isDriverClass(value: unknown): value is DriverClass {
+  return (
+    typeof value === 'function' &&
+    typeof (value as {prototype?: {createSession?: unknown}}).prototype?.createSession === 'function'
+  );
+}
+
+/**
+ * Accept a direct class or an ESM namespace/default-export wrapper. Requiring
+ * exactly one distinct DriverClass keeps ambiguous module namespaces explicit.
+ */
+function unwrapEmbeddedDriver(value: EmbeddedDriverModule): DriverClass {
+  if (isDriverClass(value)) {
+    return value;
+  }
+  const candidates = new Set<DriverClass>();
+  for (const exported of Object.values(value)) {
+    if (isDriverClass(exported)) {
+      candidates.add(exported);
+    }
+  }
+  if (candidates.size !== 1) {
+    throw new TypeError(
+      `A useDrivers module entry must expose exactly one Appium driver class; found ${candidates.size}`,
+    );
+  }
+  return [...candidates][0];
 }
 
 async function importExtensions(

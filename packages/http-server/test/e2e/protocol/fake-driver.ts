@@ -10,7 +10,7 @@ class FakeDriver extends BaseDriver<Constraints> {
     '/session/:sessionId/wrapped': {
       POST: {command: 'wrappedCommand', payloadParams: {wrap: 'items', required: ['items']}},
     },
-  };
+  } as const;
 
   declare wdProxyActive: boolean;
 

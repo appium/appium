@@ -18,8 +18,7 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
- * Pass `false` as `Strict` to opt out of checking `command` names and `payloadParams`.
- * Declare maps `as const` to keep literal `command` names; trailing `string` URL `:param`s may omit `payloadParams`.
+ * Pass `false` as `Strict` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`).
  *
  * @example
  * ```ts
@@ -151,30 +150,30 @@ type CollectParamSplits<CurP extends readonly unknown[], AllowUrlString extends 
             : never);
 
 type RequiredParamProp<R extends readonly string[], Nested extends boolean> = readonly [] extends R
-  ? {required?: R | (Nested extends true ? readonly [R, ...R[]] | string[] | string[][] : string[])}
-  : {required: R | (Nested extends true ? readonly [R, ...R[]] | string[] | string[][] : string[])};
+  ? {required?: R | (Nested extends true ? readonly [R, ...R[]] : string[])}
+  : {required: R | (Nested extends true ? readonly [R, ...R[]] : string[])};
 
-type OptionalParamProp<O extends ParamOptionalTag> = O extends {
+type OptionalParamProp<O extends ParamOptionalTag, AllowMutable extends boolean> = O extends {
   readonly kind: 'rest';
   readonly min: infer Min extends readonly string[];
 }
   ? Min extends readonly []
     ? {optional?: readonly string[]}
-    : {optional: Readonly<[...Min, ...string[]]> | string[]}
+    : {optional: Readonly<[...Min, ...string[]]> | (AllowMutable extends true ? string[] : never)}
   : O extends {readonly kind: 'exact'; readonly tuple: infer Tuple extends readonly string[]}
     ? Tuple extends readonly []
-      ? {optional?: readonly [] | string[]}
-      : {optional: Readonly<Tuple> | string[]}
+      ? {optional?: readonly [] | (AllowMutable extends true ? string[] : never)}
+      : {optional: Readonly<Tuple> | (AllowMutable extends true ? string[] : never)}
     : never;
 
-/** Groups `Splits` by `o` so valid `required` shapes form one union per `optional` rule (`Nested` enables `string[][]`). */
+/** Groups `Splits` by `o` so valid `required` shapes form one union per `optional` rule (`Nested` is `true` for REST `payloadParams`, `false` for execute `params`). */
 type BuildParamShapes<
   Splits,
   Nested extends boolean,
   OKey = Splits extends ParamSplit ? Splits['o'] : never,
 > = OKey extends ParamOptionalTag
   ? Extract<Splits, {readonly o: OKey}> extends infer Matched extends ParamSplit
-    ? RequiredParamProp<Matched['r'], Nested> & OptionalParamProp<OKey>
+    ? RequiredParamProp<Matched['r'], Nested> & OptionalParamProp<OKey, Nested extends true ? false : true>
     : never
   : never;
 
@@ -214,20 +213,27 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
                   >;
               }[keyof Commands];
 
-type IsLooseMethodCheck<T, Base, D extends boolean> = [true] extends [D]
+type IsEqual<A, B> = (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B ? 1 : 2 ? true : false;
+
+type IsEqualToAny<T, Targets extends readonly unknown[]> = Targets extends readonly [infer Head, ...infer Tail]
+  ? IsEqual<T, Head> extends true
+    ? true
+    : IsEqualToAny<T, Tail>
+  : false;
+
+/** Loose when `D` includes `true`, `T` is `any`, or `T` equals a base interface (`Driver`, `ExternalDriver`, `Plugin`). */
+type IsLooseMethodCheck<T, Bases extends readonly unknown[], D extends boolean> = [true] extends [D]
   ? true
   : IsAny<T> extends true
     ? true
-    : [Base] extends [T]
-      ? true
-      : false;
+    : IsEqualToAny<T, Bases>;
 
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
  */
 export type DriverMethodDef<T extends Driver, D extends boolean = false> =
-  IsLooseMethodCheck<T, ExternalDriver, D> extends true
+  IsLooseMethodCheck<T, [Driver, ExternalDriver], D> extends true
     ? LooseMethodDef
     : CheckedMethodDef<ConditionalPick<Required<T>, DriverCommand>, 'driver'>;
 
@@ -236,7 +242,7 @@ export type DriverMethodDef<T extends Driver, D extends boolean = false> =
  * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
  */
 export type PluginMethodDef<T extends Plugin, D extends boolean = false> =
-  IsLooseMethodCheck<T, Plugin, D> extends true
+  IsLooseMethodCheck<T, [Plugin], D> extends true
     ? LooseMethodDef
     : CheckedMethodDef<ConditionalPick<Required<T>, PluginCommand>, 'plugin'>;
 

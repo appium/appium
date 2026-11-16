@@ -265,8 +265,21 @@ expectAssignable<DriverMethodDef<TestDriver, boolean>>({
   command: 'anyCustomCommand',
   payloadParams: {required: ['a', 'b']},
 } as const);
-expectAssignable<TestMethodDef>({command: 'oneRequiredNumber', payloadParams: {required: ['a', 'b']}});
-expectAssignable<TestMethodDef>({command: 'twoRequiredOneOptional', payloadParams: {required: [['a']]}});
+expectNotAssignable<TestMethodDef>({command: 'oneRequiredNumber', payloadParams: {required: ['a', 'b']}});
+expectNotAssignable<TestMethodDef>({command: 'twoRequiredOneOptional', payloadParams: {required: [['a']]}});
+expectNotAssignable<TestMethodDef>({command: 'noArgs', payloadParams: {optional: ['a']}});
+
+const contextuallyTypedMethodMap: MethodMap<TestDriver> = {
+  '/test': {
+    POST: {command: 'oneRequiredNumber', payloadParams: {required: ['a']}},
+  },
+};
+expectAssignable<MethodMap<TestDriver>>(contextuallyTypedMethodMap);
+expectNotAssignable<MethodMap<TestDriver>>({
+  '/test': {
+    POST: {command: 'oneRequiredNumber', payloadParams: {required: ['a', 'b']}},
+  },
+});
 
 const driverMethodMap = {
   '/test': {
@@ -299,6 +312,20 @@ expectAssignable<MethodMap<any>>({
   '/any': {POST: {command: 'whatever', payloadParams: {required: ['a']}}},
 } as const);
 expectAssignable<DriverMethodDef<ExternalDriver>>({command: 'getPageSource'} as const);
+
+type ExtendedExternalDriver = ExternalDriver & {extra?(a: number): Promise<void>};
+expectAssignable<DriverMethodDef<ExtendedExternalDriver>>({command: 'getPageSource'} as const);
+expectAssignable<DriverMethodDef<ExtendedExternalDriver>>({
+  command: 'extra',
+  payloadParams: {required: ['a']},
+} as const);
+expectNotAssignable<DriverMethodDef<ExtendedExternalDriver>>({command: 'bogus'} as const);
+expectNotAssignable<DriverMethodDef<ExtendedExternalDriver>>({command: 'extra'} as const);
+
+type ExtendedBaseDriver = Driver & {extra?(a: number): Promise<void>};
+expectAssignable<DriverMethodDef<ExtendedBaseDriver>>({command: 'extra', payloadParams: {required: ['a']}} as const);
+expectNotAssignable<DriverMethodDef<ExtendedBaseDriver>>({command: 'bogus'} as const);
+expectNotAssignable<DriverMethodDef<ExtendedBaseDriver>>({command: 'extra'} as const);
 
 type TestPluginMethodDef = PluginMethodDef<TestPlugin>;
 
@@ -349,6 +376,13 @@ const pluginMethodMap = {
 expectAssignable<MethodMap<TestPlugin>>(pluginMethodMap);
 expectAssignable<MethodMap<TestPlugin, false>>(pluginMethodMap);
 expectAssignable<MethodMap<Plugin>>(pluginMethodMap);
+
+type ExtendedPlugin = Plugin & {
+  extra?(next: NextPluginCallback, driver: ExternalDriver, a: number): Promise<void>;
+};
+expectAssignable<PluginMethodDef<ExtendedPlugin>>({command: 'extra', payloadParams: {required: ['a']}} as const);
+expectNotAssignable<PluginMethodDef<ExtendedPlugin>>({command: 'bogus'} as const);
+expectNotAssignable<PluginMethodDef<ExtendedPlugin>>({command: 'extra'} as const);
 
 expectAssignable<TestMethodDef>({command: 'unk', payloadParams: {optional: ['a']}} as const);
 expectAssignable<TestMethodDef>({command: 'unk', payloadParams: {required: ['a']}} as const);

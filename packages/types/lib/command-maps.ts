@@ -19,6 +19,7 @@ export interface PayloadParams {
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
  * Pass `false` as `Strict` to opt out of validating `command` names and `payloadParams`.
+ * Trailing `string` params may omit `payloadParams` (URL `:param` inspection is unsupported via `[key: string]`).
  *
  * @example
  * ```js
@@ -36,14 +37,16 @@ export type MethodMap<T extends Plugin | Driver, Strict extends boolean = true> 
     ? Readonly<DriverMethodMap<T, Strict>>
     : never;
 
+type IsLoose<Strict extends boolean> = [false] extends [Strict] ? true : false;
+
 /**
  * A {@linkcode MethodMap} for a {@linkcode Driver}.
  */
 export interface DriverMethodMap<T extends Driver, Strict extends boolean = true> {
   [key: string]: {
-    GET?: DriverMethodDef<T, [false] extends [Strict] ? true : false>;
-    POST?: DriverMethodDef<T, [false] extends [Strict] ? true : false>;
-    DELETE?: DriverMethodDef<T, [false] extends [Strict] ? true : false>;
+    GET?: DriverMethodDef<T, IsLoose<Strict>>;
+    POST?: DriverMethodDef<T, IsLoose<Strict>>;
+    DELETE?: DriverMethodDef<T, IsLoose<Strict>>;
   };
 }
 
@@ -69,147 +72,128 @@ export interface BaseMethodDef {
   readonly info?: string;
 }
 
-type IsPureRestArray<P extends readonly unknown[]> = number extends P['length']
-  ? [P[number], ...P] extends P
+type IsPureRestArray<P extends readonly unknown[]> = number extends P['length'] ? ([] extends P ? true : false) : false;
+
+type CanAcceptUndefined<T> = [undefined] extends [T] ? true : false;
+
+// Trailing `string` params on REST routes may omit payloadParams because Express appends URL `:param` segments in makeArgs.
+type CanOmitRequiredParam<T, AllowUrlString extends boolean> =
+  CanAcceptUndefined<T> extends true
     ? true
-    : false
-  : false;
-
-type CanAcceptOptionalPayload<T> =
-  IsAny<T> extends true ? true : [unknown] extends [T] ? false : [undefined] extends [T] ? true : false;
-
-type CanAcceptOptionalRest<T> = IsAny<T> extends true ? true : undefined extends T ? true : false;
-
-type CanOmitRequiredParam<T> =
-  IsAny<T> extends true
-    ? true
-    : [unknown] extends [T]
-      ? false
-      : [string] extends [T]
+    : AllowUrlString extends true
+      ? [string] extends [T]
         ? true
-        : [undefined] extends [T]
-          ? true
-          : false;
+        : false
+      : false;
 
-// Trailing omitted params must be optional, rest, or string (from URL path params).
-type CanOmitTrailing<P extends readonly unknown[]> = P extends readonly []
+type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolean> = P extends readonly []
   ? true
   : IsPureRestArray<P> extends true
     ? true
     : P extends readonly [infer H, ...infer T]
-      ? CanOmitRequiredParam<H> extends true
-        ? CanOmitTrailing<T>
+      ? CanOmitRequiredParam<H, AllowUrlString> extends true
+        ? CanOmitTrailing<T, AllowUrlString>
         : false
       : P extends readonly [(infer _)?, ...infer T]
-        ? CanOmitTrailing<T>
+        ? CanOmitTrailing<T, AllowUrlString>
         : true;
 
-type CanTakeExactO<CurP extends readonly unknown[], OLen extends readonly unknown[]> = OLen extends readonly []
-  ? CanOmitTrailing<CurP>
-  : CurP extends readonly []
-    ? false
-    : IsPureRestArray<CurP> extends true
-      ? CanAcceptOptionalRest<CurP[number]>
-      : CurP extends readonly [infer H, ...infer T]
-        ? CanAcceptOptionalPayload<H> extends true
-          ? OLen extends readonly [unknown, ...infer OTail]
-            ? CanTakeExactO<T, OTail>
-            : false
-          : false
-        : CurP extends readonly [(infer _)?, ...infer T]
-          ? OLen extends readonly [unknown, ...infer OTail]
-            ? CanTakeExactO<T, OTail>
-            : false
-          : false;
+type ParamOptionalTag =
+  | {readonly kind: 'exact'; readonly tuple: readonly string[]}
+  | {readonly kind: 'rest'; readonly min: readonly string[]};
 
-type CanTakeRestO<CurP extends readonly unknown[]> = CurP extends readonly []
-  ? false
-  : IsPureRestArray<CurP> extends true
-    ? CanAcceptOptionalRest<CurP[number]>
-    : CurP extends readonly [infer H, ...infer T]
-      ? CanAcceptOptionalPayload<H> extends true
-        ? CanTakeRestO<T>
-        : false
-      : CurP extends readonly [(infer _)?, ...infer T]
-        ? CanTakeRestO<T>
-        : false;
+type ParamSplit = {
+  readonly r: readonly string[];
+  readonly o: ParamOptionalTag;
+};
 
-type FinitePrefixTuple<P extends readonly unknown[]> = P extends readonly []
-  ? []
-  : IsPureRestArray<P> extends true
-    ? []
-    : P extends readonly [infer _, ...infer T]
-      ? [unknown, ...FinitePrefixTuple<T>]
-      : P extends readonly [(infer _)?, ...infer T]
-        ? [unknown, ...FinitePrefixTuple<T>]
-        : [];
-
-type RequiredPropShape<RUnion, Opt> = (readonly [] extends RUnion
-  ? {readonly required?: RUnion | readonly [RUnion, ...RUnion[]] | string[] | string[][]}
-  : {readonly required: RUnion | readonly [RUnion, ...RUnion[]] | string[] | string[][]}) &
-  Opt;
-
-type PayloadShape<RUnion, O extends string[]> = RequiredPropShape<
-  RUnion,
-  O extends [] ? {readonly optional?: readonly [] | string[]} : {readonly optional: Readonly<O> | string[]}
->;
-
-type MatchingRequiredForO<P extends readonly unknown[], O extends readonly unknown[], RAcc extends string[] = []> =
-  IsPureRestArray<P> extends true
-    ? O extends readonly []
-      ? Readonly<[...RAcc, ...string[]]>
-      : CanAcceptOptionalRest<P[number]> extends true
-        ? Readonly<[...RAcc, ...string[]]>
-        : never
-    :
-        | (CanTakeExactO<P, O> extends true ? Readonly<RAcc> : never)
-        | (P extends readonly []
-            ? never
-            : P extends readonly [infer _, ...infer T]
-              ? MatchingRequiredForO<T, O, [...RAcc, string]>
-              : P extends readonly [(infer _)?, ...infer T]
-                ? MatchingRequiredForO<T, O, [...RAcc, string]>
-                : never);
-
-type MatchingRequiredForRestO<P extends readonly unknown[], RAcc extends string[] = []> =
-  IsPureRestArray<P> extends true
-    ? CanAcceptOptionalRest<P[number]> extends true
-      ? Readonly<[...RAcc, ...string[]]>
-      : never
-    :
-        | (CanTakeRestO<P> extends true ? Readonly<RAcc> : never)
-        | (P extends readonly []
-            ? never
-            : P extends readonly [infer _, ...infer T]
-              ? MatchingRequiredForRestO<T, [...RAcc, string]>
-              : P extends readonly [(infer _)?, ...infer T]
-                ? MatchingRequiredForRestO<T, [...RAcc, string]>
-                : never);
-
-type CollectByO<
-  P extends readonly unknown[],
-  O extends string[] = [],
-  Budget extends unknown[] = FinitePrefixTuple<P>,
+type CollectOptionalSplits<
+  CurP extends readonly unknown[],
+  AllowUrlString extends boolean,
+  RAcc extends string[],
+  OAcc extends string[] = [],
 > =
-  | ([MatchingRequiredForO<P, O>] extends [never] ? never : PayloadShape<MatchingRequiredForO<P, O>, O>)
-  | (Budget extends [unknown, ...infer Tail] ? CollectByO<P, [...O, string], Tail> : never);
-
-type PayloadParamsFor<P extends readonly unknown[]> =
-  | CollectByO<P>
-  | ([MatchingRequiredForRestO<P>] extends [never]
+  | (IsPureRestArray<CurP> extends true
+      ? OAcc extends []
+        ? {
+            readonly r: Readonly<[...RAcc, ...string[]]>;
+            readonly o: CanAcceptUndefined<CurP[number]> extends true
+              ? {readonly kind: 'rest'; readonly min: readonly []}
+              : {readonly kind: 'exact'; readonly tuple: readonly []};
+          }
+        : {
+            readonly r: Readonly<RAcc>;
+            readonly o: CanAcceptUndefined<CurP[number]> extends true
+              ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
+              : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
+          }
+      : CanOmitTrailing<CurP, AllowUrlString> extends true
+        ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
+        : never)
+  | (CurP extends readonly []
       ? never
-      : RequiredPropShape<MatchingRequiredForRestO<P>, {readonly optional?: ReadonlyArray<string>}>);
+      : IsPureRestArray<CurP> extends true
+        ? never
+        : CurP extends readonly [infer H, ...infer T]
+          ? CanAcceptUndefined<H> extends true
+            ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string]>
+            : never
+          : CurP extends readonly [(infer _)?, ...infer T]
+            ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string]>
+            : never);
+
+type CollectParamSplits<CurP extends readonly unknown[], AllowUrlString extends boolean, RAcc extends string[] = []> =
+  | CollectOptionalSplits<CurP, AllowUrlString, RAcc>
+  | (CurP extends readonly []
+      ? never
+      : IsPureRestArray<CurP> extends true
+        ? never
+        : CurP extends readonly [infer _, ...infer T]
+          ? CollectParamSplits<T, AllowUrlString, [...RAcc, string]>
+          : CurP extends readonly [(infer _)?, ...infer T]
+            ? CollectParamSplits<T, AllowUrlString, [...RAcc, string]>
+            : never);
+
+type RequiredParamProp<R extends readonly string[], Nested extends boolean> = readonly [] extends R
+  ? {required?: R | (Nested extends true ? readonly [R, ...R[]] | string[] | string[][] : string[])}
+  : {required: R | (Nested extends true ? readonly [R, ...R[]] | string[] | string[][] : string[])};
+
+type OptionalParamProp<O extends ParamOptionalTag> = O extends {
+  readonly kind: 'rest';
+  readonly min: infer Min extends readonly string[];
+}
+  ? Min extends readonly []
+    ? {optional?: readonly string[]}
+    : {optional: Readonly<[...Min, ...string[]]> | string[]}
+  : O extends {readonly kind: 'exact'; readonly tuple: infer Tuple extends readonly string[]}
+    ? Tuple extends readonly []
+      ? {optional?: readonly [] | string[]}
+      : {optional: Readonly<Tuple> | string[]}
+    : never;
+
+type BuildParamShapes<
+  Splits,
+  Nested extends boolean,
+  OKey = Splits extends ParamSplit ? Splits['o'] : never,
+> = OKey extends ParamOptionalTag
+  ? Extract<Splits, {readonly o: OKey}> extends infer Matched extends ParamSplit
+    ? RequiredParamProp<Matched['r'], Nested> & OptionalParamProp<OKey>
+    : never
+  : never;
+
+type PayloadParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, true>, true>;
+
+type PayloadParamsConstraint<P extends readonly unknown[]> = PayloadParams &
+  (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
 
 type PayloadParamsProp<P extends readonly unknown[]> =
-  CanOmitTrailing<P> extends true
-    ? {
-        readonly payloadParams?: PayloadParams &
-          (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
-      }
-    : {
-        readonly payloadParams: PayloadParams &
-          (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
-      };
+  CanOmitTrailing<P, true> extends true
+    ? {readonly payloadParams?: PayloadParamsConstraint<P>}
+    : {readonly payloadParams: PayloadParamsConstraint<P>};
+
+type DriverCommandParams<F> = F extends (...args: infer P) => any ? P : never;
+
+type PluginCommandParams<F> = F extends (next: any, driver: any, ...args: infer P) => any ? P : never;
 
 type LooseMethodDef = BaseMethodDef & {
   readonly command?: string;
@@ -241,29 +225,31 @@ type IsLooseMethodCheck<T, Base, D extends boolean> = [true] extends [D]
       : false;
 
 /**
- * A definition of an exposed API command in a {@linkcode Driver}. Pass `D = true` to skip command cross-checking.
+ * A definition of an exposed API command in a {@linkcode Driver}.
+ * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
  */
 export type DriverMethodDef<T extends Driver, D extends boolean = false> =
   IsLooseMethodCheck<T, ExternalDriver, D> extends true
     ? LooseMethodDef
-    : CheckedMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
+    : CheckedMethodDef<ConditionalPick<Required<T>, DriverCommand>, 'driver'>;
 
 /**
- * A definition of an exposed API command in a {@linkcode Plugin}. Pass `D = true` to skip command cross-checking.
+ * A definition of an exposed API command in a {@linkcode Plugin}.
+ * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
  */
 export type PluginMethodDef<T extends Plugin, D extends boolean = false> =
   IsLooseMethodCheck<T, Plugin, D> extends true
     ? LooseMethodDef
-    : CheckedMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
+    : CheckedMethodDef<ConditionalPick<Required<T>, PluginCommand>, 'plugin'>;
 
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode PluginMethodDef}.
  */
 export interface PluginMethodMap<T extends Plugin, Strict extends boolean = true> {
   [key: string]: {
-    GET?: PluginMethodDef<T, [false] extends [Strict] ? true : false>;
-    POST?: PluginMethodDef<T, [false] extends [Strict] ? true : false>;
-    DELETE?: PluginMethodDef<T, [false] extends [Strict] ? true : false>;
+    GET?: PluginMethodDef<T, IsLoose<Strict>>;
+    POST?: PluginMethodDef<T, IsLoose<Strict>>;
+    DELETE?: PluginMethodDef<T, IsLoose<Strict>>;
   };
 }
 
@@ -294,96 +280,15 @@ export interface BaseExecuteMethodDef {
   readonly info?: string;
 }
 
-/**
- * The elements of `P` preceding its first optional or rest element, i.e. the parameters a method
- * accepting `P` requires.
- */
-type RequiredParams<P extends readonly unknown[]> = P extends readonly [infer H, ...infer T]
-  ? [H, ...RequiredParams<T>]
-  : [];
+type ExecuteMethodParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, false>, false>;
 
-/**
- * Tuple of `string`s with the same length as `T`.
- */
-type StringTupleLike<T extends readonly unknown[]> = {[K in keyof T]: string};
-
-/**
- * Tuple of `any`s with the same length as `T`.
- */
-type AnyTupleLike<T extends readonly unknown[]> = {[K in keyof T]: any};
-
-/**
- * The shape of `params` declaring the given required and optional param names.
- *
- * Non-tuple (`string[]`) values are also accepted, since their length cannot be checked; this is
- * the case for maps not declared `as const`.
- */
-type ExecuteMethodParamsShape<R extends string[], O extends string[]> = (R extends []
-  ? {required?: readonly [] | string[]}
-  : {required: Readonly<R> | string[]}) &
-  (O extends [] ? {optional?: readonly [] | string[]} : {optional: Readonly<O> | string[]});
-
-/**
- * Union of `params` shapes with exactly `R` required params and any number of optional params up
- * to the length of `Budget`.
- */
-type ExecuteMethodParamsWithRequired<R extends string[], Budget extends unknown[], O extends string[] = []> =
-  | ExecuteMethodParamsShape<R, O>
-  | (Budget extends [unknown, ...infer BudgetTail]
-      ? ExecuteMethodParamsWithRequired<R, BudgetTail, [...O, string]>
-      : never);
-
-/**
- * Union of `params` shapes with at least `R` required params, where the total number of params
- * does not exceed the length of `R` plus the length of `Budget`.
- */
-type ExecuteMethodParamsWithin<R extends string[], Budget extends unknown[]> =
-  | ExecuteMethodParamsWithRequired<R, Budget>
-  | (Budget extends [unknown, ...infer BudgetTail] ? ExecuteMethodParamsWithin<[...R, string], BudgetTail> : never);
-
-/**
- * The shape of `params` for a method with a rest parameter: at least `R` required params, and any
- * number of further required and optional params.
- */
-type ExecuteMethodParamsShapeWithRest<R extends string[]> = (R extends []
-  ? {required?: readonly string[]}
-  : {required: Readonly<[...R, ...string[]]> | string[]}) & {optional?: readonly string[]};
-
-/**
- * Union of all `params` shapes whose `required`/`optional` param counts are compatible with a
- * method accepting `P`: at runtime, the values of the `required` params are passed first (in
- * order), followed by the values of the `optional` params (in order, `undefined` if not provided).
- * So the method must accept at least as many required parameters as there are `required` params,
- * must not require any of the `optional` ones, and must accept all of them.
- */
-type ExecuteMethodParamsFor<P extends readonly unknown[]> = number extends Required<P>['length']
-  ? ExecuteMethodParamsShapeWithRest<StringTupleLike<RequiredParams<P>>>
-  : Required<P> extends readonly [...AnyTupleLike<RequiredParams<P>>, ...infer Optional]
-    ? ExecuteMethodParamsWithin<StringTupleLike<RequiredParams<P>>, Optional>
-    : never;
-
-/**
- * The `params` property of an execute method definition for a method accepting `P`. It is
- * mandatory if the method has required parameters, since omitting it means the method is invoked
- * without any arguments.
- */
 type ExecuteMethodParamsProp<P extends readonly unknown[]> =
-  RequiredParams<P> extends [] ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
+  CanOmitTrailing<P, false> extends true ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
 
 /**
  * An execute method definition which cannot be cross-checked against a method signature.
  */
 type LooseExecuteMethodDef = BaseExecuteMethodDef & {command: string};
-
-/**
- * Parameters of a {@linkcode DriverCommand}.
- */
-type DriverCommandParams<F> = F extends (...args: infer P) => any ? P : never;
-
-/**
- * Parameters of a {@linkcode PluginCommand}, i.e. those following `next` and `driver`.
- */
-type PluginCommandParams<F> = F extends (next: any, driver: any, ...args: infer P) => any ? P : never;
 
 /**
  * Union of execute method definitions for the given command methods (`Commands`), one per

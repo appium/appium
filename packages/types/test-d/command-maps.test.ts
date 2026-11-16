@@ -29,6 +29,12 @@ type TestDriver = Driver & {
   restArgs(a: string, ...rest: unknown[]): Promise<void>;
   restStrings(a: number, ...rest: string[]): Promise<void>;
   untyped(...args: any[]): Promise<void>;
+  unk(a: unknown): Promise<void>;
+  anyArg(a: any): Promise<void>;
+  unionReq(a: string | number): Promise<void>;
+  unionOpt(a: boolean | undefined): Promise<void>;
+  litUnion(a: 'x' | 'y'): Promise<void>;
+  optionalCmd?: (a: string) => Promise<void>;
   notACommand: string;
 };
 
@@ -107,6 +113,7 @@ type TestPlugin = Plugin & {
   noArgs(next: NextPluginCallback, driver: ExternalDriver): Promise<void>;
   oneRequiredOneOptional(next: NextPluginCallback, driver: ExternalDriver, a: string, b?: number): Promise<void>;
   oneRequiredNumber(next: NextPluginCallback, driver: ExternalDriver, a: number): Promise<void>;
+  optionalPluginCmd?: (next: NextPluginCallback, driver: ExternalDriver, a: string) => Promise<void>;
 };
 type TestPluginDef = PluginExecuteMethodDef<TestPlugin>;
 
@@ -124,7 +131,6 @@ expectAssignable<ExecuteMethodMap<TestPlugin>>({
   'test: one': {command: 'oneRequiredOneOptional', params: {required: ['a'], optional: ['b']}},
 } as const);
 
-// MethodMap / DriverMethodDef checks (strict by default; opt out via D = true / Strict = false)
 type TestMethodDef = DriverMethodDef<TestDriver>;
 
 expectAssignable<TestMethodDef>({} as const);
@@ -250,7 +256,6 @@ expectNotAssignable<TestMethodDef>({
 expectNotAssignable<TestMethodDef>({command: 'doesNotExist'} as const);
 expectNotAssignable<TestMethodDef>({command: 'notACommand'} as const);
 
-// Explicit D = true / Strict = false opts out for proxied commands; non-const arrays remain accepted
 expectNotAssignable<DriverMethodDef<TestDriver>>({
   command: 'anyCustomCommand',
   payloadParams: {required: ['a', 'b']},
@@ -294,7 +299,6 @@ expectAssignable<MethodMap<any>>({
 } as const);
 expectAssignable<DriverMethodDef<ExternalDriver>>({command: 'getPageSource'} as const);
 
-// PluginMethodDef / MethodMap<Plugin> checks
 type TestPluginMethodDef = PluginMethodDef<TestPlugin>;
 
 expectAssignable<TestPluginMethodDef>({} as const);
@@ -318,7 +322,7 @@ expectNotAssignable<TestPluginMethodDef>({
   command: 'oneRequiredOneOptional',
   payloadParams: {required: ['a', 'b', 'c']},
 } as const);
-expectNotAssignable<TestPluginMethodDef>({command: 'handle'} as const);
+expectAssignable<TestPluginMethodDef>({command: 'handle', payloadParams: {required: ['cmdName']}} as const);
 
 expectNotAssignable<PluginMethodDef<TestPlugin>>({
   command: 'handledCommand',
@@ -344,3 +348,50 @@ const pluginMethodMap = {
 expectAssignable<MethodMap<TestPlugin>>(pluginMethodMap);
 expectAssignable<MethodMap<TestPlugin, false>>(pluginMethodMap);
 expectAssignable<MethodMap<Plugin>>(pluginMethodMap);
+
+expectAssignable<TestMethodDef>({command: 'unk', payloadParams: {optional: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'unk', payloadParams: {required: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'unk'} as const);
+expectAssignable<TestMethodDef>({command: 'anyArg', payloadParams: {optional: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'anyArg'} as const);
+expectAssignable<TestDef>({command: 'unk', params: {optional: ['a']}} as const);
+expectAssignable<TestDef>({command: 'unk', params: {required: ['a']}} as const);
+expectAssignable<TestDef>({command: 'unk'} as const);
+expectAssignable<TestDef>({command: 'anyArg', params: {optional: ['a']}} as const);
+expectAssignable<TestDef>({command: 'unionOpt', params: {optional: ['a']}} as const);
+expectAssignable<TestDef>({command: 'unionReq', params: {required: ['a']}} as const);
+expectNotAssignable<TestDef>({command: 'unionReq'} as const);
+expectNotAssignable<TestDef>({command: 'unionReq', params: {optional: ['a']}} as const);
+expectNotAssignable<TestDef>({command: 'restStrings', params: {required: ['a'], optional: ['b']}} as const);
+
+expectAssignable<TestMethodDef>({command: 'optionalCmd', payloadParams: {required: ['a']}} as const);
+expectNotAssignable<TestMethodDef>({command: 'optionalCmd', payloadParams: {optional: ['a']}} as const);
+expectAssignable<TestPluginMethodDef>({
+  command: 'optionalPluginCmd',
+  payloadParams: {required: ['a']},
+} as const);
+expectNotAssignable<TestPluginMethodDef>({
+  command: 'optionalPluginCmd',
+  payloadParams: {optional: ['a']},
+} as const);
+
+expectAssignable<TestMethodDef>({command: 'unionReq', payloadParams: {required: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'unionReq'} as const);
+expectNotAssignable<TestMethodDef>({command: 'unionReq', payloadParams: {optional: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'unionOpt', payloadParams: {optional: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'litUnion', payloadParams: {required: ['a']}} as const);
+expectNotAssignable<TestMethodDef>({command: 'litUnion'} as const);
+expectNotAssignable<TestMethodDef>({command: 'litUnion', payloadParams: {optional: ['a']}} as const);
+
+expectAssignable<TestMethodDef>({
+  command: 'twoRequiredOneOptional',
+  payloadParams: {wrap: 'gesture', required: ['a', 'b'], validate: (obj: any) => Boolean(obj)},
+} as const);
+expectAssignable<TestMethodDef>({
+  command: 'twoRequiredOneOptional',
+  payloadParams: {unwrap: 'data', required: ['a', 'b'], optional: ['c']},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'twoRequiredOneOptional',
+  payloadParams: {wrap: 'gesture', required: ['a'], validate: () => true},
+} as const);

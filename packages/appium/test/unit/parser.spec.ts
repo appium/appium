@@ -97,6 +97,13 @@ describe('parser', function () {
             p.parseArgs(['--loglevel', '-42']);
           }, /unrecognized arguments: --loglevel/i);
         });
+
+        it('should throw an error for a bad integer', function () {
+          assert.throws(() => p.parseArgs(['--port', '4723abc']), /must be integer/i);
+          assert.throws(() => p.parseArgs(['--port', '10.5']), /must be integer/i);
+          assert.throws(() => p.parseArgs(['--port', '0x10']), /must be integer/i);
+          assert.throws(() => p.parseArgs(['--keep-alive-timeout', '0abc']), /must be integer/i);
+        });
       });
 
       it('should parse app URL rules correctly from a string', function () {

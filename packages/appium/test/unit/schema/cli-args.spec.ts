@@ -120,7 +120,17 @@ describe('cli-args', function () {
           });
 
           it('should parse the value as an integer', function () {
-            assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('4723'), 4723);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('0'), 0);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('-12'), -12);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('+10'), 10);
+          });
+
+          it('should throw', function () {
+            assert.throws(() => result['--plugin-blob-foo'].type!('4723abc'), /must be integer/i);
+            assert.throws(() => result['--plugin-blob-foo'].type!('10.5'), /must be integer/i);
+            assert.throws(() => result['--plugin-blob-foo'].type!('0x10'), /must be integer/i);
+            assert.throws(() => result['--plugin-blob-foo'].type!('10e2'), /must be integer/i);
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {

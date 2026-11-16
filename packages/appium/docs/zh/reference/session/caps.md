@@ -29,12 +29,11 @@ Appium sessions.
 These capabilities are used in the Appium server/base driver, but are optional, and may have a
 default value.
 
-| <div style="width:19em">Capability</div>              | Description                                                                                                                                                                                                          | Type      | Default |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------- |
-| `webSocketUrl`                                        | Toggle support of the WebDriver BiDi protocol                                                                                                                                                                        | `boolean` |         |
-| `appium:eventTimings` (deprecated) | Toggle collection of [Event Timings](../../guides/event-timing.md). This capability is deprecated - please use the [`getLogEvents`](../api/appium.md#getlogevents) endpoint instead. | `boolean` |         |
-| `appium:newCommandTimeout`                            | Number of seconds the Appium server should wait for clients to send commands before stopping the session. A value of `0` disables the timeout.                                       | `number`  | `60`    |
-| `appium:printPageSourceOnFindFailure`                 | Toggle retrieval of the page source and its printing to the Appium log, whenever a request to find an element fails                                                                                                  | `boolean` |         |
+| <div style="width:19em">Capability</div> | Description                                                                                                                                                                    | Type      | Default |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ------- |
+| `webSocketUrl`                           | Toggle support of the WebDriver BiDi protocol                                                                                                                                  | `boolean` |         |
+| `appium:newCommandTimeout`               | Number of seconds the Appium server should wait for clients to send commands before stopping the session. A value of `0` disables the timeout. | `number`  | `60`    |
+| `appium:printPageSourceOnFindFailure`    | Toggle retrieval of the page source and its printing to the Appium log, whenever a request to find an element fails                                                            | `boolean` |         |
 
 ### Validated Capabilities
 
@@ -42,9 +41,9 @@ These capabilities are not directly used in the Appium server/base driver, but a
 validation checks due to their relevance in other drivers. The actual handling of these
 capabilities is optional and entirely driver-dependent.
 
-| Capability                                          | Validation                                                    |
-| --------------------------------------------------- | ------------------------------------------------------------- |
-| `platformVersion`                                   | Must be `string`                                              |
-| `appium:app`                                        | Must be `string`; empty values are ignored                    |
-| `appium:fullReset`                                  | Must be `boolean`; mutually exclusive with `appium:noReset`   |
-| `appium:noReset`                                    | Must be `boolean`; mutually exclusive with `appium:fullReset` |
+| Capability               | Validation                                                    |
+| ------------------------ | ------------------------------------------------------------- |
+| `appium:platformVersion` | Must be `string`                                              |
+| `appium:app`             | Must be `string`; empty values are ignored                    |
+| `appium:fullReset`       | Must be `boolean`; mutually exclusive with `appium:noReset`   |
+| `appium:noReset`         | Must be `boolean`; mutually exclusive with `appium:fullReset` |

@@ -24,6 +24,16 @@ title: Appium 客户端简介
 
 例如，`查找元素`命令对应于发送到 HTTP 端点 `/session/:sessionid/element` 的 HTTP `POST` 请求（其中`:sessionid` 是服务器在之前 `创建会话` 调用中生成的唯一会话 ID 的占位符）。
 
+If the client disconnects before Appium finishes sending a `Create Session` response and the
+request has no `X-Idempotency-Key`, Appium deletes the new session once driver setup completes.
+Setup is not interrupted. With an accepted idempotency key, a retry that arrives before setup
+finishes waits for the same session ID, or the same error if setup failed. If the original client
+and all waiting retries disconnect before setup finishes, Appium deletes the new session and
+discards its cached result; a later retry starts a new session. Otherwise, Appium keeps the session
+and caches its response for replay while it remains in the bounded, in-memory idempotency cache.
+Disconnecting after a response was sent, or during a command in an existing session, does not
+automatically end that session. Use `Delete Session` when you are done.
+
 此信息主要对开发与 WebDriver 规范一起工作的技术的人有用。它对试图编写 Appium 或 Selenium 测试的人不是特别有用。当您编写 Appium 测试时，您希望使用您熟悉的编程语言。幸运的是，存在一组 [Appium 客户端库](../ecosystem/clients.md)[^1]，它们负责向 Appium 服务器发起HTTP 的请求。它们为特定编程语言公开了一组“原生”命令，以便对测试作者来说，它就像您在编写 Python、JavaScript 或 Java。
 
 以下是使用 Appium 客户端在五种不同编程语言中实现相同的 Appium 命令集的示例（注意，这不是包含所有导入的工作示例代码；请参阅每个客户端库的设置和命令参考说明）：

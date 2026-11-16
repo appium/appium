@@ -18,17 +18,17 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
- * Pass `false` as `Strict` to opt out of validating `command` names and `payloadParams`.
- * Trailing `string` params may omit `payloadParams` (URL `:param` inspection is unsupported via `[key: string]`).
+ * Pass `false` as `Strict` to opt out of checking `command` names and `payloadParams`.
+ * Declare maps `as const` to keep literal `command` names; trailing `string` URL `:param`s may omit `payloadParams`.
  *
  * @example
- * ```js
+ * ```ts
  * {
  *   '/session/:sessionId/new_method': {
  *     GET: {command: 'getNewThing'},
  *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
  *   }
- * }
+ * } as const satisfies MethodMap<MyDriver>
  * ```
  */
 export type MethodMap<T extends Plugin | Driver, Strict extends boolean = true> = T extends Plugin
@@ -76,7 +76,6 @@ type IsPureRestArray<P extends readonly unknown[]> = number extends P['length'] 
 
 type CanAcceptUndefined<T> = [undefined] extends [T] ? true : false;
 
-// Trailing `string` params on REST routes may omit payloadParams because Express appends URL `:param` segments in makeArgs.
 type CanOmitRequiredParam<T, AllowUrlString extends boolean> =
   CanAcceptUndefined<T> extends true
     ? true
@@ -98,15 +97,18 @@ type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolea
         ? CanOmitTrailing<T, AllowUrlString>
         : true;
 
+/** `optional` constraint: `'exact'` fixes `tuple` length; `'rest'` requires at least `min` optional names. */
 type ParamOptionalTag =
   | {readonly kind: 'exact'; readonly tuple: readonly string[]}
   | {readonly kind: 'rest'; readonly min: readonly string[]};
 
+/** `(r, o)` split where `r` is the required param tuple and `o` constrains optional params. */
 type ParamSplit = {
   readonly r: readonly string[];
   readonly o: ParamOptionalTag;
 };
 
+/** Collects optional tails by shifting nullable/optional args into `[...OAcc, string]` (`undefined` when omitted); `AllowUrlString` permits trailing `string` URL params. */
 type CollectOptionalSplits<
   CurP extends readonly unknown[],
   AllowUrlString extends boolean,
@@ -114,19 +116,12 @@ type CollectOptionalSplits<
   OAcc extends string[] = [],
 > =
   | (IsPureRestArray<CurP> extends true
-      ? OAcc extends []
-        ? {
-            readonly r: Readonly<[...RAcc, ...string[]]>;
-            readonly o: CanAcceptUndefined<CurP[number]> extends true
-              ? {readonly kind: 'rest'; readonly min: readonly []}
-              : {readonly kind: 'exact'; readonly tuple: readonly []};
-          }
-        : {
-            readonly r: Readonly<RAcc>;
-            readonly o: CanAcceptUndefined<CurP[number]> extends true
-              ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
-              : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
-          }
+      ? {
+          readonly r: Readonly<OAcc extends [] ? [...RAcc, ...string[]] : RAcc>;
+          readonly o: CanAcceptUndefined<CurP[number]> extends true
+            ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
+            : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
+        }
       : CanOmitTrailing<CurP, AllowUrlString> extends true
         ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
         : never)
@@ -142,6 +137,7 @@ type CollectOptionalSplits<
             ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string]>
             : never);
 
+/** Enumerates `(r, o)` splits across `CurP` (`AllowUrlString`: `true` for REST URL `:param`s, `false` for execute). */
 type CollectParamSplits<CurP extends readonly unknown[], AllowUrlString extends boolean, RAcc extends string[] = []> =
   | CollectOptionalSplits<CurP, AllowUrlString, RAcc>
   | (CurP extends readonly []
@@ -171,6 +167,7 @@ type OptionalParamProp<O extends ParamOptionalTag> = O extends {
       : {optional: Readonly<Tuple> | string[]}
     : never;
 
+/** Groups `Splits` by `o` so valid `required` shapes form one union per `optional` rule (`Nested` enables `string[][]`). */
 type BuildParamShapes<
   Splits,
   Nested extends boolean,
@@ -181,6 +178,7 @@ type BuildParamShapes<
     : never
   : never;
 
+/** REST `payloadParams` shapes for `P`: runtime passes `required` first, then `optional` (`undefined` if omitted), then URL `:param` strings. */
 type PayloadParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, true>, true>;
 
 type PayloadParamsConstraint<P extends readonly unknown[]> = PayloadParams &
@@ -280,6 +278,7 @@ export interface BaseExecuteMethodDef {
   readonly info?: string;
 }
 
+/** Execute `params` shapes for `P`: runtime passes `required` first, then `optional` (`undefined` if omitted), with no URL `:param` args. */
 type ExecuteMethodParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, false>, false>;
 
 type ExecuteMethodParamsProp<P extends readonly unknown[]> =

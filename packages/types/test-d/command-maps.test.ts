@@ -13,10 +13,7 @@ import type {
   PluginMethodDef,
 } from '../lib/index.js';
 
-/**
- * A driver with execute and protocol methods of various arities. Only the members relevant to the
- * checks below are declared; the rest are stubbed via the intersection with `Driver`.
- */
+/** Stubbed driver covering the method-map signature checks below. */
 type TestDriver = Driver & {
   noArgs(): Promise<void>;
   oneRequired(a: string): Promise<void>;
@@ -294,6 +291,10 @@ expectNotAssignable<MethodMap<TestDriver>>({
 expectNotAssignable<MethodMap<TestDriver>>({
   '/invalid-params': {POST: {command: 'oneRequiredNumber', payloadParams: {optional: ['a']}}},
 } as const);
+const nonConstMethodMap = {
+  '/test': {GET: {command: 'noArgs'}},
+};
+expectNotAssignable<MethodMap<TestDriver>>(nonConstMethodMap);
 expectAssignable<MethodMap<any>>({
   '/any': {POST: {command: 'whatever', payloadParams: {required: ['a']}}},
 } as const);

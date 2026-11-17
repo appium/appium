@@ -200,7 +200,7 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
-    assert.strictEqual(app.use.callCount, 13);
+    assert.strictEqual(app.use.callCount, 14);
     assert.strictEqual(app.all.callCount, 0);
   });
 

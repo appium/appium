@@ -31,6 +31,7 @@ import {
   handleUpgrade,
   parseJsonBody,
   rejectBrowserOrigin,
+  rejectForeignHosts,
   rejectInvalidJsonOnExtensionRoutes,
   tryHandleWebSocketUpgrade,
 } from './middleware/index.js';
@@ -67,6 +68,8 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
+  /** Hostnames the server expects to be addressed by; accepted in addition to IPs and loopback names. */
+  allowedHostnames?: string[];
   /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
 }
@@ -132,6 +135,9 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           app,
           addRoutes: routeConfiguringFunction,
           allowCors,
+          allowedHostnames: [hostname, cliArgs.address].filter(
+            (h): h is string => typeof h === 'string' && h.length > 0 && h !== '0.0.0.0',
+          ),
           basePath: normalizedBasePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
@@ -187,6 +193,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
     app,
     addRoutes,
     allowCors = false,
+    allowedHostnames = [],
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -197,6 +204,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  app.use(rejectForeignHosts(allowedHostnames));
   // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
   app.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache');

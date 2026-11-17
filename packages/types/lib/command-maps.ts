@@ -18,7 +18,7 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
- * Pass `false` as `Strict` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`).
+ * Pass `false` as `Strict` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`; `makeArgs` skips positional-count checks when the command accepts arguments).
  *
  * @example
  * ```ts
@@ -75,25 +75,24 @@ type IsPureRestArray<P extends readonly unknown[]> = number extends P['length'] 
 
 type CanAcceptUndefined<T> = [undefined] extends [T] ? true : false;
 
-type CanOmitRequiredParam<T, AllowUrlString extends boolean> =
-  CanAcceptUndefined<T> extends true
-    ? true
-    : AllowUrlString extends true
-      ? [string] extends [T]
-        ? true
-        : false
-      : false;
+type IsTopType<T> = unknown extends T ? true : false;
 
 type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolean> = P extends readonly []
   ? true
   : IsPureRestArray<P> extends true
     ? true
     : P extends readonly [infer H, ...infer T]
-      ? CanOmitRequiredParam<H, AllowUrlString> extends true
+      ? IsTopType<H> extends true
         ? CanOmitTrailing<T, AllowUrlString>
-        : false
+        : CanAcceptUndefined<H> extends true
+          ? CanOmitTrailing<T, false>
+          : AllowUrlString extends true
+            ? [string] extends [H]
+              ? CanOmitTrailing<T, true>
+              : false
+            : false
       : P extends readonly [(infer _)?, ...infer T]
-        ? CanOmitTrailing<T, AllowUrlString>
+        ? CanOmitTrailing<T, false>
         : true;
 
 /** `optional` constraint: `'exact'` fixes `tuple` length; `'rest'` requires at least `min` optional names. */
@@ -107,7 +106,7 @@ type ParamSplit = {
   readonly o: ParamOptionalTag;
 };
 
-/** Collects optional tails by shifting nullable/optional args into `[...OAcc, string]` (`undefined` when omitted); `AllowUrlString` permits trailing `string` URL params. */
+/** Collects optional tails by shifting nullable/optional args into `[...OAcc, string]` (`undefined` when omitted); `AllowUrlString` permits trailing `string` URL params before any omitted arg. */
 type CollectOptionalSplits<
   CurP extends readonly unknown[],
   AllowUrlString extends boolean,
@@ -149,8 +148,18 @@ type CollectParamSplits<CurP extends readonly unknown[], AllowUrlString extends 
             ? CollectParamSplits<T, AllowUrlString, [...RAcc, string]>
             : never);
 
+type NonEmptyStringTuple<R extends readonly string[]> = Exclude<R, readonly []>;
+
 type RequiredParamProp<R extends readonly string[], Nested extends boolean> = readonly [] extends R
-  ? {required?: R | (Nested extends true ? readonly [R, ...R[]] : string[])}
+  ? {
+      required?:
+        | R
+        | (Nested extends true
+            ? IsNever<NonEmptyStringTuple<R>> extends true
+              ? never
+              : readonly [NonEmptyStringTuple<R>, ...NonEmptyStringTuple<R>[]]
+            : string[]);
+    }
   : {required: R | (Nested extends true ? readonly [R, ...R[]] : string[])};
 
 type OptionalParamProp<O extends ParamOptionalTag, AllowMutable extends boolean> = O extends {
@@ -180,21 +189,67 @@ type BuildParamShapes<
 /** REST `payloadParams` shapes for `P`: runtime passes `required` first, then `optional` (`undefined` if omitted), then URL `:param` strings. */
 type PayloadParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, true>, true>;
 
+type HasPositionalParams<P extends readonly unknown[]> = P extends readonly [] ? false : true;
+
+type MakeArgsFn<Ret extends readonly unknown[] = readonly unknown[]> = (
+  ...args: Parameters<NonNullable<PayloadParams['makeArgs']>>
+) => Ret;
+
 type PayloadParamsConstraint<P extends readonly unknown[]> = PayloadParams &
-  (PayloadParamsFor<P> | (PayloadParams & {makeArgs: NonNullable<PayloadParams['makeArgs']>}));
+  (
+    | (PayloadParamsFor<P> & {
+        makeArgs?: MakeArgsFn<true extends HasPositionalParams<P> ? readonly unknown[] : readonly never[]>;
+      })
+    | (true extends HasPositionalParams<P> ? {makeArgs: MakeArgsFn} : never)
+  );
 
 type PayloadParamsProp<P extends readonly unknown[]> =
-  CanOmitTrailing<P, true> extends true
-    ? {readonly payloadParams?: PayloadParamsConstraint<P>}
-    : {readonly payloadParams: PayloadParamsConstraint<P>};
+  true extends CanOmitTrailing<P, true>
+    ? {[Q in keyof Pick<BaseMethodDef, 'payloadParams'>]?: PayloadParamsConstraint<P>}
+    : {[Q in keyof Pick<BaseMethodDef, 'payloadParams'>]-?: PayloadParamsConstraint<P>};
 
-type DriverCommandParams<F> = F extends (...args: infer P) => any ? P : never;
+type FilterDefaultedOverload<P extends readonly unknown[], F> = unknown[] extends P
+  ? F extends (...args: unknown[]) => any
+    ? P
+    : never
+  : P;
 
-type PluginCommandParams<F> = F extends (next: any, driver: any, ...args: infer P) => any ? P : never;
+type OverloadParams<F> =
+  IsAny<F> extends true
+    ? any[]
+    : F extends {
+          (...args: infer P1): any;
+          (...args: infer P2): any;
+          (...args: infer P3): any;
+          (...args: infer P4): any;
+          (...args: infer P5): any;
+        }
+      ?
+          | FilterDefaultedOverload<P1, F>
+          | FilterDefaultedOverload<P2, F>
+          | FilterDefaultedOverload<P3, F>
+          | FilterDefaultedOverload<P4, F>
+          | FilterDefaultedOverload<P5, F>
+      : F extends (...args: infer P) => any
+        ? P
+        : never;
 
-type LooseMethodDef = BaseMethodDef & {
-  readonly command?: string;
+type DriverCommandParams<F> = OverloadParams<F>;
+
+type StripPluginPrefix<P extends readonly unknown[]> = P extends readonly unknown[]
+  ? ((...args: P) => any) extends (next: any, driver: any, ...args: infer Rest) => any
+    ? Rest
+    : never
+  : never;
+
+type PluginCommandParams<F> = StripPluginPrefix<OverloadParams<F>>;
+
+type CommandProp<K> = {
+  /** Name of the command. */
+  readonly command: K;
 };
+
+type LooseMethodDef = BaseMethodDef & Partial<CommandProp<string>>;
 
 type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
   IsNever<Commands> extends true
@@ -204,11 +259,11 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
       : [string] extends [keyof Commands]
         ? LooseMethodDef
         :
-            | (BaseMethodDef & {readonly command?: never})
+            | (BaseMethodDef & Partial<CommandProp<never>>)
             | {
-                [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> & {
-                  readonly command: K;
-                } & PayloadParamsProp<
+                [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> &
+                  CommandProp<K> &
+                  PayloadParamsProp<
                     Kind extends 'driver' ? DriverCommandParams<Commands[K]> : PluginCommandParams<Commands[K]>
                   >;
               }[keyof Commands];
@@ -288,7 +343,7 @@ export interface BaseExecuteMethodDef {
 type ExecuteMethodParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, false>, false>;
 
 type ExecuteMethodParamsProp<P extends readonly unknown[]> =
-  CanOmitTrailing<P, false> extends true ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
+  true extends CanOmitTrailing<P, false> ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
 
 /**
  * An execute method definition which cannot be cross-checked against a method signature.

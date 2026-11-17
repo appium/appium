@@ -1,4 +1,4 @@
-import {expectAssignable, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectDocCommentIncludes, expectNotAssignable} from 'tsd';
 
 import type {
   Driver,
@@ -13,7 +13,6 @@ import type {
   PluginMethodDef,
 } from '../lib/index.js';
 
-/** Stubbed driver covering the method-map signature checks below. */
 type TestDriver = Driver & {
   noArgs(): Promise<void>;
   oneRequired(a: string): Promise<void>;
@@ -23,6 +22,12 @@ type TestDriver = Driver & {
   threeRequired(a: string, b: string, c: string): Promise<void>;
   elementRequiredOnly(a: number, elementId: string): Promise<void>;
   elementWithOptional(a: number, b: number | undefined, elementId: string): Promise<void>;
+  elementWithStringOptional(a: number, b: string | undefined, elementId: string): Promise<void>;
+  twoTrailingOptionals(a: number, b: number | undefined, c?: string): Promise<void>;
+  overloaded(x: string): Promise<void>;
+  overloaded(x: number, y: number): Promise<void>;
+  overloadedZero(): Promise<void>;
+  overloadedZero(x: number): Promise<void>;
   restArgs(a: string, ...rest: unknown[]): Promise<void>;
   restStrings(a: number, ...rest: string[]): Promise<void>;
   untyped(...args: any[]): Promise<void>;
@@ -110,6 +115,8 @@ type TestPlugin = Plugin & {
   noArgs(next: NextPluginCallback, driver: ExternalDriver): Promise<void>;
   oneRequiredOneOptional(next: NextPluginCallback, driver: ExternalDriver, a: string, b?: number): Promise<void>;
   oneRequiredNumber(next: NextPluginCallback, driver: ExternalDriver, a: number): Promise<void>;
+  overloadedPlugin(next: NextPluginCallback, driver: ExternalDriver, x: string): Promise<void>;
+  overloadedPlugin(next: NextPluginCallback, driver: ExternalDriver, x: number, y: number): Promise<void>;
   optionalPluginCmd?: (next: NextPluginCallback, driver: ExternalDriver, a: string) => Promise<void>;
 };
 type TestPluginDef = PluginExecuteMethodDef<TestPlugin>;
@@ -183,7 +190,28 @@ expectAssignable<TestMethodDef>({
   command: 'elementWithOptional',
   payloadParams: {required: ['a'], optional: ['b']},
 } as const);
-expectAssignable<TestMethodDef>({command: 'elementWithOptional', payloadParams: {required: ['a']}} as const);
+expectAssignable<TestMethodDef>({
+  command: 'elementWithOptional',
+  payloadParams: {required: ['a', 'b']},
+} as const);
+expectAssignable<TestMethodDef>({
+  command: 'elementWithStringOptional',
+  payloadParams: {required: ['a'], optional: ['b']},
+} as const);
+expectAssignable<TestMethodDef>({command: 'twoTrailingOptionals', payloadParams: {required: ['a']}} as const);
+expectAssignable<TestMethodDef>({command: 'overloaded'} as const);
+expectAssignable<TestMethodDef>({command: 'overloaded', payloadParams: {required: ['x']}} as const);
+expectAssignable<TestMethodDef>({command: 'overloaded', payloadParams: {required: ['x', 'y']}} as const);
+expectAssignable<TestMethodDef>({
+  command: 'overloaded',
+  payloadParams: {required: [['x'], ['x', 'y']]},
+} as const);
+expectAssignable<TestMethodDef>({command: 'overloadedZero'} as const);
+expectAssignable<TestMethodDef>({command: 'overloadedZero', payloadParams: {required: ['x']}} as const);
+expectAssignable<TestMethodDef>({
+  command: 'oneRequiredNumber',
+  payloadParams: {required: ['x', 'y'], makeArgs: ({x, y}) => [x + y]},
+} as const);
 expectAssignable<TestMethodDef>({command: 'restArgs'} as const);
 expectAssignable<TestMethodDef>({
   command: 'restArgs',
@@ -236,9 +264,43 @@ expectNotAssignable<TestMethodDef>({
   command: 'elementRequiredOnly',
   payloadParams: {required: ['a'], optional: ['opt']},
 } as const);
+expectNotAssignable<TestMethodDef>({command: 'elementWithOptional', payloadParams: {required: ['a']}} as const);
+expectNotAssignable<TestMethodDef>({command: 'elementWithOptional'} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'elementWithStringOptional',
+  payloadParams: {required: ['a']},
+} as const);
 expectNotAssignable<TestMethodDef>({
   command: 'elementWithOptional',
   payloadParams: {required: ['a', 'b'], optional: ['elementId']},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'overloaded',
+  payloadParams: {required: ['x', 'y', 'z']},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'overloadedZero',
+  payloadParams: {required: ['x', 'y']},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'noArgs',
+  payloadParams: {required: ['x', 'y', 'z'], makeArgs: () => []},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'noArgs',
+  payloadParams: {optional: ['x'], makeArgs: () => []},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'noArgs',
+  payloadParams: {makeArgs: () => [1]},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'oneRequiredNumber',
+  payloadParams: {makeArgs: () => 123},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'oneRequired',
+  payloadParams: {required: [['a'], []]},
 } as const);
 expectNotAssignable<TestMethodDef>({command: 'restArgs', payloadParams: {optional: ['a']}} as const);
 expectNotAssignable<TestMethodDef>({
@@ -265,19 +327,16 @@ expectAssignable<DriverMethodDef<TestDriver, boolean>>({
   command: 'anyCustomCommand',
   payloadParams: {required: ['a', 'b']},
 } as const);
-expectNotAssignable<TestMethodDef>({command: 'oneRequiredNumber', payloadParams: {required: ['a', 'b']}});
-expectNotAssignable<TestMethodDef>({command: 'twoRequiredOneOptional', payloadParams: {required: [['a']]}});
-expectNotAssignable<TestMethodDef>({command: 'noArgs', payloadParams: {optional: ['a']}});
-
 const contextuallyTypedMethodMap: MethodMap<TestDriver> = {
   '/test': {
     POST: {command: 'oneRequiredNumber', payloadParams: {required: ['a']}},
+    DELETE: {command: 'overloaded', payloadParams: {required: ['x']}},
   },
 };
 expectAssignable<MethodMap<TestDriver>>(contextuallyTypedMethodMap);
 expectNotAssignable<MethodMap<TestDriver>>({
   '/test': {
-    POST: {command: 'oneRequiredNumber', payloadParams: {required: ['a', 'b']}},
+    POST: {command: 'oneRequiredNumber' as const, payloadParams: {required: ['a', 'b']}},
   },
 });
 
@@ -430,3 +489,32 @@ expectNotAssignable<TestMethodDef>({
   command: 'twoRequiredOneOptional',
   payloadParams: {wrap: 'gesture', required: ['a'], validate: () => true},
 } as const);
+
+expectAssignable<TestDef>({command: 'overloaded', params: {required: ['x']}} as const);
+expectAssignable<TestDef>({command: 'overloaded', params: {required: ['x', 'y']}} as const);
+expectNotAssignable<TestDef>({command: 'overloaded'} as const);
+expectNotAssignable<TestDef>({command: 'overloaded', params: {required: ['x', 'y', 'z']}} as const);
+expectAssignable<TestDef>({command: 'overloadedZero'} as const);
+expectAssignable<TestDef>({command: 'overloadedZero', params: {required: ['x']}} as const);
+
+expectAssignable<TestPluginMethodDef>({command: 'overloadedPlugin', payloadParams: {required: ['x']}} as const);
+expectAssignable<TestPluginMethodDef>({command: 'overloadedPlugin', payloadParams: {required: ['x', 'y']}} as const);
+expectNotAssignable<TestPluginMethodDef>({
+  command: 'overloadedPlugin',
+  payloadParams: {required: ['x', 'y', 'z']},
+} as const);
+expectAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x']}} as const);
+expectAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x', 'y']}} as const);
+expectNotAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x', 'y', 'z']}} as const);
+
+declare const strictDriverDef: Extract<TestMethodDef, {readonly command: 'oneRequiredNumber'}>;
+declare const optionalPayloadDriverDef: Extract<TestMethodDef, {readonly command: 'noArgs'}>;
+declare const looseDriverDef: DriverMethodDef<TestDriver, true>;
+declare const strictPluginDef: Extract<TestPluginMethodDef, {readonly command: 'oneRequiredNumber'}>;
+expectDocCommentIncludes<'Name of the command.'>(strictDriverDef.command);
+expectDocCommentIncludes<'Specifies shape of payload'>(strictDriverDef.payloadParams);
+expectDocCommentIncludes<'Specifies shape of payload'>(optionalPayloadDriverDef.payloadParams);
+expectDocCommentIncludes<'Name of the command.'>(looseDriverDef.command);
+expectDocCommentIncludes<'Specifies shape of payload'>(looseDriverDef.payloadParams);
+expectDocCommentIncludes<'Name of the command.'>(strictPluginDef.command);
+expectDocCommentIncludes<'Specifies shape of payload'>(strictPluginDef.payloadParams);

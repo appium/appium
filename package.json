@@ -81,7 +81,7 @@
   },
   "devDependencies": {
     "@appium/oxc-config": "2.0.0-beta.0",
-    "@tsconfig/node22": "22.0.0",
+    "@tsconfig/node22": "22.0.7",
     "@types/express": "5.0.6",
     "@types/json-schema": "7.0.15",
     "@types/lockfile": "1.0.4",

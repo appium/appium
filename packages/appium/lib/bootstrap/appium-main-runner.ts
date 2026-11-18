@@ -27,7 +27,7 @@ export class AppiumMainRunner {
    *
    * @param initResult - Output of {@link AppiumInitializer.init}
    * @param args - Original args (used to describe `appiumHome` source in logs)
-   * @param useDrivers - Original programmatic selection, before embedded modules were removed from CLI args
+   * @param useDrivers - Original programmatic selection when it contains embedded modules
    */
   async run<
     Cmd extends CliCommand = CliCommandServer,

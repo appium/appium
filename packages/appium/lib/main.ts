@@ -46,11 +46,15 @@ export async function main<
     args && (!args.subcommand || args.subcommand === 'server')
       ? (args as MainArgs<CliCommandServer>).useDrivers
       : undefined;
+  const embeddedSelection = useDrivers?.some((entry) => typeof entry !== 'string') ? useDrivers : undefined;
+  // An empty programmatic selection lets the config file supply driver names.
   const initArgs = (
-    useDrivers ? {...args, useDrivers: useDrivers.filter((entry): entry is string => typeof entry === 'string')} : args
+    embeddedSelection || useDrivers?.length === 0
+      ? {...args, useDrivers: embeddedSelection?.filter((entry) => typeof entry === 'string')}
+      : args
   ) as Args<Cmd, SubCmd> | undefined;
   const initResult = await init(initArgs);
-  return mainRunner.run(initResult, initArgs, useDrivers);
+  return mainRunner.run(initResult, initArgs, embeddedSelection);
 }
 
 // NOTE: backwards compat for scripts referencing `build/lib/main.js` directly.

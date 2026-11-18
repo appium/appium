@@ -112,13 +112,6 @@
     "ws": "8.22.0"
   },
   "overrides": {
-    "@sidvind/better-ajv-errors": {
-      "ajv": "8.20.0"
-    },
-    "ajv-formats": {
-      "ajv": "8.20.0"
-    },
-    "http-cache-semantics": "4.3.0",
     "nx": {
       "undici": "7.30.2"
     }

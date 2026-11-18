@@ -70,7 +70,10 @@ subscriptions.
 
 All subscription IDs must be known to the current session. An unknown ID causes an `invalid argument`
 error without removing any subscriptions. Subscription IDs are cleared when the session is deleted.
-The subscriptions made over a BiDi connection are also removed when that connection is closed.
+The subscriptions made over a BiDi connection are also removed when that connection is closed, with
+`session.unsubscribe` called for each of them (plugins that handle this command see these calls too).
+Events are delivered to all the connections of a session, so a connection that did not subscribe
+stops receiving the events that it got through the subscriptions of another connection which is now closed.
 
 #### Response
 

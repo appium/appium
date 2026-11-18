@@ -55,6 +55,8 @@ const RESERVED_CLOSE_CODES: readonly number[] = [
 ];
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const BIDI_CONNECTION_CLEANUPS: WeakMap<WebSocket, () => void> = new WeakMap();
+// the subscriptions of these connections are cleared together with the session
+const BIDI_SESSION_CLOSED_SOCKETS: WeakSet<WebSocket> = new WeakSet();
 const MAX_LOGGED_DATA_LENGTH = 300;
 
 /**
@@ -204,6 +206,7 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   try {
     this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
     for (const ws of this.bidiSockets[sessionId]) {
+      BIDI_SESSION_CLOSED_SOCKETS.add(ws);
       BIDI_CONNECTION_CLEANUPS.get(ws)?.();
       ws.close(WebSocketCloseCode.GOING_AWAY);
     }
@@ -250,19 +253,18 @@ async function dropSubscriptions(
 ): Promise<void> {
   const ids = [...subscriptions];
   subscriptions.clear();
-  let failed = 0;
-  // one by one: an ID that is already gone (e.g. the session has ended) must not block the others
+  let removed = 0;
+  // one by one: an ID that is already gone (e.g. unsubscribed by the event names) must not block the others
   for (const id of ids) {
     try {
       await wrapCommandWithPlugins(driver as ExtensionCore, plugins, 'session.unsubscribe', {subscriptions: [id]})();
-    } catch {
-      ++failed;
+      ++removed;
+    } catch (err) {
+      driver.log.debug(`Cannot remove the BiDi subscription ${id} of the closed connection: ${(err as Error).message}`);
     }
   }
-  if (ids.length > failed) {
-    driver.log.debug(
-      `Removed ${util.pluralize('BiDi subscription', ids.length - failed, true)} of the closed connection`,
-    );
+  if (removed > 0) {
+    driver.log.debug(`Removed ${util.pluralize('BiDi subscription', removed, true)} of the closed connection`);
   }
 }
 
@@ -467,6 +469,8 @@ function initBidiSocketHandlers(
   const pendingProxyCommands = trackBidiProxyCommands(proxyClient);
   // proxied connections keep their subscriptions upstream
   const subscriptions = new Set<string>();
+  // a command that is still running when the connection closes may add a subscription later
+  const executing = new Set<Promise<unknown>>();
   // Can't do much with random errors on the connection other than log them
   ws.on('error', logSocketErr);
 
@@ -485,8 +489,11 @@ function initBidiSocketHandlers(
         // complex for now, so just ignore plugins in this case
         await sendBidiProxyCommand(data, bidiHandlerDriver, proxyClient, sendToProxy, pendingProxyCommands);
       } else {
-        const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins, subscriptions);
-        await send(JSON.stringify(res));
+        const execution = this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins, subscriptions);
+        executing.add(execution);
+        const forget = () => executing.delete(execution);
+        execution.then(forget, forget);
+        await send(JSON.stringify(await execution));
       }
     } catch (err) {
       logSocketErr(err instanceof Error ? err : new Error(String(err)));
@@ -513,8 +520,13 @@ function initBidiSocketHandlers(
       driverLog.debug(`BiDi events statistics: ${JSON.stringify(eventLogCounts, null, 2)}`);
     }
 
-    if (subscriptions.size > 0) {
-      void dropSubscriptions(bidiHandlerDriver, bidiHandlerPlugins, subscriptions);
+    // the session clears its subscriptions on its own, no need to call the plugins meanwhile
+    if (!BIDI_SESSION_CLOSED_SOCKETS.has(ws)) {
+      void Promise.allSettled([...executing])
+        .then(() =>
+          subscriptions.size > 0 ? dropSubscriptions(bidiHandlerDriver, bidiHandlerPlugins, subscriptions) : undefined,
+        )
+        .catch(() => {});
     }
   });
 }

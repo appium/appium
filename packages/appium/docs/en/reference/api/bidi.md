@@ -50,8 +50,9 @@ Subscribes to one or more BiDi events.
 
 #### Limits
 
-A session can have up to 100 subscriptions, and together they can cover up to 1000 combinations of
-an event and a context. Lists in the parameters can have up to 1000 items, and the event names,
+A session can have up to 100 subscriptions. Every subscription covers a combination of each of its
+events and each of its contexts (an event without contexts counts as one), and all the subscriptions
+together, counted one by one, can cover up to 1000 combinations. Lists in the parameters can have up to 1000 items, and the event names,
 contexts and subscription IDs can be up to 256 characters long. A request that exceeds a limit
 fails with an `invalid argument` error without changing the subscriptions.
 

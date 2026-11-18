@@ -202,6 +202,52 @@ describe('bidi commands -', function () {
         assert.deepStrictEqual(driver.bidiEventSubs, {});
       });
 
+      it('should reuse the slots of the subscriptions that were emptied by the legacy unsubscribe', async function () {
+        for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS * 2; i++) {
+          await driver.bidiSubscribe(['log.entryAdded']);
+          await driver.bidiUnsubscribe(['log.entryAdded']);
+        }
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+        const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+        assert.deepStrictEqual(driver.bidiEventSubs, {'log.entryAdded': ['']});
+        await driver.bidiUnsubscribe(undefined, undefined, [subscription]);
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
+      it('should keep the ID of an emptied subscription valid until its slot is needed', async function () {
+        const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+        await driver.bidiUnsubscribe(['log.entryAdded']);
+        await driver.bidiUnsubscribe(undefined, undefined, [subscription]);
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
+      it('should not free the slots of the subscriptions that still have events', async function () {
+        for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS; i++) {
+          await driver.bidiSubscribe(['log.entryAdded', `e${i}`]);
+        }
+        await driver.bidiUnsubscribe(['log.entryAdded']);
+        await assert.rejects(driver.bidiSubscribe(['x']), /more than 100 subscriptions/);
+      });
+
+      it('should count an event without contexts as a combination', async function () {
+        const events = names(MAX_BIDI_SUBSCRIPTION_ENTRIES / 2);
+        await driver.bidiSubscribe(events, []);
+        await driver.bidiSubscribe(
+          events.map((e) => `${e}-2`),
+          [],
+        );
+        await assert.rejects(driver.bidiSubscribe(['x'], []), /more than 1000 combinations/);
+        assert.equal(Object.keys(driver.bidiEventSubs).length, MAX_BIDI_SUBSCRIPTION_ENTRIES);
+      });
+
+      it('should count the combinations of every subscription, even if they repeat', async function () {
+        const events = names(MAX_BIDI_SUBSCRIPTION_ENTRIES / 2);
+        await driver.bidiSubscribe(events);
+        await driver.bidiSubscribe(events);
+        await assert.rejects(driver.bidiSubscribe(['x']), /more than 1000 combinations/);
+        assert.equal(Object.keys(driver.bidiEventSubs).length, MAX_BIDI_SUBSCRIPTION_ENTRIES / 2);
+      });
+
       it('should accept names of the maximum length', async function () {
         const name = 'x'.repeat(MAX_BIDI_NAME_LENGTH);
         await driver.bidiSubscribe([name], [name]);

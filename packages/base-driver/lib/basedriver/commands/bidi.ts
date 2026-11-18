@@ -61,11 +61,14 @@ export async function bidiSubscribe<C extends Constraints>(
   const uniqueContexts = util.uniq(contexts);
   const subscriptions = getSubscriptions(this);
   if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS) {
+    pruneEmptySubscriptions(subscriptions);
+  }
+  if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS) {
     throw new errors.InvalidArgumentError(
       `Cannot create more than ${MAX_BIDI_SUBSCRIPTIONS} subscriptions, unsubscribe from some of them first`,
     );
   }
-  const entries = uniqueEvents.length * uniqueContexts.length + countEntries(subscriptions);
+  const entries = uniqueEvents.length * Math.max(uniqueContexts.length, 1) + countEntries(subscriptions);
   if (entries > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
     throw new errors.InvalidArgumentError(
       `The subscriptions cannot cover more than ${MAX_BIDI_SUBSCRIPTION_ENTRIES} combinations of an event ` +
@@ -176,14 +179,25 @@ function assertWithinLimits(items: string[], name: string): void {
   }
 }
 
+// A subscription without contexts still keeps its event, so it counts as one entry
 function countEntries(subscriptions: Map<string, Map<string, string[]>>): number {
   let count = 0;
   for (const subscription of subscriptions.values()) {
     for (const contexts of subscription.values()) {
-      count += contexts.length;
+      count += Math.max(contexts.length, 1);
     }
   }
   return count;
+}
+
+// The legacy unsubscribe by event names leaves the emptied subscriptions registered, so that their
+// IDs stay valid. They only give way when the limit is reached.
+function pruneEmptySubscriptions(subscriptions: Map<string, Map<string, string[]>>): void {
+  for (const [id, subscription] of subscriptions) {
+    if (!subscription.size) {
+      subscriptions.delete(id);
+    }
+  }
 }
 
 function refreshEventSubscriptions(driver: BidiSubscriptionDriver): void {

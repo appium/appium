@@ -109,7 +109,7 @@
     "tsd": "0.33.0",
     "typescript": "6.0.3",
     "webdriverio": "10.2.0",
-    "ws": "8.22.0"
+    "ws": "8.23.0"
   },
   "overrides": {
     "nx": {

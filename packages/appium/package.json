@@ -85,7 +85,7 @@
     "semver": "7.8.6",
     "teen_process": "5.0.1",
     "winston": "3.19.0",
-    "ws": "8.22.0",
+    "ws": "8.23.0",
     "yaml": "2.9.1",
     "yocto-spinner": "1.2.2"
   },

@@ -1,4 +1,4 @@
-import {expectAssignable, expectDocCommentIncludes, expectNotAssignable} from 'tsd';
+import {expectAssignable, expectDocCommentIncludes, expectNotAssignable, expectType} from 'tsd';
 
 import type {
   Driver,
@@ -6,6 +6,8 @@ import type {
   DriverMethodDef,
   ExecuteMethodMap,
   ExternalDriver,
+  IsEqual,
+  IsEqualToAny,
   MethodMap,
   NextPluginCallback,
   Plugin,
@@ -34,6 +36,10 @@ type TestDriver = Driver & {
   sixOverloads(a: number, b: number, c: number, d: number): Promise<void>;
   sixOverloads(a: number, b: number, c: number, d: number, e: number): Promise<void>;
   sixOverloads(a: number, b: number, c: number, d: number, e: number, f: number): Promise<void>;
+  mixedRest(x: number): Promise<void>;
+  mixedRest(a: number, b: number, ...rest: unknown[]): Promise<void>;
+  mixedCatchAll(x: number): Promise<void>;
+  mixedCatchAll(...args: unknown[]): Promise<void>;
   restArgs(a: string, ...rest: unknown[]): Promise<void>;
   restStrings(a: number, ...rest: string[]): Promise<void>;
   untyped(...args: any[]): Promise<void>;
@@ -530,6 +536,59 @@ expectNotAssignable<TestPluginMethodDef>({
 expectAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x']}} as const);
 expectAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x', 'y']}} as const);
 expectNotAssignable<TestPluginDef>({command: 'overloadedPlugin', params: {required: ['x', 'y', 'z']}} as const);
+
+expectAssignable<TestMethodDef>({command: 'mixedRest', payloadParams: {required: ['x']}} as const);
+expectAssignable<TestMethodDef>({
+  command: 'mixedRest',
+  payloadParams: {required: ['a', 'b'], optional: ['c']},
+} as const);
+expectNotAssignable<TestMethodDef>({command: 'mixedRest'} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'mixedRest',
+  payloadParams: {required: ['x'], optional: ['y']},
+} as const);
+expectAssignable<TestDef>({command: 'mixedRest', params: {required: ['x']}} as const);
+expectAssignable<TestDef>({
+  command: 'mixedRest',
+  params: {required: ['a', 'b'], optional: ['c']},
+} as const);
+expectNotAssignable<TestDef>({command: 'mixedRest'} as const);
+expectNotAssignable<TestDef>({command: 'mixedRest', params: {required: ['x'], optional: ['y']}} as const);
+
+expectAssignable<TestMethodDef>({command: 'mixedCatchAll'} as const);
+expectAssignable<TestMethodDef>({
+  command: 'mixedCatchAll',
+  payloadParams: {required: ['a', 'b'], optional: ['c']},
+} as const);
+expectAssignable<TestDef>({command: 'mixedCatchAll'} as const);
+expectAssignable<TestDef>({
+  command: 'mixedCatchAll',
+  params: {required: ['a', 'b'], optional: ['c']},
+} as const);
+
+declare const BaseTestDriver: new () => Driver;
+class ImplOverloadDriver extends BaseTestDriver {
+  cmd(x: number): Promise<void>;
+  cmd(x: number, y: number): Promise<void>;
+  async cmd(..._args: unknown[]): Promise<void> {}
+}
+expectAssignable<DriverMethodDef<ImplOverloadDriver>>({command: 'cmd', payloadParams: {required: ['x']}} as const);
+expectNotAssignable<DriverMethodDef<ImplOverloadDriver>>({command: 'cmd'} as const);
+expectNotAssignable<DriverMethodDef<ImplOverloadDriver>>({
+  command: 'cmd',
+  payloadParams: {required: ['x', 'y', 'z']},
+} as const);
+
+expectAssignable<MethodMap<TestDriver>>({
+  '/no-url-params': {POST: {command: 'threeRequired'}},
+} as const);
+
+expectType<true>({} as IsEqual<string, string>);
+expectType<false>({} as IsEqual<string, number>);
+expectType<false>({} as IsEqual<any, string>);
+expectType<false>({} as IsEqual<Driver, ExtendedBaseDriver>);
+expectType<true>({} as IsEqualToAny<ExternalDriver, [Driver, ExternalDriver]>);
+expectType<false>({} as IsEqualToAny<TestDriver, [Driver, ExternalDriver]>);
 
 declare const strictDriverDef: Extract<TestMethodDef, {readonly command: 'oneRequiredNumber'}>;
 declare const optionalPayloadDriverDef: Extract<TestMethodDef, {readonly command: 'noArgs'}>;

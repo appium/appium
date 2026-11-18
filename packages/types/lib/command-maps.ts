@@ -1,6 +1,13 @@
 import type {Driver, DriverCommand, ExternalDriver} from './driver.js';
 import type {Plugin, PluginCommand} from './plugin.js';
-import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray, StringRecord} from './util.js';
+import type {
+  ConditionalPick,
+  IsAny,
+  IsEqualToAny,
+  IsNever,
+  MultidimensionalReadonlyArray,
+  StringRecord,
+} from './util.js';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.
@@ -18,7 +25,8 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
- * Pass `true` as `Loose` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`; `makeArgs` skips positional-count checks when the command accepts arguments).
+ * Pass `true` as `Loose` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (`makeArgs` skips positional-count checks when the command accepts arguments).
+ * Note: Because route keys are typed as `string`, trailing `string` parameters on a command are always treated as potentially supplied by URL `:param` segments, so omitting them from `payloadParams` is allowed even on routes without a matching `:param`.
  *
  * @example
  * ```ts
@@ -93,12 +101,10 @@ type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolea
         ? CanOmitTrailing<T, false>
         : true;
 
-/** `optional` constraint: `'exact'` fixes `tuple` length; `'rest'` requires at least `min` optional names. */
 type ParamOptionalTag =
   | {readonly kind: 'exact'; readonly tuple: readonly string[]}
   | {readonly kind: 'rest'; readonly min: readonly string[]};
 
-/** `(r, o)` split where `r` is the required param tuple and `o` constrains optional params. */
 type ParamSplit = {
   readonly r: readonly string[];
   readonly o: ParamOptionalTag;
@@ -206,13 +212,7 @@ type PayloadParamsProp<P extends readonly unknown[]> =
     ? {[Q in keyof Pick<BaseMethodDef, 'payloadParams'>]?: PayloadParamsConstraint<P>}
     : {[Q in keyof Pick<BaseMethodDef, 'payloadParams'>]-?: PayloadParamsConstraint<P>};
 
-type FilterDefaultedOverload<P extends readonly unknown[], F> = unknown[] extends P
-  ? F extends (...args: unknown[]) => any
-    ? P
-    : never
-  : P;
-
-/** Checks at most the last 5 overload signatures (`P1`-`P5`); for 6+ overloads, TS drops earlier signatures (pass `Loose = true` to opt out). */
+/** Checks up to the last 5 overload signatures (`P1`-`P5`); earlier overloads on 6+ signature methods are dropped (`Loose = true` opts out), and a public catch-all `(...args: unknown[] | any[])` overload permits any param count. */
 type OverloadParams<F> =
   IsAny<F> extends true
     ? any[]
@@ -223,17 +223,8 @@ type OverloadParams<F> =
           (...args: infer P4): any;
           (...args: infer P5): any;
         }
-      ?
-          | FilterDefaultedOverload<P1, F>
-          | FilterDefaultedOverload<P2, F>
-          | FilterDefaultedOverload<P3, F>
-          | FilterDefaultedOverload<P4, F>
-          | FilterDefaultedOverload<P5, F>
-      : F extends (...args: infer P) => any
-        ? P
-        : never;
-
-type DriverCommandParams<F> = OverloadParams<F>;
+      ? P1 | P2 | P3 | P4 | P5
+      : never;
 
 type StripPluginPrefix<P extends readonly unknown[]> = P extends readonly unknown[]
   ? ((...args: P) => any) extends (next: any, driver: any, ...args: infer Rest) => any
@@ -263,19 +254,10 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
                 [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> &
                   CommandProp<K> &
                   PayloadParamsProp<
-                    Kind extends 'driver' ? DriverCommandParams<Commands[K]> : PluginCommandParams<Commands[K]>
+                    Kind extends 'driver' ? OverloadParams<Commands[K]> : PluginCommandParams<Commands[K]>
                   >;
               }[keyof Commands];
 
-type IsEqual<A, B> = (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B ? 1 : 2 ? true : false;
-
-type IsEqualToAny<T, Targets extends readonly unknown[]> = Targets extends readonly [infer Head, ...infer Tail]
-  ? IsEqual<T, Head> extends true
-    ? true
-    : IsEqualToAny<T, Tail>
-  : false;
-
-/** Loose when `Loose` includes `true`, `T` is `any`, or `T` equals a base interface (`Driver`, `ExternalDriver`, `Plugin`). */
 type IsLooseMethodCheck<T, Bases extends readonly unknown[], Loose extends boolean> = [true] extends [Loose]
   ? true
   : IsAny<T> extends true
@@ -361,7 +343,7 @@ type CheckedExecuteMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
       ? LooseExecuteMethodDef
       : {
           [K in keyof Commands]: Omit<BaseExecuteMethodDef, 'params'> & {command: K} & ExecuteMethodParamsProp<
-              Kind extends 'driver' ? DriverCommandParams<Commands[K]> : PluginCommandParams<Commands[K]>
+              Kind extends 'driver' ? OverloadParams<Commands[K]> : PluginCommandParams<Commands[K]>
             >;
         }[keyof Commands];
 

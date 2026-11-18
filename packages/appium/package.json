@@ -78,7 +78,7 @@
     "ajv-formats": "3.0.1",
     "argparse": "3.0.4",
     "asyncbox": "7.0.0",
-    "axios": "1.20.0",
+    "axios": "1.21.1",
     "lilconfig": "3.1.5",
     "lru-cache": "11.5.3",
     "normalize-package-data": "9.0.0",

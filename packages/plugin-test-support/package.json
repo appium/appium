@@ -51,7 +51,7 @@
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "asyncbox": "^7.1.0",
+    "asyncbox": "^7.0.0",
     "teen_process": "^5.0.0"
   },
   "devDependencies": {

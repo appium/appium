@@ -70,6 +70,13 @@ export interface ConfigureServerOpts {
   useLegacyUpgradeHandler?: boolean;
   /** Hostnames the server expects to be addressed by; accepted in addition to IPs and loopback names. */
   allowedHostnames?: string[];
+  /**
+   * Reject requests whose Host header is neither an IP address, a loopback name, nor one of
+   * `allowedHostnames` (a DNS-rebinding hardening). Off by default: strict host validation breaks
+   * deployments where the server is addressed by names the server does not know, such as reverse
+   * proxies, Docker service names or mDNS names.
+   */
+  denyForeignHosts?: boolean;
   /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
 }
@@ -138,6 +145,7 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           allowedHostnames: [hostname, cliArgs.address].filter(
             (h): h is string => typeof h === 'string' && h.length > 0 && h !== '0.0.0.0',
           ),
+          denyForeignHosts: cliArgs.denyForeignHosts === true,
           basePath: normalizedBasePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
@@ -194,6 +202,7 @@ export function configureServer(opts: ConfigureServerOpts): void {
     addRoutes,
     allowCors = false,
     allowedHostnames = [],
+    denyForeignHosts = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -204,7 +213,9 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
-  app.use(rejectForeignHosts(allowedHostnames));
+  if (denyForeignHosts) {
+    app.use(rejectForeignHosts(allowedHostnames));
+  }
   // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
   app.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache');

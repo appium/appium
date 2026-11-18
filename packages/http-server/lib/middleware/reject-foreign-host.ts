@@ -1,7 +1,7 @@
 import net from 'node:net';
 
 import {errors, getResponseForW3CError} from '@appium/base-driver';
-import type {NextFunction, Request, Response} from 'express';
+import type {NextFunction, Request, RequestHandler, Response} from 'express';
 
 import {log} from '../logger.js';
 

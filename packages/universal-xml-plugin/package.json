@@ -51,7 +51,7 @@
     "@appium/support": "8.0.0",
     "@xmldom/xmldom": "0.9.12",
     "fast-xml-parser": "5.12.1",
-    "xpath": "0.0.35"
+    "xpath": "0.0.36"
   },
   "devDependencies": {
     "@appium/types": "2.0.0"

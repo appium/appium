@@ -1,7 +1,6 @@
 import {NoImageOccurrencesError} from '@appium/opencv';
 import type {Element, ExternalDriver, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver.js';
-import {ConditionUnmetError} from 'asyncbox';
 import {LRUCache} from 'lru-cache';
 import sharp, {type Sharp} from 'sharp';
 
@@ -29,6 +28,8 @@ const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
 
+const CONDITION_UNMET_CODE = 'ERR_ASYNCBOX_CONDITION_UNMET';
+// `instanceof` fails across asyncbox copies; the message covers asyncbox < 6.6.0 (no `code`)
 const LEGACY_CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 type ImageMatchOptions = {
@@ -493,9 +494,8 @@ export class ImageElementFinder {
     try {
       await driver.implicitWaitForCondition(performLookup);
     } catch (err: any) {
-      // `ConditionUnmetError` means nothing was found in time (handled below);
-      // the message fallback covers asyncbox < 6.6.0. Rethrow anything else.
-      if (!(err instanceof ConditionUnmetError || LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
+      // A condition-unmet error means nothing was found in time (handled below); rethrow anything else
+      if (!(err.code === CONDITION_UNMET_CODE || LEGACY_CONDITION_UNMET_PATTERN.test(err.message))) {
         throw err;
       }
     }

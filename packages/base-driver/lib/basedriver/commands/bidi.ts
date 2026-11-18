@@ -60,19 +60,17 @@ export async function bidiSubscribe<C extends Constraints>(
   const uniqueEvents = util.uniq(events);
   const uniqueContexts = util.uniq(contexts);
   const subscriptions = getSubscriptions(this);
-  if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS) {
-    pruneEmptySubscriptions(subscriptions);
-  }
-  if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS) {
-    throw new errors.InvalidArgumentError(
-      `Cannot create more than ${MAX_BIDI_SUBSCRIPTIONS} subscriptions, unsubscribe from some of them first`,
-    );
-  }
   const entries = uniqueEvents.length * Math.max(uniqueContexts.length, 1) + countEntries(subscriptions);
   if (entries > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
     throw new errors.InvalidArgumentError(
       `The subscriptions cannot cover more than ${MAX_BIDI_SUBSCRIPTION_ENTRIES} combinations of an event ` +
         `and a context, unsubscribe from some of them first`,
+    );
+  }
+  // nothing is changed unless the request is going to be accepted
+  if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS && !releaseEmptySubscription(subscriptions)) {
+    throw new errors.InvalidArgumentError(
+      `Cannot create more than ${MAX_BIDI_SUBSCRIPTIONS} subscriptions, unsubscribe from some of them first`,
     );
   }
   const subscription = util.uuidV4();
@@ -191,13 +189,15 @@ function countEntries(subscriptions: Map<string, Map<string, string[]>>): number
 }
 
 // The legacy unsubscribe by event names leaves the emptied subscriptions registered, so that their
-// IDs stay valid. They only give way when the limit is reached.
-function pruneEmptySubscriptions(subscriptions: Map<string, Map<string, string[]>>): void {
+// IDs stay valid. The oldest of them gives way when the limit is reached.
+function releaseEmptySubscription(subscriptions: Map<string, Map<string, string[]>>): boolean {
   for (const [id, subscription] of subscriptions) {
     if (!subscription.size) {
       subscriptions.delete(id);
+      return true;
     }
   }
+  return false;
 }
 
 function refreshEventSubscriptions(driver: BidiSubscriptionDriver): void {

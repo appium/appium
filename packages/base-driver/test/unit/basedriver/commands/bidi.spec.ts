@@ -229,6 +229,34 @@ describe('bidi commands -', function () {
         await assert.rejects(driver.bidiSubscribe(['x']), /more than 100 subscriptions/);
       });
 
+      it('should keep the ID of an emptied subscription if the request that needs its slot is rejected', async function () {
+        const ids: string[] = [];
+        for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS - 1; i++) {
+          ids.push((await driver.bidiSubscribe([`e${i}`])).subscription);
+        }
+        const {subscription: emptied} = await driver.bidiSubscribe(['log.entryAdded']);
+        await driver.bidiUnsubscribe(['log.entryAdded']);
+        await assert.rejects(
+          driver.bidiSubscribe(names(MAX_BIDI_SUBSCRIPTION_ENTRIES), ['a']),
+          /more than 1000 combinations/,
+        );
+        // the emptied subscription is still known, so the batch is removed as a whole
+        await driver.bidiUnsubscribe(undefined, undefined, [emptied, ...ids]);
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
+      it('should release only one emptied subscription for a new one', async function () {
+        const emptied: string[] = [];
+        for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS; i++) {
+          emptied.push((await driver.bidiSubscribe([`e${i}`])).subscription);
+          await driver.bidiUnsubscribe([`e${i}`]);
+        }
+        const {subscription} = await driver.bidiSubscribe(['log.entryAdded']);
+        await driver.bidiUnsubscribe(undefined, undefined, [subscription, ...emptied.slice(1)]);
+        await assert.rejects(driver.bidiUnsubscribe(undefined, undefined, [emptied[0]]), /Unknown subscription/);
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
       it('should count an event without contexts as a combination', async function () {
         const events = names(MAX_BIDI_SUBSCRIPTION_ENTRIES / 2);
         await driver.bidiSubscribe(events, []);

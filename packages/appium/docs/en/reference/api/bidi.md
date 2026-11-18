@@ -70,6 +70,7 @@ subscriptions.
 
 All subscription IDs must be known to the current session. An unknown ID causes an `invalid argument`
 error without removing any subscriptions. Subscription IDs are cleared when the session is deleted.
+The subscriptions made over a BiDi connection are also removed when that connection is closed.
 
 #### Response
 

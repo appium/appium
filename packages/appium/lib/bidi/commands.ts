@@ -121,6 +121,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
  * @param data The raw command message
  * @param driver The driver that handles the command
  * @param plugins The plugins that may wrap the command
+ * @param subscriptions The IDs of the subscriptions made over the connection, kept up to date
  * @returns The success or the error response, never throws
  */
 export async function onBidiMessage(
@@ -128,6 +129,7 @@ export async function onBidiMessage(
   data: Buffer,
   driver: AnyDriver,
   plugins: ExtensionPlugin[],
+  subscriptions?: Set<string>,
 ): Promise<SuccessBiDiCommandResponse | ErrorBiDiCommandResponse> {
   let resMessage: SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
   let id: number = 0;
@@ -154,6 +156,7 @@ export async function onBidiMessage(
       driver === this
         ? await executeWrappedCommand()
         : await runWithCommandTimeout(driver as ExternalDriver, executeWrappedCommand);
+    trackSubscriptions(subscriptions, method, params, result);
     resMessage = {
       id,
       type: 'success',
@@ -217,6 +220,50 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
     proxyClient.close(WebSocketCloseCode.NORMAL_CLOSURE);
   } catch {}
   delete this.bidiProxyClients[sessionId];
+}
+
+/** Keeps the IDs of the subscriptions made over a connection in sync with its commands */
+function trackSubscriptions(
+  subscriptions: Set<string> | undefined,
+  method: string,
+  params: StringRecord,
+  result: BiDiResultData,
+): void {
+  if (!subscriptions) {
+    return;
+  }
+  if (method === 'session.subscribe' && typeof result?.subscription === 'string') {
+    subscriptions.add(result.subscription);
+  } else if (method === 'session.unsubscribe' && Array.isArray(params.subscriptions)) {
+    params.subscriptions.forEach((id: unknown) => subscriptions.delete(id as string));
+  }
+}
+
+/**
+ * Removes the subscriptions made over a closed connection, so that the driver does not keep
+ * producing events for a client that is gone
+ */
+async function dropSubscriptions(
+  driver: AnyDriver,
+  plugins: ExtensionPlugin[],
+  subscriptions: Set<string>,
+): Promise<void> {
+  const ids = [...subscriptions];
+  subscriptions.clear();
+  let failed = 0;
+  // one by one: an ID that is already gone (e.g. the session has ended) must not block the others
+  for (const id of ids) {
+    try {
+      await wrapCommandWithPlugins(driver as ExtensionCore, plugins, 'session.unsubscribe', {subscriptions: [id]})();
+    } catch {
+      ++failed;
+    }
+  }
+  if (ids.length > failed) {
+    driver.log.debug(
+      `Removed ${util.pluralize('BiDi subscription', ids.length - failed, true)} of the closed connection`,
+    );
+  }
 }
 
 function wrapCommandWithPlugins(
@@ -418,6 +465,8 @@ function initBidiSocketHandlers(
 ): void {
   const driverLog = bidiHandlerDriver.log;
   const pendingProxyCommands = trackBidiProxyCommands(proxyClient);
+  // proxied connections keep their subscriptions upstream
+  const subscriptions = new Set<string>();
   // Can't do much with random errors on the connection other than log them
   ws.on('error', logSocketErr);
 
@@ -436,7 +485,7 @@ function initBidiSocketHandlers(
         // complex for now, so just ignore plugins in this case
         await sendBidiProxyCommand(data, bidiHandlerDriver, proxyClient, sendToProxy, pendingProxyCommands);
       } else {
-        const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins);
+        const res = await this.onBidiMessage(data, bidiHandlerDriver, bidiHandlerPlugins, subscriptions);
         await send(JSON.stringify(res));
       }
     } catch (err) {
@@ -462,6 +511,10 @@ function initBidiSocketHandlers(
     const eventLogCounts = BIDI_EVENTS_MAP.get(bidiHandlerDriver);
     if (!util.isEmpty(eventLogCounts)) {
       driverLog.debug(`BiDi events statistics: ${JSON.stringify(eventLogCounts, null, 2)}`);
+    }
+
+    if (subscriptions.size > 0) {
+      void dropSubscriptions(bidiHandlerDriver, bidiHandlerPlugins, subscriptions);
     }
   });
 }

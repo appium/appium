@@ -18,7 +18,7 @@ export interface PayloadParams {
  *
  * Extensions can define new methods for the Appium server to map to command names, of the same
  * format as used in Appium's `routes.js`.
- * Pass `false` as `Strict` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`; `makeArgs` skips positional-count checks when the command accepts arguments).
+ * Pass `true` as `Loose` to opt out of checking `command` and `payloadParams`; annotate with `MethodMap<MyDriver>` or use `as const satisfies MethodMap<MyDriver>` to preserve literals and tuple lengths (trailing `string` URL `:param`s may omit `payloadParams`; `makeArgs` skips positional-count checks when the command accepts arguments).
  *
  * @example
  * ```ts
@@ -30,22 +30,20 @@ export interface PayloadParams {
  * } as const satisfies MethodMap<MyDriver>
  * ```
  */
-export type MethodMap<T extends Plugin | Driver, Strict extends boolean = true> = T extends Plugin
-  ? Readonly<PluginMethodMap<T, Strict>>
+export type MethodMap<T extends Plugin | Driver, Loose extends boolean = false> = T extends Plugin
+  ? Readonly<PluginMethodMap<T, Loose>>
   : T extends Driver
-    ? Readonly<DriverMethodMap<T, Strict>>
+    ? Readonly<DriverMethodMap<T, Loose>>
     : never;
-
-type IsLoose<Strict extends boolean> = [false] extends [Strict] ? true : false;
 
 /**
  * A {@linkcode MethodMap} for a {@linkcode Driver}.
  */
-export interface DriverMethodMap<T extends Driver, Strict extends boolean = true> {
+export interface DriverMethodMap<T extends Driver, Loose extends boolean = false> {
   [key: string]: {
-    GET?: DriverMethodDef<T, IsLoose<Strict>>;
-    POST?: DriverMethodDef<T, IsLoose<Strict>>;
-    DELETE?: DriverMethodDef<T, IsLoose<Strict>>;
+    GET?: DriverMethodDef<T, Loose>;
+    POST?: DriverMethodDef<T, Loose>;
+    DELETE?: DriverMethodDef<T, Loose>;
   };
 }
 
@@ -214,6 +212,7 @@ type FilterDefaultedOverload<P extends readonly unknown[], F> = unknown[] extend
     : never
   : P;
 
+/** Checks at most the last 5 overload signatures (`P1`-`P5`); for 6+ overloads, TS drops earlier signatures (pass `Loose = true` to opt out). */
 type OverloadParams<F> =
   IsAny<F> extends true
     ? any[]
@@ -276,8 +275,8 @@ type IsEqualToAny<T, Targets extends readonly unknown[]> = Targets extends reado
     : IsEqualToAny<T, Tail>
   : false;
 
-/** Loose when `D` includes `true`, `T` is `any`, or `T` equals a base interface (`Driver`, `ExternalDriver`, `Plugin`). */
-type IsLooseMethodCheck<T, Bases extends readonly unknown[], D extends boolean> = [true] extends [D]
+/** Loose when `Loose` includes `true`, `T` is `any`, or `T` equals a base interface (`Driver`, `ExternalDriver`, `Plugin`). */
+type IsLooseMethodCheck<T, Bases extends readonly unknown[], Loose extends boolean> = [true] extends [Loose]
   ? true
   : IsAny<T> extends true
     ? true
@@ -285,30 +284,30 @@ type IsLooseMethodCheck<T, Bases extends readonly unknown[], D extends boolean> 
 
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
- * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
+ * Validates `command` and `payloadParams` by default; `Loose = true` opts out.
  */
-export type DriverMethodDef<T extends Driver, D extends boolean = false> =
-  IsLooseMethodCheck<T, [Driver, ExternalDriver], D> extends true
+export type DriverMethodDef<T extends Driver, Loose extends boolean = false> =
+  IsLooseMethodCheck<T, [Driver, ExternalDriver], Loose> extends true
     ? LooseMethodDef
     : CheckedMethodDef<ConditionalPick<Required<T>, DriverCommand>, 'driver'>;
 
 /**
  * A definition of an exposed API command in a {@linkcode Plugin}.
- * Validates `command` and `payloadParams` by default; `D = true` enables loose checking (opposite of `MethodMap`'s `Strict`).
+ * Validates `command` and `payloadParams` by default; `Loose = true` opts out.
  */
-export type PluginMethodDef<T extends Plugin, D extends boolean = false> =
-  IsLooseMethodCheck<T, [Plugin], D> extends true
+export type PluginMethodDef<T extends Plugin, Loose extends boolean = false> =
+  IsLooseMethodCheck<T, [Plugin], Loose> extends true
     ? LooseMethodDef
     : CheckedMethodDef<ConditionalPick<Required<T>, PluginCommand>, 'plugin'>;
 
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode PluginMethodDef}.
  */
-export interface PluginMethodMap<T extends Plugin, Strict extends boolean = true> {
+export interface PluginMethodMap<T extends Plugin, Loose extends boolean = false> {
   [key: string]: {
-    GET?: PluginMethodDef<T, IsLoose<Strict>>;
-    POST?: PluginMethodDef<T, IsLoose<Strict>>;
-    DELETE?: PluginMethodDef<T, IsLoose<Strict>>;
+    GET?: PluginMethodDef<T, Loose>;
+    POST?: PluginMethodDef<T, Loose>;
+    DELETE?: PluginMethodDef<T, Loose>;
   };
 }
 

@@ -62,7 +62,7 @@ expectAssignable<ExecuteMethodMap<TestPlugin>>(TestPlugin.executeMethodMap);
 expectAssignable<PluginMethodDef<TestPlugin>>(TestPlugin.newMethodMap['/session/:sessionId/test'].GET);
 expectAssignable<PluginMethodDef<TestPlugin, true>>(TestPlugin.newMethodMap['/session/:sessionId/test'].GET);
 expectAssignable<MethodMap<TestPlugin>>(TestPlugin.newMethodMap);
-expectAssignable<MethodMap<TestPlugin, false>>(TestPlugin.newMethodMap);
+expectAssignable<MethodMap<TestPlugin, true>>(TestPlugin.newMethodMap);
 expectAssignable<PluginStatic<TestPlugin>>(TestPlugin);
 expectAssignable<PluginClass<TestPlugin>>(TestPlugin);
 expectAssignable<PluginClass>(TestPlugin);

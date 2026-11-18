@@ -28,6 +28,12 @@ type TestDriver = Driver & {
   overloaded(x: number, y: number): Promise<void>;
   overloadedZero(): Promise<void>;
   overloadedZero(x: number): Promise<void>;
+  sixOverloads(a: number): Promise<void>;
+  sixOverloads(a: number, b: number): Promise<void>;
+  sixOverloads(a: number, b: number, c: number): Promise<void>;
+  sixOverloads(a: number, b: number, c: number, d: number): Promise<void>;
+  sixOverloads(a: number, b: number, c: number, d: number, e: number): Promise<void>;
+  sixOverloads(a: number, b: number, c: number, d: number, e: number, f: number): Promise<void>;
   restArgs(a: string, ...rest: unknown[]): Promise<void>;
   restStrings(a: number, ...rest: string[]): Promise<void>;
   untyped(...args: any[]): Promise<void>;
@@ -348,13 +354,18 @@ const driverMethodMap = {
 } as const satisfies MethodMap<TestDriver>;
 
 expectAssignable<MethodMap<TestDriver>>(driverMethodMap);
-expectAssignable<MethodMap<TestDriver, false>>(driverMethodMap);
+expectAssignable<MethodMap<TestDriver, true>>(driverMethodMap);
 expectAssignable<MethodMap<Driver>>(driverMethodMap);
 expectAssignable<MethodMap<ExternalDriver>>(driverMethodMap);
-expectAssignable<MethodMap<TestDriver, false>>({
+expectAssignable<MethodMap<TestDriver, true>>({
   '/proxied': {
     GET: {command: 'proxiedCommand'},
     POST: {command: 'anotherProxied', payloadParams: {required: ['x']}},
+  },
+} as const);
+expectNotAssignable<MethodMap<TestDriver, false>>({
+  '/proxied': {
+    GET: {command: 'proxiedCommand'},
   },
 } as const);
 expectNotAssignable<MethodMap<TestDriver>>({
@@ -419,7 +430,7 @@ expectAssignable<PluginMethodDef<TestPlugin, true>>({
   command: 'handledCommand',
   payloadParams: {required: ['a']},
 } as const);
-expectAssignable<MethodMap<TestPlugin, false>>({
+expectAssignable<MethodMap<TestPlugin, true>>({
   '/handled': {POST: {command: 'handledCommand', payloadParams: {required: ['x']}}},
 } as const);
 expectNotAssignable<MethodMap<TestPlugin>>({
@@ -433,7 +444,7 @@ const pluginMethodMap = {
 } as const satisfies MethodMap<TestPlugin>;
 
 expectAssignable<MethodMap<TestPlugin>>(pluginMethodMap);
-expectAssignable<MethodMap<TestPlugin, false>>(pluginMethodMap);
+expectAssignable<MethodMap<TestPlugin, true>>(pluginMethodMap);
 expectAssignable<MethodMap<Plugin>>(pluginMethodMap);
 
 type ExtendedPlugin = Plugin & {
@@ -496,6 +507,19 @@ expectNotAssignable<TestDef>({command: 'overloaded'} as const);
 expectNotAssignable<TestDef>({command: 'overloaded', params: {required: ['x', 'y', 'z']}} as const);
 expectAssignable<TestDef>({command: 'overloadedZero'} as const);
 expectAssignable<TestDef>({command: 'overloadedZero', params: {required: ['x']}} as const);
+expectAssignable<TestMethodDef>({command: 'sixOverloads', payloadParams: {required: ['a', 'b']}} as const);
+expectAssignable<TestMethodDef>({
+  command: 'sixOverloads',
+  payloadParams: {required: ['a', 'b', 'c', 'd', 'e', 'f']},
+} as const);
+expectNotAssignable<TestMethodDef>({command: 'sixOverloads', payloadParams: {required: ['a']}} as const);
+expectAssignable<DriverMethodDef<TestDriver, true>>({
+  command: 'sixOverloads',
+  payloadParams: {required: ['a']},
+} as const);
+expectAssignable<MethodMap<TestDriver, true>>({
+  '/six': {POST: {command: 'sixOverloads', payloadParams: {required: ['a']}}},
+} as const);
 
 expectAssignable<TestPluginMethodDef>({command: 'overloadedPlugin', payloadParams: {required: ['x']}} as const);
 expectAssignable<TestPluginMethodDef>({command: 'overloadedPlugin', payloadParams: {required: ['x', 'y']}} as const);

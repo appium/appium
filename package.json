@@ -120,7 +120,7 @@
     },
     "http-cache-semantics": "4.3.0",
     "nx": {
-      "undici": "7.30.2"
+      "undici": "8.12.4"
     }
   },
   "engines": {

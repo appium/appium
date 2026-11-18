@@ -3,6 +3,11 @@ import {beforeEach, describe, it} from 'node:test';
 
 import type {InitialOpts} from '@appium/types';
 
+import {
+  MAX_BIDI_NAME_LENGTH,
+  MAX_BIDI_SUBSCRIPTION_ENTRIES,
+  MAX_BIDI_SUBSCRIPTIONS,
+} from '../../../../lib/basedriver/commands/bidi.js';
 import {BaseDriver} from '../../../../lib/index.js';
 
 describe('bidi commands -', function () {
@@ -140,6 +145,67 @@ describe('bidi commands -', function () {
       assert.deepStrictEqual(driver.bidiEventSubs, {
         'log.entryAdded': ['ctx-a'],
         'browsingContext.load': ['ctx-b'],
+      });
+    });
+
+    describe('limits', function () {
+      const names = (count: number, prefix = 'e') => Array.from({length: count}, (_, i) => `${prefix}${i}`);
+
+      it('should reject more subscriptions than allowed and accept new ones after unsubscribing', async function () {
+        const ids: string[] = [];
+        for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS; i++) {
+          ids.push((await driver.bidiSubscribe(['log.entryAdded'], [`ctx-${i}`])).subscription);
+        }
+        await assert.rejects(driver.bidiSubscribe(['log.entryAdded']), /more than 100 subscriptions/);
+        assert.equal(driver.bidiEventSubs['log.entryAdded'].length, MAX_BIDI_SUBSCRIPTIONS);
+        await driver.bidiUnsubscribe(undefined, undefined, [ids[0]]);
+        await driver.bidiSubscribe(['log.entryAdded']);
+      });
+
+      it('should reject more event and context combinations than allowed in all the subscriptions', async function () {
+        await driver.bidiSubscribe(names(MAX_BIDI_SUBSCRIPTION_ENTRIES / 2), ['a', 'b']);
+        await assert.rejects(driver.bidiSubscribe(['x'], ['a']), /more than 1000 combinations/);
+        assert.equal(Object.keys(driver.bidiEventSubs).length, MAX_BIDI_SUBSCRIPTION_ENTRIES / 2);
+      });
+
+      it('should count the combinations of a single request before storing anything', async function () {
+        await assert.rejects(
+          driver.bidiSubscribe(names(MAX_BIDI_SUBSCRIPTION_ENTRIES), names(2, 'c')),
+          /more than 1000 combinations/,
+        );
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
+      it('should not count the repeated events and contexts of a request', async function () {
+        await driver.bidiSubscribe(Array(MAX_BIDI_SUBSCRIPTION_ENTRIES).fill('log.entryAdded'), ['a', 'a', 'a']);
+        assert.deepStrictEqual(driver.bidiEventSubs, {'log.entryAdded': ['a']});
+      });
+
+      it('should accept exactly the maximum number of combinations', async function () {
+        await driver.bidiSubscribe(names(MAX_BIDI_SUBSCRIPTION_ENTRIES), ['']);
+        assert.equal(Object.keys(driver.bidiEventSubs).length, MAX_BIDI_SUBSCRIPTION_ENTRIES);
+      });
+
+      it('should reject too long lists and names', async function () {
+        const tooMany = names(MAX_BIDI_SUBSCRIPTION_ENTRIES + 1);
+        const tooLong = 'x'.repeat(MAX_BIDI_NAME_LENGTH + 1);
+        await assert.rejects(driver.bidiSubscribe(tooMany), /events must not have more than 1000 items/);
+        await assert.rejects(driver.bidiSubscribe(['log.entryAdded'], tooMany), /contexts must not have more than/);
+        await assert.rejects(driver.bidiSubscribe([tooLong]), /items of events must not be longer than 256/);
+        await assert.rejects(
+          driver.bidiSubscribe(['log.entryAdded'], [tooLong]),
+          /items of contexts must not be longer/,
+        );
+        await assert.rejects(driver.bidiUnsubscribe(tooMany), /events must not have more than/);
+        await assert.rejects(driver.bidiUnsubscribe(['log.entryAdded'], tooMany), /contexts must not have more than/);
+        await assert.rejects(driver.bidiUnsubscribe(undefined, undefined, [tooLong]), /items of subscriptions/);
+        assert.deepStrictEqual(driver.bidiEventSubs, {});
+      });
+
+      it('should accept names of the maximum length', async function () {
+        const name = 'x'.repeat(MAX_BIDI_NAME_LENGTH);
+        await driver.bidiSubscribe([name], [name]);
+        assert.deepStrictEqual(driver.bidiEventSubs, {[name]: [name]});
       });
     });
   });

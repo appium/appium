@@ -48,6 +48,13 @@ Subscribes to one or more BiDi events.
 
 `{subscription: string}` — a unique subscription ID that can be passed to `session.unsubscribe`.
 
+#### Limits
+
+A session can have up to 100 subscriptions, and together they can cover up to 1000 combinations of
+an event and a context. Lists in the parameters can have up to 1000 items, and the event names,
+contexts and subscription IDs can be up to 256 characters long. A request that exceeds a limit
+fails with an `invalid argument` error without changing the subscriptions.
+
 ### bidiUnsubscribe
 
 ```

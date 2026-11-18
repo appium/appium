@@ -9,6 +9,14 @@ type BidiSubscriptionDriver = {bidiEventSubs: Record<string, string[]>};
 // Keep each subscription separate: removing one ID must not remove overlapping subscriptions.
 const subscriptionsByDriver = new WeakMap<object, Map<string, Map<string, string[]>>>();
 
+// The subscriptions are checked for every emitted event, so the state a client can create is bounded
+/** The maximum number of subscriptions of a driver */
+export const MAX_BIDI_SUBSCRIPTIONS = 100;
+/** The maximum number of (event, context) pairs of all the subscriptions of a driver, and of items in a list */
+export const MAX_BIDI_SUBSCRIPTION_ENTRIES = 1000;
+/** The maximum length of an event name, a context or a subscription ID */
+export const MAX_BIDI_NAME_LENGTH = 256;
+
 export function clearBidiSubscriptions(driver: BidiSubscriptionDriver): void {
   subscriptionsByDriver.delete(driver);
   driver.bidiEventSubs = {};
@@ -48,11 +56,24 @@ export async function bidiSubscribe<C extends Constraints>(
   }
   contexts ??= [''];
   assertStringList(events, 'events');
-  if (!Array.isArray(contexts) || contexts.some((context) => typeof context !== 'string')) {
-    throw new errors.InvalidArgumentError('contexts must be an array of strings');
+  assertContexts(contexts);
+  const uniqueEvents = util.uniq(events);
+  const uniqueContexts = util.uniq(contexts);
+  const subscriptions = getSubscriptions(this);
+  if (subscriptions.size >= MAX_BIDI_SUBSCRIPTIONS) {
+    throw new errors.InvalidArgumentError(
+      `Cannot create more than ${MAX_BIDI_SUBSCRIPTIONS} subscriptions, unsubscribe from some of them first`,
+    );
+  }
+  const entries = uniqueEvents.length * uniqueContexts.length + countEntries(subscriptions);
+  if (entries > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
+    throw new errors.InvalidArgumentError(
+      `The subscriptions cannot cover more than ${MAX_BIDI_SUBSCRIPTION_ENTRIES} combinations of an event ` +
+        `and a context, unsubscribe from some of them first`,
+    );
   }
   const subscription = util.uuidV4();
-  getSubscriptions(this).set(subscription, new Map(events.map((event) => [event, [...contexts]])));
+  subscriptions.set(subscription, new Map(uniqueEvents.map((event) => [event, [...uniqueContexts]])));
   refreshEventSubscriptions(this);
   return {subscription};
 }
@@ -74,12 +95,11 @@ export async function bidiUnsubscribe<C extends Constraints>(
   if (subscriptions === undefined) {
     const contextsToRemove = contexts === undefined ? [''] : contexts;
     assertStringList(events, 'events');
-    if (!Array.isArray(contextsToRemove) || contextsToRemove.some((context) => typeof context !== 'string')) {
-      throw new errors.InvalidArgumentError('contexts must be an array of strings');
-    }
+    assertContexts(contextsToRemove);
+    const contextsToRemoveSet = new Set(contextsToRemove);
     for (const subscription of registered.values()) {
       for (const event of events) {
-        const remaining = subscription.get(event)?.filter((context) => !contextsToRemove.includes(context));
+        const remaining = subscription.get(event)?.filter((context) => !contextsToRemoveSet.has(context));
         if (remaining?.length) {
           subscription.set(event, remaining);
         } else {
@@ -135,6 +155,35 @@ function assertStringList(value: unknown, name: string): asserts value is string
   if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
     throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
   }
+  assertWithinLimits(value, name);
+}
+
+function assertContexts(value: unknown): asserts value is string[] {
+  if (!Array.isArray(value) || value.some((context) => typeof context !== 'string')) {
+    throw new errors.InvalidArgumentError('contexts must be an array of strings');
+  }
+  assertWithinLimits(value, 'contexts');
+}
+
+function assertWithinLimits(items: string[], name: string): void {
+  if (items.length > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
+    throw new errors.InvalidArgumentError(`${name} must not have more than ${MAX_BIDI_SUBSCRIPTION_ENTRIES} items`);
+  }
+  if (items.some((item) => item.length > MAX_BIDI_NAME_LENGTH)) {
+    throw new errors.InvalidArgumentError(
+      `The items of ${name} must not be longer than ${MAX_BIDI_NAME_LENGTH} characters`,
+    );
+  }
+}
+
+function countEntries(subscriptions: Map<string, Map<string, string[]>>): number {
+  let count = 0;
+  for (const subscription of subscriptions.values()) {
+    for (const contexts of subscription.values()) {
+      count += contexts.length;
+    }
+  }
+  return count;
 }
 
 function refreshEventSubscriptions(driver: BidiSubscriptionDriver): void {

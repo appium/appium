@@ -55,7 +55,7 @@
     "@appium/support": "8.0.0",
     "asyncbox": "7.0.0",
     "lru-cache": "11.5.3",
-    "ws": "8.22.0"
+    "ws": "8.23.0"
   },
   "devDependencies": {
     "@appium/types": "2.0.0"

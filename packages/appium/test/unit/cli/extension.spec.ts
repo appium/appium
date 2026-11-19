@@ -108,6 +108,25 @@ describe('runExtensionCommand', function () {
     assert.strictEqual(await fs.exists(lockFile), false);
   });
 
+  it('does not hold the manifest lock while a `run` command executes', async function () {
+    const {driverConfig} = await loadExtensions(appiumHome);
+    const lockFile = await resolveManifestLockfilePath(appiumHome);
+    let lockExistedDuringRun: boolean | undefined;
+    const executeMock = mock.method(FakeExtensionCommand.prototype, 'execute', async () => {
+      lockExistedDuringRun = existsSync(lockFile);
+      return {};
+    });
+    try {
+      await runExtensionCommand(
+        {subcommand: DRIVER_TYPE, driverCommand: 'run', suppressOutput: true} as any,
+        driverConfig,
+      );
+    } finally {
+      executeMock.mock.restore();
+    }
+    assert.strictEqual(lockExistedDuringRun, false);
+  });
+
   it('still releases the lock when the command throws', async function () {
     const {driverConfig} = await loadExtensions(appiumHome);
     const lockFile = await resolveManifestLockfilePath(appiumHome);

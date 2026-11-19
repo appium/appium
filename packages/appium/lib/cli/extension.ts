@@ -46,24 +46,32 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   // Serialize this against any other `driver`/`plugin` CLI command running (in this or another
   // process) against the same `APPIUM_HOME`, so concurrent commands can't race to read, mutate,
   // and write the same extension manifest out from under each other.
+  const prepare = async () => {
+    // Refresh from disk while holding the lock, in case another process wrote to the manifest
+    // between this process's startup read and now, and revalidate so derived state (installed
+    // extensions, pending validation summary, duplicate-automationName tracking) is current too.
+    await reloadManifest(config.manifest);
+
+    const CommandClass = commandClasses[type] as ExtCommand<Cmd>;
+    const cmd = new CommandClass({config, json} as any);
+    cmd.printPendingValidationSummary();
+    return cmd;
+  };
+  const execute = async (cmd: Awaited<ReturnType<typeof prepare>>) => {
+    const jsonResult = (await cmd.execute(args)) as Record<string, unknown>;
+    if (json && !suppressOutput) {
+      console.log(JSON.stringify(jsonResult, null, JSON_SPACES));
+    }
+    return jsonResult;
+  };
+
   try {
-    return await withManifestLock<Record<string, unknown>>(config.appiumHome, async () => {
-      // Refresh from disk while holding the lock, in case another process wrote to the manifest
-      // between this process's startup read and now, and revalidate so derived state (installed
-      // extensions, pending validation summary, duplicate-automationName tracking) is current too.
-      await reloadManifest(config.manifest);
-
-      const CommandClass = commandClasses[type] as ExtCommand<Cmd>;
-      const cmd = new CommandClass({config, json} as any);
-      cmd.printPendingValidationSummary();
-      const jsonResult = (await cmd.execute(args)) as Record<string, unknown>;
-
-      if (json && !suppressOutput) {
-        console.log(JSON.stringify(jsonResult, null, JSON_SPACES));
-      }
-
-      return jsonResult;
-    });
+    // `run` only reads the manifest and may be long-running (e.g. a tunnel), so it must not
+    // hold the lock while the script runs or it would block server startup.
+    if ((args as unknown as Record<string, unknown>)[`${type}Command`] === 'run') {
+      return await execute(await withManifestLock(config.appiumHome, prepare));
+    }
+    return await withManifestLock(config.appiumHome, async () => await execute(await prepare()));
   } catch (err) {
     // in the suppress output case, we are calling this function internally and should
     // just throw instead of printing an error and ending the process

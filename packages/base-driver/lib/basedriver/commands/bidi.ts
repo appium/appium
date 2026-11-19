@@ -153,23 +153,29 @@ function getSubscriptions(driver: object): Map<string, Map<string, string[]>> {
 }
 
 function assertStringList(value: unknown, name: string): asserts value is string[] {
+  assertListSize(value, name);
   if (!Array.isArray(value) || !value.length || value.some((item) => typeof item !== 'string' || !item.length)) {
     throw new errors.InvalidArgumentError(`${name} must be a non-empty array of non-empty strings`);
   }
-  assertWithinLimits(value, name);
+  assertNameLengths(value, name);
 }
 
 function assertContexts(value: unknown): asserts value is string[] {
+  assertListSize(value, 'contexts');
   if (!Array.isArray(value) || value.some((context) => typeof context !== 'string')) {
     throw new errors.InvalidArgumentError('contexts must be an array of strings');
   }
-  assertWithinLimits(value, 'contexts');
+  assertNameLengths(value, 'contexts');
 }
 
-function assertWithinLimits(items: string[], name: string): void {
-  if (items.length > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
+// Checked before the items are scanned, so that an oversized list is rejected in constant time
+function assertListSize(value: unknown, name: string): void {
+  if (Array.isArray(value) && value.length > MAX_BIDI_SUBSCRIPTION_ENTRIES) {
     throw new errors.InvalidArgumentError(`${name} must not have more than ${MAX_BIDI_SUBSCRIPTION_ENTRIES} items`);
   }
+}
+
+function assertNameLengths(items: string[], name: string): void {
   if (items.some((item) => item.length > MAX_BIDI_NAME_LENGTH)) {
     throw new errors.InvalidArgumentError(
       `The items of ${name} must not be longer than ${MAX_BIDI_NAME_LENGTH} characters`,

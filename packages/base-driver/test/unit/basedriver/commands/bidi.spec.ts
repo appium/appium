@@ -202,6 +202,20 @@ describe('bidi commands -', function () {
         assert.deepStrictEqual(driver.bidiEventSubs, {});
       });
 
+      it('should check the size of a list before its items', async function () {
+        const invalid = [...names(MAX_BIDI_SUBSCRIPTION_ENTRIES), 1];
+        await assert.rejects(driver.bidiSubscribe(invalid as any), /events must not have more than/);
+        await assert.rejects(
+          driver.bidiSubscribe(['log.entryAdded'], invalid as any),
+          /contexts must not have more than/,
+        );
+        await assert.rejects(driver.bidiUnsubscribe(invalid as any), /events must not have more than/);
+        await assert.rejects(
+          driver.bidiUnsubscribe(undefined, undefined, invalid as any),
+          /subscriptions must not have more than/,
+        );
+      });
+
       it('should reuse the slots of the subscriptions that were emptied by the legacy unsubscribe', async function () {
         for (let i = 0; i < MAX_BIDI_SUBSCRIPTIONS * 2; i++) {
           await driver.bidiSubscribe(['log.entryAdded']);

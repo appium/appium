@@ -2,7 +2,7 @@
 import type {Class, DriverType, ExtensionType, PluginType} from '@appium/types';
 import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/types/index.js';
 
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants.js';
+import {DRIVER_TYPE, EXT_SUBCOMMAND_RUN, PLUGIN_TYPE} from '../constants.js';
 import type {ExtensionConfig} from '../extension/extension-config.js';
 import {reloadManifest} from '../extension/index.js';
 import {isExtensionCommandArgs} from '../schema/cli-args-guards.js';
@@ -68,7 +68,7 @@ export async function runExtensionCommand<Cmd extends CliExtensionCommand, SubCm
   try {
     // `run` only reads the manifest and may be long-running (e.g. a tunnel), so it must not
     // hold the lock while the script runs or it would block server startup.
-    if ((args as unknown as Record<string, unknown>)[`${type}Command`] === 'run') {
+    if ((args as unknown as Record<string, unknown>)[`${type}Command`] === EXT_SUBCOMMAND_RUN) {
       return await execute(await withManifestLock(config.appiumHome, prepare));
     }
     return await withManifestLock(config.appiumHome, async () => await execute(await prepare()));

@@ -56,8 +56,9 @@ together, counted one by one, can cover up to 1000 combinations. Lists in the pa
 to 1000 items, and the event names, contexts and subscription IDs can be up to 256 characters long.
 A request that exceeds a limit fails with an `invalid argument` error without changing the subscriptions.
 
-Unsubscribing by event names (`events`) removes the events from all the subscriptions, but the IDs of
-the subscriptions that become empty stay valid, so they can still be passed to `session.unsubscribe`.
+Unsubscribing by event names (`events`) removes the matching contexts of those events across all the
+subscriptions (an event stays active in the contexts that are not listed), but the IDs of the
+subscriptions that have no events left stay valid, so they can still be passed to `session.unsubscribe`.
 The oldest such ID expires only when a new subscription needs its slot at the limit of 100 subscriptions.
 An unknown or expired ID fails the whole `subscriptions` request, and none of its subscriptions are removed.
 

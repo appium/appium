@@ -78,6 +78,14 @@ function getSchemaValidator<Coerced>(
   };
 }
 
+// parseInt('4723abc') is 4723
+function parseCliInteger(value: string): number {
+  if (!/^[+-]?\d+$/.test(value)) {
+    throw new ArgumentTypeError(`'${util.truncateString(value, {length: 100})}' must be integer`);
+  }
+  return parseInt(value, 10);
+}
+
 function makeDescription(schema: AppiumJSONSchema): string {
   const {appiumCliDescription, description = '', appiumDeprecated} = schema;
   let desc = appiumCliDescription ?? description;
@@ -134,7 +142,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(argSpec, (v) => parseInt(v, 10));
+      argTypeFunction = getSchemaValidator(argSpec, parseCliInteger);
       break;
     }
     case TYPENAMES.STRING: {

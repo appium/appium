@@ -1,139 +1,48 @@
 [
   {
-    "version": "4.0",
-    "title": "4.0",
+    "version": "v4",
+    "title": "v4",
     "aliases": [
-      "latest"
+      "latest",
+      "4.0"
     ]
   },
   {
-    "version": "3.9",
-    "title": "3.9",
-    "aliases": []
+    "version": "v3",
+    "title": "v3",
+    "aliases": [
+      "3.9",
+      "3.8",
+      "3.7",
+      "3.6",
+      "3.5",
+      "3.4",
+      "3.3",
+      "3.2",
+      "3.1",
+      "3.0"
+    ]
   },
   {
-    "version": "3.8",
-    "title": "3.8",
-    "aliases": []
-  },
-  {
-    "version": "3.7",
-    "title": "3.7",
-    "aliases": []
-  },
-  {
-    "version": "3.6",
-    "title": "3.6",
-    "aliases": []
-  },
-  {
-    "version": "3.5",
-    "title": "3.5",
-    "aliases": []
-  },
-  {
-    "version": "3.4",
-    "title": "3.4",
-    "aliases": []
-  },
-  {
-    "version": "3.3",
-    "title": "3.3",
-    "aliases": []
-  },
-  {
-    "version": "3.2",
-    "title": "3.2",
-    "aliases": []
-  },
-  {
-    "version": "3.1",
-    "title": "3.1",
-    "aliases": []
-  },
-  {
-    "version": "3.0",
-    "title": "3.0",
-    "aliases": []
-  },
-  {
-    "version": "2.19",
-    "title": "2.19",
-    "aliases": []
-  },
-  {
-    "version": "2.18",
-    "title": "2.18",
-    "aliases": []
-  },
-  {
-    "version": "2.17",
-    "title": "2.17",
-    "aliases": []
-  },
-  {
-    "version": "2.16",
-    "title": "2.16",
-    "aliases": []
-  },
-  {
-    "version": "2.15",
-    "title": "2.15",
-    "aliases": []
-  },
-  {
-    "version": "2.12",
-    "title": "2.12",
-    "aliases": []
-  },
-  {
-    "version": "2.11",
-    "title": "2.11",
-    "aliases": []
-  },
-  {
-    "version": "2.9",
-    "title": "2.9",
-    "aliases": []
-  },
-  {
-    "version": "2.7",
-    "title": "2.7",
-    "aliases": []
-  },
-  {
-    "version": "2.6",
-    "title": "2.6",
-    "aliases": []
-  },
-  {
-    "version": "2.5",
-    "title": "2.5",
-    "aliases": []
-  },
-  {
-    "version": "2.4",
-    "title": "2.4",
-    "aliases": []
-  },
-  {
-    "version": "2.3",
-    "title": "2.3",
-    "aliases": []
-  },
-  {
-    "version": "2.2",
-    "title": "2.2",
-    "aliases": []
-  },
-  {
-    "version": "2.1",
-    "title": "2.1",
-    "aliases": []
-  },
-  {
-    "version": "2.0",
-    "title": "2.0",
-    "aliases": []
+    "version": "v2",
+    "title": "v2",
+    "aliases": [
+      "2.19",
+      "2.18",
+      "2.17",
+      "2.16",
+      "2.15",
+      "2.12",
+      "2.11",
+      "2.9",
+      "2.7",
+      "2.6",
+      "2.5",
+      "2.4",
+      "2.3",
+      "2.2",
+      "2.1",
+      "2.0"
+    ]
   }
 ]

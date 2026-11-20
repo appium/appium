@@ -7,6 +7,7 @@ import type {
   CliCommandServer,
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
+  EmbeddedDriverModule,
 } from 'appium/types/index.js';
 
 import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
@@ -26,6 +27,7 @@ export class AppiumMainRunner {
    *
    * @param initResult - Output of {@link AppiumInitializer.init}
    * @param args - Original args (used to describe `appiumHome` source in logs)
+   * @param useDrivers - Original programmatic selection when it contains embedded modules
    */
   async run<
     Cmd extends CliCommand = CliCommandServer,
@@ -33,6 +35,7 @@ export class AppiumMainRunner {
   >(
     initResult: InitResult<Cmd>,
     args?: Args<Cmd, SubCmd>,
+    useDrivers?: Array<string | EmbeddedDriverModule>,
   ): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
     if (util.isEmpty(initResult)) {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
@@ -61,7 +64,7 @@ export class AppiumMainRunner {
     const driverClasses = await getActiveDrivers(
       driverConfig,
       parsedArgs.driversImportChunkSize,
-      parsedArgs.useDrivers,
+      useDrivers ?? parsedArgs.useDrivers,
     );
     const {serverOpts, normalizedBasePath} = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
 

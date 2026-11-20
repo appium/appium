@@ -9,6 +9,7 @@ import type {
   CliCommandServer,
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
+  MainArgs,
 } from 'appium/types/index.js';
 
 import {AppiumInitializer} from './bootstrap/appium-initializer.js';
@@ -40,9 +41,20 @@ export async function init<
 export async function main<
   Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
->(args?: Args<Cmd, SubCmd>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
-  const initResult = await init(args);
-  return mainRunner.run(initResult, args);
+>(args?: MainArgs<Cmd, SubCmd>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
+  const useDrivers =
+    args && (!args.subcommand || args.subcommand === 'server')
+      ? (args as MainArgs<CliCommandServer>).useDrivers
+      : undefined;
+  const embeddedSelection = useDrivers?.some((entry) => typeof entry !== 'string') ? useDrivers : undefined;
+  // An empty programmatic selection lets the config file supply driver names.
+  const initArgs = (
+    embeddedSelection || useDrivers?.length === 0
+      ? {...args, useDrivers: embeddedSelection?.filter((entry) => typeof entry === 'string')}
+      : args
+  ) as Args<Cmd, SubCmd> | undefined;
+  const initResult = await init(initArgs);
+  return mainRunner.run(initResult, initArgs, embeddedSelection);
 }
 
 // NOTE: backwards compat for scripts referencing `build/lib/main.js` directly.

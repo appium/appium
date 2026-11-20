@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -478,7 +478,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -2313,6 +2313,8 @@
       
         
       
+        
+      
     
     
     
@@ -2357,6 +2359,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2732,7 +2762,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2762,6 +2792,8 @@
   
     
     
+      
+        
       
         
       
@@ -2889,6 +2921,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -4398,7 +4458,9 @@
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">NoSuchElementError</span><span class="p">();</span>
 </span></code></pre></div>
 <h3 id="appium_2">向 Appium 日志写消息<a class="headerlink" href="#appium_2" title="Permanent link">&para;</a></h3>
-<p>你当然可以随时用 <code>console.log</code>，但 Appium 为你提供了一个更贴心的日志器 <code>this.logger</code>（它有 <code>.info</code>、<code>.debug</code>、<code>.log</code>、<code>.warn</code>、<code>.error</code> 等不同日志级别的方法）。如果你想在插件上下文之外（比如脚本或辅助文件中）创建 Appium 日志器，也可以自行构造：</p>
+<p>You can always use <code>console.log</code>, of course, but Appium provides a nice logger for you as
+<code>this.log</code> (it has <code>.info</code>, <code>.debug</code>, <code>.warn</code>, <code>.error</code> methods on it for differing log
+levels). 如果你想在插件上下文之外（比如脚本或辅助文件中）创建 Appium 日志器，也可以自行构造：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">logging</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'appium/support'</span><span class="p">;</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">logging</span><span class="p">.</span><span class="nx">getLogger</span><span class="p">(</span><span class="s1">'MyPlugin'</span><span class="p">);</span>
 </span></code></pre></div>
@@ -4516,7 +4578,7 @@
 <h3 id="appium_5">更新 Appium 服务器对象<a class="headerlink" href="#appium_5" title="Permanent link">&para;</a></h3>
 <p>You probably don't normally need to update the Appium server object (which is an
 <a href="https://expressjs.com/">Express</a> server having already been
-<a href="https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.ts">configured</a>
+<a href="https://github.com/appium/appium/blob/master/packages/http-server/lib/server.ts">configured</a>
 in a variety of ways). 但你可以为服务器添加新的路由来支撑你的插件的需求。要更新服务器，你必须在类中实现 <code>static async updateServer</code> 方法。该方法接收三个参数：</p>
 <ul>
 <li><code>expressApp</code>：Express app 对象</li>
@@ -4564,7 +4626,7 @@ in a variety of ways). 但你可以为服务器添加新的路由来支撑你的
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年10月20日 03:54:55 UTC"><span class="timeago" datetime="2026-10-20T03:54:55+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年10月20日 03:54:55 UTC">2026-10-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4731,7 +4793,7 @@ in a variety of ways). 但你可以为服务器添加新的路由来支撑你的
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

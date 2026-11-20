@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -480,7 +480,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -4356,6 +4356,8 @@
       
         
       
+        
+      
     
     
     
@@ -4400,6 +4402,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -4775,7 +4805,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -4805,6 +4835,8 @@
   
     
     
+      
+        
       
         
       
@@ -4932,6 +4964,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -7662,10 +7722,6 @@ directly to the driver, which is responsible for the actual endpoint implementat
 <p>WebDriver documentation: <a href="https://w3c.github.io/webdriver/#new-session">New Session</a></p>
 </blockquote>
 <p>Creates a new WebDriver session.</p>
-<p>Appium implements a modified version of this endpoint for historical reasons. While the W3C
-endpoint only accepts 1 parameter, Appium's implementation allows up to 3 parameters, as this was
-required by the legacy JSON Wire Protocol (JSONWP). Since Appium 2, the JSONWP format is no longer
-supported, and any of the 3 parameters can be used to specify the W3C capabilities.</p>
 <h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -7677,18 +7733,8 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 </thead>
 <tbody>
 <tr>
-<td><code>w3cCapabilities1?</code></td>
+<td><code>capabilities?</code></td>
 <td>Capabilities of the new session</td>
-<td><code>W3CDriverCaps</code></td>
-</tr>
-<tr>
-<td><code>w3cCapabilities2?</code></td>
-<td>Another location for the new session capabilities (legacy)</td>
-<td><code>W3CDriverCaps</code></td>
-</tr>
-<tr>
-<td><code>w3cCapabilities?</code></td>
-<td>Another location for the new session capabilities (legacy)</td>
 <td><code>W3CDriverCaps</code></td>
 </tr>
 </tbody>
@@ -7767,6 +7813,8 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 <p>WebDriver documentation: <a href="https://w3c.github.io/webdriver/#get-timeouts">Get Timeouts</a></p>
 </blockquote>
 <p>Retrieves the timeout values of the current session.</p>
+<p>Appium implements a modified version of this endpoint, by also returning the value of the <code>command</code>
+timeout for supported drivers and contexts.</p>
 <h4 id="response_3">Response<a class="headerlink" href="#response_3" title="Permanent link">&para;</a></h4>
 <p><code>GetTimeoutsResult</code> - an object with the following properties:</p>
 <table>
@@ -7779,13 +7827,23 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 </thead>
 <tbody>
 <tr>
-<td><code>command</code></td>
-<td>Command timeout</td>
-<td>number</td>
+<td><code>script</code></td>
+<td>Script timeout</td>
+<td>number or null</td>
+</tr>
+<tr>
+<td><code>pageLoad</code></td>
+<td>Page load timeout</td>
+<td>number or null</td>
 </tr>
 <tr>
 <td><code>implicit</code></td>
 <td>Implicit wait timeout</td>
+<td>number or null</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>Appium command timeout</td>
 <td>number</td>
 </tr>
 </tbody>
@@ -7797,6 +7855,8 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 <p>WebDriver documentation: <a href="https://w3c.github.io/webdriver/#set-timeouts">Set Timeouts</a></p>
 </blockquote>
 <p>Sets the timeout values of the current session.</p>
+<p>Appium implements a modified version of this endpoint by adding the optional <code>command</code> parameter
+for supported drivers and contexts.</p>
 <h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -7808,18 +7868,23 @@ supported, and any of the 3 parameters can be used to specify the W3C capabiliti
 </thead>
 <tbody>
 <tr>
+<td><code>script?</code></td>
+<td>Script timeout (in milliseconds)</td>
+<td>number or null</td>
+</tr>
+<tr>
 <td><code>implicit?</code></td>
 <td>Implicit wait timeout (in milliseconds)</td>
-<td>number</td>
+<td>number or null</td>
 </tr>
 <tr>
 <td><code>pageLoad?</code></td>
 <td>Page load timeout (in milliseconds)</td>
-<td>number</td>
+<td>number or null</td>
 </tr>
 <tr>
-<td><code>script?</code></td>
-<td>Script timeout (in milliseconds)</td>
+<td><code>command?</code></td>
+<td>Appium command timeout (in milliseconds)</td>
 <td>number</td>
 </tr>
 </tbody>
@@ -8731,7 +8796,7 @@ passed to this completion function is returned as the endpoint response.</p>
 <blockquote>
 <p>WebDriver documentation: <a href="https://w3c.github.io/webdriver/#perform-actions">Perform Actions</a></p>
 </blockquote>
-<p>Performs a sequence of <a href="https://w3c.github.io/webdriver/#actions">actions</a>.</p>
+<p>Performs a sequence of <a href="https://w3c.github.io/webdriver/#actions">actions</a>. See the <a href="../../../guides/gestures/">Automating Gestures</a> guide for multi-language examples.</p>
 <h4 id="parameters_17">Parameters<a class="headerlink" href="#parameters_17" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -8978,7 +9043,7 @@ identified by <code>:elementId</code>.</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2025年9月13日 04:50:10 UTC"><span class="timeago" datetime="2025-09-13T04:50:10+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2025年9月13日 04:50:10 UTC">2025-09-13</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -9145,7 +9210,7 @@ identified by <code>:elementId</code>.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../../js/timeago.min.js"></script>
       

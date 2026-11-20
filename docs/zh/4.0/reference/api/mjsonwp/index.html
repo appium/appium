@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -480,7 +480,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -2353,73 +2353,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#getnetworkconnection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        getNetworkConnection
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="getNetworkConnection">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setnetworkconnection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        setNetworkConnection
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="setNetworkConnection">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2601,6 +2534,8 @@
       
         
       
+        
+      
     
     
     
@@ -2645,6 +2580,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3020,7 +2983,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -3050,6 +3013,8 @@
   
     
     
+      
+        
       
         
       
@@ -3177,6 +3142,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3972,73 +3965,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#getnetworkconnection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        getNetworkConnection
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="getNetworkConnection">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#response_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setnetworkconnection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        setNetworkConnection
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="setNetworkConnection">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Response
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -4275,91 +4201,6 @@ endpoints supported in Appium.</p>
 </div>
 <h4 id="response_4">Response<a class="headerlink" href="#response_4" title="Permanent link">&para;</a></h4>
 <p><code>string[]</code> - the names of available contexts</p>
-<h3 id="getnetworkconnection">getNetworkConnection<a class="headerlink" href="#getnetworkconnection" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>GET /session/:sessionId/network_connection
-</span></code></pre></div>
-<blockquote>
-<p>MJSONWP documentation: <a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes">Device Modes</a></p>
-</blockquote>
-<p>Retrieves the current state of network types (data, Wi-Fi, airplane mode).</p>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated</p>
-<p>Please use driver-specific extension methods such as <code>mobile: getConnectivity</code></p>
-</div>
-<h4 id="response_5">Response<a class="headerlink" href="#response_5" title="Permanent link">&para;</a></h4>
-<p><code>NetworkConnectionState</code> - a number indicating the current network state:</p>
-<table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Data</th>
-<th>Wi-Fi</th>
-<th>Airplane Mode</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>0</code></td>
-<td>OFF</td>
-<td>OFF</td>
-<td>OFF</td>
-</tr>
-<tr>
-<td><code>1</code></td>
-<td>OFF</td>
-<td>OFF</td>
-<td>ON</td>
-</tr>
-<tr>
-<td><code>2</code></td>
-<td>OFF</td>
-<td>ON</td>
-<td>OFF</td>
-</tr>
-<tr>
-<td><code>4</code></td>
-<td>ON</td>
-<td>OFF</td>
-<td>OFF</td>
-</tr>
-<tr>
-<td><code>6</code></td>
-<td>ON</td>
-<td>ON</td>
-<td>OFF</td>
-</tr>
-</tbody>
-</table>
-<h3 id="setnetworkconnection">setNetworkConnection<a class="headerlink" href="#setnetworkconnection" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>POST /session/:sessionId/network_connection
-</span></code></pre></div>
-<blockquote>
-<p>MJSONWP documentation: <a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes">Device Modes</a></p>
-</blockquote>
-<p>Sets the state of network types (data, Wi-Fi, airplane mode).</p>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated</p>
-<p>Please use driver-specific extension methods such as <code>mobile: setConnectivity</code></p>
-</div>
-<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th><div style="width:6em">Name</div></th>
-<th>Description</th>
-<th><div style="width:18em">Type</div></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>parameters</code></td>
-<td>Object containing the <code>type</code> key, whose value is the desired network state</td>
-<td><code>{"type":</code><a href="#response_5"><code>NetworkConnectionState</code></a><code>}</code></td>
-</tr>
-</tbody>
-</table>
-<h4 id="response_6">Response<a class="headerlink" href="#response_6" title="Permanent link">&para;</a></h4>
-<p><a href="#response_5"><code>NetworkConnectionState</code></a> - the new network state</p>
 
 
 
@@ -4380,7 +4221,7 @@ endpoints supported in Appium.</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年8月21日 08:17:04 UTC"><span class="timeago" datetime="2026-08-21T08:17:04+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年8月21日 08:17:04 UTC">2026-08-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4547,7 +4388,7 @@ endpoints supported in Appium.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../../js/timeago.min.js"></script>
       

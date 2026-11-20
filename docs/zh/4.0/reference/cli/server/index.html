@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -480,7 +480,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -1781,6 +1781,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#default-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#info-options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2396,6 +2407,8 @@
       
         
       
+        
+      
     
     
     
@@ -2440,6 +2453,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2815,7 +2856,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2845,6 +2886,8 @@
   
     
     
+      
+        
       
         
       
@@ -2972,6 +3015,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3619,6 +3690,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#default-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Capabilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#info-options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3755,12 +3837,6 @@ set on the command line will override any options found in a configuration file.
 <td><code>0.0.0.0</code></td>
 </tr>
 <tr>
-<td><code>--allow-cors</code></td>
-<td>Allow web browser connections from any host</td>
-<td>boolean</td>
-<td><code>false</code></td>
-</tr>
-<tr>
 <td><code>--allow-insecure</code></td>
 <td>List of <a href="../../../guides/security/">insecure features</a> that should be allowed in this server's sessions. Individual features can be overridden by <code>--deny-insecure</code>. Has no effect in combination with <code>--relaxed-security</code>.</td>
 <td>array<string></td>
@@ -3773,22 +3849,16 @@ set on the command line will override any options found in a configuration file.
 <td><code>false</code></td>
 </tr>
 <tr>
+<td><code>--app-url-rules</code></td>
+<td>Rules that remote application URLs (e.g. in the <code>appium:app</code> capability) must satisfy before the server downloads them. See the <a href="../../../guides/security/#restricting-remote-app-urls">Restricting Remote App URLs</a> guide for details. Can be a path to a JSON file or raw JSON.</td>
+<td>object</td>
+<td></td>
+</tr>
+<tr>
 <td><code>--base-path</code>, <code>-pa</code></td>
 <td>Base path to use as the prefix for all webdriver routes running on the server</td>
 <td>string</td>
 <td><code>""</code></td>
-</tr>
-<tr>
-<td><code>--callback-address</code>, <code>-ca</code></td>
-<td>Callback IP address</td>
-<td>string</td>
-<td>same as <code>--address</code></td>
-</tr>
-<tr>
-<td><code>--callback-port</code>, <code>-cp</code></td>
-<td>Callback port</td>
-<td>integer</td>
-<td><code>4723</code></td>
 </tr>
 <tr>
 <td><code>--config</code></td>
@@ -3797,14 +3867,26 @@ set on the command line will override any options found in a configuration file.
 <td></td>
 </tr>
 <tr>
-<td><code>--debug-log-spacing</code></td>
-<td>Add exaggerated spacing in logs to help with visual inspection</td>
-<td>boolean</td>
-<td><code>false</code></td>
+<td><code>--bidi-heartbeat-interval</code></td>
+<td>Interval (in seconds) between WebSocket pings sent to each <a href="../../api/bidi/">BiDi</a> client. A connection that misses two consecutive pongs is terminated. Disabled if set to <code>0</code>.</td>
+<td>integer</td>
+<td><code>15</code></td>
+</tr>
+<tr>
+<td><code>--bidi-max-buffered-bytes</code></td>
+<td>Maximum number of bytes the server may keep buffered for a BiDi connection whose client is not reading fast enough. A connection that stays above the limit for longer than <code>--bidi-max-buffered-ms</code>, or exceeds twice the limit, is closed with the code <code>1013</code>. Disabled if set to <code>0</code>, which also turns off skipping of droppable events.</td>
+<td>integer</td>
+<td><code>33554432</code></td>
+</tr>
+<tr>
+<td><code>--bidi-max-buffered-ms</code></td>
+<td>Time (in milliseconds) a BiDi connection may stay above <code>--bidi-max-buffered-bytes</code> before it is closed. If set to <code>0</code>, the connection is closed as soon as the limit is exceeded.</td>
+<td>integer</td>
+<td><code>30000</code></td>
 </tr>
 <tr>
 <td><code>--default-capabilities</code>, <code>-dc</code></td>
-<td>Capabilities that will be used for each session, unless overridden by received capabilities</td>
+<td>Capabilities that will be used for each session, unless overridden by received capabilities. See <a href="#default-capabilities">Default Capabilities</a> for how they are applied.</td>
 <td>object</td>
 <td></td>
 </tr>
@@ -3860,7 +3942,7 @@ set on the command line will override any options found in a configuration file.
 <td><code>--log-level</code></td>
 <td>The log level for the server logs. Supported values are <code>debug</code>, <code>info</code>, <code>warn</code>, or <code>error</code>. Combining two supported values using a colon (e.g. <code>warn:debug</code>) allows to set separate log levels for the console and file outputs, respectively.</td>
 <td>string</td>
-<td><code>debug</code></td>
+<td><code>info</code></td>
 </tr>
 <tr>
 <td><code>--log-format</code></td>
@@ -3903,12 +3985,6 @@ set on the command line will override any options found in a configuration file.
 <td>Skip various permission checks on the server startup</td>
 <td>boolean</td>
 <td><code>false</code></td>
-</tr>
-<tr>
-<td><code>--nodeconfig</code></td>
-<td>JSON configuration for registering Appium as a node with Selenium Grid 3</td>
-<td>object</td>
-<td></td>
 </tr>
 <tr>
 <td><code>--plugin</code></td>
@@ -3959,12 +4035,6 @@ set on the command line will override any options found in a configuration file.
 <td></td>
 </tr>
 <tr>
-<td><code>--strict-caps</code></td>
-<td>Prevent creation of new client sessions that use unsupported capabilities</td>
-<td>boolean</td>
-<td><code>false</code></td>
-</tr>
-<tr>
 <td><code>--tmp</code></td>
 <td>Absolute path to the directory used for temporary files</td>
 <td>string</td>
@@ -3990,6 +4060,32 @@ set on the command line will override any options found in a configuration file.
 </tr>
 </tbody>
 </table>
+<h3 id="default-capabilities">Default Capabilities<a class="headerlink" href="#default-capabilities" title="Permanent link">&para;</a></h3>
+<p>Capabilities set with <code>--default-capabilities</code> are added to the received capabilities before a
+driver is matched. This is Appium's own defaulting behavior, not something defined by the W3C
+WebDriver specification.</p>
+<ul>
+<li>A value the client sends in <code>alwaysMatch</code>, or in a given <code>firstMatch</code> candidate, takes precedence
+  over the server default</li>
+<li>Defaults fill missing keys in each <code>firstMatch</code> candidate separately. A value in one candidate
+  does not stop the default from being applied to another candidate</li>
+<li>A key sent in both <code>alwaysMatch</code> and <code>firstMatch</code> is still rejected by the usual capability
+  validation. Server defaults do not change that</li>
+</ul>
+<p>For example, with these server defaults:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="nt">"appium:newCommandTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">}</span>
+</span></code></pre></div>
+<p>and these received capabilities:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">"alwaysMatch"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"appium:deviceName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pixel"</span><span class="p">},</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">"firstMatch"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="p">{</span><span class="nt">"platformName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"iOS"</span><span class="p">,</span><span class="w"> </span><span class="nt">"appium:newCommandTimeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">},</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="p">{</span><span class="nt">"platformName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Android"</span><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>the iOS candidate keeps <code>appium:newCommandTimeout</code> of <code>120</code>, and the Android candidate gets the
+default <code>60</code>. The session uses the value from whichever candidate it is created with.</p>
 <h3 id="info-options">Info Options<a class="headerlink" href="#info-options" title="Permanent link">&para;</a></h3>
 <p>The following options are used for reference or debug purposes. They are only supported for the base <code>appium</code> command (not <code>appium server</code>), and will not launch the server.</p>
 <table>
@@ -4038,7 +4134,7 @@ set on the command line will override any options found in a configuration file.
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年10月20日 03:54:55 UTC"><span class="timeago" datetime="2026-10-20T03:54:55+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年10月20日 03:54:55 UTC">2026-10-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月20日 09:42:31 UTC"><span class="timeago" datetime="2026-11-20T09:42:31+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月20日 09:42:31 UTC">2026-11-20</span>
   </span>
 
     
@@ -4207,7 +4303,7 @@ set on the command line will override any options found in a configuration file.
       <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../../js/timeago.min.js"></script>
       

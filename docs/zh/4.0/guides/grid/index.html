@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -482,7 +482,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../migrating-2-to-3/" class="md-tabs__link">
+        <a href="../migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -2320,6 +2320,8 @@
       
         
       
+        
+      
     
     
     
@@ -2367,6 +2369,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2789,34 +2819,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#using-selenium-grid-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using Selenium Grid 3
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using Selenium Grid 3">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-grid-node-configuration-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Grid Node Configuration JSON
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2868,7 +2870,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2898,6 +2900,8 @@
   
     
     
+      
+        
       
         
       
@@ -3028,6 +3032,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3711,34 +3743,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#using-selenium-grid-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using Selenium Grid 3
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Using Selenium Grid 3">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-grid-node-configuration-json" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Grid Node Configuration JSON
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3787,7 +3791,7 @@
     
     
       <li class="md-path__item">
-        <a href="../migrating-2-to-3/" class="md-path__link">
+        <a href="../migrating-3-to-4/" class="md-path__link">
           
   <span class="md-ellipsis">
     指南
@@ -3937,53 +3941,6 @@ hub, you'll be able to send all your Appium traffic via the single hub endpoint 
 <code>http://localhost:4444</code>).</p>
 <p>And of course, you're able to link up Appium servers and nodes running on different machines in
 your network to form a larger grid.</p>
-<h2 id="using-selenium-grid-3">Using Selenium Grid 3<a class="headerlink" href="#using-selenium-grid-3" title="Permanent link">&para;</a></h2>
-<p>It is possible to register your Appium server with a local <a href="https://www.selenium.dev/documentation/legacy/selenium_3/grid_3/">Selenium Grid 3</a>
-(<a href="https://www.selenium.dev/documentation/legacy/grid_3/setting_up_your_own_grid/">setup docs</a>) instance by using the
-<code>--nodeconfig</code> server argument.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>server<span class="w"> </span>--nodeconfig<span class="w"> </span>/path/to/nodeconfig.json<span class="w"> </span>--base-path<span class="o">=</span>/wd/hub
-</span></code></pre></div>
-<p>In the referenced config file you have to define the <code>browserName</code>, <code>version</code> and <code>platform</code>
-capabilities and based on these parameters the grid will re-direct your test to the right device.
-You will also need to configure your host details and the Selenium Grid details. For a full list of
-all parameters and descriptions see
-<a href="https://www.selenium.dev/documentation/legacy/selenium_3/grid_setup/">here</a>.</p>
-<p>Once you start the Appium server it will register with the grid, and you will see your device on
-the grid console page:</p>
-<p><code>http://**\&lt;grid-ip-address\&gt;**:**\&lt;grid-port\&gt;**/grid/console</code></p>
-<h3 id="example-grid-node-configuration-json">Example Grid Node Configuration JSON<a class="headerlink" href="#example-grid-node-configuration-json" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">"capabilities"</span><span class="p">:</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">      </span><span class="p">[</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">        </span><span class="p">{</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">          </span><span class="nt">"browserName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;e.g._iPhone5_or_iPad4&gt;"</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">          </span><span class="nt">"version"</span><span class="p">:</span><span class="s2">"&lt;version_of_iOS_e.g._7.1&gt;"</span><span class="p">,</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">          </span><span class="nt">"maxInstances"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">          </span><span class="nt">"platform"</span><span class="p">:</span><span class="s2">"&lt;platform_e.g._MAC_or_ANDROID&gt;"</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">      </span><span class="p">],</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">  </span><span class="nt">"configuration"</span><span class="p">:</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">  </span><span class="p">{</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="nt">"cleanUpCycle"</span><span class="p">:</span><span class="mi">2000</span><span class="p">,</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">    </span><span class="nt">"timeout"</span><span class="p">:</span><span class="mi">30000</span><span class="p">,</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="nt">"proxy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"org.openqa.grid.selenium.proxy.DefaultRemoteProxy"</span><span class="p">,</span>
-</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">    </span><span class="nt">"url"</span><span class="p">:</span><span class="s2">"http://&lt;host_name_appium_server_or_ip-address_appium_server&gt;:&lt;appium_port&gt;/wd/hub"</span><span class="p">,</span>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">    </span><span class="nt">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;host_name_appium_server_or_ip-address_appium_server&gt;"</span><span class="p">,</span>
-</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">    </span><span class="nt">"port"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;appium_por</span><span class="kc">t</span><span class="err">&gt;</span><span class="p">,</span>
-</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">    </span><span class="nt">"maxSession"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">    </span><span class="nt">"register"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">    </span><span class="nt">"registerCycle"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span>
-</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">    </span><span class="nt">"hubPort"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;grid_por</span><span class="kc">t</span><span class="err">&gt;</span><span class="p">,</span>
-</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="nt">"hubHost"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;Grid_host_name_or_grid_ip-address&gt;"</span><span class="p">,</span>
-</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="nt">"hubProtocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;Protocol_of_Grid_defaults_to_http&gt;"</span>
-</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>If <code>url</code>, <code>host</code>, and <code>port</code> are not given, the config will be auto updated to point to
-<code>localhost:&lt;appium-port&gt;</code>.</p>
-<p>If your Appium server is running on a different machine to your Selenium Grid server, make sure you
-use an external name/IP address in your <code>host</code> and <code>url</code> configuration; <code>localhost</code> and <code>127.0.0.1</code>
-will prevent Selenium Grid from connecting correctly.</p>
 
 
 
@@ -4004,7 +3961,7 @@ will prevent Selenium Grid from connecting correctly.</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年10月18日 09:29:56 UTC"><span class="timeago" datetime="2026-10-18T09:29:56+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年10月18日 09:29:56 UTC">2026-10-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4171,7 +4128,7 @@ will prevent Selenium Grid from connecting correctly.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

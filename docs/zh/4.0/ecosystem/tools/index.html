@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -480,7 +480,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -1690,6 +1690,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#benchfleet-appium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BenchFleet Appium
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#optics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2511,6 +2522,8 @@
       
         
       
+        
+      
     
     
     
@@ -2555,6 +2568,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2930,7 +2971,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2960,6 +3001,8 @@
   
     
     
+      
+        
       
         
       
@@ -3087,6 +3130,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3833,6 +3904,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#benchfleet-appium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BenchFleet Appium
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#optics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4020,6 +4102,15 @@ prerequisites for iOS or Android emulators or real devices.</p>
 <p>Supported by: <code>@AppiumTestDistribution</code></p>
 <div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>appium-installer
 </span></code></pre></div>
+<h3 id="benchfleet-appium"><a href="https://github.com/benchfleet/benchfleet-appium">BenchFleet Appium</a><a class="headerlink" href="#benchfleet-appium" title="Permanent link">&para;</a></h3>
+<p>BenchFleet Appium is a command-line tool for running existing Appium tests on real Android phones
+connected to a <a href="https://benchfleet.com">BenchFleet</a> Hub, a desktop app for managing many phones
+(Pro or Team plan). For each phone, the Hub starts an Appium server with the UiAutomator2 driver.
+The tool then runs your test command once per phone with that server's URL in <code>APPIUM_URL</code>, and
+collects each phone's JUnit report. iOS and BenchFleet's cloud phones are not supported yet.</p>
+<p>Supported by: <code>@benchfleet</code></p>
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>benchfleet-appium
+</span></code></pre></div>
 <h3 id="optics"><a href="https://github.com/mozarkai/optics-framework">Optics</a><a class="headerlink" href="#optics" title="Permanent link">&para;</a></h3>
 <p>Optics is an open-source test automation framework that uses Appium to drive Android, iOS,
 Android TV, Samsung Tizen and LG webOS apps (and Selenium or Playwright for web). Tests are written
@@ -4027,7 +4118,7 @@ as CSV or YAML keyword steps, and the same keywords are available as a Python li
 Framework library, an HTTP API and an MCP server. Element lookup falls back from XPath to visible
 text, OCR and image matching.</p>
 <p>Supported by: <code>@chinmayajha</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"optics-framework[mobile]"</span>
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"optics-framework[mobile]"</span>
 </span></code></pre></div>
 <h3 id="xpath-to-class-chain"><a href="https://github.com/domovou69/xpath-to-class-chain">XPath to Class Chain</a><a class="headerlink" href="#xpath-to-class-chain" title="Permanent link">&para;</a></h3>
 <p>XPath to Class Chain is a command-line tool for migrating iOS XPath locators in test code to
@@ -4035,7 +4126,7 @@ text, OCR and image matching.</p>
 converts with a warning those that only have a close one (such as grouped positions <code>(//X)[n]</code>),
 and skips the rest with a reason (for example, sibling or parent axes).</p>
 <p>Supported by: <code>@domovou69</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-class-chain
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-class-chain
 </span></code></pre></div>
 <h3 id="xpath-to-uiselector"><a href="https://github.com/domovou69/xpath-to-uiselector">XPath to UiSelector</a><a class="headerlink" href="#xpath-to-uiselector" title="Permanent link">&para;</a></h3>
 <p>XPath to UiSelector is a command-line tool for migrating Android XPath locators in test code to
@@ -4044,7 +4135,7 @@ equivalent, converts with a warning those that only have a close one (such as <c
 the rest with a reason. The strategy call is rewritten together with the string, for example
 <code>AppiumBy.xpath</code> becomes <code>AppiumBy.androidUIAutomator</code>.</p>
 <p>Supported by: <code>@domovou69</code></p>
-<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-uiselector
+<div class="language-sh highlight"><span class="filename">Install This Tool</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>xpath-to-uiselector
 </span></code></pre></div>
 
 
@@ -4066,7 +4157,7 @@ the rest with a reason. The strategy call is rewritten together with the string,
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年10月27日 15:58:18 UTC"><span class="timeago" datetime="2026-10-27T15:58:18+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年10月27日 15:58:18 UTC">2026-10-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4233,7 +4324,7 @@ the rest with a reason. The strategy call is rewritten together with the string,
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

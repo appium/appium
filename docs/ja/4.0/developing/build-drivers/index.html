@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -478,7 +478,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -2313,6 +2313,8 @@
       
         
       
+        
+      
     
     
     
@@ -2357,6 +2359,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2732,7 +2762,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2762,6 +2792,8 @@
   
     
     
+      
+        
       
         
       
@@ -2889,6 +2921,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3528,6 +3588,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Emit BiDi events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slow-clients-and-high-rate-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow clients and high-rate events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -4378,6 +4455,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Emit BiDi events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#slow-clients-and-high-rate-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow clients and high-rate events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4746,17 +4840,6 @@ driver:</p>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="nx">sessionId</span><span class="p">,</span><span class="w"> </span><span class="nx">caps</span><span class="p">];</span>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Older drivers may still define `createSession` with up to four parameters, e.g.
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>`createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)`. This shape is a holdover from the
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>retired JSON Wire Protocol, which required desired and required caps as the first two
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>arguments; only the first W3C-shaped argument was ever used. The `otherDriverData` parameter is
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>likewise deprecated in favor of [IPC](#send-messages-to-plugins-running-on-the-same-session) for
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>coordinating with other concurrently-running sessions. New drivers should use the single-argument
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>form shown above.
-</span></code></pre></div>
 <p>You'll want to make sure to call <code>super.createSession</code> in order to get the session ID as well as
 the processed capabilities (note that capabilities are also set on <code>this.caps</code>; modifying <code>caps</code>
 locally here would have no effect other than changing what the user sees in the create session
@@ -4765,11 +4848,11 @@ response).</p>
 <h3 id="end-a-session">End a session<a class="headerlink" href="#end-a-session" title="Permanent link">&para;</a></h3>
 <p>If your driver requires any cleanup or shutdown logic, it's best to do it as part of overriding the
 implementation of <code>deleteSession</code>:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">deleteSession</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="c1">// do your own cleanup here</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="c1">// don't forget to call super!</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="nx">deleteSession</span><span class="p">();</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">deleteSession</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="c1">// do your own cleanup here</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="c1">// don't forget to call super!</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="nx">deleteSession</span><span class="p">();</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>It's very important not to throw any errors here if possible so that all parts of session cleanup
 can succeed!</p>
@@ -4791,18 +4874,18 @@ Appium supports and which method you need to implement for each command is to lo
 Each route object in this directory's files tells you the command name as well as the parameters you'd expect to
 receive for that command.</p>
 <p>Let's take this block for example:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="s1">'/session/:sessionId/url'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getUrl'</span><span class="p">},</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nx">POST</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'setUrl'</span><span class="p">,</span><span class="w"> </span><span class="nx">payloadParams</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'url'</span><span class="p">]}},</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="s1">'/session/:sessionId/url'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getUrl'</span><span class="p">},</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nx">POST</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'setUrl'</span><span class="p">,</span><span class="w"> </span><span class="nx">payloadParams</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'url'</span><span class="p">]}},</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Here we see that the route <code>/session/:sessionId/url</code> is mapped to two commands, one for a <code>GET</code>
 request and one for a <code>POST</code> request. If we want to allow our driver to change the "url" (or
 whatever that might mean for our driver), we can therefore implement the <code>setUrl</code> command, knowing
 it will take the <code>url</code> parameter:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">setUrl</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="c1">// your implementation here</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">setUrl</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="c1">// your implementation here</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>A few notes:</p>
 <ul>
@@ -4831,9 +4914,9 @@ wish to define new commands, you may do so; you just need to tell Appium about t
 <p>Element finding is a special command implementation case. You don't actually want to override
 <code>findElement</code> or <code>findElements</code>, even though those are what are listed in <code>routes.js</code>. Appium does
 a lot of work for you if instead you implement this function:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">findElOrEls</span><span class="p">(</span><span class="nx">strategy</span><span class="p">,</span><span class="w"> </span><span class="nx">selector</span><span class="p">,</span><span class="w"> </span><span class="nx">mult</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="c1">// find your element here</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">findElOrEls</span><span class="p">(</span><span class="nx">strategy</span><span class="p">,</span><span class="w"> </span><span class="nx">selector</span><span class="p">,</span><span class="w"> </span><span class="nx">mult</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="c1">// find your element here</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Here's what gets passed in:</p>
 <ul>
@@ -4850,8 +4933,8 @@ a lot of work for you if instead you implement this function:</p>
 <li>an array of W3C elements</li>
 </ul>
 <p>Note that you can import that W3C web element identifier from <code>appium/support</code>:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">util</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'appium/support'</span><span class="p">;</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">W3C_WEB_ELEMENT_IDENTIFIER</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">util</span><span class="p">;</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">util</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'appium/support'</span><span class="p">;</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">W3C_WEB_ELEMENT_IDENTIFIER</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">util</span><span class="p">;</span>
 </span></code></pre></div>
 <p>What you do with elements is up to you! Usually you end up keeping a cache map of IDs to actual
 element "objects" or whatever the equivalent is for your platform.</p>
@@ -4859,7 +4942,7 @@ element "objects" or whatever the equivalent is for your platform.</p>
 <p>Your driver might only support a subset of the standard WebDriver locator strategies, or it might
 add its own custom locator strategies. To tell Appium which strategies are considered valid for
 your driver, create an array of strategies and assign it to <code>this.locatorStrategies</code>:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">locatorStrategies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">'xpath'</span><span class="p">,</span><span class="w"> </span><span class="s1">'custom-strategy'</span><span class="p">];</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">locatorStrategies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s1">'xpath'</span><span class="p">,</span><span class="w"> </span><span class="s1">'custom-strategy'</span><span class="p">];</span>
 </span></code></pre></div>
 <p>Appium will throw an error if the user attempts to use any strategies other than the allowed ones,
 which enables you to keep your element finding code clean and deal with only the strategies you
@@ -4873,17 +4956,17 @@ codes to accompany command responses if an
 error occurred. Appium has created error classes for each of these codes, so you can throw the
 appropriate error from inside a command, and it will do the right thing in terms of the protocol
 response to the user. To get access to these error classes, import them from <code>appium/driver</code>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>import {errors} from 'appium/driver';
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>throw new errors.NoSuchElementError();
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>import {errors} from 'appium/driver';
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>throw new errors.NoSuchElementError();
 </span></code></pre></div>
 <h3 id="log-messages-to-the-appium-log">Log messages to the Appium log<a class="headerlink" href="#log-messages-to-the-appium-log" title="Permanent link">&para;</a></h3>
 <p>You can always use <code>console.log</code>, of course, but Appium provides a nice logger for you as
 <code>this.log</code> (it has <code>.info</code>, <code>.debug</code>, <code>.log</code>, <code>.warn</code>, <code>.error</code> methods on it for differing log
 levels). If you want to create an Appium logger outside of a driver context (say in a script or
 helper file), you can always construct your own too:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">logging</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'appium/support'</span><span class="p">;</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">logging</span><span class="p">.</span><span class="nx">getLogger</span><span class="p">(</span><span class="s1">'MyDriver'</span><span class="p">);</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="nx">logging</span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'appium/support'</span><span class="p">;</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">logging</span><span class="p">.</span><span class="nx">getLogger</span><span class="p">(</span><span class="s1">'MyDriver'</span><span class="p">);</span>
 </span></code></pre></div>
 <h2 id="further-possibilities-for-appium-drivers">Further possibilities for Appium drivers<a class="headerlink" href="#further-possibilities-for-appium-drivers" title="Permanent link">&para;</a></h2>
 <p>These are things your driver <em>can</em> do to take advantage of extra driver features or do its job more
@@ -4904,37 +4987,37 @@ a) be a schema itself, or b) be a path to a schema file.</p>
 <li>The schema must be of type <code>object</code> (<code>{"type": "object"}</code>), containing the arguments in a <code>properties</code> keyword. Nested properties are unsupported.</li>
 </ul>
 <p>Example:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="p">{</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"object"</span><span class="p">,</span>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="nt">"test-web-server-port"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span>
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">      </span><span class="nt">"minimum"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">      </span><span class="nt">"maximum"</span><span class="p">:</span><span class="w"> </span><span class="mi">65535</span><span class="p">,</span>
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The port to use for the test web server"</span>
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="nt">"test-web-server-host"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
-</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The host to use for the test web server"</span><span class="p">,</span>
-</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">      </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sillyhost"</span>
-</span><span id="__span-18-14"><a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-18-15"><a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-18-16"><a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">{</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"object"</span><span class="p">,</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">    </span><span class="nt">"test-web-server-port"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"integer"</span><span class="p">,</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="w">      </span><span class="nt">"minimum"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="w">      </span><span class="nt">"maximum"</span><span class="p">:</span><span class="w"> </span><span class="mi">65535</span><span class="p">,</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The port to use for the test web server"</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">    </span><span class="nt">"test-web-server-host"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="w">      </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The host to use for the test web server"</span><span class="p">,</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="w">      </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sillyhost"</span>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>The above schema defines two properties which can be set via CLI argument or configuration file. If
 this extension is a <em>driver</em> and its name is "horace", the CLI args would be
 <code>--driver-horace-test-web-server-port</code> and <code>--driver-horace-test-web-server-host</code>, respectively.
 Alternatively, a user could provide a configuration file containing:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">"server"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span><span class="nt">"driver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">      </span><span class="nt">"horace"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">        </span><span class="nt">"test-web-server-port"</span><span class="p">:</span><span class="w"> </span><span class="mi">1234</span><span class="p">,</span>
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">        </span><span class="nt">"test-web-server-host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhorse"</span>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="p">{</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nt">"server"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="nt">"driver"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">      </span><span class="nt">"horace"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">        </span><span class="nt">"test-web-server-port"</span><span class="p">:</span><span class="w"> </span><span class="mi">1234</span><span class="p">,</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">        </span><span class="nt">"test-web-server-host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhorse"</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="add-driver-scripts">Add driver scripts<a class="headerlink" href="#add-driver-scripts" title="Permanent link">&para;</a></h3>
 <p>Sometimes you might want users of your driver to be able to run scripts outside the context of
@@ -4942,11 +5025,11 @@ a session (for example, to run a script that pre-builds aspects of your driver).
 you can add a map of script names and JS files to the <code>scripts</code> field within your Appium extension
 metadata. So let's say you've created a script in your project that lives in a <code>scripts</code> directory
 in your project, named <code>driver-prebuild.js</code>. Then you could add a <code>scripts</code> field like this:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="p">{</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">        </span><span class="nt">"prebuild"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./scripts/driver-prebuild.js"</span>
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">        </span><span class="nt">"prebuild"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./scripts/driver-prebuild.js"</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Now, assuming your driver is named <code>mydriver</code>, users of your driver can run <code>appium driver run
 mydriver prebuild</code>, and your script will execute.</p>
@@ -4958,17 +5041,17 @@ webview mode, it also interfaces with Chromedriver.</p>
 <p>If you find yourself in this situation, it is extremely easy to tell Appium that your driver is
 just going to be proxying WebDriver commands straight to another endpoint.</p>
 <p>First, let Appium know that your driver <em>can</em> proxy by implementing the <code>canProxy</code> method:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nx">canProxy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nx">canProxy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Next, tell Appium which WebDriver routes it should <em>not</em> attempt to proxy (there often end up being
 certain routes that you don't want to forward on):</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="nx">getProxyAvoidList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">        </span><span class="p">[</span><span class="s1">'POST'</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">RegExp</span><span class="p">(</span><span class="s1">'^/session/[^/]+/appium'</span><span class="p">)]</span>
-</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">    </span><span class="p">];</span>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nx">getProxyAvoidList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">        </span><span class="p">[</span><span class="s1">'POST'</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">RegExp</span><span class="p">(</span><span class="s1">'^/session/[^/]+/appium'</span><span class="p">)]</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="p">];</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>The proxy avoidance list should be an array of arrays, where each inner array has an HTTP method as
 its first member, and a regular expression as its second. If the regular expression matches the
@@ -4977,16 +5060,16 @@ example, we are avoiding proxying all <code>POST</code> routes that have the <co
 <p>Next, we have to set up the proxying itself. The way to do this is to use a special class from
 Appium called <code>WebDriverProxy</code>. You'll want to create a <code>WebDriverProxy</code> object using the details
 required to connect to the remote server:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">// import {WebDriverProxy} from 'appium/driver';</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
-</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">proxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebDriverProxy</span><span class="p">({</span>
-</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">    </span><span class="nx">server</span><span class="o">:</span><span class="w"> </span><span class="s1">'remote.server'</span><span class="p">,</span>
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">    </span><span class="nx">port</span><span class="o">:</span><span class="w"> </span><span class="mf">1234</span><span class="p">,</span>
-</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="w">    </span><span class="nx">base</span><span class="o">:</span><span class="w"> </span><span class="s1">'/'</span><span class="p">,</span>
-</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="p">});</span>
-</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>
-</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
-</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyCommand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">command</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1">// import {WebDriverProxy} from 'appium/driver';</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">proxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebDriverProxy</span><span class="p">({</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">    </span><span class="nx">server</span><span class="o">:</span><span class="w"> </span><span class="s1">'remote.server'</span><span class="p">,</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">    </span><span class="nx">port</span><span class="o">:</span><span class="w"> </span><span class="mf">1234</span><span class="p">,</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="w">    </span><span class="nx">base</span><span class="o">:</span><span class="w"> </span><span class="s1">'/'</span><span class="p">,</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="p">});</span>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyCommand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">command</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
 </span></code></pre></div>
 <p>Here we are creating a proxy object and assigning some of its methods to <code>this</code> under the names
 <code>proxyReqRes</code> and <code>proxyCommand</code>. This is required for Appium to use the proxy, so don't forget
@@ -4995,9 +5078,9 @@ source code as well.</p>
 <p>Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
 be active, or it might only be active when in a certain context. You can define the logic as an
 implementation of <code>proxyActive</code>:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nx">proxyActive</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// or use custom logic</span>
-</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nx">proxyActive</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// or use custom logic</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>With those pieces in play, you won't have to reimplement anything that's already implemented by the
 remote endpoint you're proxying to. Appium will take care of all the proxying for you.</p>
@@ -5050,15 +5133,15 @@ three ways:</p>
 to its set of allowed HTTP routes and command names. You do this by assigning the <code>newMethodMap</code>
 static variable in your driver class to an object of the same form as Appium's <code>routes.js</code> object.
 For example, here is the <code>newMethodMap</code> for the <code>FakeDriver</code> example driver:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">newMethodMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="s1">'/session/:sessionId/fakedriver'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getFakeThing'</span><span class="p">},</span>
-</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">    </span><span class="nx">POST</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'setFakeThing'</span><span class="p">,</span><span class="w"> </span><span class="nx">payloadParams</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'thing'</span><span class="p">]}},</span>
-</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">  </span><span class="s1">'/session/:sessionId/fakedriverargs'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getFakeDriverArgs'</span><span class="p">},</span>
-</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="p">};</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">newMethodMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="w">  </span><span class="s1">'/session/:sessionId/fakedriver'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getFakeThing'</span><span class="p">},</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">    </span><span class="nx">POST</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'setFakeThing'</span><span class="p">,</span><span class="w"> </span><span class="nx">payloadParams</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'thing'</span><span class="p">]}},</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span><span class="s1">'/session/:sessionId/fakedriverargs'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">    </span><span class="nx">GET</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'getFakeDriverArgs'</span><span class="p">},</span>
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="w">  </span><span class="p">},</span>
+</span><span id="__span-24-9"><a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a><span class="p">};</span>
 </span></code></pre></div>
 <p>In this example we're adding a few new routes and a total of 3 new commands. For more examples of
 how to define commands in this way, it's best to have a look through <code>routes.js</code>. Now all you need
@@ -5076,20 +5159,20 @@ field to your driver class, called <code>newBidiCommands</code>. It has a format
 Basically it encapsulates information about the BiDi module, BiDi command name, reference to your
 driver instance method that will handle the command, and required and optional parameters. Here's
 an example of a <code>newBidiCommands</code> as implemented on an imaginary driver:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">newBidiCommands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span><span class="s1">'appium:video'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">    </span><span class="nx">startFramerateCapture</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">      </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'startFrameCap'</span><span class="p">,</span>
-</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">      </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="w">        </span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'videoSource'</span><span class="p">],</span>
-</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="w">        </span><span class="nx">optional</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'showOnScreen'</span><span class="p">],</span>
-</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-26-9"><a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-26-10"><a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a><span class="w">    </span><span class="nx">stopFramerateCapture</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-26-11"><a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a><span class="w">      </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'stopFrameCap'</span><span class="p">,</span>
-</span><span id="__span-26-12"><a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-26-13"><a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-26-14"><a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="p">};</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">newBidiCommands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="s1">'appium:video'</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span><span class="nx">startFramerateCapture</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">      </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'startFrameCap'</span><span class="p">,</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">      </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">        </span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'videoSource'</span><span class="p">],</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">        </span><span class="nx">optional</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'showOnScreen'</span><span class="p">],</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">    </span><span class="nx">stopFramerateCapture</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="w">      </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'stopFrameCap'</span><span class="p">,</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="p">};</span>
 </span></code></pre></div>
 <p>In this imaginary example, we have defined two new BiDi commands:
 <code>appium:video.startFramerateCapture</code> and <code>appium:video.stopFramerateCapture</code>. Note first of all
@@ -5105,9 +5188,9 @@ have access to already: Execute Script. Appium provides some a convenient tool f
 easy. Let's say you are building a driver for stereo system called <code>soundz</code>, and you wanted to
 create a command for playing a song by name. You could expose this to your users in such a way that
 they call something like:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1">// webdriverio example. Calling webdriverio's `executeScript` command is what trigger's Appium's</span>
-</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="c1">// Execute Script command handler</span>
-</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">'soundz: playSong'</span><span class="p">,</span><span class="w"> </span><span class="p">[{</span><span class="nx">song</span><span class="o">:</span><span class="w"> </span><span class="s1">'Stairway to Heaven'</span><span class="p">,</span><span class="w"> </span><span class="nx">artist</span><span class="o">:</span><span class="w"> </span><span class="s1">'Led Zeppelin'</span><span class="p">}]);</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1">// webdriverio example. Calling webdriverio's `executeScript` command is what trigger's Appium's</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="c1">// Execute Script command handler</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">'soundz: playSong'</span><span class="p">,</span><span class="w"> </span><span class="p">[{</span><span class="nx">song</span><span class="o">:</span><span class="w"> </span><span class="s1">'Stairway to Heaven'</span><span class="p">,</span><span class="w"> </span><span class="nx">artist</span><span class="o">:</span><span class="w"> </span><span class="s1">'Led Zeppelin'</span><span class="p">}]);</span>
 </span></code></pre></div>
 <p>Then in your driver code you can define the static property <code>executeMethodMap</code> as a mapping of
 script names to methods on your driver. It has the same basic form as <code>newMethodMap</code>, described
@@ -5116,20 +5199,20 @@ handler, which according to Appium's routes mapping is called <code>execute</cod
 call a single helper function, <code>this.executeMethod</code>, which takes care of looking at the script and
 arguments the user sent in and routing it to the correct custom handler you've defined. Here's an
 example:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">executeMethodMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span><span class="s1">'soundz: playSong'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">    </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'soundzPlaySong'</span><span class="p">,</span>
-</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">    </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'song'</span><span class="p">,</span><span class="w"> </span><span class="s1">'artist'</span><span class="p">],</span><span class="w"> </span><span class="nx">optional</span><span class="o">:</span><span class="w"> </span><span class="p">[]},</span>
-</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="p">}</span>
-</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>
-</span><span id="__span-28-8"><a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a><span class="k">async</span><span class="w"> </span><span class="nx">soundzPlaySong</span><span class="p">(</span><span class="nx">song</span><span class="p">,</span><span class="w"> </span><span class="nx">artist</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-28-9"><a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="w">  </span><span class="c1">// play the song based on song and artist details</span>
-</span><span id="__span-28-10"><a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="p">}</span>
-</span><span id="__span-28-11"><a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>
-</span><span id="__span-28-12"><a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a><span class="k">async</span><span class="w"> </span><span class="nx">execute</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-28-13"><a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">executeMethod</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">);</span>
-</span><span id="__span-28-14"><a id="__codelineno-28-14" name="__codelineno-28-14" href="#__codelineno-28-14"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">static</span><span class="w"> </span><span class="nx">executeMethodMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span><span class="s1">'soundz: playSong'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">    </span><span class="nx">command</span><span class="o">:</span><span class="w"> </span><span class="s1">'soundzPlaySong'</span><span class="p">,</span>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">    </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">required</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'song'</span><span class="p">,</span><span class="w"> </span><span class="s1">'artist'</span><span class="p">],</span><span class="w"> </span><span class="nx">optional</span><span class="o">:</span><span class="w"> </span><span class="p">[]},</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="p">}</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="k">async</span><span class="w"> </span><span class="nx">soundzPlaySong</span><span class="p">(</span><span class="nx">song</span><span class="p">,</span><span class="w"> </span><span class="nx">artist</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="w">  </span><span class="c1">// play the song based on song and artist details</span>
+</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a><span class="p">}</span>
+</span><span id="__span-27-11"><a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a>
+</span><span id="__span-27-12"><a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a><span class="k">async</span><span class="w"> </span><span class="nx">execute</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-27-13"><a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">executeMethod</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="p">);</span>
+</span><span id="__span-27-14"><a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>A couple notes about this system:</p>
 <ol>
@@ -5145,6 +5228,12 @@ example:</p>
    mode!</li>
 <li>The <code>executeMethod</code> helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in <code>executeMethodMap</code>, or if there are missing parameters.</li>
+<li>If your driver is written in TypeScript, declare the map <code>as const satisfies
+      ExecuteMethodMap&lt;MyDriver&gt;</code> (with <code>ExecuteMethodMap</code> imported from <code>@appium/types</code>). The
+   compiler then checks that each <code>command</code> names a method of your driver, and that the
+   <code>required</code>/<code>optional</code> params are consistent with that method's signature: the method must not
+   require a parameter which is listed as <code>optional</code> (or not listed at all), and must accept all
+   of the listed parameters.</li>
 </ol>
 <p>One of the nice things about the Execute Method strategy is that methods implemented in this way
 will be available via the classic or BiDi interfaces (since they will result in the same Appium
@@ -5159,22 +5248,22 @@ cannot change during the course of a test, and sometimes users want to adjust pa
 Appium has a <a href="../../guides/settings/">Settings</a> API for this purpose.</p>
 <p>To support settings in your own driver, first of all define <code>this.settings</code> to be an instance of
 the appropriate class, in your constructor:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1">// import {DeviceSettings} from 'appium/driver';</span>
-</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>
-</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DeviceSettings</span><span class="p">();</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="c1">// import {DeviceSettings} from 'appium/driver';</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DeviceSettings</span><span class="p">();</span>
 </span></code></pre></div>
 <p>Now, you can read user settings any time simply by calling <code>this.settings.getSettings()</code>. This will
 return a JS object where the settings names are keys and have their corresponding values.</p>
 <p>If you want to assign some default settings, or run some code on your end whenever settings are
 updated, you can do both of these things as well.</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">setting1</span><span class="o">:</span><span class="w"> </span><span class="s1">'value1'</span><span class="p">};</span>
-</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DeviceSettings</span><span class="p">(</span><span class="nx">defaults</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">onSettingsUpdate</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
-</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="p">}</span>
-</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>
-</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="k">async</span><span class="w"> </span><span class="nx">onSettingsUpdate</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">  </span><span class="c1">// do anything you want here with key and value</span>
-</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="p">}</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="kr">constructor</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">setting1</span><span class="o">:</span><span class="w"> </span><span class="s1">'value1'</span><span class="p">};</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">DeviceSettings</span><span class="p">(</span><span class="nx">defaults</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">onSettingsUpdate</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="p">}</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="k">async</span><span class="w"> </span><span class="nx">onSettingsUpdate</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="w">  </span><span class="c1">// do anything you want here with key and value</span>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="emit-bidi-events">Emit BiDi events<a class="headerlink" href="#emit-bidi-events" title="Permanent link">&para;</a></h3>
 <p>With the WebDriver BiDi protocol, clients can subscribe to arbitrary events which can be sent
@@ -5186,59 +5275,71 @@ example, let's say our driver wants to periodically emit CPU load information. W
 event called <code>system.cpu</code>, and a payload that looks like <code>{load: 0.97}</code> to signify 97% CPU usage.
 Whenever we want, our driver can simply call the following code (assuming we have the current load
 in <code>this.currentCpuLoad</code>):</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">eventEmitter</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'bidiEvent'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'appium:system.cpu'</span><span class="p">,</span>
-</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">  </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">load</span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentCpuLoad</span><span class="p">},</span>
-</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="p">})</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">eventEmitter</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'bidiEvent'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'appium:system.cpu'</span><span class="p">,</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">load</span><span class="o">:</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">currentCpuLoad</span><span class="p">},</span>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="p">})</span>
 </span></code></pre></div>
 <p>Now, if the client has subscribed to the <code>system.cpu</code> event, it will be notified with the load
 whenever the driver emits it.</p>
+<h4 id="slow-clients-and-high-rate-events">Slow clients and high-rate events<a class="headerlink" href="#slow-clients-and-high-rate-events" title="Permanent link">&para;</a></h4>
+<p>Appium does not buffer events indefinitely for a client that does not read them. A connection
+that keeps more than <code>--bidi-max-buffered-bytes</code> unsent for longer than <code>--bidi-max-buffered-ms</code>
+is closed with the code <code>1013</code>, and connections that do not answer WebSocket pings (see
+<code>--bidi-heartbeat-interval</code>) are terminated. Both only affect the offending connection.</p>
+<p>Drivers that emit events at a high rate (e.g. media streams) can let Appium skip events for a
+connection that is falling behind, instead of waiting for it to be closed. Add a <code>delivery</code> hint
+to the event (it is never sent to clients; older Appium versions ignore it):</p>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">eventEmitter</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'bidiEvent'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="w">  </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'appium:media.units'</span><span class="p">,</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">  </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">track</span><span class="o">:</span><span class="w"> </span><span class="s1">'video'</span><span class="p">,</span><span class="w"> </span><span class="nx">units</span><span class="p">},</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">  </span><span class="nx">delivery</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">policy</span><span class="o">:</span><span class="w"> </span><span class="s1">'droppable'</span><span class="p">,</span><span class="w"> </span><span class="nx">chain</span><span class="o">:</span><span class="w"> </span><span class="s1">'video'</span><span class="p">,</span><span class="w"> </span><span class="nx">syncPoint</span><span class="o">:</span><span class="w"> </span><span class="nx">startsWithKeyframe</span><span class="p">},</span>
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="p">})</span>
+</span></code></pre></div>
+<ul>
+<li><code>policy</code>: <code>reliable</code> (default) events are always sent, <code>droppable</code> ones may be skipped.</li>
+<li><code>chain</code>: events of the same chain depend on each other. After one is skipped for a connection,
+  the following ones are skipped for it too, until an event with <code>syncPoint: true</code> (e.g. a keyframe)
+  arrives and the connection has caught up. Every connection resynchronizes independently.</li>
+</ul>
+<p>Subscriptions are per session, not per connection, so Appium decides by the state of each
+connection's buffer. To react to dropped events (e.g. to request a keyframe or lower the bitrate),
+listen to <code>bidiBackpressure</code> on the same emitter. Its payload is <code>{method, chain?, state, dropped}</code>,
+where <code>state</code> is <code>dropping</code> once the first connection starts skipping events (and again whenever a
+sync point is skipped, so that you can request a new one) and <code>recovered</code> once the last one stops, and <code>dropped</code> is the largest number of events skipped for a single connection.</p>
 <h3 id="make-itself-aware-of-resources-other-concurrent-drivers-are-using">Make itself aware of resources other concurrent drivers are using<a class="headerlink" href="#make-itself-aware-of-resources-other-concurrent-drivers-are-using" title="Permanent link">&para;</a></h3>
 <p>Let's say your driver uses up some system resources, like ports. There are a few ways to make sure
 that multiple simultaneous sessions don't use the same resources:</p>
 <ol>
 <li>Have your users specify resource IDs via capabilities (<code>appium:driverPort</code> etc)</li>
 <li>Just always use free resources (find a new random port for each session)</li>
-<li>Have each driver express what resources it is using, then examine currently-used resources from
-   other drivers when a new session begins.</li>
+<li>Have each running instance of your driver publish and subscribe to messages on a shared IPC
+   channel, so sessions can coordinate directly with one another.</li>
 </ol>
-<div class="admonition warning">
-<p class="admonition-title">Deprecated</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>The `driverData`-based mechanism described below is deprecated. Prefer
-</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>[IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
-</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>concurrently-running sessions instead.
-</span></code></pre></div>
-<p>To support this third strategy, you can implement <code>get driverData</code> in your driver to return what
-sorts of resources your driver is currently using, for example:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="nx">get</span><span class="w"> </span><span class="nx">driverData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="nx">specialPort</span><span class="o">:</span><span class="w"> </span><span class="mf">1234</span><span class="p">,</span><span class="w"> </span><span class="nx">specialFile</span><span class="o">:</span><span class="w"> </span><span class="err">/path/to/file}</span>
-</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>Now, when a new session is started on your driver, the <code>driverData</code> response from any other
-simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the deprecated, multi-argument form of the <code>createSession</code> method:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">createSession</span><span class="p">(</span><span class="nx">jwpCaps</span><span class="p">,</span><span class="w"> </span><span class="nx">reqCaps</span><span class="p">,</span><span class="w"> </span><span class="nx">w3cCaps</span><span class="p">,</span><span class="w"> </span><span class="nx">driverData</span><span class="p">)</span>
-</span></code></pre></div>
-<p>You can dig into this <code>driverData</code> array to see what resources other drivers are using to help
-determine which ones you want to use for this particular session.</p>
+<p>The per-session IPC channel described in Send messages to plugins running on the same
+session is isolated per session, so it
+can't be used for this: it doesn't let you talk to <em>other</em> sessions of your driver. Instead,
+construct and hold on to your own <code>AppiumIpc</code> instance (exported from <code>appium/driver.js</code>) at
+module scope in your driver's package, for example as a memoized singleton. Since Node.js caches
+modules, every instance of your driver loaded within the same Appium server process will share
+that one <code>AppiumIpc</code> object, and can use it to publish and subscribe to topics across sessions —
+the same way the per-session channel works, just not scoped to a single session. See
+<a href="https://github.com/appium/appium-xcuitest-driver/blob/master/lib/session-claim-handler.ts">xcuitest-driver's <code>session-claim-handler.ts</code></a>
+for a real example, which uses this technique to detect and resolve conflicting sessions targeting
+the same device UDID.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>Be careful here, since `driverData` is only passed between sessions of a single running Appium
-</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>server. There's nothing to stop a user from running multiple Appium servers and requesting your
-</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>driver simultaneously on each of them. In this case, you won't be able to ensure independence
-</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a>of resources via `driverData`, so you might consider using file-based locking mechanisms or
-</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>something similar.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>This only works for sessions running within the same Node.js process (i.e. the same Appium
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>server). It cannot coordinate sessions running on different Appium server processes; for that,
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>consider file-based locking or a similar out-of-process mechanism.
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>It's also important to note you will only receive `driverData` for other instances of *your*
-</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>driver. So unrelated drivers also running may still be using some system resources. In general
-</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>Appium doesn't provide any features for ensuring unrelated drivers don't interfere with one
-</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>another, so it's up to the drivers to allow users to specify resource locations or addresses to
-</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>avoid clashes.
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>Appium also doesn't provide any features for ensuring unrelated drivers don't interfere with
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>one another, so it's up to the drivers to allow users to specify resource locations or
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>addresses to avoid clashes.
 </span></code></pre></div>
 <h3 id="log-events-to-the-appium-event-timeline">Log events to the Appium event timeline<a class="headerlink" href="#log-events-to-the-appium-event-timeline" title="Permanent link">&para;</a></h3>
 <p>Appium has an <a href="../../guides/event-timing/">Event Timing API</a> which allows users to get timestamps
@@ -5246,7 +5347,7 @@ for certain server-side events (like commands, startup milestones, etc...) and d
 a timeline. The feature basically exists to allow introspection of timing for internal events to
 help with debugging or running analysis on Appium driver internals. You can add your own events to
 the event log:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">logEvent</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">logEvent</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
 </span></code></pre></div>
 <p>Simply provide a name for the event and it will be added at the current time, and made accessible
 as part of the event log for users.</p>
@@ -5273,7 +5374,7 @@ will attempt to gracefully handle any remaining requests before shutting down th
 <p>If you want to perform some of your own cleanup logic when you encounter this condition, you can
 either do so immediately before calling <code>this.startUnexpectedShutdown</code>, or you can attach a handler
 to the unexpected shutdown event and run your cleanup logic "out of band" so to speak:</p>
-<div class="language-js highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">onUnexpectedShutdown</span><span class="p">(</span><span class="nx">handler</span><span class="p">)</span>
+<div class="language-js highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="k">this</span><span class="p">.</span><span class="nx">onUnexpectedShutdown</span><span class="p">(</span><span class="nx">handler</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>handler</code> should be a function which receives an error object (representing the reason for the
 unexpected shutdown).</p>
@@ -5302,58 +5403,63 @@ string (so this would be something advertised in the driver/plugin documentation
 </ul>
 <h4 id="ipcsubscription-object"><code>IpcSubscription</code> object<a class="headerlink" href="#ipcsubscription-object" title="Permanent link">&para;</a></h4>
 <p>Here is an example of how subscribing and use of these subscription methods might work:</p>
-<div class="language-ts highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">onIpcInit</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="w">  </span><span class="c1">// we know at this point in our driver/plugin lifecycle that we can use IPC methods</span>
-</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">MyMessageData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">myData</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">};</span><span class="w"> </span><span class="c1">// let's say the message data for this channel has this shape</span>
-</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>
-</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">ipcSubscribe</span><span class="o">&lt;</span><span class="nx">MyMessageData</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'coolTopic'</span><span class="p">);</span>
-</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>
-</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a><span class="w">  </span><span class="c1">// listen for new messages on topic</span>
-</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a><span class="w">  </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">message</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span><span class="w"> </span><span class="c1">// {myData: 'something'}</span>
-</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a><span class="w">  </span><span class="p">});</span>
-</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a>
-</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a><span class="w">  </span><span class="c1">// publish data to the topic; might throw if the data is larger than configured max size, or we</span>
-</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a><span class="w">  </span><span class="c1">// are no longer subscribed</span>
-</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">publish</span><span class="p">({</span><span class="nx">myData</span><span class="o">:</span><span class="w"> </span><span class="s1">'hi'</span><span class="p">});</span>
-</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a>
-</span><span id="__span-39-16"><a id="__codelineno-39-16" name="__codelineno-39-16" href="#__codelineno-39-16"></a><span class="w">  </span><span class="c1">// get last message sent to topic</span>
-</span><span id="__span-39-17"><a id="__codelineno-39-17" name="__codelineno-39-17" href="#__codelineno-39-17"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="nx">data</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">getMessage</span><span class="p">()</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">{</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">null</span><span class="p">};</span>
-</span><span id="__span-39-18"><a id="__codelineno-39-18" name="__codelineno-39-18" href="#__codelineno-39-18"></a><span class="w">  </span><span class="c1">// data = {myData: 'hi'}</span>
-</span><span id="__span-39-19"><a id="__codelineno-39-19" name="__codelineno-39-19" href="#__codelineno-39-19"></a>
-</span><span id="__span-39-20"><a id="__codelineno-39-20" name="__codelineno-39-20" href="#__codelineno-39-20"></a><span class="w">  </span><span class="c1">// unsubscribe</span>
-</span><span id="__span-39-21"><a id="__codelineno-39-21" name="__codelineno-39-21" href="#__codelineno-39-21"></a><span class="w">  </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span><span class="w"> </span><span class="c1">// returns true if we unsubscribed and false if no subscription existed</span>
-</span><span id="__span-39-22"><a id="__codelineno-39-22" name="__codelineno-39-22" href="#__codelineno-39-22"></a><span class="p">}</span>
+<div class="language-ts highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="k">async</span><span class="w"> </span><span class="nx">onIpcInit</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="w">  </span><span class="c1">// we know at this point in our driver/plugin lifecycle that we can use IPC methods</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">MyMessageData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="nx">myData</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">};</span><span class="w"> </span><span class="c1">// let's say the message data for this channel has this shape</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">ipcSubscribe</span><span class="o">&lt;</span><span class="nx">MyMessageData</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'coolTopic'</span><span class="p">);</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="w">  </span><span class="c1">// listen for new messages on topic</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a><span class="w">  </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">message</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span><span class="w"> </span><span class="c1">// {myData: 'something'}</span>
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a><span class="w">  </span><span class="p">});</span>
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="w">  </span><span class="c1">// publish data to the topic; might throw if the data is larger than configured max size, or we</span>
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a><span class="w">  </span><span class="c1">// are no longer subscribed</span>
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a><span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">publish</span><span class="p">({</span><span class="nx">myData</span><span class="o">:</span><span class="w"> </span><span class="s1">'hi'</span><span class="p">});</span>
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a>
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a><span class="w">  </span><span class="c1">// get last message sent to topic</span>
+</span><span id="__span-36-17"><a id="__codelineno-36-17" name="__codelineno-36-17" href="#__codelineno-36-17"></a><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="nx">data</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">getMessage</span><span class="p">()</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">{</span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">null</span><span class="p">};</span>
+</span><span id="__span-36-18"><a id="__codelineno-36-18" name="__codelineno-36-18" href="#__codelineno-36-18"></a><span class="w">  </span><span class="c1">// data = {myData: 'hi'}</span>
+</span><span id="__span-36-19"><a id="__codelineno-36-19" name="__codelineno-36-19" href="#__codelineno-36-19"></a>
+</span><span id="__span-36-20"><a id="__codelineno-36-20" name="__codelineno-36-20" href="#__codelineno-36-20"></a><span class="w">  </span><span class="c1">// unsubscribe</span>
+</span><span id="__span-36-21"><a id="__codelineno-36-21" name="__codelineno-36-21" href="#__codelineno-36-21"></a><span class="w">  </span><span class="nx">subscription</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">();</span><span class="w"> </span><span class="c1">// returns true if we unsubscribed and false if no subscription existed</span>
+</span><span id="__span-36-22"><a id="__codelineno-36-22" name="__codelineno-36-22" href="#__codelineno-36-22"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>With a subscription object, we can also iterate async over it to receive new messages:</p>
-<div class="language-ts highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">subscription</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="w">  </span><span class="c1">// here we have a message and can unwrap its data</span>
-</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="p">}</span>
+<div class="language-ts highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">subscription</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="w">  </span><span class="c1">// here we have a message and can unwrap its data</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Note that the iteration will stop when the subscription ends (i.e., when <code>unsubscribe</code> is called).</p>
 <p>You can also check whether the subscription is still active (if your subscribe and unsubscribe
 logic is not locally connected):</p>
-<div class="language-ts highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">subscription</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="w">  </span><span class="c1">// we know we have not yet unsubscribed</span>
-</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="p">}</span>
+<div class="language-ts highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">subscription</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="w">  </span><span class="c1">// we know we have not yet unsubscribed</span>
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>If the subscription is not active, attempts to call <code>subscription.publish</code> will throw an error.</p>
 <h4 id="ipcmessage-object"><code>IpcMessage</code> object<a class="headerlink" href="#ipcmessage-object" title="Permanent link">&para;</a></h4>
 <p>When you get a message on a topic, it has the following shape:</p>
-<div class="language-ts highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">IpcMessage</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="w">  </span><span class="nx">publisher</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w">   </span><span class="c1">// the id of the publishing object (typically of the form &lt;ClassName&gt;@&lt;uniqueObjectId&gt;)</span>
-</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="w">  </span><span class="nx">timestampMs</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// when the message was published, in ms since epoch</span>
-</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="w">  </span><span class="nx">topic</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w">       </span><span class="c1">// the topic the message was published on</span>
-</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a><span class="w">  </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">,</span><span class="w">             </span><span class="c1">// the arbitrary message data. Must be serializable and a valid argument to 'structuredClone()'</span>
-</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a><span class="p">};</span>
+<div class="language-ts highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">IpcMessage</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="w">  </span><span class="nx">publisher</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w">   </span><span class="c1">// the id of the publishing object (typically of the form &lt;ClassName&gt;@&lt;uniqueObjectId&gt;)</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="w">  </span><span class="nx">timestampMs</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">,</span><span class="w"> </span><span class="c1">// when the message was published, in ms since epoch</span>
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a><span class="w">  </span><span class="nx">topic</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w">       </span><span class="c1">// the topic the message was published on</span>
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a><span class="w">  </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">,</span><span class="w">             </span><span class="c1">// the arbitrary message data. Must be serializable and a valid argument to 'structuredClone()'</span>
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a><span class="p">};</span>
 </span></code></pre></div>
 <h4 id="ipc-notes">IPC Notes<a class="headerlink" href="#ipc-notes" title="Permanent link">&para;</a></h4>
 <p>There are some important things to keep in mind when using Appium's IPC feature:</p>
 <ul>
-<li>IPC is only available once <code>onIpcInit</code> has been called, at the end of the <code>createSession</code> flow.
-  It cannot be used statically or in <code>createSession</code> hooks</li>
-<li>In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
-  accessing or reading data sent on IPC channels in other sessions.)</li>
+<li>The <code>ipcSubscribe</code> method (and the IPC channel it subscribes to) is only available once
+  <code>onIpcInit</code> has been called, at the end of the <code>createSession</code> flow. It cannot be used statically
+  or in <code>createSession</code> hooks</li>
+<li>The channel that <code>ipcSubscribe</code> gives you access to is scoped to the current session, and is
+  shared only with the plugins active in that same session (this is also to prevent drivers/plugins
+  from accessing or reading data sent on IPC channels in other sessions.) To coordinate across
+  multiple concurrent sessions of your own driver instead, see Make itself aware of resources
+  other concurrent drivers are
+  using.</li>
 <li>The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the <code>--max-ipc-data-size</code> arg (value is a number in bytes).</li>
 <li>If a message exceeds the configured size, any call to <code>publish</code> methods will throw, so be
@@ -5391,7 +5497,7 @@ extensions, which showcase several ways of using IPC messages.</p>
     <span class="md-icon" title="最終更新日">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年10月20日 03:54:55 UTC"><span class="timeago" datetime="2026-10-20T03:54:55+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年10月20日 03:54:55 UTC">2026-10-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -5558,7 +5664,7 @@ extensions, which showcase several ways of using IPC messages.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

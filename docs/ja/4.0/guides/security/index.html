@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -482,7 +482,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../migrating-2-to-3/" class="md-tabs__link">
+        <a href="../migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -2320,6 +2320,8 @@
       
         
       
+        
+      
     
     
     
@@ -2367,6 +2369,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2688,6 +2718,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#restricting-remote-app-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting Remote App URLs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Restricting Remote App URLs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2823,7 +2881,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -2853,6 +2911,8 @@
   
     
     
+      
+        
       
         
       
@@ -2983,6 +3043,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3649,6 +3737,34 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#restricting-remote-app-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restricting Remote App URLs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Restricting Remote App URLs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3697,7 +3813,7 @@
     
     
       <li class="md-path__item">
-        <a href="../migrating-2-to-3/" class="md-path__link">
+        <a href="../migrating-3-to-4/" class="md-path__link">
           
   <span class="md-ellipsis">
     ガイド
@@ -3796,6 +3912,9 @@ and each feature in the list must additionally include a prefix, indicating the 
 sessions the feature should apply. The prefix can be either the driver's <code>automationName</code>, or the
 wildcard (<code>*</code>) symbol, if the feature should be applied to all drivers. The prefix and feature name
 are separated using the colon character (<code>:</code>).</p>
+<p>Use the driver's <code>automationName</code>, which may differ from its install name. An install-name-only
+prefix does not enable or disable a feature. When configuring a session, Appium warns about such
+entries for that driver unless the prefix is another installed driver's <code>automationName</code>.</p>
 <p>For example, <code>first:foo</code> refers to the <code>foo</code> feature for the <code>first</code> driver, whereas <code>*:bar</code> refers
 to the <code>bar</code> feature for all drivers.</p>
 <h2 id="insecure-features">Insecure Features<a class="headerlink" href="#insecure-features" title="Permanent link">&para;</a></h2>
@@ -3826,6 +3945,157 @@ features, as well as the features defined in official plugins, see
 <p>Turn on multiple insecure features for specific drivers:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium<span class="w"> </span>--allow-insecure<span class="o">=</span>uiautomator2:adb_shell,xcuitest:get_server_logs
 </span></code></pre></div>
+<h2 id="restricting-remote-app-urls">Restricting Remote App URLs<a class="headerlink" href="#restricting-remote-app-urls" title="Permanent link">&para;</a></h2>
+<p>Several drivers accept a URL instead of a local path in capabilities such as <code>appium:app</code>, in which
+case the Appium server downloads the application package from that URL before starting the session.
+By default, any <code>http:</code> or <code>https:</code> URL is accepted. Server hosts who want to control which URLs
+their server is allowed to download from can do so with the <code>--app-url-rules</code> argument (or the
+<code>server.app-url-rules</code> property in a <a href="../config/">configuration file</a>). Its value is a JSON object
+(or a path to a JSON file) with any of the following properties:</p>
+<table>
+<thead>
+<tr>
+<th><div style="width:10em">Rule</div></th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow</code></td>
+<td>List of hostname patterns, IP addresses, or CIDR subnets. If non-empty, a hostname or its resolved address must match <em>at least one</em></td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>deny</code></td>
+<td>List of hostname patterns, IP addresses, or CIDR subnets. A matching hostname or resolved address is rejected, even if an <code>allow</code> rule also matches</td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>httpsOnly</code></td>
+<td>Only accept <code>https:</code> URLs</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>allowCredentials</code></td>
+<td>Accept URLs containing a username and/or password (e.g. <code>https://user:pass@host/app.apk</code>)</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>maxRedirects</code></td>
+<td>Maximum number of HTTP redirects to follow while downloading. Set to <code>0</code> to reject any redirect</td>
+<td><code>21</code></td>
+</tr>
+</tbody>
+</table>
+<p>Hostnames are normalized (lowercased, converted to Punycode, trailing dot removed) before matching
+and resolved on every download. Address rules apply to literal addresses and all dynamically
+resolved IPv4/IPv6 addresses. The rules are also applied to every redirect, so redirects cannot be
+used to escape them. If a URL violates any rule, the session is not created and a generic error
+is returned. The violated rule is deliberately neither reported to the client nor written to the
+server log, since server logs are often handed over to clients as well. URL schemes, ports, paths,
+queries, and fragments are not matched.</p>
+<p>Hostname patterns use the <a href="https://github.com/micromatch/picomatch#globbing-features">picomatch</a>
+glob syntax and are matched against the whole hostname:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Matches</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>artifacts.example.com</code></td>
+<td>Exactly this hostname</td>
+</tr>
+<tr>
+<td><code>*.example.com</code></td>
+<td>Any subdomain of <code>example.com</code> (including nested ones, like <code>a.b.example.com</code>), but not <code>example.com</code> itself</td>
+</tr>
+<tr>
+<td><code>*example.com</code></td>
+<td>Any hostname ending with <code>example.com</code>, including <code>example.com</code> itself</td>
+</tr>
+<tr>
+<td><code>apps.{staging,prod}.example.com</code></td>
+<td><code>apps.staging.example.com</code> and <code>apps.prod.example.com</code></td>
+</tr>
+<tr>
+<td><code>build-?.example.com</code></td>
+<td><code>build-1.example.com</code>, <code>build-a.example.com</code>, etc.</td>
+</tr>
+<tr>
+<td><code>node[0-9].example.com</code></td>
+<td><code>node0.example.com</code> to <code>node9.example.com</code></td>
+</tr>
+</tbody>
+</table>
+<p>IP address rules match a single address (<code>192.0.2.10</code>, <code>2001:db8::1</code>) or a whole subnet in CIDR
+notation (<code>10.0.0.0/8</code>, <code>2001:db8::/32</code>). IPv4 rules also match IPv4-mapped IPv6 addresses
+(e.g. <code>::ffff:10.1.2.3</code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>These rules only apply to URLs the server downloads via the standard app configuration helper,
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>which is used for `appium:app` and similar capabilities by all official drivers. Drivers may
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>define custom capabilities with URLs that are processed differently and thus are not covered.
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>If the server downloads applications through an HTTP proxy (configured via the `HTTP_PROXY`,
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>`HTTPS_PROXY` and `NO_PROXY` environment variables), the proxy resolves the destination host
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>itself, so rules containing IP addresses or subnets cannot be enforced for proxied downloads.
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Such downloads are rejected; either exclude the download hosts from proxying via `NO_PROXY`
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>or only use hostname-based rules.
+</span></code></pre></div>
+<h3 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h3>
+<p>Only allow HTTPS downloads from an internal artifact server, without credentials in the URL and
+without following redirects:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium<span class="w"> </span>--app-url-rules<span class="o">=</span><span class="s1">'{"allow": ["artifacts.example.com", "10.0.0.0/8"], "httpsOnly": true, "allowCredentials": false, "maxRedirects": 0}'</span>
+</span></code></pre></div>
+<p>The same configuration as part of a config file:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">server</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">app-url-rules</span><span class="p">:</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">allow</span><span class="p">:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'artifacts.example.com'</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'10.0.0.0/8'</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">httpsOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="nt">allowCredentials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">maxRedirects</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</span></code></pre></div>
+<p>Allow downloads from any subdomain of <code>example.com</code> and from two IPv6 subnets, except from the
+staging environment:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">server</span><span class="p">:</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">app-url-rules</span><span class="p">:</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="nt">allow</span><span class="p">:</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.example.com'</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'2001:db8:1::/48'</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'2001:db8:2::/48'</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span><span class="nt">deny</span><span class="p">:</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.staging.example.com'</span>
+</span></code></pre></div>
+<p>Allow downloads from anywhere, except from the server itself, private networks, link-local
+addresses (such as cloud metadata services), and any <code>.internal</code> hostname:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">server</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">app-url-rules</span><span class="p">:</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span><span class="nt">deny</span><span class="p">:</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'localhost'</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.internal'</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'127.0.0.0/8'</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'10.0.0.0/8'</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'172.16.0.0/12'</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'192.168.0.0/16'</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'169.254.0.0/16'</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'::1/128'</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'fc00::/7'</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'fe80::/10'</span>
+</span></code></pre></div>
+<p>The rules in the last example are applied to the addresses each hostname resolves to, so they
+cannot be bypassed via DNS. Note that the <code>deny</code> list also blocks any download from the server's
+own private network, so a private artifact server must be excluded from the <code>deny</code> rules in order
+to work.</p>
 
 
 
@@ -3846,7 +4116,7 @@ features, as well as the features defined in official plugins, see
     <span class="md-icon" title="最終更新日">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年3月13日 01:43:19 UTC"><span class="timeago" datetime="2026-03-13T01:43:19+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年3月13日 01:43:19 UTC">2026-03-13</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4013,7 +4283,7 @@ features, as well as the features defined in official plugins, see
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

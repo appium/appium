@@ -29,7 +29,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.2">
     
     
       
@@ -480,7 +480,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/migrating-2-to-3/" class="md-tabs__link">
+        <a href="../../guides/migrating-3-to-4/" class="md-tabs__link">
           
   
   
@@ -1572,10 +1572,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
+  <a href="#wincore" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Windows
+        WinCore
       
     </span>
   </a>
@@ -1703,6 +1703,17 @@
     <span class="md-ellipsis">
       
         TizenTV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows-legacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows (legacy)
       
     </span>
   </a>
@@ -2593,6 +2604,8 @@
       
         
       
+        
+      
     
     
     
@@ -2637,6 +2650,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/migrating-3-to-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to Appium 4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3012,7 +3053,7 @@
   <span class="md-ellipsis">
     
   
-    SSL/TLS/SPDY Support
+    SSL/TLS Support
   
 
     
@@ -3042,6 +3083,8 @@
   
     
     
+      
+        
       
         
       
@@ -3169,6 +3212,34 @@
     
   
     Execute Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/gestures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automating Gestures
   
 
     
@@ -3881,10 +3952,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
+  <a href="#wincore" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Windows
+        WinCore
       
     </span>
   </a>
@@ -4012,6 +4083,17 @@
     <span class="md-ellipsis">
       
         TizenTV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows-legacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows (legacy)
       
     </span>
   </a>
@@ -4161,25 +4243,19 @@ along with their installation commands and links to their documentation.</p>
 </ul>
 <div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
 </span></code></pre></div>
-<h3 id="windows"><a href="https://github.com/appium/appium-windows-driver">Windows</a><a class="headerlink" href="#windows" title="Permanent link">&para;</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Only the Node.js-based driver part is maintained by the Appium team. The server part
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>(WinAppDriver executable) is provided by Microsoft, but has not been maintained since 2022.
-</span></code></pre></div>
+<h3 id="wincore"><a href="https://appium.github.io/appium-wincore-driver">WinCore</a><a class="headerlink" href="#wincore" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Target: Windows applications</li>
 <li>Mode: Native</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>windows
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>wincore
 </span></code></pre></div>
 <h3 id="xcuitest"><a href="https://appium.github.io/appium-xcuitest-driver/">XCUITest</a><a class="headerlink" href="#xcuitest" title="Permanent link">&para;</a></h3>
 <ul>
 <li>Target: iOS, iPadOS, tvOS, watchOS applications</li>
 <li>Modes: Native, Hybrid, Web</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest
 </span></code></pre></div>
 <h2 id="other-drivers">Other Drivers<a class="headerlink" href="#other-drivers" title="Permanent link">&para;</a></h2>
 <p>These drivers are not maintained by the Appium team and can be used to target other platforms:</p>
@@ -4189,7 +4265,7 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Native</li>
 <li>Supported by: Appium Team / Community</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-flutter-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-flutter-driver
 </span></code></pre></div>
 <h3 id="flutter-integration"><a href="https://github.com/AppiumTestDistribution/appium-flutter-integration-driver">Flutter Integration</a><a class="headerlink" href="#flutter-integration" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4197,7 +4273,7 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Native</li>
 <li>Supported by: Community / <code>@AppiumTestDistribution</code></li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-flutter-integration-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-flutter-integration-driver
 </span></code></pre></div>
 <h3 id="lg-webos"><a href="https://github.com/headspinio/appium-lg-webos-driver">LG WebOS</a><a class="headerlink" href="#lg-webos" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4205,23 +4281,23 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Web</li>
 <li>Supported by: HeadSpin</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-lg-webos-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-lg-webos-driver
 </span></code></pre></div>
 <h3 id="linux-fantonglang"><a href="https://github.com/fantonglang/appium-linux-driver">Linux (@fantonglang)</a><a class="headerlink" href="#linux-fantonglang" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>This driver has not been maintained since 2022 and requires a custom Appium installation
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>This driver has not been maintained since 2022 and requires a custom Appium installation
 </span></code></pre></div>
 <ul>
 <li>Target: Linux applications</li>
 <li>Mode: Native</li>
 <li>Supported by: <code>@fantonglang</code></li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/fantonglang/appium
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">cd</span><span class="w"> </span>appium
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>yarn<span class="w"> </span>install
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>node<span class="w"> </span>./
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/fantonglang/appium
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">cd</span><span class="w"> </span>appium
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>yarn<span class="w"> </span>install
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>node<span class="w"> </span>./
 </span></code></pre></div>
 <h3 id="linux-itsmeaj"><a href="https://github.com/Itsmeaj/appium">Linux (@Itsmeaj)</a><a class="headerlink" href="#linux-itsmeaj" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4229,21 +4305,15 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Native</li>
 <li>Supported by: <code>@Itsmeaj</code></li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>@itsmeaj/appium-linux-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>@itsmeaj/appium-linux-driver
 </span></code></pre></div>
 <h3 id="novawindows"><a href="https://github.com/AutomateThePlanet/appium-novawindows-driver">NovaWindows</a><a class="headerlink" href="#novawindows" title="Permanent link">&para;</a></h3>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-</div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>This driver is recommended as a drop-in replacement for the partially unmaintained
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>[Windows driver](#windows)
-</span></code></pre></div>
 <ul>
 <li>Target: Windows applications</li>
 <li>Mode: Native, Hybrid</li>
 <li>Supported by: Community / Automate The Planet</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-novawindows-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-novawindows-driver
 </span></code></pre></div>
 <h3 id="roku"><a href="https://github.com/headspinio/appium-roku-driver">Roku</a><a class="headerlink" href="#roku" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4251,20 +4321,20 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Native</li>
 <li>Supported by: HeadSpin</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>@headspinio/appium-roku-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>@headspinio/appium-roku-driver
 </span></code></pre></div>
 <h3 id="tizen"><a href="https://github.com/Samsung/appium-tizen-driver">Tizen</a><a class="headerlink" href="#tizen" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>This driver has not been maintained since 2020 and is only compatible with Appium 1
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>This driver has not been maintained since 2020 and is only compatible with Appium 1
 </span></code></pre></div>
 <ul>
 <li>Target: Tizen applications</li>
 <li>Mode: Native</li>
 <li>Supported by: Community / Samsung</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>npm<span class="w"> </span>install<span class="w"> </span>appium-tizen-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>npm<span class="w"> </span>install<span class="w"> </span>appium-tizen-driver
 </span></code></pre></div>
 <h3 id="tizentv"><a href="https://github.com/headspinio/appium-tizen-tv-driver">TizenTV</a><a class="headerlink" href="#tizentv" title="Permanent link">&para;</a></h3>
 <ul>
@@ -4272,7 +4342,20 @@ along with their installation commands and links to their documentation.</p>
 <li>Mode: Web</li>
 <li>Supported by: HeadSpin</li>
 </ul>
-<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-tizen-tv-driver
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-tizen-tv-driver
+</span></code></pre></div>
+<h3 id="windows-legacy"><a href="https://github.com/appium/appium-windows-driver">Windows (legacy)</a><a class="headerlink" href="#windows-legacy" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+</div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>This driver relies on WinAppDriver, which has not been maintained since 2022, and is only
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>compatible with Appium 1-3. Use the [WinCore](#wincore) driver with Appium 4 and newer.
+</span></code></pre></div>
+<ul>
+<li>Target: Windows applications</li>
+<li>Mode: Native</li>
+</ul>
+<div class="language-sh highlight"><span class="filename">Install This Driver</span><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>--source<span class="o">=</span>npm<span class="w"> </span>appium-windows-driver
 </span></code></pre></div>
 <h3 id="youi-engine"><a href="https://github.com/YOU-i-Labs/appium-youiengine-driver">You.i Engine</a><a class="headerlink" href="#youi-engine" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
@@ -4307,7 +4390,7 @@ along with their installation commands and links to their documentation.</p>
     <span class="md-icon" title="最終更新日">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月14日 20:06:10 UTC"><span class="timeago" datetime="2026-11-14T20:06:10+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月14日 20:06:10 UTC">2026-11-14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="ja"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
   </span>
 
     
@@ -4474,7 +4557,7 @@ along with their installation commands and links to their documentation.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.annotate", "content.code.copy", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "navigation.indexes", "navigation.path", "navigation.sections", "navigation.tabs", "navigation.top", "toc.follow"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../js/timeago.min.js"></script>
       

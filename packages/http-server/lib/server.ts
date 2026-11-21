@@ -31,7 +31,10 @@ import {
   handleUpgrade,
   parseJsonBody,
   rejectBrowserOrigin,
+  rejectForeignHosts,
   rejectInvalidJsonOnExtensionRoutes,
+  createHostValidator,
+  invalidHostResponseBody,
   tryHandleWebSocketUpgrade,
 } from './middleware/index.js';
 import {logServerAddress, V4_BROADCAST_IP} from './network.js';
@@ -67,6 +70,15 @@ export interface ConfigureServerOpts {
   extraMethodMap?: MethodMap<ExternalDriver>;
   webSocketsMapping?: StringRecord;
   useLegacyUpgradeHandler?: boolean;
+  /** Hostnames the server expects to be addressed by; accepted in addition to IPs and loopback names. */
+  allowedHostnames?: string[];
+  /**
+   * Reject requests whose Host header is neither an IP address, a loopback name, nor one of
+   * `allowedHostnames` (a DNS-rebinding hardening). Off by default: strict host validation breaks
+   * deployments where the server is addressed by names the server does not know, such as reverse
+   * proxies, Docker service names or mDNS names.
+   */
+  denyForeignHosts?: boolean;
   /** Router mounted before any route is registered; see {@linkcode AppiumServer.frontRouter}. */
   frontRouter: Router;
 }
@@ -80,6 +92,10 @@ export interface ConfigureHttpOpts {
   allowCors?: boolean;
   keepAliveTimeout: number;
   gracefulShutdownTimeout?: number;
+  /** Reject requests (and WebSocket upgrades) whose Host header is foreign */
+  denyForeignHosts?: boolean;
+  /** Hostnames the server expects to be addressed by; accepted in addition to IPs and loopback names */
+  allowedHostnames?: string[];
 }
 
 /** Options for {@linkcode startServer} */
@@ -126,12 +142,20 @@ export async function server(opts: ServerOpts): Promise<AppiumServer> {
           allowCors,
           keepAliveTimeout,
           gracefulShutdownTimeout: cliArgs.shutdownTimeout,
+          denyForeignHosts: cliArgs.denyForeignHosts === true,
+          allowedHostnames: [hostname, cliArgs.address].filter(
+            (h): h is string => typeof h === 'string' && h.length > 0 && h !== '0.0.0.0',
+          ),
         });
         const useLegacyUpgradeHandler = !hasShouldUpgradeCallback(httpServer);
         configureServer({
           app,
           addRoutes: routeConfiguringFunction,
           allowCors,
+          allowedHostnames: [hostname, cliArgs.address].filter(
+            (h): h is string => typeof h === 'string' && h.length > 0 && h !== '0.0.0.0',
+          ),
+          denyForeignHosts: cliArgs.denyForeignHosts === true,
           basePath: normalizedBasePath,
           extraMethodMap,
           webSocketsMapping: appiumServer.webSocketsMapping,
@@ -187,6 +211,8 @@ export function configureServer(opts: ConfigureServerOpts): void {
     app,
     addRoutes,
     allowCors = false,
+    allowedHostnames = [],
+    denyForeignHosts = false,
     basePath: rawBasePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
     webSocketsMapping = {},
@@ -197,6 +223,9 @@ export function configureServer(opts: ConfigureServerOpts): void {
 
   app.use(endLogFormatter);
   app.use(handleLogContext);
+  if (denyForeignHosts) {
+    app.use(rejectForeignHosts(allowedHostnames));
+  }
   // Apply before parsing, routing, and idempotent replay so error and proxy responses are covered too.
   app.use((_req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache');
@@ -285,13 +314,15 @@ async function createServer(app: Express, cliArgs?: Partial<ServerArgs>): Promis
  * @param opts - Configuration options
  * @returns The same server instance typed as AppiumServer
  */
-function configureHttp({
+export function configureHttp({
   httpServer,
   basePath,
   reject,
   allowCors,
   keepAliveTimeout,
   gracefulShutdownTimeout,
+  denyForeignHosts = false,
+  allowedHostnames = [],
 }: ConfigureHttpOpts): AppiumServer {
   const appiumServer = Object.assign(httpServer, {
     webSocketsMapping: {},
@@ -312,7 +343,29 @@ function configureHttp({
     (
       appiumServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
     ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
+    // the native upgrade path bypasses the Express middleware entirely, so the
+    // Host check must be applied here too, before any WebSocket handler runs
+    const isAllowedHost = denyForeignHosts ? createHostValidator(allowedHostnames) : null;
     appiumServer.on('upgrade', (req, socket, head) => {
+      if (isAllowedHost && !isAllowedHost(req.headers.host ? String(req.headers.host) : undefined)) {
+        log.warn(
+          `Rejected a WebSocket upgrade whose Host header '${req.headers.host}' is neither an IP ` +
+            `address, a loopback name, nor an allowed hostname (possible DNS rebinding)`,
+        );
+        const body = JSON.stringify(invalidHostResponseBody());
+        // a rejected client may already be gone; never let the write surface as uncaught
+        socket.on('error', () => {});
+        socket.write(
+          'HTTP/1.1 403 Forbidden\r\n' +
+            'Content-Type: application/json\r\n' +
+            `Content-Length: ${Buffer.byteLength(body)}\r\n` +
+            'Connection: close\r\n' +
+            '\r\n' +
+            body,
+        );
+        socket.end();
+        return;
+      }
       if (
         !tryHandleWebSocketUpgrade({
           req,

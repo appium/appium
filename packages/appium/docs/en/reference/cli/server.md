@@ -37,6 +37,7 @@ appium
 |`--bidi-max-buffered-ms`|Time (in milliseconds) a BiDi connection may stay above `--bidi-max-buffered-bytes` before it is closed. If set to `0`, the connection is closed as soon as the limit is exceeded.|integer|`30000`|
 |`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
+|`--deny-foreign-hosts`|Reject requests whose Host header is neither an IP address, a loopback name, nor the configured server address. Hardens an unauthenticated server against DNS rebinding. Disabled by default, so deployments that reach the server through a reverse proxy, Docker service names, or mDNS names are unaffected.|boolean|`false`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
 |`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
 |`--keep-alive-timeout`, `-ka`|Timeout (in seconds) to use as both the keep-alive timeout and the connection timeout for all client requests. Disabled if set to `0`.|integer|`600`|

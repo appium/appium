@@ -200,8 +200,27 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
+    // the foreign-host (DNS rebinding) middleware is opt-in and not installed by default
     assert.strictEqual(app.use.callCount, 13);
     assert.strictEqual(app.all.callCount, 0);
+  });
+
+  it('should install the foreign-host middleware when denyForeignHosts is enabled', function () {
+    const app = fakeApp() as any;
+    const configureRoutes = () => {};
+    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter, denyForeignHosts: true});
+    assert.strictEqual(app.use.callCount, 14);
+    assert.strictEqual(app.all.callCount, 0);
+
+    const req = {headers: {host: 'rebound.example.net'}} as any;
+    const res = {status: sandbox.stub().returnsThis(), json: sandbox.stub()};
+    const next = sandbox.stub();
+    // the last registered middleware is the foreign-host rejection handler
+    // endLogFormatter, handleLogContext, then the foreign-host rejection handler
+    const mw = app.use.getCall(2).args[0];
+    mw(req, res, next);
+    assert.strictEqual(next.callCount, 0);
+    assert.strictEqual(res.status.calledWith(403), true);
   });
 
   it('should apply new methods in plugins to the standard method map', function () {

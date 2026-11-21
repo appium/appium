@@ -12,10 +12,10 @@ import type {
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
 import {injectAppiumSymlinks} from '../cli/extension-command.js';
 import {runExtensionCommand} from '../cli/extension.js';
-import {ArgParser, getParser} from '../cli/parser.js';
+import {ArgParser, getCliDriverSelection, getParser} from '../cli/parser.js';
 import {runSetupCommand} from '../cli/setup-command.js';
 import {SERVER_SUBCOMMAND} from '../constants.js';
-import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
+import {type ExtensionConfigs, isDriverLocation, loadExtensions} from '../extension/index.js';
 import {log as logger} from '../logger.js';
 import {init as logsinkInit} from '../logsink.js';
 import type {ErrorObject} from '../schema/ajv.js';
@@ -59,6 +59,12 @@ export class AppiumInitializer {
     adjustNodePath();
 
     const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+    const serverDriverConfig = driverConfig.createServerConfig();
+    if (!args) {
+      for (const location of getCliDriverSelection().filter(isDriverLocation)) {
+        await serverDriverConfig.addResolvedDriver(location, true);
+      }
+    }
 
     const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
     this.throwInsteadOfExit = throwInsteadOfExit;
@@ -71,6 +77,7 @@ export class AppiumInitializer {
         preConfigArgs,
         configResult,
         driverConfig,
+        serverDriverConfig,
         pluginConfig,
         appiumHome,
         appiumHomeSourceName,
@@ -130,6 +137,7 @@ export class AppiumInitializer {
     preConfigArgs: PreConfigArgs,
     configResult: Awaited<ReturnType<typeof readConfigFile>>,
     driverConfig: ExtensionConfigs['driverConfig'],
+    serverDriverConfig: ExtensionConfigs['driverConfig'],
     pluginConfig: ExtensionConfigs['pluginConfig'],
     appiumHome: string,
     appiumHomeSourceName: string,
@@ -167,7 +175,6 @@ export class AppiumInitializer {
       await requireDir(appiumHome, true, appiumHomeSourceName);
     }
 
-    const serverDriverConfig = driverConfig.createServerConfig();
     const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>);
     appiumDriver.driverConfig = serverDriverConfig;
     await preflightChecks(serverArgs, this.throwInsteadOfExit);

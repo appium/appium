@@ -212,9 +212,15 @@ class AppiumSchema {
   }
 
   /**
-   * Registers an extension schema.
+   * Registers an extension schema. A package selected by path can replace the
+   * installed schema for that name before CLI parsing.
    */
-  async registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): Promise<void> {
+  async registerSchema(
+    extType: ExtensionType,
+    extName: string,
+    schema: SchemaObject,
+    {replace = false}: {replace?: boolean} = {},
+  ): Promise<void> {
     if (!(extType && extName) || schema === undefined) {
       throw new TypeError('Expected extension type, extension name, and a defined schema');
     }
@@ -226,7 +232,9 @@ class AppiumSchema {
       if (util.isEqual(this.#registeredSchemas[extType].get(normalizedExtName), schema)) {
         return;
       }
-      throw new SchemaNameConflictError(extType, extName);
+      if (!replace) {
+        throw new SchemaNameConflictError(extType, extName);
+      }
     }
     await this.#ajv.validateSchema(schema, true);
     this.#registeredSchemas[extType].set(normalizedExtName, schema);

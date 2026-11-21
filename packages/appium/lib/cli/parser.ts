@@ -18,6 +18,7 @@ import {
   SETUP_SUBCOMMAND,
 } from '../constants.js';
 import {APPIUM_VER} from '../helpers/build.js';
+import {transformers} from '../schema/cli-transformers.js';
 import type {ArgumentDefinitions} from '../schema/index.js';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema/index.js';
 import {setPath} from '../utils/index.js';
@@ -359,4 +360,23 @@ export async function getParser(debug = false): Promise<ArgParser> {
   await finalizeSchema();
 
   return new ArgParser(debug);
+}
+
+/** Reads driver selections before the final parser has registered driver-specific options. */
+export function getCliDriverSelection(args: string[] = process.argv.slice(2)): string[] {
+  if (
+    (NON_SERVER_ARGS.has(args[0]) && args[0] !== SERVER_SUBCOMMAND) ||
+    !args.some((arg) => arg === '--use-drivers' || arg.startsWith('--use-drivers='))
+  ) {
+    return [];
+  }
+  const parser = new ArgumentParser({add_help: false, allow_abbrev: false, exit_on_error: false});
+  parser.add_argument('--use-drivers', {type: transformers.csv});
+  try {
+    const [selection] = parser.parse_known_args(args);
+    return (selection.use_drivers as string[] | undefined) ?? [];
+  } catch {
+    // Leave argument errors to the full CLI parser and its normal error reporting.
+    return [];
+  }
 }

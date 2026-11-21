@@ -110,6 +110,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     extType: E,
     extName: string,
     extManifest: ExtManifestWithSchema<E>,
+    schemaRoot?: string,
   ): Promise<SchemaObject | undefined> {
     const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
@@ -119,7 +120,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
-      const schemaPath = await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      const schemaPath = schemaRoot
+        ? path.resolve(schemaRoot, argSchemaPath)
+        : await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
       if (path.extname(schemaPath) === '.json') {
         // `import()` of JSON needs an import attribute Node versions disagree on the
         // syntax for; parsing directly avoids that entirely.
@@ -136,7 +139,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     // this sucks. default exports should be destroyed
     const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
-    await registerSchema(extType, extName, schema as SchemaObject);
+    await registerSchema(extType, extName, schema as SchemaObject, {replace: schemaRoot !== undefined});
     return schema;
   }
 
@@ -345,12 +348,20 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    *
    * @param extName - Extension key
    * @param extManifest - Manifest entry that includes `schema`
+   * @param schemaRoot - Resolved package root, if outside Appium home
    */
   async readExtensionSchema(
     extName: string,
     extManifest: ExtManifestWithSchema<ExtType>,
+    schemaRoot?: string,
   ): Promise<SchemaObject | undefined> {
-    return await ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extManifest);
+    return await ExtensionConfig._readExtensionSchema(
+      this.appiumHome,
+      this.extensionType,
+      extName,
+      extManifest,
+      schemaRoot,
+    );
   }
 
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
@@ -513,14 +524,18 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   }
 
   /** Validates and registers extension CLI/config schema when the manifest defines a `schema` field. */
-  protected async getSchemaProblems(extManifest: ExtManifest<ExtType>, extName: string): Promise<ExtManifestProblem[]> {
+  protected async getSchemaProblems(
+    extManifest: ExtManifest<ExtType>,
+    extName: string,
+    schemaRoot?: string,
+  ): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
     if (ExtensionConfig.extDataHasSchema(extManifest)) {
       if (typeof argSchemaPath === 'string') {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            await this.readExtensionSchema(extName, extManifest);
+            await this.readExtensionSchema(extName, extManifest, schemaRoot);
           } catch (err: any) {
             problems.push({
               err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
@@ -535,7 +550,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         }
       } else if (util.isPlainObject(argSchemaPath)) {
         try {
-          await this.readExtensionSchema(extName, extManifest);
+          await this.readExtensionSchema(extName, extManifest, schemaRoot);
         } catch (err: any) {
           problems.push({
             err: `Unable to register embedded schema; ${err.message}`,

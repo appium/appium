@@ -32,6 +32,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   private readonly resolvedDrivers = new Map<string, ExtManifest<DriverType>>();
   /** Driver classes passed directly to the programmatic Appium API. */
   private readonly embeddedDrivers = new Map<string, EmbeddedDriver>();
+  private activeDriverNames?: Set<string>;
 
   private constructor(manifest: Manifest) {
     super(DRIVER_TYPE, manifest);
@@ -109,9 +110,10 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
    *
    * @param location - Absolute path or `file:` URL of the driver package or of any file in it,
    * such as its entry point
+   * @param registerCliSchema - Register this package's schema during CLI startup
    * @returns The name of the driver
    */
-  async addResolvedDriver(location: string): Promise<ExtName<DriverType>> {
+  async addResolvedDriver(location: string, registerCliSchema = false): Promise<ExtName<DriverType>> {
     const pkgJsonPath = await findDriverPackageJson(location);
     const pkgJson = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8')) as ExtPackageJson<DriverType>;
     const installPath = path.dirname(pkgJsonPath);
@@ -141,6 +143,9 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Resolved driver packages at '${previous.installPath}' and '${installPath}' both use the driver name '${driverName}'`,
       );
     }
+    if (previous) {
+      return driverName as ExtName<DriverType>;
+    }
 
     if (driverName in super.installedExtensions) {
       log.info(`The '${driverName}' driver at ${installPath} replaces the installed '${driverName}' driver`);
@@ -148,6 +153,14 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     for (const embedded of this.embeddedDrivers.values()) {
       if (embedded.driverName === driverName) {
         this.assertSameAutomationName(driverName, embedded.automationName, extManifest.automationName);
+      }
+    }
+    if (registerCliSchema) {
+      const schemaProblems = await this.getSchemaProblems(extManifest, driverName, installPath);
+      if (schemaProblems.length) {
+        throw new Error(
+          `The driver at ${installPath} cannot be used: ${schemaProblems.map(({err}) => err).join('; ')}`,
+        );
       }
     }
     this.resolvedDrivers.set(driverName, extManifest);
@@ -215,6 +228,11 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     });
   }
 
+  /** Use the drivers loaded for this server when matching sessions. */
+  restrictToActiveDrivers(driverNames: Iterable<string>): void {
+    this.activeDriverNames = new Set(driverNames);
+  }
+
   public override extensionDesc(
     driverName: ExtName<DriverType>,
     {version, automationName}: ExtManifest<DriverType>,
@@ -238,7 +256,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
     try {
       const embedded = this.embeddedDrivers.get(automationName.toLowerCase());
-      if (embedded) {
+      if (embedded && (!this.activeDriverNames || this.activeDriverNames.has(embedded.driverName))) {
         if (
           embedded.platformNames &&
           !embedded.platformNames.some((name) => name.toLowerCase() === platformName.toLowerCase())
@@ -299,6 +317,9 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
   ): ExtManifest<DriverType> & {driverName: string} {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of Object.entries(drivers)) {
+      if (this.activeDriverNames && !this.activeDriverNames.has(driverName)) {
+        continue;
+      }
       const {automationName, platformNames} = driverData;
       const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
       const pNameMatches = platformNames.map((p) => p.toLowerCase()).includes(matchPlatformName.toLowerCase());

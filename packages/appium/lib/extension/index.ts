@@ -114,10 +114,19 @@ export async function getActiveDrivers(
     driverConfig.getActiveDriverNames(driverNames),
     maxParallelImports,
   );
-  return mergeDriverPairs(
+  const activeDrivers = mergeDriverPairs(
     [...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)],
     driverConfig.hasProgrammaticDrivers,
   );
+  if (driverConfig.hasProgrammaticDrivers) {
+    driverConfig.restrictToActiveDrivers(activeDrivers.values());
+  }
+  return activeDrivers;
+}
+
+/** Whether a `useDrivers` entry identifies a driver package rather than an installed driver name. */
+export function isDriverLocation(useDriversEntry: string): boolean {
+  return useDriversEntry.startsWith('file:') || path.isAbsolute(useDriversEntry);
 }
 
 /** Resolves selection inputs and registers programmatic drivers before applying precedence. */
@@ -175,11 +184,6 @@ function mergeDriverPairs(pairs: Array<[DriverClass, string]>, rejectConflicting
     activeDrivers.set(driver, driverName);
   }
   return activeDrivers;
-}
-
-/** Whether a `useDrivers` entry is the location of a driver package rather than a driver name */
-function isDriverLocation(useDriversEntry: string): boolean {
-  return useDriversEntry.startsWith('file:') || path.isAbsolute(useDriversEntry);
 }
 
 function isDriverClass(value: unknown): value is DriverClass {

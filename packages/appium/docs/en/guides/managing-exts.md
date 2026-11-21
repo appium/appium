@@ -132,6 +132,11 @@ The broader driver inputs are accepted by `main()` only. CLI/config arguments, `
 driver `updateServer` hooks keep their string-array contract. Hooks receive the names of active
 drivers, including when the caller supplied package locations or imported classes.
 
+When you select a package directory or `file:` URL with the CLI's `--use-drivers` option,
+Appium registers the package's argument schema before parsing driver-specific flags. For an
+entry point file, use a `file:` URL so that the CLI can distinguish it from a CSV file of driver
+names.
+
 Each server keeps its directly supplied classes and resolved package locations in its own driver
 configuration, even when multiple servers share an `APPIUM_HOME`. A directly supplied class takes
 precedence over a package driver with the same `automationName`; a resolved package takes precedence

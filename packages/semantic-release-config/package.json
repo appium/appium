@@ -33,7 +33,7 @@
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/git": "^11.0.1",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "semantic-release": "^25.0.9"
+    "semantic-release": "^26.0.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

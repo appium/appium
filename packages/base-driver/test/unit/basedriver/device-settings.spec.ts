@@ -127,6 +127,52 @@ describe('DeviceSettings', function () {
             assert.strictEqual(onSettingsUpdate.calledOnceWithExactly('stuff', 'things', undefined), true);
           });
         });
+
+        describe('when the new settings contain the `__proto__` key', function () {
+          it('should reject with an InvalidArgumentError', async function () {
+            const deviceSettings = new DeviceSettings();
+            const newSettings = JSON.parse('{"__proto__": {"polluted": true}}');
+            await assert.rejects(deviceSettings.update(newSettings), {
+              name: 'InvalidArgumentError',
+              message: /__proto__/,
+            });
+          });
+
+          it('should apply nothing from a mixed payload', async function () {
+            const deviceSettings = new DeviceSettings(
+              {},
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
+            );
+            const newSettings = JSON.parse('{"foo": 1, "__proto__": {"polluted": true}}');
+            await assert.rejects(deviceSettings.update(newSettings), {name: 'InvalidArgumentError'});
+            assert.strictEqual(onSettingsUpdate.called, false);
+            assert.deepStrictEqual(deviceSettings.getSettings(), {});
+          });
+
+          it('should keep the prototype of the settings object intact', async function () {
+            const deviceSettings = new DeviceSettings();
+            const newSettings = JSON.parse('{"__proto__": {"polluted": true}}');
+            await assert.rejects(deviceSettings.update(newSettings), {name: 'InvalidArgumentError'});
+            assert.strictEqual(
+              Object.getPrototypeOf(deviceSettings.getSettings()),
+              Object.prototype,
+            );
+          });
+        });
+
+        describe('when the new settings use other reserved-looking keys', function () {
+          it('should accept `constructor` and `prototype` as plain data keys', async function () {
+            const deviceSettings = new DeviceSettings(
+              {},
+              onSettingsUpdate as SettingsUpdateListener<Record<string, unknown>>,
+            );
+            await deviceSettings.update(
+              JSON.parse('{"constructor": "x", "prototype": "y"}') as Record<string, unknown>,
+            );
+            assert.deepStrictEqual(deviceSettings.getSettings(), {constructor: 'x', prototype: 'y'});
+            assert.strictEqual(onSettingsUpdate.callCount, 2);
+          });
+        });
       });
     });
   });

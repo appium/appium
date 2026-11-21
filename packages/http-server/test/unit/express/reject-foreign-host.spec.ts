@@ -66,4 +66,34 @@ describe('rejectForeignHosts', function () {
     assert.strictEqual(nextCalled, false);
     assert.strictEqual(res.statusCode, 403);
   });
+
+  it('should reject an unterminated bracketed host', async function () {
+    const {nextCalled, res} = await runMiddleware('[::1:4723');
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(res.statusCode, 403);
+  });
+
+  it('should reject a non-IPv6 literal inside brackets', async function () {
+    const {nextCalled, res} = await runMiddleware('[localhost]:4723');
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(res.statusCode, 403);
+  });
+
+  it('should reject trailing characters after a bracketed host', async function () {
+    const {nextCalled, res} = await runMiddleware('[::1]evil.example');
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(res.statusCode, 403);
+  });
+
+  it('should reject a non-numeric port after a bracketed host', async function () {
+    const {nextCalled, res} = await runMiddleware('[::1]:junk');
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(res.statusCode, 403);
+  });
+
+  it('should reject a bracketed allowed hostname instead of shrinking to it', async function () {
+    const {nextCalled, res} = await runMiddleware('[myhost.local]:4723', ['myhost.local']);
+    assert.strictEqual(nextCalled, false);
+    assert.strictEqual(res.statusCode, 403);
+  });
 });

@@ -99,7 +99,7 @@
     "@types/yargs": "17.0.35",
     "asyncbox": "7.1.0",
     "axios": "1.21.1",
-    "conventional-changelog-conventionalcommits": "9.3.1",
+    "conventional-changelog-conventionalcommits": "10.4.1",
     "cross-env": "10.1.0",
     "json-schema-to-typescript": "16.0.0",
     "lerna": "10.1.2",

@@ -153,10 +153,7 @@ describe('DeviceSettings', function () {
             const deviceSettings = new DeviceSettings();
             const newSettings = JSON.parse('{"__proto__": {"polluted": true}}');
             await assert.rejects(deviceSettings.update(newSettings), {name: 'InvalidArgumentError'});
-            assert.strictEqual(
-              Object.getPrototypeOf(deviceSettings.getSettings()),
-              Object.prototype,
-            );
+            assert.strictEqual(Object.getPrototypeOf(deviceSettings.getSettings()), Object.prototype);
           });
         });
 

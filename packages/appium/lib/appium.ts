@@ -624,9 +624,8 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
     const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
     // get any plugins which are registered as handling this command
-    const plugins = newSessionPlugins
-      ? newSessionPlugins.filter((p) => canHandleCmd(p, cmd))
-      : this.pluginsToHandleCmd(cmd, sessionId);
+    const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
+    const plugins = candidates.filter((p) => canHandleCmd(p, cmd));
 
     // now we define a 'cmdHandledBy' object which will keep track of which plugins have handled this
     // command. we care about this because (a) multiple plugins can handle the same command, and

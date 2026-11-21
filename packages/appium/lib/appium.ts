@@ -477,16 +477,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
+    const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
     try {
-      const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
-      if (dstSession) {
-        this.cleanupBidiSockets(sessionId);
-      }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {
         throw new Error('Session not found');
       }
+      // The inner driver may take a while to clean up, and must not get any other command or a
+      // second deleteSession call meanwhile
+      delete this.sessions[sessionId];
+      this.cleanupBidiSockets(sessionId);
 
       return markResponseEnvelope({
         protocol: PROTOCOLS.W3C,
@@ -503,8 +504,10 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       // regardless of whether the deleteSession completes successfully or not
       // make the session unavailable, because who knows what state it might
       // be in otherwise
-      this.log.info(`Removing session ${sessionId} from our master session list`);
-      this.deleteLinkedSessionObjects(sessionId);
+      if (dstSession) {
+        this.log.info(`Removing session ${sessionId} from our master session list`);
+        this.deleteLinkedSessionObjects(sessionId);
+      }
     }
   }
 

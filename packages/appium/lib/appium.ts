@@ -139,6 +139,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   private _isShuttingDown = false;
 
+  /** Inner driver deleteSession calls that are still running, by session id */
+  private readonly pendingTeardowns = new Map<string, Promise<unknown>>();
+
   /**
    * @param opts - CLI/server options (address, port, security, default capabilities, etc.)
    */
@@ -488,10 +491,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       // second deleteSession call meanwhile
       delete this.sessions[sessionId];
       this.cleanupBidiSockets(sessionId);
+      const teardown = dstSession.deleteSession(sessionId);
+      this.pendingTeardowns.set(sessionId, teardown);
 
       return markResponseEnvelope({
         protocol: PROTOCOLS.W3C,
-        value: await dstSession.deleteSession(sessionId),
+        value: await teardown,
       });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -505,6 +510,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       // make the session unavailable, because who knows what state it might
       // be in otherwise
       if (dstSession) {
+        this.pendingTeardowns.delete(sessionId);
         this.log.info(`Removing session ${sessionId} from our master session list`);
         this.deleteLinkedSessionObjects(sessionId);
       }
@@ -513,20 +519,30 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   /**
    * Ends every active session, either by normal `deleteSession` or by `startUnexpectedShutdown`
-   * when `force` is true.
+   * when `force` is true, and waits for the sessions that are already being deleted.
    */
   async deleteAllSessions(opts: {force?: boolean; reason?: string} = {}): Promise<void> {
     const sessionsCount = Object.keys(this.sessions).length;
-    if (0 === sessionsCount) {
+    // A second deleteSession or startUnexpectedShutdown call would run the driver teardown twice
+    const teardowns = [...this.pendingTeardowns.values()];
+    if (0 === sessionsCount && 0 === teardowns.length) {
       this.log.debug('There are no active sessions for cleanup');
       return;
     }
 
     const {force = false, reason} = opts;
-    this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
-    const cleanupPromises = force
-      ? Object.values(this.sessions).map((drv) => drv.startUnexpectedShutdown(reason ? new Error(reason) : undefined))
-      : Object.keys(this.sessions).map((id) => this.deleteSession(id));
+    if (sessionsCount) {
+      this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
+    }
+    if (teardowns.length) {
+      this.log.debug(`Waiting for ${util.pluralize('session', teardowns.length, true)} to finish deleting`);
+    }
+    const cleanupPromises = [
+      ...(force
+        ? Object.values(this.sessions).map((drv) => drv.startUnexpectedShutdown(reason ? new Error(reason) : undefined))
+        : Object.keys(this.sessions).map((id) => this.deleteSession(id))),
+      ...teardowns,
+    ];
     for (const cleanupPromise of cleanupPromises) {
       try {
         await cleanupPromise;

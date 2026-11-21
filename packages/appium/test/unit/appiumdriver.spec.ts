@@ -542,6 +542,7 @@ describe('AppiumDriver', function () {
         const deletion = appium.deleteSession(sessionId);
         try {
           assert.strictEqual(appium.sessionExists(sessionId), false);
+          await assert.rejects(appium.executeCommand('getPageSource', sessionId), /does not exist/);
           const {error} = await appium.deleteSession(sessionId);
           assert.match(error!.message, /Session not found/);
           assert.strictEqual(innerDeleteSession.callCount, 1);
@@ -549,6 +550,77 @@ describe('AppiumDriver', function () {
           finish();
           assert.strictEqual((await deletion).error, undefined);
         }
+      });
+      it('should keep the session removed when the inner driver fails to delete it', async function () {
+        const [sessionId] = (await appium.createSession(W3C_CAPS)).value!;
+        sandbox.stub(fakeDriver, 'deleteSession').rejects(new Error('teardown failed'));
+        try {
+          const {error} = await appium.deleteSession(sessionId);
+          assert.match(error!.message, /teardown failed/);
+          assert.strictEqual(appium.sessionExists(sessionId), false);
+          await assert.rejects(appium.executeCommand('getPageSource', sessionId), /does not exist/);
+        } finally {
+          await fakeDriver.clearNewCommandTimeout();
+        }
+      });
+      it('should wait for a session that is being deleted before overriding it', async function () {
+        appium.args.sessionOverride = true;
+        const oldDriver = new FakeDriver();
+        (appium as any).sessions['old-session'] = oldDriver;
+        let finish!: () => void;
+        const pending = new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+        const events: string[] = [];
+        sandbox.stub(oldDriver, 'deleteSession').callsFake(async () => {
+          await pending;
+          events.push('old session deleted');
+        });
+        mockFakeDriver
+          .expects('createSession')
+          .once()
+          .callsFake(async () => {
+            events.push('new session created');
+            return [SESSION_ID, {...BASE_CAPS}];
+          });
+        const deletion = appium.deleteSession('old-session');
+        const creation = appium.createSession(W3C_CAPS);
+        try {
+          await new Promise((resolve) => setImmediate(resolve));
+          assert.deepStrictEqual(events, []);
+        } finally {
+          finish();
+        }
+        assert.strictEqual((await deletion).error, undefined);
+        assert.strictEqual((await creation).error, undefined);
+        assert.deepStrictEqual(events, ['old session deleted', 'new session created']);
+        await appium.deleteSession(SESSION_ID);
+      });
+      it('should wait for a session that is being deleted when the server shuts down', async function () {
+        const [sessionId] = (await appium.createSession(W3C_CAPS)).value!;
+        let finish!: () => void;
+        const pending = new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+        const originalDeleteSession = fakeDriver.deleteSession.bind(fakeDriver);
+        const innerDeleteSession = sandbox.stub(fakeDriver, 'deleteSession').callsFake(async (id) => {
+          await pending;
+          await originalDeleteSession(id);
+        });
+        const deletion = appium.deleteSession(sessionId);
+        let isShutDown = false;
+        const shutdown = appium.shutdown().then(() => {
+          isShutDown = true;
+        });
+        try {
+          await new Promise((resolve) => setImmediate(resolve));
+          assert.strictEqual(isShutDown, false);
+        } finally {
+          finish();
+        }
+        await shutdown;
+        assert.strictEqual((await deletion).error, undefined);
+        assert.strictEqual(innerDeleteSession.callCount, 1);
       });
     });
     describe('executeCommand', function () {

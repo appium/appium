@@ -760,6 +760,44 @@ describe('AppiumDriver', function () {
           await appium.deleteSession(secondId);
         }
       });
+
+      it('should not reuse the plugin instances of a failed createSession', async function () {
+        class SessionStatePlugin extends BasePlugin {
+          deviceNames: string[] = [];
+          async createSession(next: () => Promise<unknown>, driver: unknown, caps: W3CCapabilities<Constraints>) {
+            this.deviceNames.push(caps.alwaysMatch?.['appium:deviceName'] as string);
+            return await next();
+          }
+        }
+        class FailingDriver extends BaseDriver<Constraints> {
+          override async createSession(): Promise<never> {
+            throw new Error('cannot start the session');
+          }
+        }
+        class ProbeDriver extends BaseDriver<Constraints> {}
+        (appium as any).driverConfig = {
+          findMatchingDriver: sandbox
+            .stub()
+            .onFirstCall()
+            .returns({driver: FailingDriver, version: '1.2.3', driverName: 'probe'})
+            .onSecondCall()
+            .returns({driver: ProbeDriver, version: '1.2.3', driverName: 'probe'}),
+        };
+        setPluginClassesForTest(appium, new Map<any, string>([[SessionStatePlugin, 'state']]));
+        const caps = (deviceName: string) => ({
+          alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:deviceName': deviceName, 'appium:newCommandTimeout': 0},
+          firstMatch: [{}],
+        });
+        const failed = await appium.executeCommand('createSession', caps('failing'));
+        assert.match(failed.error!.message, /cannot start the session/);
+        const [sessionId] = (await appium.executeCommand('createSession', caps('working'))).value as [string];
+        try {
+          const [plugin] = appium.pluginsForSession(sessionId) as SessionStatePlugin[];
+          assert.deepStrictEqual(plugin.deviceNames, ['working']);
+        } finally {
+          await appium.deleteSession(sessionId);
+        }
+      });
     });
     describe('configureDriverFeatures', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;

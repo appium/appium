@@ -39,6 +39,18 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
       );
     }
 
+    // every key is validated up front so a rejected update is all-or-nothing:
+    // no part of the payload reaches the listener or the store. An own
+    // `__proto__` key (e.g. from JSON.parse) is the only hazard - assigning it
+    // rewrites the prototype of the settings object itself, while
+    // `constructor`/`prototype` as own keys are plain data properties
+    const keys = Object.keys(newSettings);
+    if (keys.includes('__proto__')) {
+      throw new errors.InvalidArgumentError(
+        `Settings updates must not use the '__proto__' key, because assigning it would rewrite the prototype of the settings object`,
+      );
+    }
+
     if (node.getObjectSize({...this._settings, ...newSettings}) >= MAX_SETTINGS_SIZE) {
       throw new errors.InvalidArgumentError(
         `New settings cannot be applied, because the overall ` +
@@ -46,12 +58,7 @@ export class DeviceSettings<T extends StringRecord = StringRecord> implements ID
       );
     }
 
-    for (const prop of Object.keys(newSettings)) {
-      if (prop === '__proto__' || prop === 'constructor' || prop === 'prototype') {
-        throw new errors.InvalidArgumentError(
-          `Settings updates must not use the '${prop}' key, because it would pollute object prototypes`,
-        );
-      }
+    for (const prop of keys) {
       if (this._settings[prop] !== undefined) {
         if (this._settings[prop] === newSettings[prop]) {
           log.debug(`The value of '${prop}' setting did not change. Skipping the update for it`);

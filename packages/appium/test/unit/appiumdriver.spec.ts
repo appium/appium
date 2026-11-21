@@ -528,6 +528,28 @@ describe('AppiumDriver', function () {
         // cleanup, since we faked the delete session call
         await (mockFakeDriver as any).object.deleteSession();
       });
+      it('should stop routing to the session while the inner driver deletes it', async function () {
+        const [sessionId] = (await appium.createSession(W3C_CAPS)).value!;
+        let finish!: () => void;
+        const pending = new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+        const originalDeleteSession = fakeDriver.deleteSession.bind(fakeDriver);
+        const innerDeleteSession = sandbox.stub(fakeDriver, 'deleteSession').callsFake(async (id) => {
+          await pending;
+          await originalDeleteSession(id);
+        });
+        const deletion = appium.deleteSession(sessionId);
+        try {
+          assert.strictEqual(appium.sessionExists(sessionId), false);
+          const {error} = await appium.deleteSession(sessionId);
+          assert.match(error!.message, /Session not found/);
+          assert.strictEqual(innerDeleteSession.callCount, 1);
+        } finally {
+          finish();
+          assert.strictEqual((await deletion).error, undefined);
+        }
+      });
     });
     describe('executeCommand', function () {
       let appium: InstanceType<typeof AppiumModule.AppiumDriver>;

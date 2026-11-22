@@ -123,6 +123,11 @@ constructor(...args) {
 
 这里的 `args` 参数是包含启动 Appium 服务器所用全部 CLI 参数的对象。
 
+Appium creates a separate instance of your plugin for each session. The instance that handles
+`createSession` also handles the later commands of that session, so state set in `createSession`
+can be kept on `this`. If `createSession` fails, that instance is dropped. Commands that do not
+belong to a session, such as `getStatus`, are handled by another instance which no session uses.
+
 ### 拦截并处理特定的 Appium 命令
 
 这是 Appium 插件最常见的用法——修改或替换本应由当前驱动处理的一个或多个命令的执行。要覆盖默认的命令处理逻辑，你需要在类中实现与所要处理的 Appium 命令同名的 `async` 方法（和[驱动本身的实现方式](./build-drivers.md#implement-webdriver-classic-commands)完全一致）。想知道都有哪些命令名？它们定义在 Appium base driver 的

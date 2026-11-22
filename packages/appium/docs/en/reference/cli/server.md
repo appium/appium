@@ -67,6 +67,16 @@ appium
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
 |`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
 
+### `--deny-foreign-hosts` behind a reverse proxy
+
+When Appium listens on `--address 0.0.0.0` and is reached through a reverse proxy that
+forwards `Host: appium.company.com`, enabling `--deny-foreign-hosts` makes the server
+answer that traffic with `403`, because `appium.company.com` is not the address the
+server is configured with, and there is currently no separate CLI option to allow a
+public hostname. Operators should either bind the server to the address clients use
+(`--address appium.company.com`), keep the flag off, or terminate the Host header at
+the proxy (e.g. rewrite it to the address Appium is bound to) before enabling it.
+
 ### Default Capabilities
 
 Capabilities set with `--default-capabilities` are added to the received capabilities before a

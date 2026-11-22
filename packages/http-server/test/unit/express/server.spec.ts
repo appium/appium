@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import os from 'node:os';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {errors, routeConfiguringFunction, WebDriverProxy} from '@appium/base-driver';
@@ -981,5 +982,44 @@ describe('server configuration', function () {
       assert.strictEqual(normalizeBasePath('wd/hub'), '/wd/hub');
       assert.strictEqual(normalizeBasePath('wd/hub/'), '/wd/hub');
     });
+  });
+});
+
+describe('deny-foreign-hosts server boundary', function () {
+  beforeEach(async function () {
+    port = await getTestPort();
+  });
+
+  it('serves requests addressed to the configured hostname and rejects them when it is not configured', async function () {
+    const driver = fakeDriver();
+    const hostname = os.hostname();
+
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      hostname,
+      cliArgs: {denyForeignHosts: true},
+    });
+    try {
+      const ok = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: hostname}});
+      assert.strictEqual(ok.status, 200);
+      const foreign = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: 'evil.example'}});
+      assert.strictEqual(foreign.status, 403);
+    } finally {
+      await _server.close();
+    }
+
+    // removing the configured hostname: the same request is now rejected
+    const _serverWithoutHostname = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      cliArgs: {denyForeignHosts: true},
+    });
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: hostname}});
+      assert.strictEqual(res.status, 403);
+    } finally {
+      await _serverWithoutHostname.close();
+    }
   });
 });

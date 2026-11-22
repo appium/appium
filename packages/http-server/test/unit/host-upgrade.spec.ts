@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import net from 'node:net';
+import type net from 'node:net';
 import {after, before, beforeEach, describe, it} from 'node:test';
 
 import {configureHttp} from '../../lib/server.js';
@@ -98,8 +98,7 @@ describe('configureHttp Host validation on native WebSocket upgrades', function 
         });
         res.on('end', () => resolve({status: res.statusCode, body}));
       });
-      // the guarded socket is destroyed right after the 403; a reset is expected
-      req.on('error', () => {});
+      req.on('error', reject);
     });
   }
 

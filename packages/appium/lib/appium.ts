@@ -411,18 +411,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       await driverInstance.startNewCommandTimeout();
     } catch (error: unknown) {
       if (registeredSessionId) {
-        try {
-          // A failed initialization must not leave a registered session or an idle timer,
-          // even if the driver's own deleteSession also fails.
-          try {
-            await this.sessions[registeredSessionId]?.clearNewCommandTimeout();
-          } finally {
-            await this.deleteSession(registeredSessionId);
-          }
-        } catch (cleanupError) {
-          const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
-        }
+        await this.cleanupFailedSession(registeredSessionId);
       }
       return markResponseEnvelope({
         protocol,
@@ -642,6 +631,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
     const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
+    let createdSessionId: string | undefined;
     // get any plugins which are registered as handling this command
     const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
     const plugins = candidates.filter((p) => canHandleCmd(p, cmd));
@@ -692,7 +682,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (isUmbrellaCmd) {
         // some commands, like deleteSession, we want to make sure to handle on *this* driver,
         // not the platform driver
-        return await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
+        const result = await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
+        if (newSessionPlugins?.length) {
+          createdSessionId = (result as SessionHandlerCreateResult).value?.[0];
+        }
+        return result;
       }
 
       if (!dstSession) {
@@ -721,6 +715,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         : await execute();
 
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
+
+    // A plugin can fail after next() successfully created a session. The client will
+    // receive an error and won't have a session ID to delete.
+    if (res.error && createdSessionId && this.sessionExists(createdSessionId)) {
+      await this.cleanupFailedSession(createdSessionId);
+    }
 
     // And finally, if the command was createSession, we want to attach its plugin instances to the
     // new sessionId, so that plugins can share state between their createSession method and other
@@ -855,6 +855,20 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   override canProxy(sessionId: string): boolean {
     const dstSession = this.sessions[sessionId];
     return typeof dstSession?.canProxy === 'function' && dstSession.canProxy(sessionId);
+  }
+
+  private async cleanupFailedSession(sessionId: string): Promise<void> {
+    try {
+      // Stop the idle timer even if the driver's deleteSession fails before clearing it.
+      try {
+        await this.sessions[sessionId]?.clearNewCommandTimeout();
+      } finally {
+        await this.deleteSession(sessionId);
+      }
+    } catch (cleanupError) {
+      const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+      this.log.warn(`Could not clean up failed session ${sessionId}: ${message}`);
+    }
   }
 
   private deleteLinkedSessionObjects(sessionId: string): void {

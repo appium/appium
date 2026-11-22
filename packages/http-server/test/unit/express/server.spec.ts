@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import http from 'node:http';
 import os from 'node:os';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
@@ -985,7 +986,24 @@ describe('server configuration', function () {
   });
 });
 
+
+function getStatus(port: number, targetHost: string, hostHeader: string): Promise<{status: number}> {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      {host: targetHost, port, path: '/status', headers: {host: hostHeader, accept: 'application/json'}},
+      (res) => {
+        res.resume();
+        res.on('end', () => resolve({status: res.statusCode ?? 0}));
+      },
+    );
+    req.on('error', reject);
+    req.end();
+  });
+}
+
 describe('deny-foreign-hosts server boundary', function () {
+  let port: number;
+
   beforeEach(async function () {
     port = await getTestPort();
   });
@@ -1001,9 +1019,9 @@ describe('deny-foreign-hosts server boundary', function () {
       cliArgs: {denyForeignHosts: true},
     });
     try {
-      const ok = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: hostname}});
+      const ok = await getStatus(port, hostname, hostname);
       assert.strictEqual(ok.status, 200);
-      const foreign = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: 'evil.example'}});
+      const foreign = await getStatus(port, hostname, 'evil.example');
       assert.strictEqual(foreign.status, 403);
     } finally {
       await _server.close();
@@ -1016,7 +1034,7 @@ describe('deny-foreign-hosts server boundary', function () {
       cliArgs: {denyForeignHosts: true},
     });
     try {
-      const res = await fetch(`http://127.0.0.1:${port}/status`, {headers: {host: hostname}});
+      const res = await getStatus(port, '127.0.0.1', hostname);
       assert.strictEqual(res.status, 403);
     } finally {
       await _serverWithoutHostname.close();

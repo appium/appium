@@ -142,12 +142,10 @@ export function buildServerOpts(
   pluginClasses: PluginNameMap,
 ): {serverOpts: ServerOpts; normalizedBasePath: string} {
   const routeConfiguringFunction = makeRouter(appiumDriver);
-  // Driver updateServer hooks receive the CLI-shaped argument contract.
-  // Embedded programmatic modules have already been registered in driverClasses.
-  const cliArgs = {
-    ...parsedArgs,
-    useDrivers: [...driverClasses.values()],
-  };
+  // Normalize package locations and embedded classes to the names expected by hooks.
+  const cliArgs = appiumDriver.driverConfig.hasProgrammaticDrivers
+    ? {...parsedArgs, useDrivers: [...driverClasses.values()]}
+    : parsedArgs;
   const serverOpts: ServerOpts = {
     routeConfiguringFunction,
     port: parsedArgs.port,

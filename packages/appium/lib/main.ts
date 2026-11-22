@@ -41,18 +41,9 @@ export async function init<
 export async function main<
   Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
->(args?: MainArgs<Cmd, SubCmd>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
-  const useDrivers =
-    args && (!args.subcommand || args.subcommand === 'server')
-      ? (args as MainArgs<CliCommandServer>).useDrivers
-      : undefined;
-  const embeddedSelection = useDrivers?.some((entry) => typeof entry !== 'string') ? useDrivers : undefined;
-  // An empty programmatic selection lets the config file supply driver names.
-  const initArgs = (
-    embeddedSelection || useDrivers?.length === 0
-      ? {...args, useDrivers: embeddedSelection?.filter((entry) => typeof entry === 'string')}
-      : args
-  ) as Args<Cmd, SubCmd> | undefined;
+  const Drivers extends readonly (string | object)[] = NonNullable<MainArgs['useDrivers']>,
+>(args?: MainArgs<Cmd, SubCmd, Drivers>): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
+  const {initArgs, embeddedSelection} = splitUseDrivers<Cmd, SubCmd, Drivers>(args);
   const initResult = await init(initArgs);
   return mainRunner.run(initResult, initArgs, embeddedSelection);
 }
@@ -71,3 +62,28 @@ export {finalizeSchema, getSchema, validate} from './schema/schema.js';
 export const resolveAppiumHome = resolveAppiumHomeUtil;
 
 export type {ExtCommandInitResult, InitResult, ServerInitData};
+
+function splitUseDrivers<
+  Cmd extends CliCommand,
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
+  Drivers extends readonly (string | object)[],
+>(args?: MainArgs<Cmd, SubCmd, Drivers>): {initArgs?: Args<Cmd, SubCmd>; embeddedSelection?: Drivers} {
+  const initArgs = args as Args<Cmd, SubCmd> | undefined;
+  if (!args || (args.subcommand && args.subcommand !== 'server')) {
+    return {initArgs};
+  }
+
+  const {useDrivers} = args as {useDrivers?: Drivers};
+  if (useDrivers?.length === 0) {
+    // An empty programmatic selection lets the config file supply driver names.
+    return {initArgs: {...args, useDrivers: undefined} as Args<Cmd, SubCmd>};
+  }
+  if (useDrivers?.some((entry) => typeof entry !== 'string')) {
+    const installedOrResolvedDrivers = useDrivers.filter((entry) => typeof entry === 'string');
+    return {
+      initArgs: {...args, useDrivers: installedOrResolvedDrivers} as Args<Cmd, SubCmd>,
+      embeddedSelection: useDrivers,
+    };
+  }
+  return {initArgs};
+}

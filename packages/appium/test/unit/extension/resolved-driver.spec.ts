@@ -11,6 +11,7 @@ import {AppiumDriver} from '../../../lib/appium.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
 import {getActiveDrivers} from '../../../lib/extension/index.js';
 import {Manifest} from '../../../lib/extension/manifest/index.js';
+import {readResolvedDriver} from '../../../lib/extension/resolved-driver.js';
 
 const TestDriver = BaseDriver as unknown as DriverClass;
 
@@ -52,16 +53,17 @@ describe('resolved drivers', function () {
     await fs.rimraf(root);
   });
 
-  beforeEach(function () {
+  function createDriverConfig(): void {
     // `Manifest.getInstance()` is memoized per `APPIUM_HOME`, so give each test its own
     const manifest = Manifest.getInstance(path.join(root, `appium-home-${homeCounter++}`));
     driverConfig = DriverConfig.create(manifest);
-  });
+  }
 
-  describe('DriverConfig.addResolvedDriver()', function () {
-    it('should add the driver from its package directory without changing the manifest', async function () {
-      assert.equal(await driverConfig.addResolvedDriver(driverRoot), 'resolved');
-      assert.deepEqual(driverConfig.installedExtensions.resolved, {
+  describe('readResolvedDriver()', function () {
+    it('should read driver metadata from the package containing a file URL', async function () {
+      const {driverName, manifest} = await readResolvedDriver(pathToFileURL(entryPoint).href);
+      assert.equal(driverName, 'resolved');
+      assert.deepEqual(manifest, {
         automationName: 'Resolved',
         platformNames: ['Fake'],
         mainClass: 'ResolvedDriver',
@@ -72,12 +74,29 @@ describe('resolved drivers', function () {
         installSpec: driverRoot,
         installPath: driverRoot,
       });
-      assert.deepEqual(driverConfig.manifest.getExtensionData('driver'), {});
     });
 
-    it('should find the package from a file URL of its entry point', async function () {
-      assert.equal(await driverConfig.addResolvedDriver(pathToFileURL(entryPoint).href), 'resolved');
+    it('should reject a package that is not a driver', async function () {
+      const pkgRoot = path.join(root, 'node_modules', 'not-a-driver');
+      await writePackage(pkgRoot, {name: 'not-a-driver', version: '1.0.0'});
+      await assert.rejects(readResolvedDriver(pkgRoot), /not-a-driver.* is not an Appium driver/);
+    });
+
+    it('should reject a driver with an invalid manifest', async function () {
+      const pkgRoot = path.join(root, 'node_modules', 'invalid-driver');
+      await writePackage(pkgRoot, {...DRIVER_PKG, name: 'invalid-driver', appium: {driverName: 'invalid'}});
+      await assert.rejects(readResolvedDriver(pkgRoot), /cannot be used: .*automationName/);
+    });
+  });
+
+  describe('DriverConfig.addResolvedDriver()', function () {
+    beforeEach(createDriverConfig);
+
+    it('should add the driver from its package directory without changing the manifest', async function () {
+      assert.equal(await driverConfig.addResolvedDriver(driverRoot), 'resolved');
+      assert.equal(await driverConfig.addResolvedDriver(driverRoot + path.sep), 'resolved');
       assert.equal(driverConfig.getInstallPath('resolved'), driverRoot);
+      assert.deepEqual(driverConfig.manifest.getExtensionData('driver'), {});
     });
 
     it('should be preferred over installed drivers', async function () {
@@ -105,22 +124,11 @@ describe('resolved drivers', function () {
       assert.equal(driverName, 'resolved');
       assert.equal(driver.name, 'ResolvedDriver');
     });
-
-    it('should reject a package that is not a driver', async function () {
-      const pkgRoot = path.join(root, 'node_modules', 'not-a-driver');
-      await writePackage(pkgRoot, {name: 'not-a-driver', version: '1.0.0'});
-      await assert.rejects(driverConfig.addResolvedDriver(pkgRoot), /not-a-driver.* is not an Appium driver/);
-    });
-
-    it('should reject a driver with an invalid manifest', async function () {
-      const pkgRoot = path.join(root, 'node_modules', 'invalid-driver');
-      await writePackage(pkgRoot, {...DRIVER_PKG, name: 'invalid-driver', appium: {driverName: 'invalid'}});
-      await assert.rejects(driverConfig.addResolvedDriver(pkgRoot), /cannot be used: .*automationName/);
-      assert.equal(driverConfig.isInstalled('invalid'), false);
-    });
   });
 
   describe('getActiveDrivers()', function () {
+    beforeEach(createDriverConfig);
+
     for (const embeddedFirst of [true, false]) {
       it(`should apply a selected package override before checking embedded identity with embeddedFirst=${embeddedFirst}`, async function () {
         driverConfig.manifest.setExtension('driver', 'resolved', {
@@ -331,6 +339,8 @@ describe('resolved drivers', function () {
   });
 
   describe('embedded driver configuration', function () {
+    beforeEach(createDriverConfig);
+
     it('should reject an embedded name colliding with an unselected installed automation identity', async function () {
       driverConfig.manifest.setExtension('driver', 'embeddedname', {
         ...DRIVER_PKG.appium,

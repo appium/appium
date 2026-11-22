@@ -10,6 +10,8 @@ import {createSandbox} from 'sinon';
 
 import {AppiumDriver} from '../../../lib/appium.js';
 import {buildServerOpts, inspect, showBuildInfo} from '../../../lib/bootstrap/main-helpers.js';
+import {DriverConfig} from '../../../lib/extension/driver-config.js';
+import {Manifest} from '../../../lib/extension/manifest/index.js';
 import {getBuildInfo} from '../../../lib/helpers/build.js';
 import {log as logger} from '../../../lib/logger.js';
 import {finalizeSchema, getDefaultsForSchema} from '../../../lib/schema/schema.js';
@@ -49,21 +51,24 @@ describe('bootstrap/main-helpers', function () {
   });
 
   describe('buildServerOpts()', function () {
-    for (const useDrivers of [
-      [],
-      ['resolved'],
-      ['/package/resolved-driver'],
-      ['file:///package/resolved-driver/index.js'],
+    const driverConfig = DriverConfig.create(Manifest.getInstance('build-server-opts'));
+    for (const {useDrivers, hasProgrammaticDrivers} of [
+      {useDrivers: [], hasProgrammaticDrivers: false},
+      {useDrivers: ['installed'], hasProgrammaticDrivers: false},
+      {useDrivers: [], hasProgrammaticDrivers: true},
+      {useDrivers: ['/package/resolved-driver'], hasProgrammaticDrivers: true},
+      {useDrivers: ['file:///package/resolved-driver/index.js'], hasProgrammaticDrivers: true},
     ]) {
-      it(`should pass active driver names to hooks for ${JSON.stringify(useDrivers)}`, async function () {
+      it(`should ${hasProgrammaticDrivers ? 'normalize' : 'preserve'} hook arguments for ${JSON.stringify(useDrivers)}`, async function () {
         await finalizeSchema();
         const parsedArgs = {...getDefaultsForSchema(false), useDrivers} as ParsedArgs;
         const appium = new AppiumDriver(parsedArgs as unknown as ConstructorParameters<typeof AppiumDriver>[0]);
-        const classes = new Map([[BaseDriver as unknown as DriverClass, 'resolved']]);
+        appium.driverConfig = driverConfig.createServerConfig();
+        sandbox.stub(appium.driverConfig, 'hasProgrammaticDrivers').get(() => hasProgrammaticDrivers);
+        const classes = new Map([[BaseDriver as unknown as DriverClass, 'active']]);
         const {serverOpts} = buildServerOpts(appium, parsedArgs, classes, new Map());
-        assert.deepEqual(serverOpts.cliArgs?.useDrivers, ['resolved']);
+        assert.deepEqual(serverOpts.cliArgs?.useDrivers, hasProgrammaticDrivers ? ['active'] : useDrivers);
         assert.deepEqual(parsedArgs.useDrivers, useDrivers);
-        assert.notEqual(serverOpts.cliArgs, parsedArgs);
       });
     }
   });

@@ -63,7 +63,7 @@ it('should isolate embedded main selections and pass normalized names to real se
       appiumHome,
       address: '127.0.0.1',
       port: 0,
-      useDrivers: [driver],
+      useDrivers: [driver === FirstDriver ? driver : {driver, version: '1.0.0'}],
       relaxedSecurityEnabled: true,
       denyInsecure: [`${driver.automationName}:foo`],
       loglevel: 'error',
@@ -132,6 +132,21 @@ it('should isolate embedded main selections and pass normalized names to real se
       await fetch(`${url}/session/${sessionId}`, {method: 'DELETE'});
     }
   }
+});
+
+it('should reject a programmatic driver module with no driver export', async function (t) {
+  const appiumHome = await tempDir.openDir();
+  t.after(() => fs.rimraf(appiumHome));
+  await assert.rejects(
+    main({
+      appiumHome,
+      loglevel: 'error',
+      throwInsteadOfExit: true,
+      // @ts-expect-error A driver module must export an Appium driver constructor.
+      useDrivers: [{}],
+    }),
+    /must expose exactly one Appium driver class; found 0/,
+  );
 });
 
 it('should parse CLI options declared by a resolved driver', async function (t) {

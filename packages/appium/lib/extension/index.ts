@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import {timing, util} from '@appium/support';
 import type {DriverClass, ExtensionType, PluginClass} from '@appium/types';
-import type {EmbeddedDriverModule, ExtClass} from 'appium/types/index.js';
+import type {ExtClass} from 'appium/types/index.js';
 import {asyncmap} from 'asyncbox';
 
 import {USE_ALL_PLUGINS} from '../constants.js';
@@ -105,7 +105,7 @@ export async function getActivePlugins(
 export async function getActiveDrivers(
   driverConfig: DriverConfig,
   maxParallelImports: number,
-  useDrivers: Array<string | EmbeddedDriverModule> = [],
+  useDrivers: readonly (string | object)[] = [],
 ): Promise<DriverNameMap> {
   const {driverNames, embeddedPairs} = await resolveDriverEntries(driverConfig, useDrivers);
   const pairs = await importExtensions(
@@ -132,7 +132,7 @@ export function isDriverLocation(useDriversEntry: string): boolean {
 /** Resolves selection inputs and registers programmatic drivers before applying precedence. */
 async function resolveDriverEntries(
   driverConfig: DriverConfig,
-  useDrivers: Array<string | EmbeddedDriverModule>,
+  useDrivers: readonly (string | object)[],
 ): Promise<{driverNames: string[]; embeddedPairs: Array<[DriverClass, string]>}> {
   let filteredDriverNames: string[] = [];
   const embeddedDrivers: DriverClass[] = [];
@@ -197,7 +197,7 @@ function isDriverClass(value: unknown): value is DriverClass {
  * Accept a direct class or an ESM namespace/default-export wrapper. Requiring
  * exactly one distinct DriverClass keeps ambiguous module namespaces explicit.
  */
-function unwrapEmbeddedDriver(value: EmbeddedDriverModule): DriverClass {
+function unwrapEmbeddedDriver(value: object): DriverClass {
   if (isDriverClass(value)) {
     return value;
   }

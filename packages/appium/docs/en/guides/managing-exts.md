@@ -129,8 +129,10 @@ is selected by automation name alone; the embedding caller is responsible for ch
 driver. Use a package location when matching must use the package's declared platforms.
 
 The broader driver inputs are accepted by `main()` only. CLI/config arguments, `init()` results and
-driver `updateServer` hooks keep their string-array contract. Hooks receive the names of active
-drivers, including when the caller supplied package locations or imported classes.
+driver `updateServer` hooks keep their string-array contract. For installed-only selections,
+hooks receive the selected driver names, or an empty array when all installed drivers are selected
+by default. When package locations or imported classes are supplied, hooks receive the names of
+the active drivers.
 
 When you select a package directory or `file:` URL with the CLI's `--use-drivers` option,
 Appium registers the package's argument schema before parsing driver-specific flags. For an

@@ -1,28 +1,19 @@
-import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-
 import {errors} from '@appium/base-driver';
-import {fs, util} from '@appium/support';
 import type {DriverClass, DriverType, StringRecord} from '@appium/types';
-import type {ExtManifest, ExtName, ExtPackageJson, ExtRecord} from 'appium/types/index.js';
+import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
 import {DRIVER_TYPE} from '../constants.js';
 import {log} from '../logger.js';
 import {ExtensionConfig} from './extension-config.js';
-import {INSTALL_TYPE_LOCAL, manifestValidator} from './manifest/index.js';
+import {manifestValidator} from './manifest/index.js';
 import type {ExtManifestProblem, Manifest} from './manifest/index.js';
+import {describeEmbeddedDriver, readResolvedDriver} from './resolved-driver.js';
+import type {EmbeddedDriver} from './resolved-driver.js';
 
 export type MatchedDriver = {
   driver: DriverClass;
   version: string;
   driverName: string;
-};
-
-type EmbeddedDriver = {
-  driver: DriverClass;
-  driverName: string;
-  automationName: string;
-  platformNames?: string[];
 };
 
 export class DriverConfig extends ExtensionConfig<DriverType> {
@@ -114,29 +105,8 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
    * @returns The name of the driver
    */
   async addResolvedDriver(location: string, registerCliSchema = false): Promise<ExtName<DriverType>> {
-    const pkgJsonPath = await findDriverPackageJson(location);
-    const pkgJson = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8')) as ExtPackageJson<DriverType>;
-    const installPath = path.dirname(pkgJsonPath);
-    const {driverName, ...driverMeta} = pkgJson.appium;
-    const extManifest = {
-      ...driverMeta,
-      pkgName: pkgJson.name,
-      version: pkgJson.version,
-      appiumVersion: pkgJson.peerDependencies?.appium,
-      installType: INSTALL_TYPE_LOCAL,
-      installSpec: installPath,
-      installPath,
-    } as ExtManifest<DriverType>;
-
-    const problems = [
-      ...manifestValidator.getCommonManifestProblems(extManifest),
-      ...manifestValidator.getDriverManifestProblems(extManifest),
-    ];
-    if (!util.isEmpty(problems)) {
-      const details = problems.map(({err, val}) => `${err} (Actual value: ${JSON.stringify(val)})`).join('; ');
-      throw new Error(`The driver at ${installPath} cannot be used: ${details}`);
-    }
-
+    const {driverName, manifest} = await readResolvedDriver(location);
+    const {installPath, automationName} = manifest;
     const previous = this.resolvedDrivers.get(driverName);
     if (previous && previous.installPath !== installPath) {
       throw new TypeError(
@@ -144,7 +114,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
       );
     }
     if (previous) {
-      return driverName as ExtName<DriverType>;
+      return driverName;
     }
 
     if (driverName in super.installedExtensions) {
@@ -152,19 +122,19 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     }
     for (const embedded of this.embeddedDrivers.values()) {
       if (embedded.driverName === driverName) {
-        this.assertSameAutomationName(driverName, embedded.automationName, extManifest.automationName);
+        this.assertSameAutomationName(driverName, embedded.automationName, automationName);
       }
     }
     if (registerCliSchema) {
-      const schemaProblems = await this.getSchemaProblems(extManifest, driverName, installPath);
+      const schemaProblems = await this.getSchemaProblems(manifest, driverName, installPath);
       if (schemaProblems.length) {
         throw new Error(
           `The driver at ${installPath} cannot be used: ${schemaProblems.map(({err}) => err).join('; ')}`,
         );
       }
     }
-    this.resolvedDrivers.set(driverName, extManifest);
-    return driverName as ExtName<DriverType>;
+    this.resolvedDrivers.set(driverName, manifest);
+    return driverName;
   }
 
   /**
@@ -348,73 +318,5 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `An embedded driver and a package driver both use the name '${driverName}' for different automation names`,
       );
     }
-  }
-}
-
-function describeEmbeddedDriver(driver: DriverClass): EmbeddedDriver {
-  const {automationName: declaredAutomationName, platformNames} = driver as DriverClass & {
-    automationName?: unknown;
-    platformNames?: unknown;
-  };
-  const automationName =
-    typeof declaredAutomationName === 'string' ? declaredAutomationName : driver.name.replace(/Driver$/, '');
-  if (!automationName) {
-    throw new TypeError('An embedded Appium driver must have a class name or static automationName');
-  }
-  if (
-    platformNames !== undefined &&
-    (!Array.isArray(platformNames) ||
-      !platformNames.length ||
-      platformNames.some((name) => typeof name !== 'string' || !name.trim()))
-  ) {
-    throw new TypeError('An embedded driver platformNames must be a non-empty array of platform names');
-  }
-  const driverName = automationName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-  if (!driverName) {
-    throw new TypeError(`Could not derive a driver name from automationName '${automationName}'`);
-  }
-  return {
-    driver,
-    driverName,
-    automationName,
-    platformNames: platformNames === undefined ? undefined : [...(platformNames as string[])],
-  };
-}
-
-/**
- * Finds the `package.json` of the driver package containing `location`.
- *
- * Nested `package.json` files without a `name`, like ones that only set the module `type`, are skipped.
- *
- * @param location - Absolute path or `file:` URL of the driver package or of any file in it
- */
-async function findDriverPackageJson(location: string): Promise<string> {
-  const locationPath = location.startsWith('file:') ? fileURLToPath(location) : location;
-  if (!path.isAbsolute(locationPath)) {
-    throw new TypeError(`A driver location must be an absolute path or a file URL, but got '${location}'`);
-  }
-  if (!(await fs.exists(locationPath))) {
-    throw new Error(`Could not find a driver at '${location}' because the path does not exist`);
-  }
-
-  let dir = (await fs.stat(locationPath)).isDirectory() ? locationPath : path.dirname(locationPath);
-  for (;;) {
-    const pkgJsonPath = path.join(dir, 'package.json');
-    if (await fs.exists(pkgJsonPath)) {
-      const pkgJson = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8')) as Partial<ExtPackageJson<DriverType>>;
-      if (typeof pkgJson.name === 'string') {
-        if (typeof pkgJson.appium?.driverName !== 'string') {
-          throw new Error(
-            `The package '${pkgJson.name}' at ${dir} is not an Appium driver: its package.json has no 'appium.driverName' field`,
-          );
-        }
-        return pkgJsonPath;
-      }
-    }
-    const parentDir = path.dirname(dir);
-    if (parentDir === dir) {
-      throw new Error(`Could not find the package.json of a driver package containing '${location}'`);
-    }
-    dir = parentDir;
   }
 }

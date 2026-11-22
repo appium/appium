@@ -7,7 +7,6 @@ import type {
   CliCommandServer,
   CliCommandSetupSubcommand,
   CliExtensionSubcommand,
-  EmbeddedDriverModule,
 } from 'appium/types/index.js';
 
 import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
@@ -35,7 +34,7 @@ export class AppiumMainRunner {
   >(
     initResult: InitResult<Cmd>,
     args?: Args<Cmd, SubCmd>,
-    useDrivers?: Array<string | EmbeddedDriverModule>,
+    useDrivers?: readonly (string | object)[],
   ): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
     if (util.isEmpty(initResult)) {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;

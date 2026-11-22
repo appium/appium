@@ -18,9 +18,13 @@ const MIN_NODE_VERSION = (npmPackage.engines as Record<string, string>).node;
  * addressed to the configured hostname is served while a request whose Host
  * header names something else is rejected before it reaches the API.
  */
-describe.skipIf(!semver.satisfies(process.version, MIN_NODE_VERSION))(
-  'deny-foreign-hosts server wiring',
-  function () {
+// pick describe or skip at declaration time, so the before hook never runs on
+// an unsupported Node (the server would exit immediately)
+const describeIfNodeSupported = semver.satisfies(process.version, MIN_NODE_VERSION)
+  ? describe
+  : describe.skip;
+
+describeIfNodeSupported('deny-foreign-hosts server wiring', function () {
     let appiumHome: string;
     let serverProcess: SubProcess | undefined;
     let port: number;

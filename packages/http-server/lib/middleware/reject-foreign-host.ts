@@ -59,7 +59,12 @@ export function createHostValidator(allowedHostnames: string[] = []): (host: str
     if (hostName === null) {
       return false;
     }
-    return Boolean(net.isIP(hostName)) || hostName === 'localhost' || hostName.endsWith('.localhost') || allowed.has(hostName);
+    return (
+      Boolean(net.isIP(hostName)) ||
+      hostName === 'localhost' ||
+      hostName.endsWith('.localhost') ||
+      allowed.has(hostName)
+    );
   };
 }
 

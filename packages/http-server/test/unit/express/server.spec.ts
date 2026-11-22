@@ -986,7 +986,6 @@ describe('server configuration', function () {
   });
 });
 
-
 function getStatus(port: number, targetHost: string, hostHeader: string): Promise<{status: number}> {
   return new Promise((resolve, reject) => {
     const req = http.request(

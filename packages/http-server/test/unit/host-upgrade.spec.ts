@@ -44,9 +44,8 @@ describe('configureHttp Host validation on native WebSocket upgrades', function 
     httpServer.on('clientError', (_err, socket) => {
       socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
     });
-    (
-      httpServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}
-    ).shouldUpgradeCallback = (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
+    (httpServer as unknown as {shouldUpgradeCallback?: (req: http.IncomingMessage) => boolean}).shouldUpgradeCallback =
+      (req) => String(req.headers?.upgrade ?? '').toLowerCase() === 'websocket';
     const appiumServer = configureHttp({
       httpServer: httpServer as never,
       basePath: '/',

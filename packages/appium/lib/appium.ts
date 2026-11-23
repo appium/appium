@@ -632,6 +632,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
     const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
     let createdSessionId: string | undefined;
+    let createSessionPluginChainSettled = false;
     // get any plugins which are registered as handling this command
     const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
     const plugins = candidates.filter((p) => canHandleCmd(p, cmd));
@@ -684,7 +685,15 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         // not the platform driver
         const result = await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
         if (newSessionPlugins?.length) {
-          createdSessionId = (result as SessionHandlerCreateResult).value?.[0];
+          const id = (result as SessionHandlerCreateResult).value?.[0];
+          if (id && createSessionPluginChainSettled) {
+            // A plugin can reject while an unawaited next() is still creating the session.
+            if (this.sessionExists(id)) {
+              await this.cleanupFailedSession(id);
+            }
+          } else {
+            createdSessionId = id;
+          }
         }
         return result;
       }
@@ -716,17 +725,21 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
 
-    // A plugin can fail after next() successfully created a session. The client will
-    // receive an error and won't have a session ID to delete.
-    if (res.error && createdSessionId && this.sessionExists(createdSessionId)) {
-      await this.cleanupFailedSession(createdSessionId);
-    }
-
     // And finally, if the command was createSession, we want to attach its plugin instances to the
     // new sessionId, so that plugins can share state between their createSession method and other
     // instance methods
-    if (newSessionPlugins?.length && !res.error) {
-      const newSessionId = (res.value as unknown[])[0] as string;
+    if (newSessionPlugins?.length) {
+      createSessionPluginChainSettled = true;
+      const newSessionId =
+        !res.error && Array.isArray(res.value) && typeof res.value[0] === 'string' ? res.value[0] : undefined;
+      // Only keep the session created by next() if the response lets the client use it.
+      if (createdSessionId && createdSessionId !== newSessionId && this.sessionExists(createdSessionId)) {
+        await this.cleanupFailedSession(createdSessionId);
+      }
+      if (!newSessionId) {
+        res.error ??= new Error('A createSession plugin did not return a session ID');
+        return res;
+      }
       this.log.info(`Attaching ${newSessionPlugins.length} plugins to session ID ${newSessionId}`);
       this.sessionPlugins[newSessionId] = newSessionPlugins;
       for (const p of newSessionPlugins as (Plugin & ExtensionCore)[]) {
@@ -817,15 +830,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   /** Runs the wrapped plugin chain and merges the result into a `SessionHandlerResult` shape. */
   async executeWrappedCommand(wrappedCmd: () => Promise<unknown>): Promise<SessionHandlerResult<unknown>> {
     let cmdRes: unknown;
-    let cmdErr: unknown;
     const res: SessionHandlerResult<unknown> = {};
     try {
       // At this point, `wrappedCmd` defines a whole sequence of plugin handlers, culminating in
       // our default handler. Whatever it returns is what we're going to want to send back to the
       // user.
       cmdRes = await wrappedCmd();
-    } catch (e) {
-      cmdErr = e;
+    } catch (error) {
+      return markResponseEnvelope({
+        error: error instanceof Error ? error : new Error(String(error)),
+        protocol: PROTOCOLS.W3C,
+      });
     }
 
     // A marked envelope or a returned Error is passed through. `{protocol: 'W3C', value}` is data.
@@ -833,7 +848,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       Object.assign(res, cmdRes);
     } else {
       res.value = cmdRes;
-      res.error = cmdErr instanceof Error ? cmdErr : undefined;
       res.protocol = PROTOCOLS.W3C;
     }
     return markResponseEnvelope(res);

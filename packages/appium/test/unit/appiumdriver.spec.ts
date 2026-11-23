@@ -855,18 +855,65 @@ describe('AppiumDriver', function () {
         }
       });
 
-      it('should delete a session when a plugin throws after creating it', async function () {
+      for (const throwsError of [true, false]) {
+        it(`should delete a session when a plugin throws ${throwsError ? 'an Error' : 'a string'} after creating it`, async function () {
+          const failure = throwsError ? new Error('plugin setup failed') : 'plugin setup failed';
+          let createdSessionId: string | null = null;
+          class FailingPlugin extends BasePlugin {
+            async createSession(next: () => Promise<unknown>) {
+              await next();
+              createdSessionId = fakeDriver.sessionId;
+              throw failure;
+            }
+          }
+          setPluginClassesForTest(appium, new Map([[FailingPlugin, 'failing']]));
+          delete appium.sessions[SESSION_ID]; // Remove the placeholder from the executeCommand fixture.
+          const deleteSession = sandbox.spy(fakeDriver, 'deleteSession');
+          const caps = {
+            ...W3C_CAPS,
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:newCommandTimeout': 0},
+          };
+
+          try {
+            const result = await appium.executeCommand('createSession', caps);
+            if (failure instanceof Error) {
+              assert.strictEqual(result.error, failure);
+            } else {
+              assert.strictEqual(result.error?.message, failure);
+            }
+            assert.ok(createdSessionId, 'the inner driver must create a session before the plugin fails');
+            assert.strictEqual(appium.sessionExists(createdSessionId), false);
+            assert.strictEqual(appium.sessionIpcs[createdSessionId], undefined);
+            assert.strictEqual(fakeDriver.sessionId, null);
+            assert.deepStrictEqual(deleteSession.args, [[createdSessionId]]);
+          } finally {
+            if (createdSessionId && appium.sessionExists(createdSessionId)) {
+              await appium.deleteSession(createdSessionId);
+            }
+          }
+        });
+      }
+
+      it('should delete a session when driver startup finishes after the plugin fails', async function () {
         const failure = new Error('plugin setup failed');
-        let createdSessionId: string | null = null;
+        const startupEntered = Promise.withResolvers<void>();
+        const releaseStartup = Promise.withResolvers<void>();
+        let pendingStartup: Promise<unknown> | undefined;
         class FailingPlugin extends BasePlugin {
           async createSession(next: () => Promise<unknown>) {
-            await next();
-            createdSessionId = fakeDriver.sessionId;
+            pendingStartup = next();
+            await startupEntered.promise;
             throw failure;
           }
         }
         setPluginClassesForTest(appium, new Map([[FailingPlugin, 'failing']]));
-        delete appium.sessions[SESSION_ID]; // Remove the placeholder from the executeCommand fixture.
+        delete appium.sessions[SESSION_ID];
+        const createSession = fakeDriver.createSession.bind(fakeDriver);
+        sandbox.stub(fakeDriver, 'createSession').callsFake(async (caps) => {
+          startupEntered.resolve();
+          await releaseStartup.promise;
+          return await createSession(caps);
+        });
         const deleteSession = sandbox.spy(fakeDriver, 'deleteSession');
         const caps = {
           ...W3C_CAPS,
@@ -876,14 +923,21 @@ describe('AppiumDriver', function () {
         try {
           const result = await appium.executeCommand('createSession', caps);
           assert.strictEqual(result.error, failure);
-          assert.ok(createdSessionId, 'the inner driver must create a session before the plugin fails');
-          assert.strictEqual(appium.sessionExists(createdSessionId), false);
-          assert.strictEqual(appium.sessionIpcs[createdSessionId], undefined);
+          assert.strictEqual(deleteSession.callCount, 0);
+          assert.ok(pendingStartup);
+          releaseStartup.resolve();
+          const {value} = (await pendingStartup) as {value: [string]};
+          const [sessionId] = value;
+          assert.strictEqual(appium.sessionExists(sessionId), false);
+          assert.strictEqual(appium.sessionIpcs[sessionId], undefined);
+          assert.strictEqual(appium.sessionPlugins[sessionId], undefined);
           assert.strictEqual(fakeDriver.sessionId, null);
-          assert.deepStrictEqual(deleteSession.args, [[createdSessionId]]);
+          assert.deepStrictEqual(deleteSession.args, [[sessionId]]);
         } finally {
-          if (createdSessionId && appium.sessionExists(createdSessionId)) {
-            await appium.deleteSession(createdSessionId);
+          releaseStartup.resolve();
+          await pendingStartup;
+          if (fakeDriver.sessionId && appium.sessionExists(fakeDriver.sessionId)) {
+            await appium.deleteSession(fakeDriver.sessionId);
           }
         }
       });

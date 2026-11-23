@@ -49,8 +49,8 @@
   "dependencies": {
     "@appium/http-server": "1.0.0",
     "@xmldom/xmldom": "0.9.12",
-    "asyncbox": "7.0.0",
-    "xpath": "0.0.35",
+    "asyncbox": "7.1.0",
+    "xpath": "0.0.36",
     "yocto-spinner": "1.2.2"
   },
   "devDependencies": {

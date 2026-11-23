@@ -1,9 +1,11 @@
 import {errors} from '@appium/base-driver';
-import type {DriverClass, DriverType, StringRecord} from '@appium/types';
+import type {DriverClass, DriverType, NormalizedAppiumConfig, StringRecord} from '@appium/types';
 import type {ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 
 import {DRIVER_TYPE} from '../constants.js';
 import {log} from '../logger.js';
+import {ArgSpec} from '../schema/arg-spec.js';
+import {appiumSchema, type AppiumSchema} from '../schema/schema.js';
 import {ExtensionConfig} from './extension-config.js';
 import {manifestValidator} from './manifest/index.js';
 import type {ExtManifestProblem, Manifest} from './manifest/index.js';
@@ -16,11 +18,14 @@ export type MatchedDriver = {
   driverName: string;
 };
 
+type DriverNameMap = Map<DriverClass, string>;
+
 export class DriverConfig extends ExtensionConfig<DriverType> {
   private static readonly _instances = new WeakMap<Manifest, DriverConfig>();
   private knownAutomationNames = new Set<string>();
   /** Drivers added by {@linkcode DriverConfig.addResolvedDriver}; never written to the manifest */
   private readonly resolvedDrivers = new Map<string, ExtManifest<DriverType>>();
+  private readonly driverNamesByLocation = new Map<string, string>();
   /** Driver classes passed directly to the programmatic Appium API. */
   private readonly embeddedDrivers = new Map<string, EmbeddedDriver>();
   private activeDriverNames?: Set<string>;
@@ -66,9 +71,9 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     return drivers;
   }
 
-  /** Whether this configuration contains any embedded classes or resolved packages. */
-  get hasProgrammaticDrivers(): boolean {
-    return this.embeddedDrivers.size > 0 || this.resolvedDrivers.size > 0;
+  /** Active names to pass to hooks when a server uses embedded or resolved drivers. */
+  get activeProgrammaticDriverNames(): string[] | undefined {
+    return this.activeDriverNames && [...this.activeDriverNames];
   }
 
   /** Returns automation names for installed, resolved and embedded drivers, keyed by driver name. */
@@ -101,10 +106,13 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
    *
    * @param location - Absolute path or `file:` URL of the driver package or of any file in it,
    * such as its entry point
-   * @param registerCliSchema - Register this package's schema during CLI startup
    * @returns The name of the driver
    */
-  async addResolvedDriver(location: string, registerCliSchema = false): Promise<ExtName<DriverType>> {
+  async addResolvedDriver(location: string): Promise<ExtName<DriverType>> {
+    const cachedName = this.driverNamesByLocation.get(location);
+    if (cachedName !== undefined) {
+      return cachedName;
+    }
     const {driverName, manifest} = await readResolvedDriver(location);
     const {installPath, automationName} = manifest;
     const previous = this.resolvedDrivers.get(driverName);
@@ -113,11 +121,7 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         `Resolved driver packages at '${previous.installPath}' and '${installPath}' both use the driver name '${driverName}'`,
       );
     }
-    if (previous) {
-      return driverName;
-    }
-
-    if (driverName in super.installedExtensions) {
+    if (!previous && Object.hasOwn(super.installedExtensions, driverName)) {
       log.info(`The '${driverName}' driver at ${installPath} replaces the installed '${driverName}' driver`);
     }
     for (const embedded of this.embeddedDrivers.values()) {
@@ -125,16 +129,42 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
         this.assertSameAutomationName(driverName, embedded.automationName, automationName);
       }
     }
-    if (registerCliSchema) {
-      const schemaProblems = await this.getSchemaProblems(manifest, driverName, installPath);
+    this.resolvedDrivers.set(driverName, previous ?? manifest);
+    this.driverNamesByLocation.set(location, driverName);
+    return driverName;
+  }
+
+  /** Builds a schema for this startup without changing the process-wide installed schemas. */
+  async getStartupSchema(): Promise<AppiumSchema> {
+    if (!this.resolvedDrivers.size) {
+      return appiumSchema;
+    }
+    const schema = appiumSchema.forResolvedDrivers(this.resolvedDrivers.keys());
+    for (const [name, manifest] of this.resolvedDrivers) {
+      const root = this.getInstallPath(name);
+      const schemaProblems = await this.getSchemaProblems(manifest, name, {root, schema});
       if (schemaProblems.length) {
-        throw new Error(
-          `The driver at ${installPath} cannot be used: ${schemaProblems.map(({err}) => err).join('; ')}`,
+        throw new Error(`The driver at ${root} cannot be used: ${schemaProblems.map(({err}) => err).join('; ')}`);
+      }
+    }
+    return schema;
+  }
+
+  /** Converts resolved drivers' config-file keys to the same names used by CLI flags and defaults. */
+  normalizeResolvedDriverArgs(config: NormalizedAppiumConfig | undefined, schema: AppiumSchema): void {
+    const driverArgs = config?.server?.driver;
+    for (const name of this.resolvedDrivers.keys()) {
+      const normalizedName = ArgSpec.toNormalizedExtName(name);
+      const args = driverArgs?.[normalizedName];
+      if (args && driverArgs) {
+        driverArgs[normalizedName] = Object.fromEntries(
+          Object.entries(args).map(([key, value]) => [
+            schema.getArgSpec(key, DRIVER_TYPE, normalizedName)?.rawDest ?? key,
+            value,
+          ]),
         );
       }
     }
-    this.resolvedDrivers.set(driverName, manifest);
-    return driverName;
   }
 
   /**
@@ -162,45 +192,46 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     return driverName;
   }
 
-  /**
-   * Selects requested package drivers using the same precedence as session matching.
-   * Embedded classes win over package drivers; resolved packages precede installed packages.
-   */
-  getActiveDriverNames(requestedNames: string[]): string[] {
-    if (!this.hasProgrammaticDrivers) {
-      return requestedNames;
-    }
-    const drivers = this.installedExtensions;
-    const preferredNames = new Map<string, string>();
-    for (const [driverName, {automationName}] of Object.entries(drivers)) {
-      const automationKey = automationName.toLowerCase();
-      if (!this.embeddedDrivers.has(automationKey) && !preferredNames.has(automationKey)) {
-        preferredNames.set(automationKey, driverName);
-      }
-    }
-    const requested = new Set(requestedNames);
-    return [...requested].filter((driverName) => {
-      const {automationName} = drivers[driverName];
-      const preferredName = preferredNames.get(automationName.toLowerCase());
-      if (preferredName === undefined) {
-        return false;
-      }
-      if (preferredName !== driverName) {
-        if (!requested.has(preferredName)) {
-          throw new TypeError(
-            `Requested driver '${driverName}' is shadowed by unselected driver '${preferredName}' ` +
-              `for automationName '${automationName}'`,
-          );
-        }
-        return false;
-      }
-      return true;
-    });
+  /** Loads the preferred drivers and applies the successfully loaded selection to session matching. */
+  async applySelection(
+    requestedNames: string[],
+    load: (names: string[], rejectConflictingNames: boolean) => Promise<DriverNameMap>,
+  ): Promise<DriverNameMap> {
+    const programmatic = this.embeddedDrivers.size > 0 || this.resolvedDrivers.size > 0;
+    const activeDrivers = await load(
+      programmatic ? this.getPreferredDriverNames(requestedNames) : requestedNames,
+      programmatic,
+    );
+    this.activeDriverNames = programmatic ? new Set(activeDrivers.values()) : undefined;
+    return activeDrivers;
   }
 
-  /** Use the drivers loaded for this server when matching sessions. */
-  restrictToActiveDrivers(driverNames: Iterable<string>): void {
-    this.activeDriverNames = new Set(driverNames);
+  /** Prints the drivers loaded for a server, or the installed drivers if called without a selection. */
+  override print(activeNames?: string[]): void {
+    if (
+      !activeNames ||
+      (!activeNames.length && !Object.keys(this.installedExtensions).length && !this.embeddedDrivers.size)
+    ) {
+      super.print();
+      return;
+    }
+    if (!activeNames.length) {
+      log.info('No drivers are active.');
+      return;
+    }
+    const embeddedByName = new Map([...this.embeddedDrivers.values()].map((entry) => [entry.driverName, entry]));
+    const installed = this.installedExtensions;
+    log.info('Active drivers:');
+    for (const name of activeNames) {
+      const embedded = embeddedByName.get(name);
+      const manifest = installed[name];
+      const description = embedded
+        ? `${name} (embedded, automationName '${embedded.automationName}')`
+        : manifest
+          ? this.extensionDesc(name, manifest)
+          : name;
+      log.info(`  - ${description}`);
+    }
   }
 
   public override extensionDesc(
@@ -279,6 +310,29 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
     }
 
     return problems;
+  }
+
+  private getPreferredDriverNames(requestedNames: string[]): string[] {
+    const drivers = this.installedExtensions;
+    const preferredNames = new Map<string, string>();
+    for (const [driverName, {automationName}] of Object.entries(drivers)) {
+      const automationKey = automationName.toLowerCase();
+      if (!this.embeddedDrivers.has(automationKey) && !preferredNames.has(automationKey)) {
+        preferredNames.set(automationKey, driverName);
+      }
+    }
+    const requested = new Set(requestedNames);
+    return [...requested].filter((driverName) => {
+      const {automationName} = drivers[driverName];
+      const preferredName = preferredNames.get(automationName.toLowerCase());
+      if (preferredName !== undefined && !requested.has(preferredName)) {
+        throw new TypeError(
+          `Requested driver '${driverName}' is shadowed by unselected driver '${preferredName}' ` +
+            `for automationName '${automationName}'`,
+        );
+      }
+      return preferredName === driverName;
+    });
   }
 
   private _getDriverBySupport(

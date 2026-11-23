@@ -9,7 +9,7 @@ import type {DriverClass, ExternalDriver} from '@appium/types';
 
 import {AppiumDriver} from '../../../lib/appium.js';
 import {DriverConfig} from '../../../lib/extension/driver-config.js';
-import {getActiveDrivers} from '../../../lib/extension/index.js';
+import {loadActiveDrivers} from '../../../lib/extension/index.js';
 import {Manifest} from '../../../lib/extension/manifest/index.js';
 import {readResolvedDriver} from '../../../lib/extension/resolved-driver.js';
 
@@ -126,7 +126,7 @@ describe('resolved drivers', function () {
     });
   });
 
-  describe('getActiveDrivers()', function () {
+  describe('loadActiveDrivers()', function () {
     beforeEach(createDriverConfig);
 
     for (const embeddedFirst of [true, false]) {
@@ -144,7 +144,7 @@ describe('resolved drivers', function () {
           static automationName = 'Resolved';
         }
         const inputs = embeddedFirst ? [EmbeddedDriver, driverRoot] : [driverRoot, EmbeddedDriver];
-        const drivers = await getActiveDrivers(driverConfig, 1, inputs);
+        const drivers = await loadActiveDrivers(driverConfig, 1, inputs);
         assert.deepEqual([...drivers], [[EmbeddedDriver, 'resolved']]);
         assert.deepEqual(driverConfig.getAutomationNames(), {resolved: 'Resolved'});
       });
@@ -172,7 +172,7 @@ describe('resolved drivers', function () {
           installPath,
         });
       }
-      const drivers = await getActiveDrivers(driverConfig, 1);
+      const drivers = await loadActiveDrivers(driverConfig, 1);
       assert.deepEqual([...drivers.values()], ['second']);
     });
 
@@ -196,9 +196,9 @@ describe('resolved drivers', function () {
           installPath,
         });
       }
-      const allDrivers = await getActiveDrivers(driverConfig, 1);
+      const allDrivers = await loadActiveDrivers(driverConfig, 1);
       assert.deepEqual([...allDrivers.values()], ['first', 'second']);
-      const selectedDrivers = await getActiveDrivers(driverConfig, 1, ['second']);
+      const selectedDrivers = await loadActiveDrivers(driverConfig, 1, ['second']);
       assert.deepEqual([...selectedDrivers.values()], ['second']);
     });
 
@@ -211,7 +211,7 @@ describe('resolved drivers', function () {
         installSpec: driverRoot,
         installPath: driverRoot,
       });
-      const drivers = await getActiveDrivers(driverConfig, 1, ['old', driverRoot]);
+      const drivers = await loadActiveDrivers(driverConfig, 1, ['old', driverRoot]);
       assert.deepEqual([...drivers.values()], ['resolved']);
     });
 
@@ -225,7 +225,7 @@ describe('resolved drivers', function () {
         installPath: driverRoot,
       });
       await driverConfig.addResolvedDriver(driverRoot);
-      await assert.rejects(getActiveDrivers(driverConfig, 1, ['old']), /shadowed by unselected driver 'resolved'/);
+      await assert.rejects(loadActiveDrivers(driverConfig, 1, ['old']), /shadowed by unselected driver 'resolved'/);
     });
 
     it('should reject different embedded classes with the same automation name', async function () {
@@ -235,7 +235,10 @@ describe('resolved drivers', function () {
       class SecondDriver extends TestDriver {
         static automationName = 'shared';
       }
-      await assert.rejects(getActiveDrivers(driverConfig, 1, [FirstDriver, SecondDriver]), /Multiple embedded drivers/);
+      await assert.rejects(
+        loadActiveDrivers(driverConfig, 1, [FirstDriver, SecondDriver]),
+        /Multiple embedded drivers/,
+      );
     });
 
     it('should reject one constructor activated under different embedded and package names', async function () {
@@ -243,7 +246,7 @@ describe('resolved drivers', function () {
       driver.prototype.createSession = async () => {};
       driver.automationName = 'Different';
       try {
-        await assert.rejects(getActiveDrivers(driverConfig, 1, [driver, driverRoot]), /cannot be activated as both/);
+        await assert.rejects(loadActiveDrivers(driverConfig, 1, [driver, driverRoot]), /cannot be activated as both/);
       } finally {
         delete driver.automationName;
         delete driver.prototype.createSession;
@@ -255,7 +258,7 @@ describe('resolved drivers', function () {
         static automationName = 'Resolved';
       }
       await driverConfig.addResolvedDriver(driverRoot);
-      const drivers = await getActiveDrivers(driverConfig, 1, [EmbeddedDriver, 'resolved']);
+      const drivers = await loadActiveDrivers(driverConfig, 1, [EmbeddedDriver, 'resolved']);
       assert.deepEqual([...drivers], [[EmbeddedDriver, 'resolved']]);
     });
 
@@ -264,7 +267,7 @@ describe('resolved drivers', function () {
         static automationName = 'Res-olved';
       }
       await assert.rejects(
-        getActiveDrivers(driverConfig, 1, [EmbeddedDriver, driverRoot]),
+        loadActiveDrivers(driverConfig, 1, [EmbeddedDriver, driverRoot]),
         /both use the name 'resolved'/,
       );
     });
@@ -277,7 +280,7 @@ describe('resolved drivers', function () {
         static automationName = 'MyDriver';
       }
       await assert.rejects(
-        getActiveDrivers(driverConfig, 1, [FirstDriver, SecondDriver]),
+        loadActiveDrivers(driverConfig, 1, [FirstDriver, SecondDriver]),
         /derive the driver name 'mydriver'/,
       );
     });
@@ -286,20 +289,20 @@ describe('resolved drivers', function () {
       class InvalidDriver extends TestDriver {
         static automationName = '!';
       }
-      await assert.rejects(getActiveDrivers(driverConfig, 1, [InvalidDriver]), /Could not derive a driver name/);
+      await assert.rejects(loadActiveDrivers(driverConfig, 1, [InvalidDriver]), /Could not derive a driver name/);
     });
 
     it('should reject an empty module namespace', async function () {
-      await assert.rejects(getActiveDrivers(driverConfig, 1, [{}]), /found 0/);
+      await assert.rejects(loadActiveDrivers(driverConfig, 1, [{}]), /found 0/);
     });
 
     it('should reject an uninstalled driver name', async function () {
-      await assert.rejects(getActiveDrivers(driverConfig, 1, ['missing']), /not installed/);
+      await assert.rejects(loadActiveDrivers(driverConfig, 1, ['missing']), /not installed/);
     });
 
     it('should activate a repeated embedded constructor only once', async function () {
       class EmbeddedDriver extends TestDriver {}
-      const drivers = await getActiveDrivers(driverConfig, 1, [EmbeddedDriver, {default: EmbeddedDriver}]);
+      const drivers = await loadActiveDrivers(driverConfig, 1, [EmbeddedDriver, {default: EmbeddedDriver}]);
       assert.deepEqual([...drivers], [[EmbeddedDriver, 'embedded']]);
     });
 
@@ -307,12 +310,12 @@ describe('resolved drivers', function () {
       class FirstDriver extends TestDriver {}
       class SecondDriver extends TestDriver {}
       await assert.rejects(
-        getActiveDrivers(driverConfig, 1, [{FirstDriver, SecondDriver}]),
+        loadActiveDrivers(driverConfig, 1, [{FirstDriver, SecondDriver}]),
         /exactly one Appium driver class/,
       );
     });
     it('should load drivers given by location', async function () {
-      const drivers = await getActiveDrivers(driverConfig, 1, [pathToFileURL(entryPoint).href]);
+      const drivers = await loadActiveDrivers(driverConfig, 1, [pathToFileURL(entryPoint).href]);
       assert.deepEqual([...drivers.values()], ['resolved']);
       assert.equal([...drivers.keys()][0].name, 'ResolvedDriver');
     });
@@ -324,7 +327,7 @@ describe('resolved drivers', function () {
       const driver = LiteralDriver as unknown as DriverClass;
       const moduleNamespace = {default: driver, LiteralDriver: driver};
 
-      const drivers = await getActiveDrivers(driverConfig, 1, [moduleNamespace]);
+      const drivers = await loadActiveDrivers(driverConfig, 1, [moduleNamespace]);
       assert.equal([...drivers.keys()][0], driver);
       assert.deepEqual([...drivers.values()], ['literal']);
       assert.deepEqual(
@@ -354,7 +357,7 @@ describe('resolved drivers', function () {
       class EmbeddedDriver extends TestDriver {
         static automationName = 'Embedded-Name';
       }
-      await assert.rejects(getActiveDrivers(driverConfig, 1, [EmbeddedDriver]), /both use the name 'embeddedname'/);
+      await assert.rejects(loadActiveDrivers(driverConfig, 1, [EmbeddedDriver]), /both use the name 'embeddedname'/);
     });
 
     for (const embeddedFirst of [true, false]) {
@@ -402,7 +405,7 @@ describe('resolved drivers', function () {
       class EmbeddedDriver extends TestDriver {
         static automationName = 'Embedded-Name';
       }
-      await getActiveDrivers(driverConfig, 1, [EmbeddedDriver]);
+      await loadActiveDrivers(driverConfig, 1, [EmbeddedDriver]);
       const appium = new AppiumDriver({
         relaxedSecurityEnabled: true,
         denyInsecure: ['embeddedname:foo'],
@@ -452,7 +455,7 @@ describe('resolved drivers', function () {
       class EmbeddedDriver extends TestDriver {}
       const first = driverConfig.createServerConfig();
       const second = driverConfig.createServerConfig();
-      await getActiveDrivers(first, 1, [EmbeddedDriver, driverRoot]);
+      await loadActiveDrivers(first, 1, [EmbeddedDriver, driverRoot]);
       assert.deepEqual(Object.keys(second.installedExtensions), []);
       assert.deepEqual(Object.keys(driverConfig.installedExtensions), []);
       await assert.rejects(second.findMatchingDriver({automationName: 'Embedded', platformName: 'Fake'}));
@@ -480,7 +483,7 @@ describe('resolved drivers', function () {
     ]) {
       it(`should honor ${name} in an embedded-driver session`, async function () {
         class EmbeddedDriver extends TestDriver {}
-        await getActiveDrivers(driverConfig, 1, [EmbeddedDriver]);
+        await loadActiveDrivers(driverConfig, 1, [EmbeddedDriver]);
         const appium = new AppiumDriver(args as unknown as ConstructorParameters<typeof AppiumDriver>[0]);
         appium.driverConfig = driverConfig;
         appium.configureGlobalFeatures();

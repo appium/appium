@@ -38,10 +38,10 @@ async function main() {
   if (!semVersion) {
     throw new Error(`Could not parse Appium version "${version}" as semver`);
   }
-  const majMinVer = `${semVersion.major}.${semVersion.minor}`;
+  const vPrefixedMajVer = `v${semVersion.major}`;
 
   for (const lang of LANGS) {
-    log.info(`Building docs for language '${lang}' and version ${majMinVer}`);
+    log.info(`Building docs for language '${lang}' and version ${vPrefixedMajVer}`);
     const configFile = path.join(DOCS_DIR, `mkdocs-${lang}.yml`);
     if (preview) {
       await buildSite({
@@ -54,10 +54,10 @@ async function main() {
         branch,
         deployPrefix: path.join(basePrefix, lang),
         remote,
-        deployVersion: majMinVer,
+        deployVersion: vPrefixedMajVer,
         push,
         alias: LATEST_ALIAS,
-        message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
+        message: `docs(appium): build docs for appium@${vPrefixedMajVer}, language ${lang}`,
       });
     }
     log.info(`Docs built`);

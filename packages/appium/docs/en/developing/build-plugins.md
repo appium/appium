@@ -164,6 +164,11 @@ constructor(...args) {
 The `args` parameter here is the object containing all the CLI args used to start the Appium
 server.
 
+Appium creates a separate instance of your plugin for each session. The instance that handles
+`createSession` also handles the later commands of that session, so state set in `createSession`
+can be kept on `this`. If `createSession` fails, that instance is dropped. Commands that do not
+belong to a session, such as `getStatus`, are handled by another instance which no session uses.
+
 ### Intercept and handle specific Appium commands
 
 This is the most normal behavior for Appium plugins -- to modify or replace the execution of one or

@@ -134,10 +134,11 @@ hooks receive the selected driver names, or an empty array when all installed dr
 by default. When package locations or imported classes are supplied, hooks receive the names of
 the active drivers.
 
-When you select a package directory or `file:` URL with the CLI's `--use-drivers` option,
-Appium registers the package's argument schema before parsing driver-specific flags. For an
-entry point file, use a `file:` URL so that the CLI can distinguish it from a CSV file of driver
-names.
+When you select a package directory or `file:` URL with `--use-drivers`, `server.use-drivers` in
+the config file, or `main({useDrivers: [...]})`, Appium uses the selected package's schema to validate
+and supply defaults for its `server.driver.<name>` settings. The CLI also accepts flags declared
+by that schema. For an entry point file on the CLI, use a `file:` URL to distinguish it from a CSV
+file of driver names.
 
 Each server keeps its directly supplied classes and resolved package locations in its own driver
 configuration, even when multiple servers share an `APPIUM_HOME`. A directly supplied class takes

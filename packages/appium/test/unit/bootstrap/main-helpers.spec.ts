@@ -64,7 +64,9 @@ describe('bootstrap/main-helpers', function () {
         const parsedArgs = {...getDefaultsForSchema(false), useDrivers} as ParsedArgs;
         const appium = new AppiumDriver(parsedArgs as unknown as ConstructorParameters<typeof AppiumDriver>[0]);
         appium.driverConfig = driverConfig.createServerConfig();
-        sandbox.stub(appium.driverConfig, 'hasProgrammaticDrivers').get(() => hasProgrammaticDrivers);
+        sandbox
+          .stub(appium.driverConfig, 'activeProgrammaticDriverNames')
+          .get(() => (hasProgrammaticDrivers ? ['active'] : undefined));
         const classes = new Map([[BaseDriver as unknown as DriverClass, 'active']]);
         const {serverOpts} = buildServerOpts(appium, parsedArgs, classes, new Map());
         assert.deepEqual(serverOpts.cliArgs?.useDrivers, hasProgrammaticDrivers ? ['active'] : useDrivers);

@@ -6,15 +6,8 @@ import * as yaml from 'yaml';
 
 import type {ErrorObject, SchemaObject} from '../schema/ajv.js';
 import {formatErrors} from '../schema/format-errors.js';
-import {getSchema, validate} from '../schema/schema.js';
+import {getSchema, validate, type AppiumSchema} from '../schema/schema.js';
 import {camelCase, getPath, mapKeys, mapValues} from '../utils/index.js';
-
-/**
- * A cache of the raw config file (a JSON string) at a filepath.
- * This is used for better error reporting.
- * Note that config files needn't be JSON, but it helps if they are.
- */
-const rawConfig = new Map<string, string>();
 
 /**
  * Result of calling {@link readConfigFile}.
@@ -38,6 +31,7 @@ export interface ReadConfigFileOptions {
  * This is an `AsyncSearcher` which is inexplicably _not_ exported by the `lilconfig` type definition.
  */
 type LilconfigAsyncSearcher = ReturnType<typeof lilconfig>;
+type LoadedConfigFile = {result: LilconfigResult; json?: string};
 
 /**
  * Given an optional path, read a config file. Validates the config file.
@@ -52,43 +46,47 @@ export async function readConfigFile(
   filepath?: string,
   opts: ReadConfigFileOptions = {},
 ): Promise<ReadConfigFileResult> {
+  return validateConfigFile(await loadConfigFile(filepath), opts);
+}
+
+/** Reads the raw file so driver packages can be identified before config validation. */
+export async function loadConfigFile(filepath?: string): Promise<LoadedConfigFile> {
+  const rawConfig = new Map<string, string>();
+  const loadJson: LoaderSync = (file, content) => {
+    const config = jsonLoader(file, content);
+    rawConfig.set(file, content);
+    return config;
+  };
   const lc = lilconfig('appium', {
     loaders: {
       '.yaml': yamlLoader as LoaderSync,
       '.yml': yamlLoader as LoaderSync,
-      '.json': jsonLoader as LoaderSync,
-      noExt: jsonLoader as LoaderSync,
+      '.json': loadJson,
+      noExt: loadJson,
     },
     packageProp: 'appiumConfig',
   });
 
-  const result = filepath ? await loadConfigFile(lc, filepath) : await searchConfigFile(lc);
+  const result = filepath ? await loadExplicitConfigFile(lc, filepath) : await searchConfigFile(lc);
+  return {result, json: result ? rawConfig.get(result.filepath) : undefined};
+}
 
-  if (result?.filepath && !result?.isEmpty) {
-    const {pretty = true} = opts;
-    try {
-      let configResult: ReadConfigFileResult;
-      const errors = validate(result.config) as ErrorObject[];
-      if (util.isEmpty(errors)) {
-        configResult = {...result, errors};
-      } else {
-        const reason = formatErrors(errors, result.config as Record<string, unknown>, {
-          json: rawConfig.get(result.filepath),
-          pretty,
-        });
-        configResult = reason ? {...result, errors, reason} : {...result, errors};
-      }
-
-      // normalize (to camel case) all top-level property names of the config file
-      configResult.config = normalizeConfig(configResult.config as AppiumConfig);
-
-      return configResult;
-    } finally {
-      // clean up the raw config file cache, which is only kept to better report errors.
-      rawConfig.delete(result.filepath);
-    }
+/** Validates and normalizes a loaded file against the startup schema. */
+export function validateConfigFile(
+  {result, json}: LoadedConfigFile,
+  {pretty = true}: ReadConfigFileOptions = {},
+  configSchema?: AppiumSchema,
+): ReadConfigFileResult {
+  if (!result?.filepath || result.isEmpty) {
+    return result ?? {};
   }
-  return result ?? {};
+  const errors = configSchema ? configSchema.validate(result.config) : validate(result.config);
+  const schema = configSchema?.getSchema();
+  const reason = util.isEmpty(errors)
+    ? undefined
+    : formatErrors(errors, result.config as Record<string, unknown>, {json, pretty, schema});
+  const config = normalizeConfig(result.config as AppiumConfig, schema);
+  return reason ? {...result, errors, reason, config} : {...result, errors, config};
 }
 
 /**
@@ -97,9 +95,7 @@ export async function readConfigFile(
  * @param config - Raw config object as parsed from file
  * @returns New object with camel-cased keys (or CLI `dest` keys).
  */
-export function normalizeConfig(config: AppiumConfig): NormalizedAppiumConfig {
-  const schema = getSchema();
-
+export function normalizeConfig(config: AppiumConfig, schema = getSchema()): NormalizedAppiumConfig {
   const isSchemaTypeObject = (schemaObj: SchemaObject | Record<string, unknown> | undefined): boolean =>
     Boolean(
       (schemaObj as SchemaObject | undefined)?.properties || (schemaObj as SchemaObject | undefined)?.type === 'object',
@@ -136,15 +132,12 @@ function yamlLoader(filepath: string, content: string): unknown {
 }
 
 /**
- * Custom JSON loader that caches the raw config file (for use with `better-ajv-errors`).
- * If it weren't for this cache, this would be unnecessary.
+ * Adds the JSON config path to parse errors.
  */
 function jsonLoader(filepath: string, content: string): unknown {
-  rawConfig.set(filepath, content);
   try {
     return JSON.parse(content);
   } catch (e) {
-    rawConfig.delete(filepath);
     throw new Error(`The JSON config at '${filepath}' cannot be loaded. Original error: ${(e as Error).message}`, {
       cause: e,
     });
@@ -154,7 +147,7 @@ function jsonLoader(filepath: string, content: string): unknown {
 /**
  * Loads a config file from an explicit path
  */
-async function loadConfigFile(lc: LilconfigAsyncSearcher, filepath: string): Promise<LilconfigResult> {
+async function loadExplicitConfigFile(lc: LilconfigAsyncSearcher, filepath: string): Promise<LilconfigResult> {
   try {
     // removing "await" will cause any rejection to _not_ be caught in this block!
     return await lc.load(filepath);

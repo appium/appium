@@ -16,7 +16,8 @@ import type {
 import {APPIUM_VER} from '../helpers/build.js';
 import {log} from '../logger.js';
 import type {SchemaObject} from '../schema/ajv.js';
-import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
+import {ALLOWED_SCHEMA_EXTENSIONS, appiumSchema, isAllowedSchemaFileExtension} from '../schema/schema.js';
+import type {AppiumSchema} from '../schema/schema.js';
 import {capitalize, resolveFrom} from '../utils/index.js';
 import {INSTALL_TYPES, manifestValidator} from './manifest/index.js';
 import type {ExtManifestProblem, Manifest} from './manifest/index.js';
@@ -31,6 +32,8 @@ export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
 };
 
 export type ExtensionConfigMutationOpts = {write?: boolean};
+
+type ResolvedSchemaContext = {root: string; schema: AppiumSchema};
 
 /**
  * Results of the most recent {@linkcode ExtensionConfig.validate} call, not yet rendered anywhere.
@@ -110,7 +113,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     extType: E,
     extName: string,
     extManifest: ExtManifestWithSchema<E>,
-    schemaRoot?: string,
+    context?: ResolvedSchemaContext,
   ): Promise<SchemaObject | undefined> {
     const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
@@ -120,8 +123,8 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     let moduleObject: any;
     if (typeof argSchemaPath === 'string') {
-      const schemaPath = schemaRoot
-        ? path.resolve(schemaRoot, argSchemaPath)
+      const schemaPath = context
+        ? path.resolve(context.root, argSchemaPath)
         : await resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
       if (path.extname(schemaPath) === '.json') {
         // `import()` of JSON needs an import attribute Node versions disagree on the
@@ -139,7 +142,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
     // this sucks. default exports should be destroyed
     const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
-    await registerSchema(extType, extName, schema as SchemaObject, {replace: schemaRoot !== undefined});
+    await (context?.schema ?? appiumSchema).registerSchema(extType, extName, schema as SchemaObject);
     return schema;
   }
 
@@ -348,19 +351,19 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
    *
    * @param extName - Extension key
    * @param extManifest - Manifest entry that includes `schema`
-   * @param schemaRoot - Resolved package root, if outside Appium home
+   * @param context - Package root and startup schema for a driver selected by location
    */
   async readExtensionSchema(
     extName: string,
     extManifest: ExtManifestWithSchema<ExtType>,
-    schemaRoot?: string,
+    context?: ResolvedSchemaContext,
   ): Promise<SchemaObject | undefined> {
     return await ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
       extManifest,
-      schemaRoot,
+      context,
     );
   }
 
@@ -527,7 +530,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   protected async getSchemaProblems(
     extManifest: ExtManifest<ExtType>,
     extName: string,
-    schemaRoot?: string,
+    context?: ResolvedSchemaContext,
   ): Promise<ExtManifestProblem[]> {
     const problems: ExtManifestProblem[] = [];
     const {schema: argSchemaPath} = extManifest;
@@ -535,7 +538,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
       if (typeof argSchemaPath === 'string') {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            await this.readExtensionSchema(extName, extManifest, schemaRoot);
+            await this.readExtensionSchema(extName, extManifest, context);
           } catch (err: any) {
             problems.push({
               err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
@@ -550,7 +553,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         }
       } else if (util.isPlainObject(argSchemaPath)) {
         try {
-          await this.readExtensionSchema(extName, extManifest, schemaRoot);
+          await this.readExtensionSchema(extName, extManifest, context);
         } catch (err: any) {
           problems.push({
             err: `Unable to register embedded schema; ${err.message}`,

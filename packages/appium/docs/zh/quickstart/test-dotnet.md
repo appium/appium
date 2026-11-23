@@ -8,15 +8,14 @@ title: 编写测试 (.NET)
 [Appium .NET Client](https://github.com/appium/dotnet-client/) 是
 官方的 Appium C# 客户端。这个驱动程序是 Selenium C# 客户端的扩展。它具有常规驱动程序的所有功能，但在之上添加了 Appium 特定的方法。该驱动程序在公共 NuGet Gallery 上作为 [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/) 提供。
 
-现在，我们进入目录并创建一个新的 [NUnit](https://nunit.org/) 项目。我们还将添加对 Appium.Net 驱动程序和其他依赖项的引用。
+Now, create a new [NUnit](https://nunit.org/) project. 我们还将添加对 Appium.Net 驱动程序和其他依赖项的引用。
 
 ```bash
-cd dotnet-client
 dotnet new nunit --name appiumtest
 
 cd appiumtest
 
-# 这将安装最新的 5.x 版本
+# This will install the latest version
 dotnet add package Appium.WebDriver  --prerelease
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
@@ -47,7 +46,7 @@ public class Tests
 
         driverOptions.AddAdditionalAppiumOption("appPackage", "com.android.settings");
         driverOptions.AddAdditionalAppiumOption("appActivity", ".Settings");
-        // NoReset assumes the app com.google.android is preinstalled on the emulator
+        // NoReset assumes the app com.android.settings is preinstalled on the emulator
         driverOptions.AddAdditionalAppiumOption("noReset", true);
 
         _driver = new AndroidDriver(serverUri, driverOptions, TimeSpan.FromSeconds(180));

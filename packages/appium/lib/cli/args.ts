@@ -15,6 +15,7 @@ import {
 import {INSTALL_TYPES} from '../extension/manifest/index.js';
 import {toParserArgs} from '../schema/cli-args.js';
 import type {ArgumentDefinitions} from '../schema/cli-args.js';
+import type {AppiumSchema} from '../schema/schema.js';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'images';
 
@@ -69,8 +70,8 @@ export const getExtensionArgs = util.memoize(function getExtensionArgs(): Record
  * This includes schema-derived options and additional CLI-only options which
  * are intentionally disallowed in config files.
  */
-export function getServerArgs(): ArgumentDefinitions {
-  return new Map([...toParserArgs(), ...serverArgsDisallowedInConfig]);
+export function getServerArgs(configSchema?: AppiumSchema): ArgumentDefinitions {
+  return new Map([...toParserArgs(configSchema), ...serverArgsDisallowedInConfig]);
 }
 
 /**

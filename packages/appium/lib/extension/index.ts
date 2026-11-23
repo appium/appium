@@ -94,34 +94,22 @@ export async function getActivePlugins(
 }
 
 /**
- * Find any driver name which has been installed, and turn each one into its class, so we can send
- * them as objects to the server init in case they need to add methods/routes or update the server.
- * If the --drivers flag was given, this method only loads the given drivers.
+ * Loads the selected drivers for server hooks, routes and session matching.
  *
  * Besides names of installed drivers, `useDrivers` may contain the absolute path or `file:` URL of a
  * driver package (or of any file in it), which is then used without being installed in `APPIUM_HOME`.
  * See {@linkcode DriverConfig.addResolvedDriver}.
  */
-export async function getActiveDrivers(
+export async function loadActiveDrivers(
   driverConfig: DriverConfig,
   maxParallelImports: number,
   useDrivers: readonly (string | object)[] = [],
 ): Promise<DriverNameMap> {
   const {driverNames, embeddedPairs} = await resolveDriverEntries(driverConfig, useDrivers);
-  const pairs = await importExtensions(
-    'driver',
-    driverConfig,
-    driverConfig.getActiveDriverNames(driverNames),
-    maxParallelImports,
-  );
-  const activeDrivers = mergeDriverPairs(
-    [...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)],
-    driverConfig.hasProgrammaticDrivers,
-  );
-  if (driverConfig.hasProgrammaticDrivers) {
-    driverConfig.restrictToActiveDrivers(activeDrivers.values());
-  }
-  return activeDrivers;
+  return await driverConfig.applySelection(driverNames, async (selectedNames, rejectConflictingNames) => {
+    const pairs = await importExtensions('driver', driverConfig, selectedNames, maxParallelImports);
+    return mergeDriverPairs([...embeddedPairs, ...(pairs as Array<[DriverClass, string]>)], rejectConflictingNames);
+  });
 }
 
 /** Whether a `useDrivers` entry identifies a driver package rather than an installed driver name. */
@@ -152,7 +140,7 @@ async function resolveDriverEntries(
       }
     }
     for (const driverName of filteredDriverNames) {
-      if (!(driverName in driverConfig.installedExtensions)) {
+      if (!Object.hasOwn(driverConfig.installedExtensions, driverName)) {
         const suffix = util.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
           : `Only the following ${
@@ -202,9 +190,11 @@ function unwrapEmbeddedDriver(value: object): DriverClass {
     return value;
   }
   const candidates = new Set<DriverClass>();
-  for (const exported of Object.values(value)) {
-    if (isDriverClass(exported)) {
-      candidates.add(exported);
+  if (value && typeof value === 'object') {
+    for (const exported of Object.values(value)) {
+      if (isDriverClass(exported)) {
+        candidates.add(exported);
+      }
     }
   }
   if (candidates.size !== 1) {

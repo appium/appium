@@ -123,6 +123,11 @@ constructor(...args) {
 
 这里的 `args` 参数是包含启动 Appium 服务器所用全部 CLI 参数的对象。
 
+Appium creates a separate instance of your plugin for each session. The instance that handles
+`createSession` also handles the later commands of that session, so state set in `createSession`
+can be kept on `this`. If `createSession` fails, that instance is dropped. Commands that do not
+belong to a session, such as `getStatus`, are handled by another instance which no session uses.
+
 ### 拦截并处理特定的 Appium 命令
 
 这是 Appium 插件最常见的用法——修改或替换本应由当前驱动处理的一个或多个命令的执行。要覆盖默认的命令处理逻辑，你需要在类中实现与所要处理的 Appium 命令同名的 `async` 方法（和[驱动本身的实现方式](./build-drivers.md#implement-webdriver-classic-commands)完全一致）。想知道都有哪些命令名？它们定义在 Appium base driver 的
@@ -190,7 +195,9 @@ throw new errors.NoSuchElementError();
 
 ### 向 Appium 日志写消息
 
-你当然可以随时用 `console.log`，但 Appium 为你提供了一个更贴心的日志器 `this.logger`（它有 `.info`、`.debug`、`.log`、`.warn`、`.error` 等不同日志级别的方法）。如果你想在插件上下文之外（比如脚本或辅助文件中）创建 Appium 日志器，也可以自行构造：
+You can always use `console.log`, of course, but Appium provides a nice logger for you as
+`this.log` (it has `.info`, `.debug`, `.warn`, `.error` methods on it for differing log
+levels). 如果你想在插件上下文之外（比如脚本或辅助文件中）创建 Appium 日志器，也可以自行构造：
 
 ```js
 import {logging} from 'appium/support';
@@ -354,7 +361,7 @@ async execute(next, driver, script, args) {
 
 You probably don't normally need to update the Appium server object (which is an
 [Express](https://expressjs.com/) server having already been
-[configured](https://github.com/appium/appium/blob/master/packages/base-driver/lib/express/server.ts)
+[configured](https://github.com/appium/appium/blob/master/packages/http-server/lib/server.ts)
 in a variety of ways). 但你可以为服务器添加新的路由来支撑你的插件的需求。要更新服务器，你必须在类中实现 `static async updateServer` 方法。该方法接收三个参数：
 
 - `expressApp`：Express app 对象

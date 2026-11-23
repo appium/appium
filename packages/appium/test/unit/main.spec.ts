@@ -1,15 +1,14 @@
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
 import type {AddressInfo} from 'node:net';
 import path from 'node:path';
 import {it} from 'node:test';
-import {fileURLToPath, pathToFileURL} from 'node:url';
-import {promisify} from 'node:util';
+import {fileURLToPath} from 'node:url';
 
 import {BaseDriver} from '@appium/base-driver';
 import {fs, tempDir} from '@appium/support';
 import type {AppiumServer, DriverClass, InitialOpts, ServerArgs, UpdateServerCallback} from '@appium/types';
 
+import {log} from '../../lib/logger.js';
 import {init, main} from '../../lib/main.js';
 
 it('should isolate embedded main selections and pass normalized names to real server hooks', async function (t) {
@@ -41,6 +40,7 @@ it('should isolate embedded main selections and pass normalized names to real se
 
   const TestDriver = BaseDriver as unknown as DriverClass;
   const hookArgs: Partial<ServerArgs>[] = [];
+  const info = t.mock.method(log, 'info');
   class FirstDriver extends TestDriver {
     static automationName = 'First';
     static platformNames = ['TestOS'];
@@ -75,6 +75,10 @@ it('should isolate embedded main selections and pass normalized names to real se
     hookArgs.map((args) => args.useDrivers),
     [['first'], ['second']],
   );
+  const startupMessages = info.mock.calls.map(({arguments: [message]}) => String(message));
+  assert.ok(startupMessages.includes("  - first (embedded, automationName 'First')"));
+  assert.ok(startupMessages.includes("  - second (embedded, automationName 'Second')"));
+  assert.ok(!startupMessages.some((message) => message.startsWith('  - fake@')));
 
   const initialized = await init({appiumHome, address: '127.0.0.1', loglevel: 'error', throwInsteadOfExit: true});
   const parsedNames: string[] = initialized.parsedArgs.useDrivers;
@@ -149,17 +153,51 @@ it('should reject a programmatic driver module with no driver export', async fun
   );
 });
 
-it('should parse CLI options declared by a resolved driver', async function (t) {
+it('should validate and default config for resolved package selections without sharing schemas', async function (t) {
   const root = await tempDir.openDir();
   t.after(() => fs.rimraf(root));
   const appiumHome = path.join(root, 'appium-home');
-  const driverRoot = path.join(root, 'path-driver');
   await fs.mkdir(appiumHome);
+  const fileDriver = await writeResolvedDriver(root, 'file-driver', {
+    'test-value': {type: 'integer', minimum: 0, default: 2, appiumCliDest: 'numberValue'},
+    'default-only': {type: 'boolean', default: true},
+  });
+  const programmaticDriver = await writeResolvedDriver(root, 'programmatic-driver', {
+    'test-value': {type: 'string', default: 'default'},
+  });
+  const configFile = path.join(root, 'appium.json');
+  const programmaticFile = path.join(root, 'programmatic.json');
+  await fs.writeFile(
+    configFile,
+    JSON.stringify({server: {'use-drivers': [fileDriver], driver: {'path-driver': {'test-value': 3}}}}),
+  );
+  await fs.writeFile(programmaticFile, JSON.stringify({server: {driver: {'path-driver': {'test-value': 'value'}}}}));
+  const startupArgs = {appiumHome, loglevel: 'error', throwInsteadOfExit: true} as const;
+  const [file, programmatic] = await Promise.all([
+    init({...startupArgs, configFile}),
+    init({...startupArgs, configFile: programmaticFile, useDrivers: [programmaticDriver]}),
+  ]);
+  assert.deepEqual(file.parsedArgs.driver?.['path-driver'], {numberValue: 3, defaultOnly: true});
+  assert.deepEqual(file.appiumDriver.getCliArgsForDriver('path-driver'), {numberValue: 3});
+  assert.deepEqual(programmatic.parsedArgs.driver?.['path-driver'], {testValue: 'value'});
+
+  await assert.rejects(
+    init({...startupArgs, configFile, useDrivers: [programmaticDriver]}),
+    /Errors in config file.*[\s\S]*must be string/,
+  );
+});
+
+async function writeResolvedDriver(
+  root: string,
+  directory: string,
+  properties: Record<string, object>,
+): Promise<string> {
+  const driverRoot = path.join(root, directory);
   await fs.mkdir(driverRoot);
   await fs.writeFile(
     path.join(driverRoot, 'package.json'),
     JSON.stringify({
-      name: 'path-driver',
+      name: directory,
       version: '1.0.0',
       appium: {
         driverName: 'path-driver',
@@ -170,18 +208,6 @@ it('should parse CLI options declared by a resolved driver', async function (t) 
       },
     }),
   );
-  await fs.writeFile(
-    path.join(driverRoot, 'schema.json'),
-    JSON.stringify({type: 'object', properties: {'test-value': {type: 'string'}}}),
-  );
-
-  const appium = fileURLToPath(new URL('../../../index.js', import.meta.url));
-  for (const location of [driverRoot, pathToFileURL(driverRoot).href]) {
-    const {stdout} = await promisify(execFile)(
-      process.execPath,
-      [appium, '--use-drivers', location, '--driver-path-driver-test-value', 'selected', '--show-config'],
-      {env: {...process.env, APPIUM_HOME: appiumHome}},
-    );
-    assert.match(stdout, /testValue.*selected/);
-  }
-});
+  await fs.writeFile(path.join(driverRoot, 'schema.json'), JSON.stringify({type: 'object', properties}));
+  return driverRoot;
+}

@@ -20,7 +20,7 @@ import {
 import {APPIUM_VER} from '../helpers/build.js';
 import {transformers} from '../schema/cli-transformers.js';
 import type {ArgumentDefinitions} from '../schema/index.js';
-import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema/index.js';
+import {appiumSchema} from '../schema/schema.js';
 import {setPath} from '../utils/index.js';
 import {getExtensionArgs, getServerArgs} from './args.js';
 import {
@@ -62,8 +62,12 @@ export class ArgParser {
 
   /**
    * @param debug - if true, throw instead of exiting on parse errors
+   * @param configSchema - schema for this Appium startup
    */
-  constructor(debug = false) {
+  constructor(
+    debug = false,
+    private readonly configSchema = appiumSchema,
+  ) {
     const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
     const parser = new ArgumentParser({
       add_help: true,
@@ -91,7 +95,7 @@ export class ArgParser {
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
     // conceptually rather than just through argparse
-    const serverArgs = ArgParser._addServerToParser(subParsers);
+    const serverArgs = this._addServerToParser(subParsers);
 
     this.rawArgs = serverArgs;
 
@@ -110,9 +114,9 @@ export class ArgParser {
    *
    * This mutates and returns the same object.
    */
-  static normalizeServerArgs<T extends LooseArgsMap>(obj: T): T {
+  static normalizeServerArgs<T extends LooseArgsMap>(obj: T, configSchema = appiumSchema): T {
     const mutableObj = obj as LooseArgsMap;
-    for (const spec of getAllArgSpecs().values()) {
+    for (const spec of configSchema.getAllArgSpecs().values()) {
       if (!spec.extType && mutableObj[spec.name] !== undefined && spec.rawDest !== spec.name) {
         mutableObj[spec.rawDest] = mutableObj[spec.name] ?? mutableObj[spec.rawDest];
         delete mutableObj[spec.name];
@@ -128,9 +132,9 @@ export class ArgParser {
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
    */
-  private static _transformParsedArgs(args: LooseArgsMap, unknownArgs: string[] = []): TransformedArgsMap {
+  private _transformParsedArgs(args: LooseArgsMap, unknownArgs: string[] = []): TransformedArgsMap {
     const result = Object.entries(args).reduce((unpacked: LooseArgsMap, [key, value]) => {
-      const spec = hasArgSpec(key) ? getArgSpec(key) : undefined;
+      const spec = this.configSchema.getArgSpec(key);
       if (value !== undefined && spec) {
         const {dest} = spec;
         setPath(unpacked as Record<string, unknown>, dest, value);
@@ -159,7 +163,7 @@ export class ArgParser {
   /**
    * Adds the `server` subcommand parser and returns its argument definitions.
    */
-  private static _addServerToParser(subParser: SubparsersAction): ArgumentDefinitions {
+  private _addServerToParser(subParser: SubparsersAction): ArgumentDefinitions {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Start an Appium server',
@@ -168,7 +172,7 @@ export class ArgParser {
 
     ArgParser._patchExit(serverParser);
 
-    const serverArgs = getServerArgs();
+    const serverArgs = getServerArgs(this.configSchema);
     for (const [flagsOrNames, opts] of serverArgs) {
       // @ts-ignore TS doesn't like the spread operator here.
       serverParser.add_argument(...flagsOrNames, {...opts});
@@ -323,18 +327,18 @@ export class ArgParser {
         knownArgs.pluginCommand = 'list';
       }
       if (unknownArgs?.length && (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')) {
-        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
+        return this._transformParsedArgs(knownArgs, unknownArgs);
       } else if (unknownArgs?.length) {
         if (knownArgs.allowUnknownArgs) {
           // eslint-disable-next-line no-console
           console.error(
             `[WARN] Ignoring unrecognized arguments because '--allow-unknown-args' is set: ${unknownArgs.join(' ')}`,
           );
-          return ArgParser._transformParsedArgs(knownArgs);
+          return this._transformParsedArgs(knownArgs);
         }
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
       }
-      return ArgParser._transformParsedArgs(knownArgs);
+      return this._transformParsedArgs(knownArgs);
     } catch (err) {
       if (this.debug) {
         throw err;
@@ -356,27 +360,27 @@ export class ArgParser {
 /**
  * Creates and returns an `ArgParser` after finalizing schema state.
  */
-export async function getParser(debug = false): Promise<ArgParser> {
-  await finalizeSchema();
-
-  return new ArgParser(debug);
+export async function getParser(debug = false, configSchema = appiumSchema): Promise<ArgParser> {
+  await configSchema.finalize();
+  return new ArgParser(debug, configSchema);
 }
 
-/** Reads driver selections before the final parser has registered driver-specific options. */
-export function getCliDriverSelection(args: string[] = process.argv.slice(2)): string[] {
-  if (
-    (NON_SERVER_ARGS.has(args[0]) && args[0] !== SERVER_SUBCOMMAND) ||
-    !args.some((arg) => arg === '--use-drivers' || arg.startsWith('--use-drivers='))
-  ) {
-    return [];
+/** Reads server config and driver selectors before the final parser knows extension-specific options. */
+export function getCliServerSelection(
+  args: string[] = process.argv.slice(2),
+): {configFile?: string; useDrivers?: string[]; help?: boolean} | undefined {
+  if (NON_SERVER_ARGS.has(args[0]) && args[0] !== SERVER_SUBCOMMAND) {
+    return;
   }
   const parser = new ArgumentParser({add_help: false, allow_abbrev: false, exit_on_error: false});
-  parser.add_argument('--use-drivers', {type: transformers.csv});
+  parser.add_argument('--config', {dest: 'configFile'});
+  parser.add_argument('--use-drivers', {dest: 'useDrivers', type: transformers.csv});
+  parser.add_argument('-h', '--help', {action: 'store_true'});
   try {
     const [selection] = parser.parse_known_args(args);
-    return (selection.use_drivers as string[] | undefined) ?? [];
+    return selection;
   } catch {
     // Leave argument errors to the full CLI parser and its normal error reporting.
-    return [];
+    return;
   }
 }

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {describe, it, before, after} from 'node:test';
+import {pathToFileURL} from 'node:url';
 
 import {fs, tempDir} from '@appium/support';
 
@@ -80,5 +81,23 @@ describe('CLI behavior controlled by schema', function () {
       assert.match(help, /The port to use for the fake web server/);
       assert.match(help, /The host to use for the fake web server/);
     });
+  });
+
+  it('should accept options from a driver package selected by CLI or config file', async function (t) {
+    const home = await tempDir.openDir();
+    t.after(() => fs.rimraf(home));
+    const driverPath = path.dirname(resolveFixture('test-driver/package.json'));
+    const driverUrl = pathToFileURL(driverPath).href;
+    const configFile = path.join(home, 'appium.json');
+    await fs.writeFile(configFile, JSON.stringify({server: {'use-drivers': [driverUrl]}}));
+
+    for (const selection of [
+      ['--use-drivers', driverPath],
+      ['--use-drivers', driverUrl],
+      ['--config', configFile],
+    ]) {
+      const stdout = await runAppium(home, [...selection, '--driver-test-oliver-boliver', '42', '--show-config']);
+      assert.match(stdout, /oliverBoliver:\s*42/);
+    }
   });
 });

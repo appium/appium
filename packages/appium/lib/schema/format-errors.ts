@@ -1,7 +1,7 @@
 import type {NormalizedAppiumConfig} from '@appium/types';
 import betterAjvErrorsImport, {type IOutputError} from '@sidvind/better-ajv-errors';
 
-import type {ErrorObject} from './ajv.js';
+import type {ErrorObject, SchemaObject} from './ajv.js';
 import {getSchema} from './schema.js';
 
 // `@sidvind/better-ajv-errors` has no `"type"` field in its own package.json, so TS's
@@ -23,6 +23,7 @@ export interface FormatConfigErrorsOptions {
   json?: RawJson;
   pretty?: boolean;
   schemaId?: string;
+  schema?: SchemaObject;
 }
 
 /**
@@ -44,7 +45,7 @@ export function formatErrors(
   if (errors && !errors.length) {
     throw new TypeError('Array of errors must be non-empty');
   }
-  return betterAjvErrors(getSchema(opts.schemaId), config, errors, {
+  return betterAjvErrors(opts.schema ?? getSchema(opts.schemaId), config, errors, {
     json: opts.json,
     format: opts.pretty === false ? 'js' : 'cli',
   });

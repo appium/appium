@@ -46,7 +46,7 @@ export const ALLOWED_SCHEMA_EXTENSIONS = Object.freeze(new Set<AllowedSchemaExte
 
 const SCHEMA_KEY = '$schema';
 
-class AppiumSchema {
+export class AppiumSchema {
   static #instance: AppiumSchema;
   #argSpecs = new RoachHotelMap<string, ArgSpec>();
   #registeredSchemas: Record<ExtensionType, Map<string, SchemaObject>> = {
@@ -55,6 +55,7 @@ class AppiumSchema {
   };
   #ajv: AjvInstance;
   #finalizedSchemas: Record<string, StrictSchemaObject> | null = null;
+  #finalizing?: Promise<Readonly<Record<string, StrictSchemaObject>>>;
 
   private constructor() {
     this.#ajv = AppiumSchema._instantiateAjv();
@@ -100,6 +101,19 @@ class AppiumSchema {
     return util.isPlainObject(schema) && (schema as any).$async !== true;
   }
 
+  /** Creates a startup schema in which selected packages can supply their own driver schemas. */
+  forResolvedDrivers(driverNames: Iterable<string>): AppiumSchema {
+    const schema = new AppiumSchema();
+    schema.#registeredSchemas = {
+      [DRIVER_TYPE]: new Map(this.#registeredSchemas[DRIVER_TYPE]),
+      [PLUGIN_TYPE]: new Map(this.#registeredSchemas[PLUGIN_TYPE]),
+    };
+    for (const name of driverNames) {
+      schema.#registeredSchemas[DRIVER_TYPE].delete(kebabCase(name));
+    }
+    return schema;
+  }
+
   /**
    * Configures and creates an Ajv instance.
    */
@@ -140,62 +154,8 @@ class AppiumSchema {
   /**
    * Finalizes all registered schemas into Ajv and generates arg-spec lookups.
    */
-  async finalize(): Promise<Readonly<Record<string, StrictSchemaObject>>> {
-    if (this.isFinalized()) {
-      return this.#finalizedSchemas as Record<string, StrictSchemaObject>;
-    }
-
-    const ajv = this.#ajv;
-    const baseSchema = structuredClone(AppiumConfigJsonSchema) as any;
-
-    const addArgSpecs = (schema: Record<string, any>, extType?: ExtensionType, extName?: string): void => {
-      for (const [propName, propSchema] of Object.entries(schema)) {
-        const argSpec = ArgSpec.create(propName, {
-          dest: (propSchema as any).appiumCliDest,
-          defaultValue: (propSchema as any).default,
-          extType,
-          extName,
-        });
-        this.#argSpecs.set(argSpec.arg, argSpec);
-      }
-    };
-
-    addArgSpecs(omitKeys(baseSchema.properties.server.properties, [DRIVER_TYPE, PLUGIN_TYPE]));
-
-    const finalizedSchemas: Record<string, StrictSchemaObject> = {};
-
-    for (const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
-      [ExtensionType, Map<string, SchemaObject>]
-    >) {
-      for (const [extName, schema] of extensionSchemas.entries()) {
-        const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
-        // Clone rather than mutate the registered schema in place: extensions whose schema is
-        // freshly re-parsed on every manifest reload (an inline object, as opposed to one
-        // `import()`ed from a file, which Node's module cache returns by the same reference every
-        // time) would otherwise stop deep-equaling their own registered copy on a later
-        // `registerSchema()` call, once this injects `$id`/`additionalProperties` -- causing a
-        // false "conflicts with an existing schema" error and dropping the extension entirely.
-        const finalizedSchema = structuredClone(schema) as StrictSchemaObject;
-        (finalizedSchema as any).$id = $ref;
-        (finalizedSchema as any).additionalProperties = false;
-        baseSchema.properties.server.properties[extType].properties[extName] = {
-          $ref,
-          $comment: extName,
-        };
-        await ajv.validateSchema(finalizedSchema, true);
-        addArgSpecs((finalizedSchema as any).properties, extType, extName);
-        ajv.addSchema(finalizedSchema, $ref);
-        finalizedSchemas[$ref] = finalizedSchema;
-      }
-    }
-
-    const finalSchema = baseSchema as StrictSchemaObject;
-
-    ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
-    finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
-    await ajv.validateSchema(finalSchema, true);
-    this.#finalizedSchemas = finalizedSchemas;
-    return Object.freeze(finalizedSchemas);
+  finalize(): Promise<Readonly<Record<string, StrictSchemaObject>>> {
+    return (this.#finalizing ??= this.finalizeSchemas());
   }
 
   /**
@@ -208,19 +168,12 @@ class AppiumSchema {
     this.#argSpecs = new RoachHotelMap();
     this.#registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
     this.#finalizedSchemas = null;
+    this.#finalizing = undefined;
     this.#ajv = AppiumSchema._instantiateAjv();
   }
 
-  /**
-   * Registers an extension schema. A package selected by path can replace the
-   * installed schema for that name before CLI parsing.
-   */
-  async registerSchema(
-    extType: ExtensionType,
-    extName: string,
-    schema: SchemaObject,
-    {replace = false}: {replace?: boolean} = {},
-  ): Promise<void> {
+  /** Registers an extension schema. */
+  async registerSchema(extType: ExtensionType, extName: string, schema: SchemaObject): Promise<void> {
     if (!(extType && extName) || schema === undefined) {
       throw new TypeError('Expected extension type, extension name, and a defined schema');
     }
@@ -232,9 +185,7 @@ class AppiumSchema {
       if (util.isEqual(this.#registeredSchemas[extType].get(normalizedExtName), schema)) {
         return;
       }
-      if (!replace) {
-        throw new SchemaNameConflictError(extType, extName);
-      }
+      throw new SchemaNameConflictError(extType, extName);
     }
     await this.#ajv.validateSchema(schema, true);
     this.#registeredSchemas[extType].set(normalizedExtName, schema);
@@ -361,6 +312,54 @@ class AppiumSchema {
     return !validator(value) && Array.isArray(validator.errors) ? [...validator.errors] : [];
   }
 
+  private async finalizeSchemas(): Promise<Readonly<Record<string, StrictSchemaObject>>> {
+    const ajv = this.#ajv;
+    const baseSchema = structuredClone(AppiumConfigJsonSchema) as any;
+
+    const addArgSpecs = (schema: Record<string, any>, extType?: ExtensionType, extName?: string): void => {
+      for (const [propName, propSchema] of Object.entries(schema)) {
+        const argSpec = ArgSpec.create(propName, {
+          dest: (propSchema as any).appiumCliDest,
+          defaultValue: (propSchema as any).default,
+          extType,
+          extName,
+        });
+        this.#argSpecs.set(argSpec.arg, argSpec);
+      }
+    };
+
+    addArgSpecs(omitKeys(baseSchema.properties.server.properties, [DRIVER_TYPE, PLUGIN_TYPE]));
+
+    const finalizedSchemas: Record<string, StrictSchemaObject> = {};
+
+    for (const [extType, extensionSchemas] of Object.entries(this.#registeredSchemas) as Array<
+      [ExtensionType, Map<string, SchemaObject>]
+    >) {
+      for (const [extName, schema] of extensionSchemas.entries()) {
+        const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
+        // Keep registered schemas unchanged so the same schema can be registered again after a manifest reload.
+        const finalizedSchema = structuredClone(schema) as StrictSchemaObject;
+        (finalizedSchema as any).$id = $ref;
+        (finalizedSchema as any).additionalProperties = false;
+        baseSchema.properties.server.properties[extType].properties[extName] = {
+          $ref,
+          $comment: extName,
+        };
+        await ajv.validateSchema(finalizedSchema, true);
+        addArgSpecs((finalizedSchema as any).properties, extType, extName);
+        ajv.addSchema(finalizedSchema, $ref);
+        finalizedSchemas[$ref] = finalizedSchema;
+      }
+    }
+
+    const finalSchema = baseSchema as StrictSchemaObject;
+    ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
+    finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
+    await ajv.validateSchema(finalSchema, true);
+    this.#finalizedSchemas = finalizedSchemas;
+    return Object.freeze(finalizedSchemas);
+  }
+
   /**
    * Retrieves schema validator function from Ajv.
    */
@@ -438,7 +437,7 @@ export class SchemaUnsupportedSchemaError extends TypeError {
   }
 }
 
-const appiumSchema = AppiumSchema.create();
+export const appiumSchema = AppiumSchema.create();
 
 export const {
   registerSchema,

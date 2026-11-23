@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
 
+import {log} from '../logger.js';
 import {kebabCase} from '../utils/index.js';
 import type {ArgSpec} from './arg-spec.js';
 import {
@@ -78,12 +79,13 @@ function getSchemaValidator<Coerced>(
   };
 }
 
-// parseInt('4723abc') is 4723
-function parseCliInteger(value: string): number {
-  if (!/^[+-]?\d+$/.test(value)) {
-    throw new ArgumentTypeError(`'${util.truncateString(value, {length: 100})}' must be integer`);
+// parseInt('4723abc') and parseFloat('7abc') drop the rest of the token without an error
+function parseCliNumber(value: string, parse: (value: string) => number, flag: string): number {
+  const parsed = parse(value);
+  if (!Number.isNaN(parsed) && Number(value) !== parsed) {
+    log.warn(`The value '${util.truncateString(value, {length: 100})}' of ${flag} was coerced to ${parsed}`);
   }
-  return parseInt(value, 10);
+  return parsed;
 }
 
 function makeDescription(schema: AppiumJSONSchema): string {
@@ -138,11 +140,11 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.NUMBER: {
-      argTypeFunction = getSchemaValidator(argSpec, parseFloat);
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseCliNumber(v, parseFloat, aliases[0]));
       break;
     }
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(argSpec, parseCliInteger);
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseCliNumber(v, (s) => parseInt(s, 10), aliases[0]));
       break;
     }
     case TYPENAMES.STRING: {

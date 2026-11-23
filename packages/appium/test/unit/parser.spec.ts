@@ -10,6 +10,7 @@ import {readConfigFile} from '../../lib/bootstrap/config-file.js';
 import {ArgParser, getParser} from '../../lib/cli/parser.js';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js';
 import {INSTALL_TYPES} from '../../lib/extension/manifest/index.js';
+import {log} from '../../lib/logger.js';
 import {stripColorCodes} from '../../lib/logsink.js';
 import * as schema from '../../lib/schema/schema.js';
 import {resolveFixture} from '../helpers.js';
@@ -96,13 +97,6 @@ describe('parser', function () {
           assert.throws(() => {
             p.parseArgs(['--loglevel', '-42']);
           }, /unrecognized arguments: --loglevel/i);
-        });
-
-        it('should throw an error for a bad integer', function () {
-          assert.throws(() => p.parseArgs(['--port', '4723abc']), /must be integer/i);
-          assert.throws(() => p.parseArgs(['--port', '10.5']), /must be integer/i);
-          assert.throws(() => p.parseArgs(['--port', '0x10']), /must be integer/i);
-          assert.throws(() => p.parseArgs(['--keep-alive-timeout', '0abc']), /must be integer/i);
         });
       });
 
@@ -230,6 +224,12 @@ describe('parser', function () {
 
       it('should parse a file for --log-filters', function () {
         assert.ok(Object.hasOwn(p.parseArgs(['--log-filters', LOG_FILTERS_FIXTURE]), 'logFilters'));
+      });
+
+      it('should warn when an integer server argument is coerced', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        assert.strictEqual(p.parseArgs(['--port', '4723abc']).port, 4723);
+        assert.deepStrictEqual(warn.mock.calls[0].arguments, [`The value '4723abc' of --port was coerced to 4723`]);
       });
     });
 

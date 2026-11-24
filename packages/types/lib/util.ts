@@ -66,16 +66,6 @@ export type IsAny<T> = 0 extends 1 & T ? true : false;
  */
 export type IsNever<T> = [T] extends [never] ? true : false;
 
-/** Returns whether `A` and `B` are identical types. */
-export type IsEqual<A, B> = (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B ? 1 : 2 ? true : false;
-
-/** Returns whether `T` is identical to any element of `Targets`. */
-export type IsEqualToAny<T, Targets extends readonly unknown[]> = Targets extends readonly [infer Head, ...infer Tail]
-  ? IsEqual<T, Head> extends true
-    ? true
-    : IsEqualToAny<T, Tail>
-  : false;
-
 /**
  * Picks the keys from `Base` whose value type extends `Condition`.
  *

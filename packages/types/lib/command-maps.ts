@@ -1,13 +1,6 @@
 import type {Driver, DriverCommand, ExternalDriver} from './driver.js';
 import type {Plugin, PluginCommand} from './plugin.js';
-import type {
-  ConditionalPick,
-  IsAny,
-  IsEqualToAny,
-  IsNever,
-  MultidimensionalReadonlyArray,
-  StringRecord,
-} from './util.js';
+import type {ConditionalPick, IsAny, IsNever, MultidimensionalReadonlyArray, StringRecord} from './util.js';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.
@@ -77,11 +70,33 @@ export interface BaseMethodDef {
   readonly info?: string;
 }
 
-type IsPureRestArray<P extends readonly unknown[]> = number extends P['length'] ? ([] extends P ? true : false) : false;
+type IsEqual<A, B> = (<G>() => G extends A ? 1 : 2) extends <G>() => G extends B ? 1 : 2 ? true : false;
+
+type IsPureRestArray<P extends readonly unknown[]> = P extends P
+  ? IsAny<P> extends true
+    ? true
+    : number extends P['length']
+      ? [] extends P
+        ? [undefined] extends P
+          ? IsEqual<P, P[number][]> extends true
+            ? true
+            : IsEqual<P, readonly P[number][]>
+          : true
+        : false
+      : false
+  : never;
 
 type CanAcceptUndefined<T> = [undefined] extends [T] ? true : false;
 
 type IsTopType<T> = unknown extends T ? true : false;
+
+type CanOmitWithUrl<T, AllowUrlString extends boolean> = AllowUrlString extends true
+  ? true extends IsTopType<T>
+    ? true
+    : [string] extends [T]
+      ? true
+      : false
+  : false;
 
 type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolean> = P extends readonly []
   ? true
@@ -97,9 +112,15 @@ type CanOmitTrailing<P extends readonly unknown[], AllowUrlString extends boolea
               ? CanOmitTrailing<T, true>
               : false
             : false
-      : P extends readonly [(infer _)?, ...infer T]
-        ? CanOmitTrailing<T, false>
-        : true;
+      : [] extends P
+        ? P extends readonly [(infer _)?, ...infer T]
+          ? CanOmitTrailing<T, false>
+          : false
+        : P extends readonly [...infer Head, infer Last]
+          ? true extends CanOmitWithUrl<Last, AllowUrlString>
+            ? CanOmitTrailing<Head, true>
+            : false
+          : false;
 
 type ParamOptionalTag =
   | {readonly kind: 'exact'; readonly tuple: readonly string[]}
@@ -116,41 +137,70 @@ type CollectOptionalSplits<
   AllowUrlString extends boolean,
   RAcc extends string[],
   OAcc extends string[] = [],
-> =
-  | (IsPureRestArray<CurP> extends true
-      ? {
-          readonly r: Readonly<OAcc extends [] ? [...RAcc, ...string[]] : RAcc>;
-          readonly o: CanAcceptUndefined<CurP[number]> extends true
-            ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
-            : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
-        }
-      : CanOmitTrailing<CurP, AllowUrlString> extends true
-        ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
-        : never)
-  | (CurP extends readonly []
-      ? never
-      : IsPureRestArray<CurP> extends true
-        ? never
-        : CurP extends readonly [infer H, ...infer T]
-          ? CanAcceptUndefined<H> extends true
-            ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string]>
-            : never
-          : CurP extends readonly [(infer _)?, ...infer T]
-            ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string]>
-            : never);
+  AllowOptional extends boolean = true,
+> = CurP extends readonly unknown[]
+  ?
+      | (IsPureRestArray<CurP> extends true
+          ? {
+              readonly r: Readonly<OAcc extends [] ? [...RAcc, ...string[]] : RAcc>;
+              readonly o: AllowOptional extends true
+                ? CanAcceptUndefined<CurP[number]> extends true
+                  ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
+                  : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}
+                : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
+            }
+          : CanOmitTrailing<CurP, AllowUrlString> extends true
+            ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
+            : never)
+      | (AllowOptional extends false
+          ? never
+          : CurP extends readonly []
+            ? never
+            : IsPureRestArray<CurP> extends true
+              ? never
+              : CurP extends readonly [infer H, ...infer T]
+                ? CanAcceptUndefined<H> extends true
+                  ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string], AllowOptional>
+                  : never
+                : [] extends CurP
+                  ? CurP extends readonly [(infer _)?, ...infer T]
+                    ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string], AllowOptional>
+                    : never
+                  : never)
+  : never;
 
 /** Enumerates `(r, o)` splits across `CurP` (`AllowUrlString`: `true` for REST URL `:param`s, `false` for execute). */
-type CollectParamSplits<CurP extends readonly unknown[], AllowUrlString extends boolean, RAcc extends string[] = []> =
-  | CollectOptionalSplits<CurP, AllowUrlString, RAcc>
-  | (CurP extends readonly []
-      ? never
-      : IsPureRestArray<CurP> extends true
-        ? never
-        : CurP extends readonly [infer _, ...infer T]
-          ? CollectParamSplits<T, AllowUrlString, [...RAcc, string]>
-          : CurP extends readonly [(infer _)?, ...infer T]
-            ? CollectParamSplits<T, AllowUrlString, [...RAcc, string]>
-            : never);
+type CollectParamSplits<
+  CurP extends readonly unknown[],
+  AllowUrlString extends boolean,
+  RAcc extends string[] = [],
+  AllowOptional extends boolean = true,
+> = CurP extends readonly unknown[]
+  ?
+      | CollectOptionalSplits<CurP, AllowUrlString, RAcc, [], AllowOptional>
+      | (CurP extends readonly []
+          ? never
+          : IsPureRestArray<CurP> extends true
+            ? never
+            : CurP extends readonly [infer _, ...infer T]
+              ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
+              : [] extends CurP
+                ? CurP extends readonly [(infer _)?, ...infer T]
+                  ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
+                  : never
+                : CurP extends readonly [...infer Head, infer Last]
+                  ?
+                      | (CanOmitWithUrl<Last, AllowUrlString> extends true
+                          ? CollectParamSplits<Head, true, RAcc, AllowOptional>
+                          : never)
+                      | CollectParamSplits<
+                          Head,
+                          false,
+                          [...RAcc, string],
+                          CanAcceptUndefined<Last> extends true ? AllowOptional : false
+                        >
+                  : never)
+  : never;
 
 type NonEmptyStringTuple<R extends readonly string[]> = Exclude<R, readonly []>;
 
@@ -191,7 +241,10 @@ type BuildParamShapes<
   : never;
 
 /** REST `payloadParams` shapes for `P`: runtime passes `required` first, then `optional` (`undefined` if omitted), then URL `:param` strings. */
-type PayloadParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, true>, true>;
+type PayloadParamsFor<P extends readonly unknown[]> = BuildParamShapes<
+  P extends readonly unknown[] ? CollectParamSplits<P, true> : never,
+  true
+>;
 
 type HasPositionalParams<P extends readonly unknown[]> = P extends readonly [] ? false : true;
 
@@ -217,17 +270,17 @@ type OverloadParams<F> =
   IsAny<F> extends true
     ? any[]
     : F extends {
-          (...args: infer P1): any;
-          (...args: infer P2): any;
-          (...args: infer P3): any;
-          (...args: infer P4): any;
-          (...args: infer P5): any;
+          (...args: infer P1 extends readonly unknown[]): any;
+          (...args: infer P2 extends readonly unknown[]): any;
+          (...args: infer P3 extends readonly unknown[]): any;
+          (...args: infer P4 extends readonly unknown[]): any;
+          (...args: infer P5 extends readonly unknown[]): any;
         }
       ? P1 | P2 | P3 | P4 | P5
       : never;
 
 type StripPluginPrefix<P extends readonly unknown[]> = P extends readonly unknown[]
-  ? ((...args: P) => any) extends (next: any, driver: any, ...args: infer Rest) => any
+  ? ((...args: P) => any) extends (next: any, driver: any, ...args: infer Rest extends readonly unknown[]) => any
     ? Rest
     : never
   : never;
@@ -239,7 +292,10 @@ type CommandProp<K> = {
   readonly command: K;
 };
 
-type LooseMethodDef = BaseMethodDef & Partial<CommandProp<string>>;
+type LooseMethodDef = BaseMethodDef & {
+  /** Name of the command. */
+  readonly command?: string;
+};
 
 type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
   IsNever<Commands> extends true
@@ -258,29 +314,61 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
                   >;
               }[keyof Commands];
 
-type IsLooseMethodCheck<T, Bases extends readonly unknown[], Loose extends boolean> = [true] extends [Loose]
+type IsExactDriver<T> =
+  T extends Driver<infer C, infer CArgs, infer Settings, infer CR, infer DR>
+    ? true extends IsEqual<T, Driver<C, CArgs, Settings, CR, DR>>
+      ? true
+      : IsEqual<T, Driver & Driver<C, CArgs, Settings, CR, DR>>
+    : false;
+
+type IsExactExternalDriver<T> =
+  T extends ExternalDriver<infer C, infer Ctx, infer CArgs, infer Settings, infer CR, infer DR>
+    ? true extends IsEqual<T, ExternalDriver<C, Ctx, CArgs, Settings, CR, DR>>
+      ? true
+      : IsEqual<T, Driver & ExternalDriver<C, Ctx, CArgs, Settings, CR, DR>>
+    : false;
+
+type IsExactBaseDriver<T> = T extends unknown
+  ? true extends IsExactDriver<T>
+    ? true
+    : IsExactExternalDriver<T>
+  : never;
+
+type IsLooseDriverCheck<T, Loose extends boolean> = [true] extends [Loose]
   ? true
   : IsAny<T> extends true
     ? true
-    : IsEqualToAny<T, Bases>;
+    : IsNever<T> extends true
+      ? false
+      : IsExactBaseDriver<T> extends true
+        ? true
+        : false;
+
+type IsLoosePluginCheck<T, Loose extends boolean> = [true] extends [Loose]
+  ? true
+  : IsAny<T> extends true
+    ? true
+    : IsNever<T> extends true
+      ? false
+      : IsEqual<T, Plugin>;
 
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  * Validates `command` and `payloadParams` by default; `Loose = true` opts out.
  */
-export type DriverMethodDef<T extends Driver, Loose extends boolean = false> =
-  IsLooseMethodCheck<T, [Driver, ExternalDriver], Loose> extends true
-    ? LooseMethodDef
-    : CheckedMethodDef<ConditionalPick<Required<T>, DriverCommand>, 'driver'>;
+export type DriverMethodDef<T extends Driver, Loose extends boolean = false> = LooseMethodDef &
+  (IsLooseDriverCheck<T, Loose> extends true
+    ? unknown
+    : CheckedMethodDef<ConditionalPick<Required<T>, DriverCommand>, 'driver'>);
 
 /**
  * A definition of an exposed API command in a {@linkcode Plugin}.
  * Validates `command` and `payloadParams` by default; `Loose = true` opts out.
  */
-export type PluginMethodDef<T extends Plugin, Loose extends boolean = false> =
-  IsLooseMethodCheck<T, [Plugin], Loose> extends true
-    ? LooseMethodDef
-    : CheckedMethodDef<ConditionalPick<Required<T>, PluginCommand>, 'plugin'>;
+export type PluginMethodDef<T extends Plugin, Loose extends boolean = false> = LooseMethodDef &
+  (IsLoosePluginCheck<T, Loose> extends true
+    ? unknown
+    : CheckedMethodDef<ConditionalPick<Required<T>, PluginCommand>, 'plugin'>);
 
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode PluginMethodDef}.
@@ -320,8 +408,10 @@ export interface BaseExecuteMethodDef {
   readonly info?: string;
 }
 
-/** Execute `params` shapes for `P`: runtime passes `required` first, then `optional` (`undefined` if omitted), with no URL `:param` args. */
-type ExecuteMethodParamsFor<P extends readonly unknown[]> = BuildParamShapes<CollectParamSplits<P, false>, false>;
+type ExecuteMethodParamsFor<P extends readonly unknown[]> = BuildParamShapes<
+  P extends readonly unknown[] ? CollectParamSplits<P, false> : never,
+  false
+>;
 
 type ExecuteMethodParamsProp<P extends readonly unknown[]> =
   true extends CanOmitTrailing<P, false> ? {params?: ExecuteMethodParamsFor<P>} : {params: ExecuteMethodParamsFor<P>};
@@ -368,8 +458,10 @@ type CheckedExecuteMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
  * }
  * ```
  */
-export type DriverExecuteMethodDef<T extends Driver> =
-  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
+export type DriverExecuteMethodDef<T extends Driver> = LooseExecuteMethodDef &
+  (IsLooseDriverCheck<T, false> extends true
+    ? unknown
+    : CheckedExecuteMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>);
 
 /**
  * A definition of an execute method in a {@linkcode Plugin}.
@@ -378,8 +470,10 @@ export type DriverExecuteMethodDef<T extends Driver> =
  * `optional` params must be compatible with that method's signature (ignoring its leading `next`
  * and `driver` parameters). See {@linkcode DriverExecuteMethodDef} for details.
  */
-export type PluginExecuteMethodDef<T extends Plugin> =
-  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
+export type PluginExecuteMethodDef<T extends Plugin> = LooseExecuteMethodDef &
+  (IsLoosePluginCheck<T, false> extends true
+    ? unknown
+    : CheckedExecuteMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>);
 
 /**
  * Definition of an execute method (which overloads the behavior of the `execute` command) in a {@linkcode Driver} or {@linkcode Plugin}.

@@ -1,13 +1,13 @@
-import {expectAssignable, expectDocCommentIncludes, expectNotAssignable, expectType} from 'tsd';
+import {expectAssignable, expectDocCommentIncludes, expectNotAssignable} from 'tsd';
 
 import type {
+  Constraints,
   Driver,
+  DriverClass,
   DriverExecuteMethodDef,
   DriverMethodDef,
   ExecuteMethodMap,
   ExternalDriver,
-  IsEqual,
-  IsEqualToAny,
   MethodMap,
   NextPluginCallback,
   Plugin,
@@ -40,8 +40,17 @@ type TestDriver = Driver & {
   mixedRest(a: number, b: number, ...rest: unknown[]): Promise<void>;
   mixedCatchAll(x: number): Promise<void>;
   mixedCatchAll(...args: unknown[]): Promise<void>;
+  mixedRestOverload(x: undefined): Promise<void>;
+  mixedRestOverload(...rest: number[]): Promise<void>;
+  optWithRest(a: number, b?: string, ...rest: number[]): Promise<void>;
+  optSameTypeWithRest(a: number, b?: number, ...rest: number[]): Promise<void>;
   restArgs(a: string, ...rest: unknown[]): Promise<void>;
   restStrings(a: number, ...rest: string[]): Promise<void>;
+  roRest(...rest: readonly number[]): Promise<void>;
+  variadicTail(...args: [...number[], boolean]): Promise<void>;
+  variadicUrlTail(...args: [...number[], string]): Promise<void>;
+  varUndefBool(...args: [...(number | undefined)[], boolean]): Promise<void>;
+  varBoolStr(...args: [...number[], boolean, string]): Promise<void>;
   untyped(...args: any[]): Promise<void>;
   unk(a: unknown): Promise<void>;
   anyArg(a: any): Promise<void>;
@@ -219,6 +228,8 @@ expectAssignable<TestMethodDef>({
   payloadParams: {required: [['x'], ['x', 'y']]},
 } as const);
 expectAssignable<TestMethodDef>({command: 'overloadedZero'} as const);
+expectAssignable<TestMethodDef>({command: 'overloadedZero', payloadParams: {}} as const);
+expectAssignable<TestMethodDef>({command: 'overloadedZero', payloadParams: {required: []}} as const);
 expectAssignable<TestMethodDef>({command: 'overloadedZero', payloadParams: {required: ['x']}} as const);
 expectAssignable<TestMethodDef>({
   command: 'oneRequiredNumber',
@@ -512,6 +523,7 @@ expectAssignable<TestDef>({command: 'overloaded', params: {required: ['x', 'y']}
 expectNotAssignable<TestDef>({command: 'overloaded'} as const);
 expectNotAssignable<TestDef>({command: 'overloaded', params: {required: ['x', 'y', 'z']}} as const);
 expectAssignable<TestDef>({command: 'overloadedZero'} as const);
+expectAssignable<TestDef>({command: 'overloadedZero', params: {}} as const);
 expectAssignable<TestDef>({command: 'overloadedZero', params: {required: ['x']}} as const);
 expectAssignable<TestMethodDef>({command: 'sixOverloads', payloadParams: {required: ['a', 'b']}} as const);
 expectAssignable<TestMethodDef>({
@@ -583,12 +595,118 @@ expectAssignable<MethodMap<TestDriver>>({
   '/no-url-params': {POST: {command: 'threeRequired'}},
 } as const);
 
-expectType<true>({} as IsEqual<string, string>);
-expectType<false>({} as IsEqual<string, number>);
-expectType<false>({} as IsEqual<any, string>);
-expectType<false>({} as IsEqual<Driver, ExtendedBaseDriver>);
-expectType<true>({} as IsEqualToAny<ExternalDriver, [Driver, ExternalDriver]>);
-expectType<false>({} as IsEqualToAny<TestDriver, [Driver, ExternalDriver]>);
+expectAssignable<DriverMethodDef<Driver>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverMethodDef<ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectAssignable<PluginMethodDef<Plugin>>({command: 'anyCustomCommand'} as const);
+type CustomCapConstraints = {customCap: {isString: true}};
+expectAssignable<DriverMethodDef<Driver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverMethodDef<ExternalDriver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverMethodDef<Driver | ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverMethodDef<Driver<CustomCapConstraints> | ExternalDriver<CustomCapConstraints>>>({
+  command: 'anyCustomCommand',
+} as const);
+expectAssignable<DriverExecuteMethodDef<ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverExecuteMethodDef<Driver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverExecuteMethodDef<ExternalDriver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
+expectAssignable<DriverExecuteMethodDef<Driver | ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<DriverMethodDef<Driver | (Driver & {getStatus(a: number): Promise<any>})>>({
+  command: 'anyCustomCommand',
+} as const);
+expectNotAssignable<DriverMethodDef<Driver & {getStatus(a: number): Promise<any>}>>({
+  command: 'anyCustomCommand',
+} as const);
+expectNotAssignable<DriverExecuteMethodDef<Driver & {getStatus(a: number): Promise<any>}>>({
+  command: 'anyCustomCommand',
+} as const);
+declare const ConstrainedBaseDriver: new () => Driver<CustomCapConstraints>;
+class ConstrainedDriver extends ConstrainedBaseDriver {
+  static baseVersion = '1.0.0';
+  static newMethodMap = {
+    '/constrained': {GET: {command: 'customCmd'}},
+  } as const satisfies MethodMap<ConstrainedDriver>;
+  static executeMethodMap = {
+    'test: constrained': {command: 'customCmd'},
+  } as const satisfies ExecuteMethodMap<ConstrainedDriver>;
+  async customCmd(): Promise<void> {}
+}
+expectAssignable<DriverClass<Driver<CustomCapConstraints>>>(ConstrainedDriver);
+declare const ConstrainedExtBaseDriver: new () => ExternalDriver<CustomCapConstraints>;
+class ExtSubDriver extends ConstrainedExtBaseDriver {
+  static baseVersion = '1.0.0';
+  static newMethodMap = {
+    '/ext': {GET: {command: 'extCmd'}},
+  } as const satisfies MethodMap<ExtSubDriver>;
+  static executeMethodMap = {
+    'test: ext': {command: 'extCmd'},
+  } as const satisfies ExecuteMethodMap<ExtSubDriver>;
+  async extCmd(): Promise<void> {}
+}
+expectAssignable<DriverClass<ExternalDriver>>(ExtSubDriver);
+expectAssignable<DriverClass<ExternalDriver<CustomCapConstraints>>>(ExtSubDriver);
+expectAssignable<ExecuteMethodMap<ExternalDriver>>(ExtSubDriver.executeMethodMap);
+
+expectAssignable<TestMethodDef>({command: 'mixedRestOverload', payloadParams: {optional: ['a']}} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'mixedRestOverload',
+  payloadParams: {optional: ['a', 'b', 'c']},
+} as const);
+expectAssignable<TestMethodDef>({command: 'optWithRest', payloadParams: {required: ['a'], optional: ['b']}} as const);
+expectAssignable<TestMethodDef>({command: 'optWithRest', payloadParams: {required: ['a', 'b', 'c']}} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'optWithRest',
+  payloadParams: {required: ['a'], optional: ['b', 'c']},
+} as const);
+expectAssignable<TestMethodDef>({
+  command: 'optSameTypeWithRest',
+  payloadParams: {required: ['a'], optional: ['b']},
+} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'optSameTypeWithRest',
+  payloadParams: {required: ['a'], optional: ['b', 'c']},
+} as const);
+expectAssignable<TestMethodDef>({command: 'roRest', payloadParams: {required: ['a', 'b']}} as const);
+expectAssignable<TestMethodDef>({command: 'variadicTail', payloadParams: {required: ['b']}} as const);
+expectAssignable<TestMethodDef>({command: 'variadicUrlTail'} as const);
+expectNotAssignable<TestMethodDef>({command: 'variadicTail'} as const);
+expectNotAssignable<TestDef>({command: 'variadicTail'} as const);
+expectNotAssignable<TestMethodDef>({command: 'variadicTail', payloadParams: {optional: ['x']}} as const);
+expectAssignable<TestMethodDef>({command: 'varBoolStr', payloadParams: {required: ['b']}} as const);
+expectNotAssignable<TestDef>({command: 'varBoolStr', params: {required: ['b']}} as const);
+expectNotAssignable<TestMethodDef>({
+  command: 'varUndefBool',
+  payloadParams: {required: ['a'], optional: ['b']},
+} as const);
+expectNotAssignable<TestDef>({command: 'varUndefBool', params: {required: ['a'], optional: ['b']}} as const);
+
+export function genericMethodMapLookup<C extends Constraints>(d: DriverClass<Driver<C>>, route: string) {
+  return d.newMethodMap?.[route]?.GET;
+}
+export function wrappedGenericMethodLookup(d: DriverClass<Driver<CustomCapConstraints>>, route: string) {
+  return genericMethodMapLookup(d, route);
+}
+export function genericExecMapLookup<C extends Constraints>(d: DriverClass<Driver<C>>, script: string) {
+  return d.executeMethodMap?.[script];
+}
+export function genericExecSpread<C extends Constraints>(d: DriverClass<Driver<C>>, script: string) {
+  return {...d.executeMethodMap?.[script]};
+}
+export function genericMethodSpread<C extends Constraints>(d: DriverClass<Driver<C>>, route: string) {
+  return {...d.newMethodMap?.[route]?.GET};
+}
+export function genericPluginMethodLookup<P extends Plugin>(m: MethodMap<P>, route: string) {
+  return m[route]?.GET;
+}
+export function genericPluginExecSpread<P extends Plugin>(m: ExecuteMethodMap<P>, script: string) {
+  return {...m[script]};
+}
+expectAssignable<DriverMethodDef<Driver<CustomCapConstraints>> | undefined>(
+  genericMethodMapLookup(ConstrainedDriver, '/constrained'),
+);
+expectAssignable<DriverExecuteMethodDef<Driver<CustomCapConstraints>> | undefined>(
+  genericExecMapLookup(ConstrainedDriver, 'test: constrained'),
+);
+expectAssignable<{command?: string}>(genericExecSpread(ConstrainedDriver, 'test: constrained'));
+expectAssignable<{command?: string}>(genericMethodSpread(ConstrainedDriver, '/constrained'));
 
 declare const strictDriverDef: Extract<TestMethodDef, {readonly command: 'oneRequiredNumber'}>;
 declare const optionalPayloadDriverDef: Extract<TestMethodDef, {readonly command: 'noArgs'}>;

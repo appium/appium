@@ -9,6 +9,12 @@ export interface ArchCheckConfig {
    * through their entry points only. Default: none.
    */
   entryPointScopes?: string[];
+  /**
+   * What to do about import cycles that exist only through `import type`. They have no runtime
+   * effect, and patterns like command mixins that reference their driver's type produce hundreds of
+   * them. Default: `error`.
+   */
+  typeOnlyCycles?: 'error' | 'ignore';
 }
 
 export interface ResolvedConfig {
@@ -16,6 +22,7 @@ export interface ResolvedConfig {
   sourceRoot: string;
   tsconfig: string;
   entryPointScopes: string[];
+  typeOnlyCycles: 'error' | 'ignore';
   modelDir: string;
   baselineFile: string;
 }

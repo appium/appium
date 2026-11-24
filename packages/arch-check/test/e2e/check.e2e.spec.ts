@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
-import {cp, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {cp, mkdir, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 import {fileURLToPath} from 'node:url';
 
 import {main} from '../../lib/cli.js';
-import {checkPackage, updateBaseline, type Finding} from '../../lib/index.js';
+import {checkPackage, initPackage, updateBaseline, type Finding} from '../../lib/index.js';
 
 const FIXTURE = fileURLToPath(new URL('../../../test/fixtures/sample-package', import.meta.url));
 
@@ -128,6 +128,87 @@ describe('arch-check', () => {
     const analysis = await updateBaseline(dir);
     assert.deepEqual(analysis.unownedFiles, ['lib/stray.ts']);
     assert.ok(!(await checkPackage(dir)).ok);
+  });
+
+  it('ignores type-only cycles when configured', async () => {
+    await write(
+      'lib/services/svc.ts',
+      `import {log} from '../util/log.js';\nimport type {x} from '../app.js';\nexport const serve = (v?: typeof x) => log(String(v));\n`,
+    );
+    await write('lib/app.ts', `import {serve} from './services/svc.js';\nexport const x = serve();\n`);
+    // the type import also crosses an undeclared component edge, so declare it
+    const model = await readFile(path.join(dir, 'architecture/model.c4'), 'utf8');
+    await write(
+      'architecture/model.c4',
+      model.replace('  sample.app -> sample.util', '  sample.app -> sample.util\n  sample.services -> sample.app'),
+    );
+    assert.equal(keys((await checkPackage(dir)).findings, 'type-cycle').length, 1);
+    await write('architecture/config.json', '{"entryPointScopes": ["@scope"], "typeOnlyCycles": "ignore"}');
+    assert.deepEqual((await checkPackage(dir)).findings, []);
+  });
+
+  it('accepts devDependencies for type-only imports only', async () => {
+    await write(
+      'lib/util/log.ts',
+      `import type {T} from '@scope/dev-types';\nexport const log = (m: string, t?: T) => m + t;\n`,
+    );
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), []);
+    await write('lib/util/log.ts', `import {T} from '@scope/dev-types';\nexport const log = (m: string) => m + T;\n`);
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), [
+      'lib/util/log.ts -> @scope/dev-types',
+    ]);
+  });
+
+  it('initializes a model from the current code', async () => {
+    await rm(path.join(dir, 'architecture'), {recursive: true});
+    await write(
+      'lib/services/svc.ts',
+      `import {log} from '../util/log.js';\nimport type {x} from '../app.js';\nexport const serve = (v?: typeof x) => log(String(v));\n`,
+    );
+    await write('lib/app.ts', `import {serve} from './services/svc.js';\nexport const x = serve();\n`);
+    const result = await initPackage(dir, {entryPointScopes: ['@scope']});
+    assert.deepEqual(result.files, [
+      'architecture/spec.c4',
+      'architecture/model.c4',
+      'architecture/config.json',
+      'architecture/baseline.json',
+    ]);
+    assert.equal(result.components, 4);
+    const check = await checkPackage(dir);
+    assert.deepEqual(check.findings, []);
+    assert.equal(check.baselined.typeOnlyCycles, 1);
+    await assert.rejects(initPackage(dir), /already contains a model/);
+  });
+
+  it('does not mistake build output named lib for the source root when initializing', async () => {
+    await rm(path.join(dir, 'architecture'), {recursive: true});
+    await cp(path.join(dir, 'lib'), path.join(dir, 'src'), {recursive: true});
+    await rm(path.join(dir, 'lib'), {recursive: true});
+    await mkdir(path.join(dir, 'lib/src'), {recursive: true});
+    await write('lib/src/app.js', 'export {};\n');
+    await write(
+      'tsconfig.json',
+      '{"compilerOptions": {"module": "NodeNext", "moduleResolution": "NodeNext", "outDir": "./lib"}}',
+    );
+    const result = await initPackage(dir);
+    assert.ok(result.files.includes('architecture/config.json'));
+    assert.equal(JSON.parse(await readFile(path.join(dir, 'architecture/config.json'), 'utf8')).sourceRoot, 'src');
+    assert.deepEqual((await checkPackage(dir)).findings, []);
+  });
+
+  it('checks several packages and the workspaces of a monorepo from the CLI', async () => {
+    await mkdir(path.join(dir, 'packages'));
+    const a = path.join(dir, 'packages/a');
+    const b = path.join(dir, 'packages/b');
+    await cp(FIXTURE, a, {recursive: true});
+    await cp(FIXTURE, b, {recursive: true});
+    await rm(path.join(b, 'architecture'), {recursive: true});
+    await write('package.json', '{"workspaces": ["packages/*"]}');
+    assert.equal(await main(['--workspaces', dir]), 0);
+    assert.equal(await main([a, a]), 0);
+    await writeFile(path.join(a, 'lib/stray.ts'), 'export {};\n');
+    assert.equal(await main(['--workspaces', dir]), 1);
+    assert.equal(await main([b]), 2);
   });
 
   it('reports a missing model', async () => {

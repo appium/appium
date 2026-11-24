@@ -44,6 +44,11 @@ describe('formatReport', () => {
     assert.doesNotMatch(formatReport(result(findings), {verbose: true}), /more/);
   });
 
+  it('truncates stale entries too', () => {
+    const findings = Array.from({length: 8}, (_, i) => boundary(`a${i} -> b${i}`, 'stale'));
+    assert.match(formatReport(result(findings)), /and 3 more STALE/);
+  });
+
   it('reports stale entries without the fix hint', () => {
     const text = formatReport(result([boundary('a -> b', 'stale')]));
     assert.match(text, /STALE {2}a -> b/);

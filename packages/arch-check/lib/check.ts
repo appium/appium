@@ -73,6 +73,8 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
     cruiseBoth(config),
   ]);
   const {withTypes, runtime} = graphs;
+  // Imports that survive compilation (unresolved ones carry no type-only marker, so compare passes)
+  const runtimeImports = new Set(runtime.modules.flatMap((m) => m.dependencies.map((d) => `${m.source}\0${d.module}`)));
   const {ownersOf, componentIds} = buildOwnership(model);
   const allowed = allowedEdges(model, componentIds);
 
@@ -106,9 +108,16 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
           key,
           `${mod.source} deep-imports '${dep.module}'. Import from '${spec.pkg}' entry points only.`,
         );
-      } else if (spec && !declared.has(spec.pkg)) {
+      } else if (
+        spec &&
+        !declared.runtime.has(spec.pkg) &&
+        !(declared.dev.has(spec.pkg) && !runtimeImports.has(`${mod.source}\0${dep.module}`))
+      ) {
         const key = `${mod.source} -> ${spec.pkg}`;
-        packageImports.set(key, `${mod.source} imports '${spec.pkg}', which is not declared in package.json.`);
+        packageImports.set(
+          key,
+          `${mod.source} imports '${spec.pkg}', which is not declared in package.json (devDependencies are enough for type-only imports).`,
+        );
       }
       if (dep.couldNotResolve && dep.module.startsWith('.')) {
         unresolvedImports.push(`${mod.source} -> ${dep.module}`);
@@ -149,7 +158,10 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
     boundaries: [...boundaries.values()].sort((a, b) => byString(boundaryKey(a), boundaryKey(b))),
     unresolvedImports: [...new Set(unresolvedImports)].sort(byString),
     runtimeCycles: [...runtime.cycles].sort(byString),
-    typeOnlyCycles: withTypes.cycles.filter((key) => !isRuntimeCycle(key.split(' > '), runtimeEdges)).sort(byString),
+    typeOnlyCycles:
+      config.typeOnlyCycles === 'ignore'
+        ? []
+        : withTypes.cycles.filter((key) => !isRuntimeCycle(key.split(' > '), runtimeEdges)).sort(byString),
     unusedEdges: [...allowed].filter((e) => !usedEdges.has(e)).sort(byString),
   };
 }
@@ -186,12 +198,14 @@ async function assertModelExists(modelDir: string): Promise<void> {
   }
 }
 
-async function readDeclaredDependencies(packageDir: string): Promise<Set<string>> {
+async function readDeclaredDependencies(packageDir: string): Promise<{runtime: Set<string>; dev: Set<string>}> {
   const pkg = JSON.parse(await readFile(path.join(packageDir, 'package.json'), 'utf8')) as Record<
     string,
     Record<string, string> | undefined
   >;
-  return new Set(
-    ['dependencies', 'peerDependencies', 'optionalDependencies'].flatMap((field) => Object.keys(pkg[field] ?? {})),
-  );
+  const names = (fields: string[]) => new Set(fields.flatMap((field) => Object.keys(pkg[field] ?? {})));
+  return {
+    runtime: names(['dependencies', 'peerDependencies', 'optionalDependencies']),
+    dev: names(['devDependencies']),
+  };
 }

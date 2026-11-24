@@ -22,10 +22,26 @@ baseline can only shrink.
 
 ```bash
 npm install --save-dev @appium/arch-check
-npx arch-check [packageDir]                    # check (default: current directory)
+npx arch-check init [packageDir]               # scaffold architecture/ from the current code
+npx arch-check [packageDir...]                 # check (default: current directory)
+npx arch-check --workspaces [rootDir]          # check the workspace packages that have a model
 npx arch-check --update-baseline               # tolerate all current violations
 npx arch-check --verbose                       # list every finding
 ```
+
+### Getting started
+
+`arch-check init` creates `architecture/` from the code as it is: one component per top-level
+directory and per root file of the source root (`lib`, or `src` if `lib` holds build output; use
+`--source-root` to override), allowed dependencies taken from the current imports, and a baseline
+for the existing cycles. Then:
+
+1. Edit `model.c4`: delete the dependencies that should not be allowed, merge or rename components,
+   add descriptions. Run `arch-check --update-baseline` to tolerate the violations this creates.
+2. Run `arch-check` in CI.
+3. Tell agents about the model, see [AI agents](#ai-agents) (`init` prints a ready snippet).
+
+In a monorepo, run `init` in each package, and `arch-check --workspaces .` from the root.
 
 Relative imports that cannot be resolved are reported as warnings, as they cannot be checked.
 
@@ -78,7 +94,10 @@ specification) still own their files, but their dependencies are not checked. El
 |---|---|---|
 | `sourceRoot` | `lib` | Directory to check, relative to the package. |
 | `tsconfig` | `tsconfig.json` | Used to resolve imports. |
-| `entryPointScopes` | `[]` | npm scopes (e.g. `["@appium"]`) whose packages must be declared in `package.json` and imported through their entry points only. |
+| `entryPointScopes` | `[]` | npm scopes (e.g. `["@appium"]`) whose packages must be declared in `package.json` and imported through their entry points only. A `devDependency` is enough for `import type`. |
+| `typeOnlyCycles` | `error` | `ignore` to stop reporting cycles that exist only through `import type`. They have no runtime effect, and patterns such as command mixins that reference their driver's type produce hundreds of them. Runtime cycles are always reported. |
+
+Unknown options are rejected.
 
 ### Baseline
 

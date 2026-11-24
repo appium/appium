@@ -4,5 +4,8 @@
   "type": "module",
   "dependencies": {
     "@scope/declared": "1.0.0"
+  },
+  "devDependencies": {
+    "@scope/dev-types": "1.0.0"
   }
 }

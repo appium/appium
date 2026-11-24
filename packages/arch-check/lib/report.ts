@@ -46,13 +46,17 @@ export function formatReport(result: CheckResult, {verbose = false}: ReportOptio
 
 function formatRule(rule: Rule, findings: Finding[], verbose: boolean): string[] {
   const added = findings.filter((f) => f.status === 'new');
-  const shown = verbose ? added : added.slice(0, MAX_PER_RULE);
-  const lines = [`${TITLES[rule]}:`, ...shown.map((f) => `  NEW    ${f.message}`)];
-  if (shown.length < added.length) {
-    lines.push(`  ... and ${added.length - shown.length} more (use --verbose to list all)`);
-  }
-  for (const f of findings.filter((x) => x.status === 'stale')) {
-    lines.push(`  STALE  ${f.message} (fixed? run with --update-baseline)`);
+  const stale = findings.filter((f) => f.status === 'stale');
+  const lines = [`${TITLES[rule]}:`];
+  for (const [label, group, suffix] of [
+    ['NEW   ', added, ''],
+    ['STALE ', stale, ' (fixed? run with --update-baseline)'],
+  ] as const) {
+    const shown = verbose ? group : group.slice(0, MAX_PER_RULE);
+    lines.push(...shown.map((f) => `  ${label} ${f.message}${suffix}`));
+    if (shown.length < group.length) {
+      lines.push(`  ... and ${group.length - shown.length} more ${label.trim()} (use --verbose to list all)`);
+    }
   }
   if (added.length) {
     lines.push(`  -> ${HINTS[rule]}`);

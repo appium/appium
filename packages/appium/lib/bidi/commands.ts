@@ -27,7 +27,9 @@ import {
   serializeBiDiEvent,
   trackBiDiEvent,
 } from './flow-control.js';
-import {BidiProxyBridge, type SendData, toBidiErrorResponse, toSendableCloseCode} from './proxy.js';
+import {BidiProxyBridge} from './proxy.js';
+
+export type SendData = (data: string | Buffer, options?: {binary?: boolean}) => Promise<void>;
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
@@ -46,10 +48,88 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-const {WebSocketCloseCode} = net;
+const {WebSocketCloseCode, MIN_APPLICATION_CLOSE_CODE, MAX_APPLICATION_CLOSE_CODE} = net;
+const RESERVED_CLOSE_CODES: readonly number[] = [
+  WebSocketCloseCode.RESERVED,
+  WebSocketCloseCode.NO_STATUS_RECEIVED,
+  WebSocketCloseCode.ABNORMAL_CLOSURE,
+];
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
-const BIDI_CONNECTION_CLEANUPS: WeakMap<WebSocket, () => void> = new WeakMap();
+const BIDI_CONNECTION_CLEANUPS: WeakMap<WebSocket, Set<() => void>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
+
+/**
+ * Convert an error thrown while handling a local BiDi command into a W3C BiDi error response.
+ *
+ * @param id - Request correlation ID
+ * @param err - Error thrown during command execution
+ * @returns W3C BiDi error response payload
+ */
+export function toBidiErrorResponse(id: number, err: unknown): ErrorBiDiCommandResponse {
+  if (
+    err !== null &&
+    typeof err === 'object' &&
+    'bidiErrObject' in err &&
+    typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
+  ) {
+    return (err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}).bidiErrObject(id);
+  }
+  return {
+    id,
+    type: 'error',
+    error: errors.UnknownError.error(),
+    message: err instanceof Error ? err.message : String(err),
+    stacktrace: err instanceof Error ? err.stack : undefined,
+  };
+}
+
+/**
+ * 'close' events can report reserved codes like 1005 and 1006, which RFC 6455 forbids in a close
+ * frame and ws throws on, so anything ws would reject is replaced with an internal error.
+ *
+ * @param code - WebSocket close code reported by ws
+ * @returns Close code safe to pass to `WebSocket.close()`
+ */
+export function toSendableCloseCode(code: number): number {
+  const isStandard =
+    code >= WebSocketCloseCode.NORMAL_CLOSURE &&
+    code <= WebSocketCloseCode.BAD_GATEWAY &&
+    !RESERVED_CLOSE_CODES.includes(code);
+  const isApplication = code >= MIN_APPLICATION_CLOSE_CODE && code <= MAX_APPLICATION_CLOSE_CODE;
+  return isStandard || isApplication ? code : WebSocketCloseCode.INTERNAL_ERROR;
+}
+
+function registerConnectionCleanup(ws: WebSocket, cleanup: () => void): () => void {
+  let cleanups = BIDI_CONNECTION_CLEANUPS.get(ws);
+  if (!cleanups) {
+    cleanups = new Set();
+    BIDI_CONNECTION_CLEANUPS.set(ws, cleanups);
+  }
+  cleanups.add(cleanup);
+  return () => {
+    const registered = BIDI_CONNECTION_CLEANUPS.get(ws);
+    if (!registered) {
+      return;
+    }
+    registered.delete(cleanup);
+    if (registered.size === 0) {
+      BIDI_CONNECTION_CLEANUPS.delete(ws);
+    }
+  };
+}
+
+function runConnectionCleanups(ws: WebSocket): void {
+  const cleanups = BIDI_CONNECTION_CLEANUPS.get(ws);
+  if (!cleanups) {
+    return;
+  }
+  BIDI_CONNECTION_CLEANUPS.delete(ws);
+  for (const cleanup of [...cleanups]) {
+    try {
+      cleanup();
+    } catch {}
+  }
+}
 
 /**
  * Clients cannot use broadcast addresses, like 0.0.0.0 or ::
@@ -91,6 +171,9 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     const send = guardSend(unguardedSend, guard);
     const proxyBridge =
       proxyClient && sendToProxy ? new BidiProxyBridge(ws, proxyClient, bidiHandlerDriver, send, sendToProxy) : null;
+    if (proxyBridge) {
+      registerConnectionCleanup(ws, () => proxyBridge.dispose());
+    }
 
     const initBidiSocketHandlersFunc: OmitThisParameter<typeof initBidiSocketHandlers> =
       initBidiSocketHandlers.bind(this);
@@ -101,13 +184,6 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> =
       initBidiEventListeners.bind(this);
     initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, send, guard);
-    if (proxyBridge) {
-      const disposeEventListeners = BIDI_CONNECTION_CLEANUPS.get(ws);
-      BIDI_CONNECTION_CLEANUPS.set(ws, () => {
-        proxyBridge.dispose();
-        disposeEventListeners?.();
-      });
-    }
   } catch (err) {
     this.log.error(err);
     try {
@@ -187,7 +263,7 @@ export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void 
   try {
     this.log.debug(`Closing bidi socket(s) associated with session ${sessionId}`);
     for (const ws of this.bidiSockets[sessionId]) {
-      BIDI_CONNECTION_CLEANUPS.get(ws)?.();
+      runConnectionCleanups(ws);
       ws.close(WebSocketCloseCode.GOING_AWAY);
     }
   } catch {}
@@ -432,13 +508,15 @@ function initBidiEventListeners(
   const eventLogCounts: Record<string, number> = BIDI_EVENTS_MAP.get(bidiHandlerDriver) ?? {};
   BIDI_EVENTS_MAP.set(bidiHandlerDriver, eventLogCounts);
   const registrations: EventRegistration[] = [];
+  let unregisterCleanup: (() => void) | undefined;
   const disposeConnection = () => {
     for (const {emitter, eventListener, gate} of registrations.splice(0)) {
       emitter.removeListener(BIDI_EVENT_NAME, eventListener);
       gate.release();
     }
     guard.dispose();
-    BIDI_CONNECTION_CLEANUPS.delete(ws);
+    unregisterCleanup?.();
+    ws.off('close', disposeConnection);
   };
   const eventListenerFactory = (extType: 'driver' | 'plugin', ext: ExtensionCore) => {
     const gate = new BiDiDeliveryGate(guard, ext.eventEmitter, ext.log);
@@ -518,7 +596,7 @@ function initBidiEventListeners(
     plugin.eventEmitter?.on(BIDI_EVENT_NAME, eventListenerFactory('plugin', plugin));
   }
   ws.once('close', disposeConnection);
-  BIDI_CONNECTION_CLEANUPS.set(ws, disposeConnection);
+  unregisterCleanup = registerConnectionCleanup(ws, disposeConnection);
 }
 
 /**

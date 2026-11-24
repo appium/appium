@@ -1,5 +1,5 @@
 import {errors, runWithCommandTimeout} from '@appium/base-driver';
-import {net, util} from '@appium/support';
+import {util} from '@appium/support';
 import type {
   AppiumLogger,
   BiDiResultData,
@@ -11,17 +11,10 @@ import type {
 import {WebSocket, type RawData} from 'ws';
 
 import type {AppiumDriver} from '../appium.js';
+import {type SendData, toBidiErrorResponse, toSendableCloseCode} from './commands.js';
 
-export type AnyBidiDriver = ExternalDriver | AppiumDriver;
-export type SendData = (data: string | Buffer, options?: {binary?: boolean}) => Promise<void>;
-export type BidiCommandResponse = SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
-
-const {WebSocketCloseCode, MIN_APPLICATION_CLOSE_CODE, MAX_APPLICATION_CLOSE_CODE} = net;
-const RESERVED_CLOSE_CODES: readonly number[] = [
-  WebSocketCloseCode.RESERVED,
-  WebSocketCloseCode.NO_STATUS_RECEIVED,
-  WebSocketCloseCode.ABNORMAL_CLOSURE,
-];
+type AnyBidiDriver = ExternalDriver | AppiumDriver;
+type BidiCommandResponse = SuccessBiDiCommandResponse | ErrorBiDiCommandResponse;
 
 const SESSION_SUBSCRIBE_METHOD = 'session.subscribe';
 const SESSION_UNSUBSCRIBE_METHOD = 'session.unsubscribe';
@@ -30,68 +23,22 @@ const SHARED_BIDI_EVENTS: ReadonlySet<string> = new Set(['log', 'log.entryAdded'
 // Keep generated upstream IDs within signed 32-bit positive ints so every browser/driver JSON parser accepts them.
 const MIN_SYNTHETIC_COMMAND_ID = 1_000_000_000;
 const MAX_SYNTHETIC_COMMAND_ID = 2_000_000_000;
+const MAX_TRACKED_UPSTREAM_SUB_IDS = 1000;
 
-type InterceptedProxyOutcome = {ok: true; response: BidiCommandResponse} | {ok: false; error: Error};
+type InternalUpstreamOutcome = {ok: true; response: BidiCommandResponse} | {ok: false; error: Error};
 
-interface PendingInterceptedRequest {
-  resolve: (outcome: InterceptedProxyOutcome) => void;
-}
-
-interface RemappedProxyCommand {
-  clientId: number;
-  resolve: () => void;
-}
+type PendingUpstreamRequest =
+  | {kind: 'internal'; resolve: (outcome: InternalUpstreamOutcome) => void}
+  | {kind: 'passthrough'; clientId: number; resolve: () => void};
 
 interface TrackedLocalSubscription {
   localId: string;
   upstreamId?: string;
+  upstreamEvents?: Set<string>;
+  contexts?: Set<string>;
 }
 
-/**
- * Convert an error thrown while handling a local BiDi command into a W3C BiDi error response.
- *
- * @param id - Request correlation ID
- * @param err - Error thrown during command execution
- * @returns W3C BiDi error response payload
- */
-export function toBidiErrorResponse(id: number, err: unknown): ErrorBiDiCommandResponse {
-  if (
-    err !== null &&
-    typeof err === 'object' &&
-    'bidiErrObject' in err &&
-    typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
-  ) {
-    return (err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}).bidiErrObject(id);
-  }
-  return {
-    id,
-    type: 'error',
-    error: errors.UnknownError.error(),
-    message: err instanceof Error ? err.message : String(err),
-    stacktrace: err instanceof Error ? err.stack : undefined,
-  };
-}
-
-/**
- * 'close' events can report reserved codes like 1005 and 1006, which RFC 6455 forbids in a close
- * frame and ws throws on, so anything ws would reject is replaced with an internal error.
- *
- * @param code - WebSocket close code reported by ws
- * @returns Close code safe to pass to `WebSocket.close()`
- */
-export function toSendableCloseCode(code: number): number {
-  const isStandard =
-    code >= WebSocketCloseCode.NORMAL_CLOSURE &&
-    code <= WebSocketCloseCode.BAD_GATEWAY &&
-    !RESERVED_CLOSE_CODES.includes(code);
-  const isApplication = code >= MIN_APPLICATION_CLOSE_CODE && code <= MAX_APPLICATION_CLOSE_CODE;
-  return isStandard || isApplication ? code : WebSocketCloseCode.INTERNAL_ERROR;
-}
-
-/**
- * Returns true if the BiDi event name or module belongs exclusively to Appium (`appium:*`, `appium`, `appium.*`).
- */
-export function isAppiumOnlyEvent(eventName: string): boolean {
+function isAppiumOnlyEvent(eventName: string): boolean {
   return eventName === 'appium' || eventName.startsWith('appium:') || eventName.startsWith('appium.');
 }
 
@@ -120,6 +67,17 @@ function extractSubscriptionId(result: BiDiResultData): string {
   return result.subscription;
 }
 
+function isUnknownSubscriptionError(err: unknown): boolean {
+  return err instanceof Error && /Unknown subscription id/i.test(err.message);
+}
+
+function eventMatchesUnsubscribe(subscribedEvent: string, unsubscribedEvent: string): boolean {
+  return (
+    subscribedEvent === unsubscribedEvent ||
+    (!unsubscribedEvent.includes('.') && subscribedEvent.startsWith(`${unsubscribedEvent}.`))
+  );
+}
+
 function partitionEvents(
   events: readonly string[],
   includeSharedLocal: boolean,
@@ -140,6 +98,144 @@ function partitionEvents(
 }
 
 /**
+ * Manages synthetic upstream command ID allocation and response correlation across both
+ * bridge-internal BiDi commands and client pass-through commands.
+ */
+class UpstreamBidiCorrelator {
+  private readonly proxyClient: WebSocket;
+  private readonly sendToClient: SendData;
+  private readonly sendToProxy: SendData;
+  private readonly isDisposed: () => boolean;
+  private readonly minId: number;
+  private readonly maxId: number;
+  private readonly pending: Map<number, PendingUpstreamRequest> = new Map();
+  private nextSyntheticId: number;
+
+  constructor(
+    proxyClient: WebSocket,
+    sendToClient: SendData,
+    sendToProxy: SendData,
+    isDisposed: () => boolean,
+    syntheticIdRange: {min: number; max: number} = {
+      min: MIN_SYNTHETIC_COMMAND_ID,
+      max: MAX_SYNTHETIC_COMMAND_ID,
+    },
+  ) {
+    this.proxyClient = proxyClient;
+    this.sendToClient = sendToClient;
+    this.sendToProxy = sendToProxy;
+    this.isDisposed = isDisposed;
+    this.minId = syntheticIdRange.min;
+    this.maxId = syntheticIdRange.max;
+    this.nextSyntheticId = this.minId;
+  }
+
+  /**
+   * Send an internal BiDi command upstream and wait for its correlated response.
+   */
+  async sendInternal(method: string, params: StringRecord): Promise<BidiCommandResponse> {
+    const upstreamId = this.allocateSyntheticId();
+    const outcomePromise = new Promise<InternalUpstreamOutcome>((resolve) => {
+      this.pending.set(upstreamId, {kind: 'internal', resolve});
+    });
+
+    try {
+      await this.sendToProxy(JSON.stringify({id: upstreamId, method, params}));
+      if (this.isDisposed() || this.proxyClient.readyState !== WebSocket.OPEN) {
+        throw new errors.UnknownError('Upstream BiDi socket connection is closed');
+      }
+      const outcome = await outcomePromise;
+      if (!outcome.ok) {
+        throw outcome.error;
+      }
+      return outcome.response;
+    } finally {
+      this.pending.delete(upstreamId);
+    }
+  }
+
+  /**
+   * Forward a parsed client command using a unique synthetic upstream ID, keeping the caller's
+   * promise pending until the upstream response returns or the connection closes.
+   */
+  async forwardCommand(command: StringRecord, clientId: number): Promise<void> {
+    const upstreamId = this.allocateSyntheticId();
+    const response = new Promise<void>((resolve) => {
+      this.pending.set(upstreamId, {kind: 'passthrough', clientId, resolve});
+    });
+
+    try {
+      await this.sendToProxy(JSON.stringify({...command, id: upstreamId}));
+      if (this.isDisposed() || this.proxyClient.readyState !== WebSocket.OPEN) {
+        this.abortAll(new Error('Upstream BiDi socket connection is closed'));
+      }
+      await response;
+    } finally {
+      this.pending.delete(upstreamId);
+    }
+  }
+
+  /**
+   * Forward an opaque or ID-less frame upstream without response correlation.
+   */
+  async forwardOpaque(raw: string): Promise<void> {
+    await this.sendToProxy(raw);
+    if (this.isDisposed() || this.proxyClient.readyState !== WebSocket.OPEN) {
+      this.abortAll(new Error('Upstream BiDi socket connection is closed'));
+    }
+  }
+
+  /**
+   * Resolve a parsed upstream command response if it matches an in-flight correlated request.
+   */
+  async handleResponse(response: BidiCommandResponse): Promise<boolean> {
+    const entry = this.pending.get(response.id);
+    if (!entry) {
+      return false;
+    }
+    this.pending.delete(response.id);
+    if (entry.kind === 'internal') {
+      entry.resolve({ok: true, response});
+      return true;
+    }
+    entry.resolve();
+    await this.sendToClient(JSON.stringify({...response, id: entry.clientId}), {binary: false});
+    return true;
+  }
+
+  /**
+   * Unblock all pending internal and pass-through command waiters when a socket terminates.
+   */
+  abortAll(err: Error): void {
+    for (const [id, entry] of this.pending) {
+      this.pending.delete(id);
+      if (entry.kind === 'internal') {
+        entry.resolve({ok: false, error: err});
+      } else {
+        entry.resolve();
+      }
+    }
+  }
+
+  private allocateSyntheticId(): number {
+    const rangeSize = this.maxId - this.minId;
+    if (rangeSize <= 0) {
+      throw new errors.UnknownError('Invalid synthetic BiDi proxy command ID range');
+    }
+    for (let i = 0; i < rangeSize; ++i) {
+      const candidate = this.nextSyntheticId++;
+      if (this.nextSyntheticId >= this.maxId) {
+        this.nextSyntheticId = this.minId;
+      }
+      if (!this.pending.has(candidate)) {
+        return candidate;
+      }
+    }
+    throw new errors.UnknownError('Exhausted synthetic BiDi proxy command IDs');
+  }
+}
+
+/**
  * Bridges a client BiDi WebSocket to an upstream BiDi proxy server while handling Appium-local
  * `session.subscribe` / `session.unsubscribe` event subscriptions on the same connection.
  */
@@ -149,14 +245,10 @@ export class BidiProxyBridge {
   private readonly driver: AnyBidiDriver;
   private readonly driverLog: AppiumLogger;
   private readonly sendToClient: SendData;
-  private readonly sendToProxy: SendData;
+  private readonly correlator: UpstreamBidiCorrelator;
 
-  private readonly pendingCommands: Map<number, Set<() => void>> = new Map();
-  private readonly pendingIntercepted: Map<number, PendingInterceptedRequest> = new Map();
-  private readonly remappedCommands: Map<number, RemappedProxyCommand> = new Map();
   private readonly localSubscriptions: Map<string, TrackedLocalSubscription> = new Map();
   private readonly seenUpstreamSubIds: Set<string> = new Set();
-  private nextSyntheticId = MIN_SYNTHETIC_COMMAND_ID;
   private disposed = false;
 
   constructor(
@@ -165,13 +257,20 @@ export class BidiProxyBridge {
     driver: AnyBidiDriver,
     sendToClient: SendData,
     sendToProxy: SendData,
+    options: {syntheticIdRange?: {min: number; max: number}} = {},
   ) {
     this.ws = ws;
     this.proxyClient = proxyClient;
     this.driver = driver;
     this.driverLog = driver.log;
     this.sendToClient = sendToClient;
-    this.sendToProxy = sendToProxy;
+    this.correlator = new UpstreamBidiCorrelator(
+      proxyClient,
+      sendToClient,
+      sendToProxy,
+      () => this.disposed,
+      options.syntheticIdRange,
+    );
   }
 
   /**
@@ -187,7 +286,7 @@ export class BidiProxyBridge {
         `Upstream bidi socket closed connection (code ${code}, reason: '${reason?.toString()}'). ` +
           `Closing proxy connection to client`,
       );
-      this.abortPending(new Error('Upstream BiDi socket connection closed'));
+      this.correlator.abortAll(new Error('Upstream BiDi socket connection closed'));
       const closeCode = toSendableCloseCode(code);
       if (closeCode !== code) {
         this.driverLog.warn(
@@ -200,7 +299,7 @@ export class BidiProxyBridge {
 
     this.proxyClient.on('error', (err) => {
       this.driverLog.warn(`Got error on upstream bidi socket connection: ${err.message}`);
-      this.abortPending(err instanceof Error ? err : new Error(String(err)));
+      this.correlator.abortAll(err instanceof Error ? err : new Error(String(err)));
     });
   }
 
@@ -214,54 +313,67 @@ export class BidiProxyBridge {
       try {
         parsed = JSON.parse(data.toString('utf8'));
       } catch {
-        await this.forwardRaw(data);
+        await this.correlator.forwardOpaque(data.toString('utf8'));
         return;
       }
 
       if (!util.isPlainObject(parsed)) {
-        await this.forwardRaw(data);
+        await this.correlator.forwardOpaque(data.toString('utf8'));
         return;
       }
 
       const id = typeof parsed.id === 'number' ? parsed.id : undefined;
+      if (id === undefined) {
+        await this.correlator.forwardOpaque(data.toString('utf8'));
+        return;
+      }
+
       const method = typeof parsed.method === 'string' ? parsed.method : undefined;
       const params = util.isPlainObject(parsed.params) ? (parsed.params as StringRecord) : undefined;
 
-      if (id !== undefined && params !== undefined && method === SESSION_SUBSCRIBE_METHOD) {
-        try {
-          const handled = await this.handleSubscribe(id, params);
-          if (handled) {
+      try {
+        if (params !== undefined && method === SESSION_SUBSCRIBE_METHOD) {
+          if (await this.handleSubscribe(id, params)) {
             return;
           }
-        } catch (err) {
-          await this.sendToClient(JSON.stringify(toBidiErrorResponse(id, err)));
-          return;
-        }
-      } else if (id !== undefined && params !== undefined && method === SESSION_UNSUBSCRIBE_METHOD) {
-        try {
-          const handled = await this.handleUnsubscribe(id, params);
-          if (handled) {
+        } else if (params !== undefined && method === SESSION_UNSUBSCRIBE_METHOD) {
+          if (await this.handleUnsubscribe(id, params)) {
             return;
           }
-        } catch (err) {
-          await this.sendToClient(JSON.stringify(toBidiErrorResponse(id, err)));
-          return;
         }
-      }
 
-      await this.forwardRaw(data, id);
+        await this.correlator.forwardCommand(parsed, id);
+      } catch (err) {
+        await this.sendToClient(JSON.stringify(toBidiErrorResponse(id, err)));
+      }
     });
   }
 
   /**
-   * Release any pending command waiters when the client socket or session shuts down.
+   * Release pending command waiters and unsubscribe any Appium-local subscriptions created by
+   * this bridge when the client socket or session shuts down.
    */
   dispose(): void {
     if (this.disposed) {
       return;
     }
     this.disposed = true;
-    this.abortPending(new Error('BiDi socket connection closed'));
+    const localIds = util.uniq(Array.from(this.localSubscriptions.values(), ({localId}) => localId));
+    this.localSubscriptions.clear();
+    this.seenUpstreamSubIds.clear();
+    this.correlator.abortAll(new Error('BiDi socket connection closed'));
+    if (localIds.length > 0) {
+      void this.releaseLocalSubscriptions(localIds);
+    }
+  }
+
+  private async releaseLocalSubscriptions(localIds: string[]): Promise<void> {
+    try {
+      await this.unsubscribeLocalIdsIdempotently(localIds);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.driverLog.debug(`Best-effort local BiDi subscription cleanup failed: ${message}`);
+    }
   }
 
   private async handleUpstreamMessage(data: RawData, isBinary: boolean): Promise<void> {
@@ -282,25 +394,11 @@ export class BidiProxyBridge {
 
       if (response) {
         if (response.type === 'success' && typeof response.result?.subscription === 'string') {
-          this.seenUpstreamSubIds.add(response.result.subscription);
+          this.recordUpstreamSubscriptionId(response.result.subscription);
         }
-
-        const intercepted = this.pendingIntercepted.get(response.id);
-        if (intercepted) {
-          this.pendingIntercepted.delete(response.id);
-          intercepted.resolve({ok: true, response});
+        if (await this.correlator.handleResponse(response)) {
           return;
         }
-
-        const remapped = this.remappedCommands.get(response.id);
-        if (remapped) {
-          this.remappedCommands.delete(response.id);
-          remapped.resolve();
-          await this.sendToClient(JSON.stringify({...response, id: remapped.clientId}), {binary: false});
-          return;
-        }
-
-        this.finishPendingCommand(response.id);
       }
     }
 
@@ -330,7 +428,10 @@ export class BidiProxyBridge {
       return true;
     }
 
-    const upstreamRes = await this.sendCorrelated(SESSION_SUBSCRIBE_METHOD, {...params, events: upstreamEvents});
+    const upstreamRes = await this.correlator.sendInternal(SESSION_SUBSCRIBE_METHOD, {
+      ...params,
+      events: upstreamEvents,
+    });
     if (upstreamRes.type === 'error') {
       await this.sendToClient(JSON.stringify({...upstreamRes, id}));
       return true;
@@ -338,17 +439,19 @@ export class BidiProxyBridge {
 
     const upstreamSubId =
       typeof upstreamRes.result?.subscription === 'string' ? upstreamRes.result.subscription : undefined;
-    if (upstreamSubId) {
-      this.seenUpstreamSubIds.add(upstreamSubId);
-    }
 
-    let localResult: BiDiResultData;
+    let localId: string;
     try {
-      localResult = await this.driver.executeBidiCommand(SESSION_SUBSCRIBE_METHOD, {...params, events: localEvents});
+      const localResult = await this.driver.executeBidiCommand(SESSION_SUBSCRIBE_METHOD, {
+        ...params,
+        events: localEvents,
+      });
+      localId = extractSubscriptionId(localResult);
     } catch (localErr) {
       if (upstreamSubId && !this.disposed && this.proxyClient.readyState === WebSocket.OPEN) {
         try {
-          await this.sendCorrelated(SESSION_UNSUBSCRIBE_METHOD, {subscriptions: [upstreamSubId]});
+          await this.correlator.sendInternal(SESSION_UNSUBSCRIBE_METHOD, {subscriptions: [upstreamSubId]});
+          this.seenUpstreamSubIds.delete(upstreamSubId);
         } catch {
           // Best-effort rollback when local subscription fails.
         }
@@ -356,9 +459,14 @@ export class BidiProxyBridge {
       throw localErr;
     }
 
-    const localId = extractSubscriptionId(localResult);
+    const trackedContexts = isNonEmptyStringArray(params.contexts) ? new Set(params.contexts) : undefined;
     const clientSubId = this.allocateClientSubscriptionId(localId);
-    this.localSubscriptions.set(clientSubId, {localId, upstreamId: upstreamSubId});
+    this.localSubscriptions.set(clientSubId, {
+      localId,
+      upstreamId: upstreamSubId,
+      upstreamEvents: upstreamSubId ? new Set(upstreamEvents) : undefined,
+      contexts: upstreamSubId ? trackedContexts : undefined,
+    });
     await this.sendToClient(JSON.stringify({id, type: 'success', result: {subscription: clientSubId}}));
     return true;
   }
@@ -391,19 +499,26 @@ export class BidiProxyBridge {
         return false;
       }
 
-      if (upstreamIds.length > 0) {
-        const upstreamRes = await this.sendCorrelated(SESSION_UNSUBSCRIBE_METHOD, {
-          subscriptions: util.uniq(upstreamIds),
+      const uniqueUpstreamIds = util.uniq(upstreamIds);
+      if (uniqueUpstreamIds.length > 0) {
+        const upstreamRes = await this.correlator.sendInternal(SESSION_UNSUBSCRIBE_METHOD, {
+          subscriptions: uniqueUpstreamIds,
         });
         if (upstreamRes.type === 'error') {
           await this.sendToClient(JSON.stringify({...upstreamRes, id}));
           return true;
         }
+        for (const upId of uniqueUpstreamIds) {
+          this.seenUpstreamSubIds.delete(upId);
+        }
       }
 
-      await this.driver.executeBidiCommand(SESSION_UNSUBSCRIBE_METHOD, {subscriptions: util.uniq(localIds)});
-      for (const clientSubId of matchedClientIds) {
-        this.localSubscriptions.delete(clientSubId);
+      try {
+        await this.unsubscribeLocalIdsIdempotently(util.uniq(localIds));
+      } finally {
+        for (const clientSubId of matchedClientIds) {
+          this.localSubscriptions.delete(clientSubId);
+        }
       }
       await this.sendToClient(JSON.stringify({id, type: 'success', result: {}}));
       return true;
@@ -411,95 +526,113 @@ export class BidiProxyBridge {
 
     if (params.subscriptions === undefined && isNonEmptyStringArray(params.events)) {
       const {localEvents, upstreamEvents} = partitionEvents(params.events, true);
-      if (localEvents.length === 0) {
+      if (localEvents.length === 0 && !this.hasTrackedUpstreamEventOverlap(upstreamEvents)) {
         return false;
       }
 
       if (upstreamEvents.length > 0) {
-        const upstreamRes = await this.sendCorrelated(SESSION_UNSUBSCRIBE_METHOD, {...params, events: upstreamEvents});
+        const upstreamRes = await this.correlator.sendInternal(SESSION_UNSUBSCRIBE_METHOD, {
+          ...params,
+          events: upstreamEvents,
+        });
         if (upstreamRes.type === 'error') {
           await this.sendToClient(JSON.stringify({...upstreamRes, id}));
           return true;
         }
+        this.reconcileTrackedUpstreamEvents(upstreamEvents, params.contexts);
       }
 
-      const localResult = await this.driver.executeBidiCommand(SESSION_UNSUBSCRIBE_METHOD, {
-        ...params,
-        events: localEvents,
-      });
-      await this.sendToClient(JSON.stringify({id, type: 'success', result: localResult}));
+      const result =
+        localEvents.length > 0
+          ? await this.driver.executeBidiCommand(SESSION_UNSUBSCRIBE_METHOD, {
+              ...params,
+              events: localEvents,
+            })
+          : {};
+      await this.sendToClient(JSON.stringify({id, type: 'success', result}));
       return true;
     }
 
     return false;
   }
 
-  private async forwardRaw(data: Buffer, id?: number): Promise<void> {
-    if (id !== undefined && (this.pendingIntercepted.has(id) || this.remappedCommands.has(id))) {
-      const upstreamId = this.allocateSyntheticId();
-      const parsed = JSON.parse(data.toString('utf8')) as StringRecord;
-      const response = new Promise<void>((resolve) => {
-        this.remappedCommands.set(upstreamId, {clientId: id, resolve});
-      });
-      await this.sendToProxy(JSON.stringify({...parsed, id: upstreamId}));
-      if (this.disposed || this.proxyClient.readyState !== WebSocket.OPEN) {
-        this.abortPending(new Error('Upstream BiDi socket connection is closed'));
-      }
-      await response;
+  private async unsubscribeLocalIdsIdempotently(localIds: string[]): Promise<void> {
+    if (localIds.length === 0) {
       return;
     }
-
-    let response: Promise<void> | undefined;
-    if (id !== undefined) {
-      response = new Promise<void>((resolve) => {
-        const pending = this.pendingCommands.get(id) ?? new Set();
-        pending.add(resolve);
-        this.pendingCommands.set(id, pending);
-      });
-    }
-    await this.sendToProxy(data.toString('utf8'));
-    if (this.disposed || this.proxyClient.readyState !== WebSocket.OPEN) {
-      this.abortPending(new Error('Upstream BiDi socket connection is closed'));
-    }
-    await response;
-  }
-
-  private async sendCorrelated(method: string, params: StringRecord): Promise<BidiCommandResponse> {
-    const upstreamId = this.allocateSyntheticId();
-    const outcomePromise = new Promise<InterceptedProxyOutcome>((resolve) => {
-      this.pendingIntercepted.set(upstreamId, {resolve});
-    });
-
     try {
-      await this.sendToProxy(JSON.stringify({id: upstreamId, method, params}));
-      if (this.disposed || this.proxyClient.readyState !== WebSocket.OPEN) {
-        throw new errors.UnknownError('Upstream BiDi socket connection is closed');
+      await this.driver.executeBidiCommand(SESSION_UNSUBSCRIBE_METHOD, {subscriptions: localIds});
+    } catch (err) {
+      if (!isUnknownSubscriptionError(err)) {
+        throw err;
       }
-      const outcome = await outcomePromise;
-      if (!outcome.ok) {
-        throw outcome.error;
+      if (localIds.length === 1) {
+        return;
       }
-      return outcome.response;
-    } finally {
-      this.pendingIntercepted.delete(upstreamId);
+      for (const localId of localIds) {
+        try {
+          await this.driver.executeBidiCommand(SESSION_UNSUBSCRIBE_METHOD, {subscriptions: [localId]});
+        } catch (singleErr) {
+          if (!isUnknownSubscriptionError(singleErr)) {
+            throw singleErr;
+          }
+        }
+      }
     }
   }
 
-  private allocateSyntheticId(): number {
-    for (let i = 0; i < MAX_SYNTHETIC_COMMAND_ID - MIN_SYNTHETIC_COMMAND_ID; ++i) {
-      const candidate = this.nextSyntheticId++;
-      if (this.nextSyntheticId >= MAX_SYNTHETIC_COMMAND_ID) {
-        this.nextSyntheticId = MIN_SYNTHETIC_COMMAND_ID;
+  private hasTrackedUpstreamEventOverlap(unsubscribedUpstreamEvents: readonly string[]): boolean {
+    if (unsubscribedUpstreamEvents.length === 0) {
+      return false;
+    }
+    for (const entry of this.localSubscriptions.values()) {
+      if (!entry.upstreamEvents) {
+        continue;
       }
-      if (
-        !this.pendingCommands.has(candidate) &&
-        !this.pendingIntercepted.has(candidate) &&
-        !this.remappedCommands.has(candidate)
-      ) {
-        return candidate;
+      for (const subscribedEvent of entry.upstreamEvents) {
+        if (unsubscribedUpstreamEvents.some((ev) => eventMatchesUnsubscribe(subscribedEvent, ev))) {
+          return true;
+        }
       }
     }
-    throw new errors.UnknownError('Exhausted synthetic BiDi proxy command IDs');
+    return false;
+  }
+
+  private reconcileTrackedUpstreamEvents(unsubscribedUpstreamEvents: readonly string[], contextsParam: unknown): void {
+    const removedContexts = isNonEmptyStringArray(contextsParam) ? new Set(contextsParam) : undefined;
+    for (const entry of this.localSubscriptions.values()) {
+      if (!entry.upstreamEvents) {
+        continue;
+      }
+      if (removedContexts !== undefined) {
+        if (!entry.contexts || ![...entry.contexts].every((ctx) => removedContexts.has(ctx))) {
+          continue;
+        }
+      }
+      for (const subscribedEvent of [...entry.upstreamEvents]) {
+        if (unsubscribedUpstreamEvents.some((ev) => eventMatchesUnsubscribe(subscribedEvent, ev))) {
+          entry.upstreamEvents.delete(subscribedEvent);
+        }
+      }
+      if (entry.upstreamEvents.size === 0) {
+        if (entry.upstreamId) {
+          this.seenUpstreamSubIds.delete(entry.upstreamId);
+        }
+        entry.upstreamId = undefined;
+        entry.upstreamEvents = undefined;
+      }
+    }
+  }
+
+  private recordUpstreamSubscriptionId(subId: string): void {
+    this.seenUpstreamSubIds.delete(subId);
+    if (this.seenUpstreamSubIds.size >= MAX_TRACKED_UPSTREAM_SUB_IDS) {
+      const oldest = this.seenUpstreamSubIds.values().next().value;
+      if (oldest !== undefined) {
+        this.seenUpstreamSubIds.delete(oldest);
+      }
+    }
+    this.seenUpstreamSubIds.add(subId);
   }
 
   private allocateClientSubscriptionId(localId: string): string {
@@ -507,35 +640,5 @@ export class BidiProxyBridge {
       return localId;
     }
     return util.uuidV4();
-  }
-
-  private finishPendingCommand(id: number): void {
-    const pending = this.pendingCommands.get(id);
-    const finish = pending?.values().next().value;
-    if (pending && finish) {
-      // BiDi IDs are not necessarily unique. One response completes only one command.
-      pending.delete(finish);
-      if (pending.size === 0) {
-        this.pendingCommands.delete(id);
-      }
-      finish();
-    }
-  }
-
-  private abortPending(err: Error): void {
-    for (const [id, pending] of this.pendingIntercepted) {
-      this.pendingIntercepted.delete(id);
-      pending.resolve({ok: false, error: err});
-    }
-    for (const [id, remapped] of this.remappedCommands) {
-      this.remappedCommands.delete(id);
-      remapped.resolve();
-    }
-    for (const [id, waiters] of this.pendingCommands) {
-      this.pendingCommands.delete(id);
-      for (const finish of waiters) {
-        finish();
-      }
-    }
   }
 }

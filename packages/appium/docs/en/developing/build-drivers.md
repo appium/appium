@@ -560,8 +560,24 @@ want BiDi commands to be proxied to.
 The intended pattern here is for you to start a session on the upstream implementation, check
 whether it has an active BiDi socket in the returned capabilities (e.g., the `webSocketUrl`
 capability), and then to set an internal field to that value, so that it can be returned by `get
-bidiProxyUrl`. Once all this is in place, Appium will proxy BiDi commands from the client straight
-to the upstream connection.
+bidiProxyUrl`. Once all this is in place, Appium will proxy standard BiDi commands to the upstream
+connection with a few intentional differences for Appium's own events:
+
+- **`appium` / `appium:*` event subscriptions run locally:** `session.subscribe` and
+  `session.unsubscribe` requests referencing Appium-namespaced events (`appium`, `appium:*`, or
+  `appium.*`) are routed to your driver's `bidiSubscribe` / `bidiUnsubscribe` implementation
+  instead of upstream (while mixed requests split browser events upstream and Appium events
+  locally). Your `bidiSubscribe` implementation must return `{subscription: string}`, and
+  `userContexts` is rejected on Appium events unless your driver overrides `bidiSubscribe` to
+  support them.
+- **Merged `log` / `log.entryAdded` stream:** Subscribing to `log` or `log.entryAdded` without
+  `userContexts` registers the subscription both upstream and on the local driver, so both
+  upstream browser log events and local driver-emitted `log.entryAdded` events (such as server or
+  device logs) are delivered on the same client socket. Supplying `userContexts` routes `log` /
+  `log.entryAdded` upstream only.
+- **No plugin BiDi interception in proxy mode:** When `bidiProxyUrl` is active, plugins are not
+  attached to the BiDi connection (`bidiHandlerPlugins` is empty), so plugin BiDi command wrappers
+  and plugin-emitted `appium:*` events are not forwarded over proxied BiDi sessions.
 
 ### Understand server-assigned driver properties and security flags
 

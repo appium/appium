@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {isExportedSubpath} from '../../lib/exports.js';
+import {isExportedSubpath} from '../../../lib/analysis/exports.js';
 
 describe('isExportedSubpath', () => {
   const exportsField = {

@@ -8,7 +8,7 @@ import {promisify} from 'node:util';
 
 import picomatch from 'picomatch';
 
-import type {ArchitectureModel} from './types.js';
+import type {ArchitectureModel} from '../types.js';
 
 const execFileAsync = promisify(execFile);
 

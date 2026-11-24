@@ -2,7 +2,7 @@ import path from 'node:path';
 import {parseArgs} from 'node:util';
 
 import {checkPackage, updateBaseline} from './check.js';
-import {initPackage} from './init.js';
+import {initPackage} from './init/index.js';
 import {formatReport} from './report.js';
 import {findWorkspacePackages} from './workspaces.js';
 

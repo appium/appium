@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {allowedEdges, buildOwnership, parseModel} from '../../lib/model.js';
-import type {ArchitectureModel} from '../../lib/types.js';
+import {allowedEdges, buildOwnership, parseModel} from '../../../lib/analysis/model.js';
+import type {ArchitectureModel} from '../../../lib/types.js';
 
 const model: ArchitectureModel = {
   elements: {

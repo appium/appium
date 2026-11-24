@@ -1,12 +1,23 @@
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
+import {cycleKey} from './analysis/cycles.js';
 import {readOptionalJson} from './config.js';
-import {byString, cycleKey} from './rules.js';
 import type {Analysis, Baseline, CycleEntry} from './types.js';
+import {boundaryKey, byString} from './util.js';
 
-/** Returns the baseline key for an import between two files. */
-export const boundaryKey = (b: {from: string; to: string}): string => `${b.from} -> ${b.to}`;
+/** Splits `current` keys against a baseline into new (not baselined) and stale (no longer present). */
+export function diffAgainstBaseline(
+  currentKeys: Iterable<string>,
+  baselineKeys: Iterable<string>,
+): {added: string[]; stale: string[]} {
+  const current = new Set(currentKeys);
+  const baseline = new Set(baselineKeys);
+  return {
+    added: [...current].filter((k) => !baseline.has(k)).sort(byString),
+    stale: [...baseline].filter((k) => !current.has(k)).sort(byString),
+  };
+}
 
 /** Reads the baseline file; a missing file is an empty baseline. */
 export async function readBaseline(file: string): Promise<Baseline> {

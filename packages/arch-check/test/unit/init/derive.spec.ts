@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {deriveComponents, deriveEdges, renderModel} from '../../lib/init.js';
+import {deriveComponents, deriveEdges} from '../../../lib/init/derive.js';
+import {renderModel} from '../../../lib/init/render.js';
 
 describe('init', () => {
   const files = [

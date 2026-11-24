@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {cycleKey, diffAgainstBaseline, isRuntimeCycle, parseScopedSpecifier} from '../../lib/rules.js';
+import {
+  cycleKey,
+  diffAgainstBaseline,
+  externalPackageName,
+  isRuntimeCycle,
+  parseScopedSpecifier,
+} from '../../lib/rules.js';
 
 describe('rules', () => {
   it('tells runtime cycles from cycles that use a type-only import', () => {
@@ -27,5 +33,23 @@ describe('rules', () => {
     });
     assert.equal(parseScopedSpecifier('@other/x', ['@appium']), null);
     assert.equal(parseScopedSpecifier('@appium/support', []), null);
+  });
+
+  it('names the package behind an import specifier', () => {
+    assert.equal(externalPackageName('lodash'), 'lodash');
+    assert.equal(externalPackageName('lodash/fp.js'), 'lodash');
+    assert.equal(externalPackageName('@appium/support/lib/fs.js'), '@appium/support');
+    for (const skipped of [
+      './a.js',
+      '../a.js',
+      '/abs.js',
+      '#internal',
+      'node:fs',
+      'fs',
+      'fs/promises',
+      'data:text/js,1',
+    ]) {
+      assert.equal(externalPackageName(skipped), null, skipped);
+    }
   });
 });

@@ -61,6 +61,7 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     tsconfig: 'tsconfig.json',
     entryPointScopes: options.entryPointScopes ?? [],
     typeOnlyCycles: 'error',
+    undeclaredDependencies: 'ignore',
     modelDir,
     baselineFile: path.join(modelDir, 'baseline.json'),
   };

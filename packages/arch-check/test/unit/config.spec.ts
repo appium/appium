@@ -5,7 +5,13 @@ import {parseConfig} from '../../lib/config.js';
 
 describe('parseConfig', () => {
   it('accepts valid options', () => {
-    const config = {sourceRoot: 'src', tsconfig: 't.json', entryPointScopes: ['@a'], typeOnlyCycles: 'ignore'};
+    const config = {
+      sourceRoot: 'src',
+      tsconfig: 't.json',
+      entryPointScopes: ['@a'],
+      typeOnlyCycles: 'ignore',
+      undeclaredDependencies: 'error',
+    };
     assert.deepEqual(parseConfig(config, 'config.json'), config);
     assert.deepEqual(parseConfig({}, 'config.json'), {});
   });
@@ -14,7 +20,11 @@ describe('parseConfig', () => {
     assert.throws(() => parseConfig({sourceroot: 'src'}, 'config.json'), /unknown option 'sourceroot'/);
     assert.throws(() => parseConfig({sourceRoot: 1}, 'config.json'), /'sourceRoot' must be a string/);
     assert.throws(() => parseConfig({entryPointScopes: '@a'}, 'config.json'), /array of strings/);
-    assert.throws(() => parseConfig({typeOnlyCycles: 'warn'}, 'config.json'), /'error' or 'ignore'/);
+    assert.throws(
+      () => parseConfig({typeOnlyCycles: 'warn'}, 'config.json'),
+      /'typeOnlyCycles' must be 'error' or 'ignore'/,
+    );
+    assert.throws(() => parseConfig({undeclaredDependencies: true}, 'config.json'), /'undeclaredDependencies' must be/);
     assert.throws(() => parseConfig([], 'config.json'), /expected a JSON object/);
   });
 });

@@ -98,6 +98,8 @@ specification) still own their files, but their dependencies are not checked. El
 | `entryPointScopes` | `[]` | npm scopes (e.g. `["@appium"]`) whose packages must be declared in `package.json` and imported through their entry points only. A `devDependency` is enough for `import type`. |
 | `typeOnlyCycles` | `error` | `ignore` to stop reporting cycles that exist only through `import type`. They have no runtime effect, and patterns such as command mixins that reference their driver's type produce hundreds of them. Runtime cycles are always reported. |
 
+| `undeclaredDependencies` | `ignore` | `error` to require every package the source imports to be declared in `package.json` (`dependencies`, `peerDependencies` or `optionalDependencies`; a `devDependency` is enough for `import type`), so nothing works only because of hoisting. Built-ins, relative and `#` imports, the package itself and tsconfig `paths` aliases are exempt. Without it, only packages in `entryPointScopes` are checked. |
+
 Unknown options are rejected.
 
 ### Baseline

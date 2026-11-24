@@ -1,3 +1,7 @@
+import {builtinModules} from 'node:module';
+
+const BUILTINS = new Set(builtinModules);
+
 /** Orders strings by code unit. */
 export const byString = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -42,4 +46,17 @@ export function parseScopedSpecifier(
     }
   }
   return null;
+}
+
+/**
+ * The npm package an import specifier refers to (`@scope/name` or `name`), or `null` for relative
+ * and absolute paths, `#` imports, `node:`/URL-style specifiers and Node.js built-in modules.
+ */
+export function externalPackageName(specifier: string): string | null {
+  if (/^[./#]/.test(specifier) || specifier.includes(':')) {
+    return null;
+  }
+  const parts = specifier.split('/');
+  const name = specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+  return !name || (!specifier.startsWith('@') && BUILTINS.has(name)) ? null : name;
 }

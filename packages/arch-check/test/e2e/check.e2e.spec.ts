@@ -175,6 +175,41 @@ describe('arch-check', () => {
     ]);
   });
 
+  it('checks that every imported package is declared when asked to', async () => {
+    const source = `import 'lodash';
+import type {T} from '@scope/dev-types';
+import {readFile} from 'node:fs/promises';
+import {join} from 'path';
+import '@/extras/extra.js';
+import 'sample-package';
+export const log = (m: string, t?: T) => String(readFile) + join('a') + m + t;
+`;
+    await write('lib/util/log.ts', source);
+    await write(
+      'tsconfig.json',
+      '{"compilerOptions": {"module": "NodeNext", "moduleResolution": "NodeNext", "baseUrl": ".", "paths": {"@/*": ["lib/*"]}}}',
+    );
+    const model = await readFile(path.join(dir, 'architecture/model.c4'), 'utf8');
+    await write(
+      'architecture/model.c4',
+      model.replace('  sample.app -> sample.util', '  sample.app -> sample.util\n  sample.util -> sample.extras'),
+    );
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), []);
+    await write('architecture/config.json', '{"entryPointScopes": ["@scope"], "undeclaredDependencies": "error"}');
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), ['lib/util/log.ts -> lodash']);
+    // used as a value, so the import survives compilation
+    await write(
+      'lib/util/log.ts',
+      source
+        .replace("import type {T} from '@scope/dev-types';", "import {T} from '@scope/dev-types';")
+        .replace('t?: T', 't = T'),
+    );
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), [
+      'lib/util/log.ts -> @scope/dev-types',
+      'lib/util/log.ts -> lodash',
+    ]);
+  });
+
   it('initializes a model from the current code', async () => {
     await rm(path.join(dir, 'architecture'), {recursive: true});
     await write(

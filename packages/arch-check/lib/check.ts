@@ -6,7 +6,7 @@ import {loadConfig} from './config.js';
 import {isExportedSubpath, readInstalledExports} from './exports.js';
 import {cruiseSources, type SourceGraph} from './graph.js';
 import {allowedEdges, buildOwnership, exportModel} from './model.js';
-import {byString, diffAgainstBaseline, isRuntimeCycle, parseScopedSpecifier} from './rules.js';
+import {byString, diffAgainstBaseline, externalPackageName, isRuntimeCycle, parseScopedSpecifier} from './rules.js';
 import type {Analysis, CheckResult, Finding, ImportedBoundary, ResolvedConfig} from './types.js';
 
 /**
@@ -116,14 +116,22 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
           `${mod.source} deep-imports '${dep.module}'. Import from '${spec.pkg}' entry points only.`,
         );
       }
+      // An alias (tsconfig `paths`) that resolves into the source root is not a package.
+      const external =
+        config.undeclaredDependencies === 'error'
+          ? dep.resolved.startsWith(prefix)
+            ? null
+            : externalPackageName(dep.module)
+          : (spec?.pkg ?? null);
       if (
-        spec &&
-        !declared.runtime.has(spec.pkg) &&
-        !(declared.dev.has(spec.pkg) && !runtimeImports.has(`${mod.source}\0${dep.module}`))
+        external &&
+        external !== declared.name &&
+        !declared.runtime.has(external) &&
+        !(declared.dev.has(external) && !runtimeImports.has(`${mod.source}\0${dep.module}`))
       ) {
         packageImports.set(
-          `${mod.source} -> ${spec.pkg}`,
-          `${mod.source} imports '${spec.pkg}', which is not declared in package.json (devDependencies are enough for type-only imports).`,
+          `${mod.source} -> ${external}`,
+          `${mod.source} imports '${external}', which is not declared in package.json (devDependencies are enough for type-only imports).`,
         );
       }
       if (dep.couldNotResolve && dep.module.startsWith('.')) {
@@ -205,13 +213,15 @@ async function assertModelExists(modelDir: string): Promise<void> {
   }
 }
 
-async function readDeclaredDependencies(packageDir: string): Promise<{runtime: Set<string>; dev: Set<string>}> {
-  const pkg = JSON.parse(await readFile(path.join(packageDir, 'package.json'), 'utf8')) as Record<
-    string,
-    Record<string, string> | undefined
-  >;
+async function readDeclaredDependencies(
+  packageDir: string,
+): Promise<{name?: string; runtime: Set<string>; dev: Set<string>}> {
+  const pkg = JSON.parse(await readFile(path.join(packageDir, 'package.json'), 'utf8')) as {
+    name?: string;
+  } & Record<string, Record<string, string> | undefined>;
   const names = (fields: string[]) => new Set(fields.flatMap((field) => Object.keys(pkg[field] ?? {})));
   return {
+    name: pkg.name as string | undefined,
     runtime: names(['dependencies', 'peerDependencies', 'optionalDependencies']),
     dev: names(['devDependencies']),
   };

@@ -15,6 +15,12 @@ export interface ArchCheckConfig {
    * them. Default: `error`.
    */
   typeOnlyCycles?: 'error' | 'ignore';
+  /**
+   * `error`: every package the source imports must be declared in `package.json` (a
+   * `devDependency` is enough for `import type`), so nothing works only thanks to hoisting. By
+   * default only packages in `entryPointScopes` are checked.
+   */
+  undeclaredDependencies?: 'error' | 'ignore';
 }
 
 export interface ResolvedConfig {
@@ -23,6 +29,7 @@ export interface ResolvedConfig {
   tsconfig: string;
   entryPointScopes: string[];
   typeOnlyCycles: 'error' | 'ignore';
+  undeclaredDependencies: 'error' | 'ignore';
   modelDir: string;
   baselineFile: string;
 }

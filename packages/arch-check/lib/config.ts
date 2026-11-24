@@ -5,7 +5,7 @@ import type {ArchCheckConfig, ResolvedConfig} from './types.js';
 
 export const ARCHITECTURE_DIR = 'architecture';
 
-const CONFIG_KEYS = new Set(['sourceRoot', 'tsconfig', 'entryPointScopes', 'typeOnlyCycles']);
+const CONFIG_KEYS = new Set(['sourceRoot', 'tsconfig', 'entryPointScopes', 'typeOnlyCycles', 'undeclaredDependencies']);
 
 /**
  * Resolves the settings of the package in `packageDir`, applying defaults over the optional
@@ -23,6 +23,7 @@ export async function loadConfig(packageDir: string): Promise<ResolvedConfig> {
     tsconfig: user.tsconfig ?? 'tsconfig.json',
     entryPointScopes: user.entryPointScopes ?? [],
     typeOnlyCycles: user.typeOnlyCycles ?? 'error',
+    undeclaredDependencies: user.undeclaredDependencies ?? 'ignore',
     modelDir,
     baselineFile: path.join(modelDir, 'baseline.json'),
   };
@@ -51,8 +52,10 @@ export function parseConfig(raw: unknown, file: string): ArchCheckConfig {
   if (scopes !== undefined && !(Array.isArray(scopes) && scopes.every((s) => typeof s === 'string'))) {
     fail("'entryPointScopes' must be an array of strings");
   }
-  if (config.typeOnlyCycles !== undefined && config.typeOnlyCycles !== 'error' && config.typeOnlyCycles !== 'ignore') {
-    fail("'typeOnlyCycles' must be 'error' or 'ignore'");
+  for (const key of ['typeOnlyCycles', 'undeclaredDependencies'] as const) {
+    if (config[key] !== undefined && config[key] !== 'error' && config[key] !== 'ignore') {
+      fail(`'${key}' must be 'error' or 'ignore'`);
+    }
   }
   return config as ArchCheckConfig;
 }

@@ -82,6 +82,37 @@ Components tagged `#unenforced` are documented but not checked. Elements without
 (`runtime` and `typeOnly`, each a list of files). Treat changes to it like changes to the model:
 adding an entry accepts a violation, so it deserves review.
 
+## AI agents
+
+The model is only a single source of truth if agents read it and keep it current. A project that
+adopts `arch-check` must say so in its `AGENTS.md` (or equivalent), so that agents:
+
+- read the model before adding or moving code, and put new code in the component that owns it;
+- run `arch-check` before finishing, as CI does;
+- update the model in the same change when a component, path or dependency legitimately changes,
+  and explain why in the PR description;
+- never loosen the model or the baseline to silence a failure, and only ever remove baseline entries
+  as they get fixed.
+
+A snippet to adapt (replace `packages/foo`):
+
+```markdown
+## Architecture
+
+`packages/foo/architecture/*.c4` is the source of truth for the component boundaries of
+`packages/foo`. CI runs `npx arch-check packages/foo`.
+
+- Before adding or moving code, find the owning component (`metadata.paths`) and respect its
+  allowed dependencies. New files must be covered by a component's `paths`.
+- Fix a failing check by changing the code. Do not add edges to the model or entries to
+  `baseline.json` to make it pass, unless the new dependency is intended; then update the `.c4`
+  files in the same change and explain why in the PR description.
+- Remove `baseline.json` entries when you fix the violation they cover.
+- Keep component descriptions and the paths they own in sync with the code.
+```
+
+Agents can also query the model directly: `npx likec4 mcp architecture` starts an MCP server for it.
+
 ## API
 
 ```ts

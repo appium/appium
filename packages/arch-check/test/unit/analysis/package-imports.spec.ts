@@ -77,6 +77,33 @@ describe('findPackageImports', () => {
     assert.deepEqual(await keys(modules, context({runtimeModules: modules})), []);
   });
 
+  it('exempts tsconfig aliases that resolve to files of the package, wherever they point', async () => {
+    const modules = [
+      mod('lib/a.ts', [
+        {module: '@shared/models', resolved: 'types/models.ts'},
+        {module: '@/x', resolved: 'lib/x.ts'},
+      ]),
+    ];
+    assert.deepEqual(await keys(modules, context({runtimeModules: modules})), []);
+  });
+
+  it('still checks packages that resolve into node_modules or to linked workspace packages', async () => {
+    const modules = [
+      mod('lib/a.ts', [
+        {module: 'a', resolved: 'node_modules/a/index.js'},
+        {module: 'b', resolved: '../../node_modules/b/index.js'},
+        {module: 'c', resolved: '../c/build/lib/index.js'},
+        {module: 'd', resolved: 'd', couldNotResolve: true},
+      ]),
+    ];
+    assert.deepEqual(await keys(modules, context({runtimeModules: modules})), [
+      'lib/a.ts -> a',
+      'lib/a.ts -> b',
+      'lib/a.ts -> c',
+      'lib/a.ts -> d',
+    ]);
+  });
+
   it('reports undeclared packages', async () => {
     const modules = [mod('lib/a.ts', ['lodash', '@scope/x'])];
     assert.deepEqual(await keys(modules, context({runtimeModules: modules})), [

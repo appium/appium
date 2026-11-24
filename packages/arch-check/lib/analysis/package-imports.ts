@@ -67,10 +67,9 @@ export async function findPackageImports(
           `${mod.source} deep-imports '${dep.module}'. Import from '${spec.pkg}' entry points only.`,
         );
       }
-      // An alias (tsconfig `paths`) that resolves into the source root is not a package.
       const external =
         undeclaredDependencies === 'error'
-          ? dep.resolved.startsWith(prefix)
+          ? isLocalFile(dep)
             ? null
             : externalPackageName(dep.module)
           : (spec?.pkg ?? null);
@@ -122,6 +121,20 @@ export function externalPackageName(specifier: string): string | null {
   const parts = specifier.split('/');
   const name = specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
   return !name || (!specifier.startsWith('@') && BUILTINS.has(name)) ? null : name;
+}
+
+/**
+ * Whether an import resolved to a file of this package that is not in `node_modules`: a relative
+ * import, or a tsconfig `paths` alias (wherever in the package it points). Packages resolve into
+ * `node_modules`, or, for linked workspace packages, outside the package directory.
+ */
+function isLocalFile(dep: {resolved: string; couldNotResolve?: boolean}): boolean {
+  return (
+    !dep.couldNotResolve &&
+    !dep.resolved.startsWith('..') &&
+    !path.isAbsolute(dep.resolved) &&
+    !dep.resolved.split('/').includes('node_modules')
+  );
 }
 
 /** Looks up the `exports` of installed packages, reading each package at most once. */

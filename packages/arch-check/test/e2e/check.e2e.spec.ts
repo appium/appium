@@ -181,13 +181,16 @@ import type {T} from '@scope/dev-types';
 import {readFile} from 'node:fs/promises';
 import {join} from 'path';
 import '@/extras/extra.js';
+import '@shared/models.js';
 import 'sample-package';
 export const log = (m: string, t?: T) => String(readFile) + join('a') + m + t;
 `;
     await write('lib/util/log.ts', source);
+    await mkdir(path.join(dir, 'types'));
+    await write('types/models.ts', 'export {};\n');
     await write(
       'tsconfig.json',
-      '{"compilerOptions": {"module": "NodeNext", "moduleResolution": "NodeNext", "baseUrl": ".", "paths": {"@/*": ["lib/*"]}}}',
+      '{"compilerOptions": {"module": "NodeNext", "moduleResolution": "NodeNext", "baseUrl": ".", "paths": {"@/*": ["lib/*"], "@shared/*": ["types/*"]}}}',
     );
     const model = await readFile(path.join(dir, 'architecture/model.c4'), 'utf8');
     await write(

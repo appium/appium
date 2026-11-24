@@ -8,7 +8,8 @@ export function mod(source: string, deps: DepSpec[] = []): IModule {
     source,
     dependencies: deps.map((d) => {
       const dep = typeof d === 'string' ? {module: d} : d;
-      return {couldNotResolve: false, resolved: dep.module, ...dep};
+      // like dependency-cruiser, treat a bare specifier without a resolved path as not installed
+      return {couldNotResolve: !dep.resolved && !dep.module.startsWith('.'), resolved: dep.module, ...dep};
     }),
   } as unknown as IModule;
 }

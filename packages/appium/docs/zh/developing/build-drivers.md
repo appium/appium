@@ -350,11 +350,7 @@ schema 的规则如下：
 
 ### 添加驱动脚本
 
-Sometimes you might want users of your driver to be able to run scripts outside the context of
-a session (for example, to run a script that pre-builds aspects of your driver). To support this,
-you can add a map of script names and JS files to the `scripts` field within your Appium extension
-metadata. So let's say you've created a script in your project that lives in a `scripts` directory
-in your project, named `driver-prebuild.js`. Then you could add a `scripts` field like this:
+有时你可能希望驱动用户能够在会话上下文之外运行脚本（例如运行一个预先构建驱动某些部分的脚本）。为支持这一点，你可以在 Appium 扩展元数据的 `scripts` 字段中添加一个"脚本名 → JS 文件"的映射。假设你在项目的 `scripts` 目录下创建了一个名为 `driver-prebuild.js` 的脚本，那么可以像这样添加`scripts` 字段：
 
 ```json
 {
@@ -364,20 +360,15 @@ in your project, named `driver-prebuild.js`. Then you could add a `scripts` fiel
 }
 ```
 
-Now, assuming your driver is named `mydriver`, users of your driver can run `appium driver run
-mydriver prebuild`, and your script will execute.
+假设你的驱动名为 `mydriver`，驱动用户就可以运行 `appium driver run mydriver prebuild`，你的脚本便会执行。
 
-### Proxy commands to another WebDriver implementation
+### 把命令代理到另一个 WebDriver 实现
 
-A very common design architecture for Appium drivers is to have some kind of platform-specific
-WebDriver implementation that the Appium driver interfaces with. For example, the Appium
-UiAutomator2 driver interfaces with a special (Java-based) server running on the Android device. In
-webview mode, it also interfaces with Chromedriver.
+Appium 驱动一种非常常见的设计架构，是与某种平台专有的 WebDriver 实现对接。例如，Appium 的 UiAutomator2 驱动对接一个运行在 Android 设备上的特殊（基于 Java 的）服务器；在 webview 模式下，它还对接 Chromedriver。
 
-If you find yourself in this situation, it is extremely easy to tell Appium that your driver is
-just going to be proxying WebDriver commands straight to another endpoint.
+如果你发现自己正处于这种情形，告诉 Appium"这个驱动只是把 WebDriver 命令直接代理转发到另一个端点"是极其简单的。
 
-First, let Appium know that your driver _can_ proxy by implementing the `canProxy` method:
+首先，实现 `canProxy` 方法，让 Appium 知道你的驱&#x52A8;_&#x53EF;&#x4EE5;_&#x4EE3;理：
 
 ```js
 canProxy() {
@@ -385,8 +376,7 @@ canProxy() {
 }
 ```
 
-Next, tell Appium which WebDriver routes it should _not_ attempt to proxy (there often end up being
-certain routes that you don't want to forward on):
+接下来，告诉 Appium 哪些 WebDriver 路&#x7531;_&#x4E0D;&#x5E94;_&#x5C1D;试代理（通常总有一些路由是你不想转发出去的）：
 
 ```js
 getProxyAvoidList() {
@@ -396,14 +386,9 @@ getProxyAvoidList() {
 }
 ```
 
-The proxy avoidance list should be an array of arrays, where each inner array has an HTTP method as
-its first member, and a regular expression as its second. If the regular expression matches the
-route, then the route will not be proxied and instead will be handled by your driver. In this
-example, we are avoiding proxying all `POST` routes that have the `appium` prefix.
+禁止代理列表应是一个二维数组，每个内层数组的第一个成员是 HTTP 方法，第二个是正则表达式。如果正则表达式匹配某条路由，该路由就不会被代理，而是交由你的驱动处理。这个例子中，我们禁止代理所有带 `appium` 前缀的 `POST` 路由。
 
-Next, we have to set up the proxying itself. The way to do this is to use a special class from
-Appium called `WebDriverProxy`. You'll want to create a `WebDriverProxy` object using the details
-required to connect to the remote server:
+然后要设置代理本身。做法是使用 Appium 提供的特殊类 `WebDriverProxy`。你需要用连接远程服务器所需的详细信息创建 `WebDriverProxy` 对象：
 
 ```js
 // import {WebDriverProxy} from 'appium/driver';
@@ -418,14 +403,9 @@ this.proxyReqRes = proxy.proxyReqRes.bind(proxy);
 this.proxyCommand = proxy.command.bind(proxy);
 ```
 
-Here we are creating a proxy object and assigning some of its methods to `this` under the names
-`proxyReqRes` and `proxyCommand`. This is required for Appium to use the proxy, so don't forget
-this step! The `WebDriverProxy` has a variety of other options which you can check out in the
-source code as well.
+这里我们创建了代理对象，并把它的部分方法以 `proxyReqRes` 和 `proxyCommand` 的名字挂到 `this`上。这是 Appium 使用代理的必要条件，千万别漏掉这一步！ `WebDriverProxy` 还有许多其他选项，你可以在[源码](https://github.com/appium/appium/blob/master/packages/base-driver/lib/wd-proxy/proxy.ts)中查看。
 
-Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
-be active, or it might only be active when in a certain context. You can define the logic as an
-implementation of `proxyActive`:
+最后，我们需要告诉 Appium 代理何时激活。对你的驱动来说，代理可能一直激活，也可能只在某个特定上下文中激活。你可以把这部分逻辑实现为 `proxyActive`：
 
 ```js
 proxyActive() {
@@ -433,8 +413,7 @@ proxyActive() {
 }
 ```
 
-With those pieces in play, you won't have to reimplement anything that's already implemented by the
-remote endpoint you're proxying to. Appium will take care of all the proxying for you.
+有了这几块拼图，你就不必重新实现远程端点已经实现过的功能。所有的代理工作都会由 Appium 代劳。
 
 ### Proxy BiDi commands to another BiDi implementation
 

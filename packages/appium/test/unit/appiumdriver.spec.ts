@@ -942,6 +942,71 @@ describe('AppiumDriver', function () {
         }
       });
 
+      for (const retryFails of [true, false]) {
+        it(`should delete the first session when a plugin retry ${retryFails ? 'fails' : 'succeeds'}`, async function () {
+          class RetryingPlugin extends BasePlugin {
+            async createSession(next: () => Promise<unknown>) {
+              await next();
+              return await next();
+            }
+          }
+          const retryDriver = new FakeDriver();
+          const retryError = new Error('retry driver failed to start');
+          if (retryFails) {
+            sandbox.stub(retryDriver, 'createSession').rejects(retryError);
+          }
+          const driverMatch = (driver: FakeDriver) => ({
+            driver: function Driver() {
+              return driver;
+            },
+            version: '1.2.3',
+            driverName: 'fake',
+          });
+          (appium as any).driverConfig = {
+            findMatchingDriver: sandbox
+              .stub()
+              .onFirstCall()
+              .returns(driverMatch(fakeDriver))
+              .onSecondCall()
+              .returns(driverMatch(retryDriver)),
+          };
+          setPluginClassesForTest(appium, new Map([[RetryingPlugin, 'retrying']]));
+          delete appium.sessions[SESSION_ID];
+          const firstStartup = sandbox.spy(fakeDriver, 'createSession');
+          const deleteFirstSession = sandbox.spy(fakeDriver, 'deleteSession');
+          const deleteRetrySession = sandbox.spy(retryDriver, 'deleteSession');
+          const caps = {
+            ...W3C_CAPS,
+            alwaysMatch: {...W3C_CAPS.alwaysMatch, 'appium:newCommandTimeout': 0},
+          };
+
+          try {
+            const result = await appium.executeCommand('createSession', caps);
+            const [firstId] = await firstStartup.returnValues[0];
+            if (retryFails) {
+              assert.strictEqual(result.error, retryError);
+              assert.deepStrictEqual(Object.keys(appium.sessions), []);
+            } else {
+              const [returnedId] = result.value as [string];
+              assert.strictEqual(returnedId, retryDriver.sessionId);
+              assert.notStrictEqual(returnedId, firstId);
+              assert.strictEqual(appium.sessions[returnedId], retryDriver);
+              assert.ok(appium.sessionIpcs[returnedId]);
+              assert.ok(appium.sessionPlugins[returnedId][0] instanceof RetryingPlugin);
+            }
+            assert.strictEqual(appium.sessionExists(firstId), false);
+            assert.strictEqual(appium.sessionIpcs[firstId], undefined);
+            assert.strictEqual(appium.sessionPlugins[firstId], undefined);
+            assert.deepStrictEqual(deleteFirstSession.args, [[firstId]]);
+            assert.strictEqual(deleteRetrySession.callCount, 0);
+          } finally {
+            for (const id of Object.keys(appium.sessions)) {
+              await appium.deleteSession(id);
+            }
+          }
+        });
+      }
+
       it('should not reuse the plugin instances of a failed createSession', async function () {
         class SessionStatePlugin extends BasePlugin {
           deviceNames: string[] = [];

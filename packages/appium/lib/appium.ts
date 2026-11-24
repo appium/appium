@@ -631,7 +631,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
     const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
-    let createdSessionId: string | undefined;
+    let createdSessionIds: Set<string> | undefined;
     let createSessionPluginChainSettled = false;
     // get any plugins which are registered as handling this command
     const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
@@ -686,13 +686,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const result = await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
         if (newSessionPlugins?.length) {
           const id = (result as SessionHandlerCreateResult).value?.[0];
-          if (id && createSessionPluginChainSettled) {
+          if (id && !createSessionPluginChainSettled) {
+            (createdSessionIds ??= new Set()).add(id);
+          } else if (id && this.sessionExists(id)) {
             // A plugin can reject while an unawaited next() is still creating the session.
-            if (this.sessionExists(id)) {
-              await this.cleanupFailedSession(id);
-            }
-          } else {
-            createdSessionId = id;
+            await this.cleanupFailedSession(id);
           }
         }
         return result;
@@ -732,9 +730,11 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       createSessionPluginChainSettled = true;
       const newSessionId =
         !res.error && Array.isArray(res.value) && typeof res.value[0] === 'string' ? res.value[0] : undefined;
-      // Only keep the session created by next() if the response lets the client use it.
-      if (createdSessionId && createdSessionId !== newSessionId && this.sessionExists(createdSessionId)) {
-        await this.cleanupFailedSession(createdSessionId);
+      // Retrying plugins may create several sessions; only keep the one returned to the client.
+      for (const id of createdSessionIds ?? []) {
+        if (id !== newSessionId && this.sessionExists(id)) {
+          await this.cleanupFailedSession(id);
+        }
       }
       if (!newSessionId) {
         res.error ??= new Error('A createSession plugin did not return a session ID');

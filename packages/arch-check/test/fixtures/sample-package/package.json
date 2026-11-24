@@ -1,0 +1,8 @@
+{
+  "name": "sample-package",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@scope/declared": "1.0.0"
+  }
+}

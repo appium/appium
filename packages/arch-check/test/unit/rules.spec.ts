@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {cycleKey, diffAgainstBaseline, globToRegExp, parseScopedSpecifier} from '../../lib/rules.js';
+import {cycleKey, diffAgainstBaseline, isRuntimeCycle, parseScopedSpecifier} from '../../lib/rules.js';
 
 describe('rules', () => {
-  it('matches globs', () => {
-    assert.ok(globToRegExp('lib/cli/**').test('lib/cli/a/b.ts'));
-    assert.ok(globToRegExp('lib/*.ts').test('lib/a.ts'));
-    assert.ok(!globToRegExp('lib/*.ts').test('lib/x/a.ts'));
-    assert.ok(!globToRegExp('lib/a.ts').test('lib/aXts'));
+  it('tells runtime cycles from cycles that use a type-only import', () => {
+    const runtimeEdges = new Set(['a -> b', 'b -> a', 'b -> c']);
+    assert.ok(isRuntimeCycle(['a', 'b'], runtimeEdges));
+    assert.ok(!isRuntimeCycle(['a', 'b', 'c'], runtimeEdges));
   });
 
   it('canonicalizes cycles regardless of rotation', () => {

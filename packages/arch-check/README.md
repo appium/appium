@@ -10,7 +10,7 @@ imports against it and fails on:
 
 - an import between components that the model does not declare (domain leaks);
 - import cycles, reported separately for runtime and type-only imports;
-- source files that no component owns;
+- source files that no component owns (or that several do);
 - deep imports of scoped packages (e.g. `@appium/support/lib/fs.js`) and imports of scoped packages
   that are not declared in `package.json` (optional).
 
@@ -26,6 +26,8 @@ npx arch-check [packageDir]                    # check (default: current directo
 npx arch-check --update-baseline               # tolerate all current violations
 npx arch-check --verbose                       # list every finding
 ```
+
+Relative imports that cannot be resolved are reported as warnings, as they cannot be checked.
 
 Exit code: `0` ok, `1` violations found, `2` usage or runtime error. `typescript` (5 or 6) must be
 installed, as imports are resolved with the package's `tsconfig.json`.
@@ -65,8 +67,10 @@ model {
 }
 ```
 
-Components tagged `#unenforced` are documented but not checked. Elements without `metadata.paths`
-(systems, actors, ...) are for diagrams only. Preview the diagrams with `npx likec4 start architecture`.
+Every file under the source root must belong to exactly one component; a file that matches no
+component, or several, is an error. Components tagged `#unenforced` (declare `tag unenforced` in the
+specification) still own their files, but their dependencies are not checked. Elements without
+`metadata.paths` (systems, actors, ...) are for diagrams only. Preview the diagrams with `npx likec4 start architecture`.
 
 ### `architecture/config.json`
 
@@ -79,7 +83,8 @@ Components tagged `#unenforced` are documented but not checked. Elements without
 ### Baseline
 
 `baseline.json` lists tolerated violations: `boundaries` (`from`/`to` files), and `cycles`
-(`runtime` and `typeOnly`, each a list of files). Treat changes to it like changes to the model:
+(`runtime` and `typeOnly`, each a list of files). Unowned files and package-import violations cannot
+be baselined; they are cheap to fix, and `--update-baseline` warns when it finds any. Treat changes to it like changes to the model:
 adding an entry accepts a violation, so it deserves review.
 
 ## AI agents

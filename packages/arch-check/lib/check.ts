@@ -3,9 +3,9 @@ import path from 'node:path';
 
 import {boundaryKey, readBaseline, writeBaseline} from './baseline.js';
 import {loadConfig} from './config.js';
-import {cruiseSources} from './graph.js';
+import {cruiseSources, type SourceGraph} from './graph.js';
 import {allowedEdges, buildOwnership, exportModel} from './model.js';
-import {byString, diffAgainstBaseline, parseScopedSpecifier} from './rules.js';
+import {byString, diffAgainstBaseline, isRuntimeCycle, parseScopedSpecifier} from './rules.js';
 import type {Analysis, CheckResult, Finding, ImportedBoundary, ResolvedConfig} from './types.js';
 
 /**
@@ -16,6 +16,7 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
   const config = await loadConfig(packageDir);
   const analysis = await analyze(config);
   const baseline = await readBaseline(config.baselineFile);
+  const boundariesByKey = new Map(analysis.boundaries.map((b) => [boundaryKey(b), b]));
   const findings: Finding[] = [
     ...analysis.unownedFiles.map((file) => ({
       rule: 'unowned-file' as const,
@@ -24,8 +25,8 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
       message: `${file} is not owned by any component. Add its path to a component in architecture/model.c4.`,
     })),
     ...analysis.packageImports.map((p) => ({rule: 'package-import' as const, status: 'new' as const, ...p})),
-    ...compare('boundary', analysis.boundaries.map(boundaryKey), baseline.boundaries.map(boundaryKey), (key) =>
-      describeBoundary(key, analysis.boundaries),
+    ...compare('boundary', [...boundariesByKey.keys()], baseline.boundaries.map(boundaryKey), (key) =>
+      describeBoundary(key, boundariesByKey),
     ),
     ...compare(
       'runtime-cycle',
@@ -43,7 +44,10 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
   return {
     ok: findings.length === 0,
     findings,
-    warnings: analysis.unusedEdges.map((edge) => `edge '${edge}' is declared in the model but never used in the code.`),
+    warnings: [
+      ...analysis.unusedEdges.map((edge) => `edge '${edge}' is declared in the model but never used in the code.`),
+      ...analysis.unresolvedImports.map((imp) => `${imp} could not be resolved, so it was not checked.`),
+    ],
     analysis,
     baselined: {
       boundaries: count('boundary', analysis.boundaries.length),
@@ -63,18 +67,29 @@ export async function updateBaseline(packageDir: string): Promise<Analysis> {
 
 async function analyze(config: ResolvedConfig): Promise<Analysis> {
   await assertModelExists(config.modelDir);
-  const model = await exportModel(config.modelDir);
-  const {ownerOf, componentIds} = buildOwnership(model);
+  const [model, declared, graphs] = await Promise.all([
+    exportModel(config.modelDir),
+    readDeclaredDependencies(config.packageDir),
+    cruiseBoth(config),
+  ]);
+  const {withTypes, runtime} = graphs;
+  const {ownersOf, componentIds} = buildOwnership(model);
   const allowed = allowedEdges(model, componentIds);
-  const declared = await readDeclaredDependencies(config.packageDir);
-  const withTypes = await cruiseSources(config, true);
-  const runtime = await cruiseSources(config, false);
 
   const prefix = `${config.sourceRoot.replace(/\/$/, '')}/`;
   const unownedFiles: string[] = [];
+  const ambiguousFiles: string[] = [];
+  const unresolvedImports: string[] = [];
   const packageImports = new Map<string, string>();
   const boundaries = new Map<string, ImportedBoundary>();
   const usedEdges = new Set<string>();
+  const ownerOf = (file: string): string | undefined => {
+    const owners = ownersOf(file);
+    if (owners.length > 1) {
+      ambiguousFiles.push(`${file} (${owners.join(', ')})`);
+    }
+    return owners[0];
+  };
   for (const mod of withTypes.modules) {
     if (!mod.source.startsWith(prefix)) {
       continue;
@@ -95,8 +110,17 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
         const key = `${mod.source} -> ${spec.pkg}`;
         packageImports.set(key, `${mod.source} imports '${spec.pkg}', which is not declared in package.json.`);
       }
+      if (dep.couldNotResolve && dep.module.startsWith('.')) {
+        unresolvedImports.push(`${mod.source} -> ${dep.module}`);
+      }
       const toComponent = dep.resolved.startsWith(prefix) ? ownerOf(dep.resolved) : undefined;
-      if (!fromComponent || !toComponent || fromComponent === toComponent) {
+      if (
+        !fromComponent ||
+        !toComponent ||
+        fromComponent === toComponent ||
+        !componentIds.has(fromComponent) ||
+        !componentIds.has(toComponent)
+      ) {
         continue;
       }
       usedEdges.add(`${fromComponent} -> ${toComponent}`);
@@ -106,18 +130,35 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
       }
     }
   }
+  if (ambiguousFiles.length) {
+    const files = [...new Set(ambiguousFiles)].sort(byString);
+    throw new Error(
+      `Each file must belong to exactly one component, but these match several:\n  ${files.slice(0, 10).join('\n  ')}`,
+    );
+  }
 
-  const runtimeCycles = new Set(runtime.cycles);
+  // A cycle made only of runtime imports is already covered by the runtime pass.
+  const runtimeEdges = new Set(
+    runtime.modules.flatMap((m) => m.dependencies.map((d) => `${m.source} -> ${d.resolved}`)),
+  );
   return {
-    unownedFiles: unownedFiles.sort(byString),
+    unownedFiles: [...new Set(unownedFiles)].sort(byString),
     packageImports: [...packageImports]
       .map(([key, message]) => ({key, message}))
       .sort((a, b) => byString(a.key, b.key)),
     boundaries: [...boundaries.values()].sort((a, b) => byString(boundaryKey(a), boundaryKey(b))),
-    runtimeCycles: [...runtimeCycles].sort(byString),
-    typeOnlyCycles: withTypes.cycles.filter((k) => !runtimeCycles.has(k)).sort(byString),
+    unresolvedImports: [...new Set(unresolvedImports)].sort(byString),
+    runtimeCycles: [...runtime.cycles].sort(byString),
+    typeOnlyCycles: withTypes.cycles.filter((key) => !isRuntimeCycle(key.split(' > '), runtimeEdges)).sort(byString),
     unusedEdges: [...allowed].filter((e) => !usedEdges.has(e)).sort(byString),
   };
+}
+
+/** Runs the two passes one after the other, so they never share dependency-cruiser's process-wide state. */
+async function cruiseBoth(config: ResolvedConfig): Promise<{withTypes: SourceGraph; runtime: SourceGraph}> {
+  const withTypes = await cruiseSources(config, true);
+  const runtime = await cruiseSources(config, false);
+  return {withTypes, runtime};
 }
 
 function compare(
@@ -133,8 +174,8 @@ function compare(
   ];
 }
 
-function describeBoundary(key: string, boundaries: ImportedBoundary[]): string {
-  const b = boundaries.find((x) => boundaryKey(x) === key);
+function describeBoundary(key: string, boundaries: ReadonlyMap<string, ImportedBoundary>): string {
+  const b = boundaries.get(key);
   return b ? `${key} (component '${b.fromComponent}' may not depend on '${b.toComponent}')` : key;
 }
 

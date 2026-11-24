@@ -8,6 +8,7 @@ const emptyAnalysis = {
   unownedFiles: [],
   packageImports: [],
   boundaries: [],
+  unresolvedImports: [],
   runtimeCycles: [],
   typeOnlyCycles: [],
   unusedEdges: [],

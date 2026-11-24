@@ -94,6 +94,42 @@ describe('arch-check', () => {
     assert.deepEqual(keys(stale.findings, 'boundary', 'stale'), ['lib/util/log.ts -> lib/extras/extra.ts']);
   });
 
+  it('does not report files of unenforced components as unowned, nor check their edges', async () => {
+    const model = await readFile(path.join(dir, 'architecture/model.c4'), 'utf8');
+    await write(
+      'architecture/model.c4',
+      model.replace("extras = component 'extras' {", "extras = component 'extras' {\n      #unenforced"),
+    );
+    await write(
+      'lib/util/log.ts',
+      `import {EXTRA} from '../extras/extra.js';\nexport const log = (m: string) => m + EXTRA;\n`,
+    );
+    const result = await checkPackage(dir);
+    assert.deepEqual(result.findings, []);
+  });
+
+  it('fails when a file belongs to several components', async () => {
+    const model = await readFile(path.join(dir, 'architecture/model.c4'), 'utf8');
+    await write('architecture/model.c4', model.replace("paths 'lib/extras/**'", "paths 'lib/**'"));
+    await assert.rejects(checkPackage(dir), /exactly one component[\s\S]*lib\/app\.ts/);
+  });
+
+  it('warns about relative imports it could not resolve', async () => {
+    await write('lib/util/log.ts', `import './missing.js';\nexport const log = (m: string) => m;\n`);
+    const result = await checkPackage(dir);
+    assert.ok(result.ok);
+    assert.deepEqual(result.warnings, [
+      'lib/util/log.ts -> ./missing.js could not be resolved, so it was not checked.',
+    ]);
+  });
+
+  it('cannot baseline unowned files or package imports', async () => {
+    await write('lib/stray.ts', 'export {};\n');
+    const analysis = await updateBaseline(dir);
+    assert.deepEqual(analysis.unownedFiles, ['lib/stray.ts']);
+    assert.ok(!(await checkPackage(dir)).ok);
+  });
+
   it('reports a missing model', async () => {
     await rm(path.join(dir, 'architecture'), {recursive: true});
     await assert.rejects(checkPackage(dir), /No architecture model found/);

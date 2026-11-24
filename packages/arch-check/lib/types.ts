@@ -79,6 +79,8 @@ export interface Analysis {
   unownedFiles: string[];
   packageImports: {key: string; message: string}[];
   boundaries: ImportedBoundary[];
+  /** Relative imports that could not be resolved, so they could not be checked. */
+  unresolvedImports: string[];
   runtimeCycles: string[];
   typeOnlyCycles: string[];
   unusedEdges: string[];

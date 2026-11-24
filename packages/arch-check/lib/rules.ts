@@ -1,20 +1,15 @@
 /** Orders strings by code unit. */
 export const byString = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
-/** Converts a path glob (`*`, `**`) to an anchored RegExp. */
-export function globToRegExp(glob: string): RegExp {
-  const body = glob
-    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*\*/g, '<<DOUBLESTAR>>')
-    .replace(/\*/g, '[^/]*')
-    .replace(/<<DOUBLESTAR>>/g, '.*');
-  return new RegExp(`^${body}$`);
-}
-
 /** Canonical key of a cycle: rotated to start at its smallest file. */
 export function cycleKey(files: readonly string[]): string {
   const start = files.indexOf([...files].sort(byString)[0]);
   return [...files.slice(start), ...files.slice(0, start)].join(' > ');
+}
+
+/** Whether every import in the cycle exists at runtime (none is type-only). */
+export function isRuntimeCycle(files: readonly string[], runtimeEdges: ReadonlySet<string>): boolean {
+  return files.every((file, i) => runtimeEdges.has(`${file} -> ${files[(i + 1) % files.length]}`));
 }
 
 /** Splits `current` keys against a baseline into new (not baselined) and stale (no longer present). */

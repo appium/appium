@@ -77,6 +77,22 @@ describe('arch-check', () => {
     ]);
   });
 
+  it('allows deep imports that the installed package exports', async () => {
+    const installed = path.join(dir, 'node_modules/@scope/declared');
+    await mkdir(installed, {recursive: true});
+    await writeFile(
+      path.join(installed, 'package.json'),
+      JSON.stringify({name: '@scope/declared', exports: {'.': './index.js', './feature': './feature.js'}}),
+    );
+    await write(
+      'lib/util/log.ts',
+      `import '@scope/declared/feature';\nimport '@scope/declared/lib/deep.js';\nexport const log = (m: string) => m;\n`,
+    );
+    assert.deepEqual(keys((await checkPackage(dir)).findings, 'package-import'), [
+      'lib/util/log.ts -> @scope/declared/lib/deep.js',
+    ]);
+  });
+
   it('tolerates baselined violations and reports them as stale once fixed', async () => {
     const original = await readFile(path.join(dir, 'lib/util/log.ts'), 'utf8');
     await write(

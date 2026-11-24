@@ -27,17 +27,18 @@ export function diffAgainstBaseline(
 
 /**
  * Parses an import specifier of a package within one of the given npm scopes.
- * @returns the package name and whether the specifier reaches past its entry point, or `null`
+ * @returns the package name, and the subpath (e.g. `./oxlint`) if the specifier reaches past the
+ * package's root entry point, or `null`
  */
 export function parseScopedSpecifier(
   specifier: string,
   scopes: readonly string[],
-): {pkg: string; deep: boolean} | null {
+): {pkg: string; subpath?: string} | null {
   for (const scope of scopes) {
     const escaped = scope.replace(/[.+^${}()|[\]\\]/g, '\\$&');
     const match = new RegExp(`^(${escaped}/[^/]+)(/.*)?$`).exec(specifier);
     if (match) {
-      return {pkg: match[1], deep: Boolean(match[2])};
+      return {pkg: match[1], ...(match[2] ? {subpath: `.${match[2]}`} : {})};
     }
   }
   return null;

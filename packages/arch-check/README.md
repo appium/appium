@@ -12,7 +12,8 @@ imports against it and fails on:
 - import cycles, reported separately for runtime and type-only imports;
 - source files that no component owns (or that several do);
 - deep imports of scoped packages (e.g. `@appium/support/lib/fs.js`) and imports of scoped packages
-  that are not declared in `package.json` (optional).
+  that are not declared in `package.json` (optional). A subpath is fine if the installed package
+  lists it in its `exports` (e.g. `@appium/oxc-config/oxlint`).
 
 Known violations are frozen in a baseline, so a package can adopt the check without fixing
 everything first. New violations fail, and baseline entries that are fixed must be removed, so the

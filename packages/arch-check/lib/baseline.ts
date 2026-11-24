@@ -5,6 +5,7 @@ import {readOptionalJson} from './config.js';
 import {byString, cycleKey} from './rules.js';
 import type {Analysis, Baseline, CycleEntry} from './types.js';
 
+/** Returns the baseline key for an import between two files. */
 export const boundaryKey = (b: {from: string; to: string}): string => `${b.from} -> ${b.to}`;
 
 /** Reads the baseline file; a missing file is an empty baseline. */

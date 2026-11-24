@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import {boundaryKey, readBaseline, writeBaseline} from './baseline.js';
 import {loadConfig} from './config.js';
+import {isExportedSubpath, readInstalledExports} from './exports.js';
 import {cruiseSources, type SourceGraph} from './graph.js';
 import {allowedEdges, buildOwnership, exportModel} from './model.js';
 import {byString, diffAgainstBaseline, isRuntimeCycle, parseScopedSpecifier} from './rules.js';
@@ -85,6 +86,13 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
   const packageImports = new Map<string, string>();
   const boundaries = new Map<string, ImportedBoundary>();
   const usedEdges = new Set<string>();
+  const exportsCache = new Map<string, Promise<unknown>>();
+  const exportsSubpath = async (pkg: string, subpath: string): Promise<boolean> => {
+    if (!exportsCache.has(pkg)) {
+      exportsCache.set(pkg, readInstalledExports(config.packageDir, pkg));
+    }
+    return isExportedSubpath(await exportsCache.get(pkg), subpath);
+  };
   const ownerOf = (file: string): string | undefined => {
     const owners = ownersOf(file);
     if (owners.length > 1) {
@@ -102,20 +110,19 @@ async function analyze(config: ResolvedConfig): Promise<Analysis> {
     }
     for (const dep of mod.dependencies) {
       const spec = parseScopedSpecifier(dep.module, config.entryPointScopes);
-      if (spec?.deep) {
-        const key = `${mod.source} -> ${dep.module}`;
+      if (spec?.subpath && !(await exportsSubpath(spec.pkg, spec.subpath))) {
         packageImports.set(
-          key,
+          `${mod.source} -> ${dep.module}`,
           `${mod.source} deep-imports '${dep.module}'. Import from '${spec.pkg}' entry points only.`,
         );
-      } else if (
+      }
+      if (
         spec &&
         !declared.runtime.has(spec.pkg) &&
         !(declared.dev.has(spec.pkg) && !runtimeImports.has(`${mod.source}\0${dep.module}`))
       ) {
-        const key = `${mod.source} -> ${spec.pkg}`;
         packageImports.set(
-          key,
+          `${mod.source} -> ${spec.pkg}`,
           `${mod.source} imports '${spec.pkg}', which is not declared in package.json (devDependencies are enough for type-only imports).`,
         );
       }

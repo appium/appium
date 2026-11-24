@@ -20,10 +20,10 @@ describe('rules', () => {
   });
 
   it('parses scoped specifiers', () => {
-    assert.deepEqual(parseScopedSpecifier('@appium/support', ['@appium']), {pkg: '@appium/support', deep: false});
+    assert.deepEqual(parseScopedSpecifier('@appium/support', ['@appium']), {pkg: '@appium/support'});
     assert.deepEqual(parseScopedSpecifier('@appium/support/lib/fs.js', ['@appium']), {
       pkg: '@appium/support',
-      deep: true,
+      subpath: './lib/fs.js',
     });
     assert.equal(parseScopedSpecifier('@other/x', ['@appium']), null);
     assert.equal(parseScopedSpecifier('@appium/support', []), null);

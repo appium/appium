@@ -247,6 +247,24 @@ export const log = (m: string, t?: T) => String(readFile) + join('a') + m + t;
     assert.deepEqual((await checkPackage(dir)).findings, []);
   });
 
+  it('accepts a source root typed as ./src and detects plain JavaScript sources', async () => {
+    await rm(path.join(dir, 'architecture'), {recursive: true});
+    await cp(path.join(dir, 'lib'), path.join(dir, 'src'), {recursive: true});
+    await rm(path.join(dir, 'lib'), {recursive: true});
+    await initPackage(dir, {sourceRoot: './src/'});
+    assert.equal(JSON.parse(await readFile(path.join(dir, 'architecture/config.json'), 'utf8')).sourceRoot, 'src');
+    assert.deepEqual((await checkPackage(dir)).findings, []);
+
+    // a package whose only source directory is also its `main` is not build output
+    await rm(path.join(dir, 'architecture'), {recursive: true});
+    await cp(path.join(dir, 'src'), path.join(dir, 'lib'), {recursive: true});
+    await rm(path.join(dir, 'src'), {recursive: true});
+    await write('package.json', '{"name": "sample-package", "main": "./lib/app.js"}');
+    const result = await initPackage(dir);
+    assert.ok(!result.files.includes('architecture/config.json'));
+    assert.deepEqual((await checkPackage(dir)).findings, []);
+  });
+
   it('checks several packages and the workspaces of a monorepo from the CLI', async () => {
     await mkdir(path.join(dir, 'packages'));
     const a = path.join(dir, 'packages/a');

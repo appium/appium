@@ -19,7 +19,7 @@ export async function loadConfig(packageDir: string): Promise<ResolvedConfig> {
   const user = parseConfig(await readOptionalJson<ArchCheckConfig>(configFile), configFile);
   return {
     packageDir: root,
-    sourceRoot: user.sourceRoot ?? 'lib',
+    sourceRoot: normalizeSourceRoot(user.sourceRoot ?? 'lib', configFile),
     tsconfig: user.tsconfig ?? 'tsconfig.json',
     entryPointScopes: user.entryPointScopes ?? [],
     typeOnlyCycles: user.typeOnlyCycles ?? 'error',
@@ -27,6 +27,18 @@ export async function loadConfig(packageDir: string): Promise<ResolvedConfig> {
     modelDir,
     baselineFile: path.join(modelDir, 'baseline.json'),
   };
+}
+
+/**
+ * Normalizes a source directory to the form used in the import graph: relative to the package,
+ * `/`-separated, without a leading `./` or trailing slash.
+ */
+export function normalizeSourceRoot(sourceRoot: string, origin = 'sourceRoot'): string {
+  const normalized = path.posix.normalize(sourceRoot.replace(/\\/g, '/')).replace(/\/+$/, '');
+  if (!normalized || normalized === '.' || normalized.startsWith('..') || path.posix.isAbsolute(normalized)) {
+    throw new Error(`${origin}: the source root must be a subdirectory of the package, got '${sourceRoot}'`);
+  }
+  return normalized;
 }
 
 /** Validates the contents of `architecture/config.json`; unknown options are rejected to catch typos. */

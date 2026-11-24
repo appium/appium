@@ -23,6 +23,12 @@ describe('isExportedSubpath', () => {
     assert.ok(!isExportedSubpath(exportsField, './features/internal/x'));
   });
 
+  it('picks the most specific pattern, like Node', () => {
+    assert.ok(!isExportedSubpath({'./features/*': './src/*.js', './features/*.js': null}, './features/private.js'));
+    assert.ok(!isExportedSubpath({'./features/*.js': null, './features/*': './src/*.js'}, './features/private.js'));
+    assert.ok(isExportedSubpath({'./features/*': null, './features/*.js': './src/*.js'}, './features/public.js'));
+  });
+
   it('treats packages without a subpath map as having only a root entry point', () => {
     assert.ok(!isExportedSubpath(undefined, './oxlint'));
     assert.ok(!isExportedSubpath('./index.js', './oxlint'));

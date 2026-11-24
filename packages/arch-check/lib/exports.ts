@@ -26,7 +26,8 @@ export function isExportedSubpath(exportsField: unknown, subpath: string): boole
         subpath.endsWith(key.slice(star + 1))
       );
     })
-    .sort((a, b) => b.indexOf('*') - a.indexOf('*'))[0];
+    // Node's order: the longer prefix before `*` wins, then the longer key
+    .sort((a, b) => b.indexOf('*') - a.indexOf('*') || b.length - a.length)[0];
   return pattern !== undefined && map[pattern] !== null;
 }
 

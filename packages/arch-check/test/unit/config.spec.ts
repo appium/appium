@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {parseConfig} from '../../lib/config.js';
+import {normalizeSourceRoot, parseConfig} from '../../lib/config.js';
 
 describe('parseConfig', () => {
   it('accepts valid options', () => {
@@ -26,5 +26,20 @@ describe('parseConfig', () => {
     );
     assert.throws(() => parseConfig({undeclaredDependencies: true}, 'config.json'), /'undeclaredDependencies' must be/);
     assert.throws(() => parseConfig([], 'config.json'), /expected a JSON object/);
+  });
+});
+
+describe('normalizeSourceRoot', () => {
+  it('normalizes to a package-relative, slash-separated path', () => {
+    for (const input of ['src', './src', 'src/', './src/', 'src\\\\', 'a/../src']) {
+      assert.equal(normalizeSourceRoot(input), 'src', input);
+    }
+    assert.equal(normalizeSourceRoot('.\\\\packages\\\\x'), 'packages/x');
+  });
+
+  it('rejects paths outside the package', () => {
+    for (const input of ['.', '..', '../src', '/abs', '']) {
+      assert.throws(() => normalizeSourceRoot(input), /subdirectory of the package/, input);
+    }
   });
 });

@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import {describe, it} from 'node:test';
 
-import {classifyCycles, cycleKey, isRuntimeCycle} from '../../../lib/analysis/cycles.js';
+import {classifyCycles, isRuntimeCycle} from '../../../lib/analysis/cycles.js';
 import type {SourceGraph} from '../../../lib/analysis/graph.js';
+import {cycleKey} from '../../../lib/util.js';
 import {mod} from './modules.js';
 
 describe('cycles', () => {

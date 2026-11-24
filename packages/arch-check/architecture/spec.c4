@@ -1,0 +1,6 @@
+specification {
+  element container
+  element component
+  // Tag a component #unenforced to document it without checking its dependencies.
+  tag unenforced
+}

@@ -1,0 +1,79 @@
+// Architecture of @appium/arch-check, checked by `arch-check` itself (see ../README.md).
+// Each component owns the files in `metadata.paths`; each `a -> b` ALLOWS a to import b.
+model {
+  archCheck = container '@appium/arch-check' {
+    api = component 'index.ts' {
+      description 'Public programmatic entry point; re-exports only.'
+      metadata { paths 'lib/index.ts' }
+    }
+    cli = component 'cli.ts' {
+      description 'Argument parsing, exit codes and printing for the `arch-check` command.'
+      metadata { paths 'lib/cli.ts' }
+    }
+    check = component 'check.ts' {
+      description 'Runs one package check: analysis, baseline comparison and baseline updates.'
+      metadata { paths 'lib/check.ts' }
+    }
+    analysis = component 'analysis' {
+      description 'Reads the model and the import graph; finds boundary, cycle and package-import violations.'
+      metadata { paths 'lib/analysis/**' }
+    }
+    init = component 'init' {
+      description 'Derives a starting model and baseline from the current code (`arch-check init`).'
+      metadata { paths 'lib/init/**' }
+    }
+    baseline = component 'baseline.ts' {
+      description 'Reads, writes and diffs the tolerated-violations baseline.'
+      metadata { paths 'lib/baseline.ts' }
+    }
+    config = component 'config.ts' {
+      description 'Loads and validates `architecture/config.json`.'
+      metadata { paths 'lib/config.ts' }
+    }
+    report = component 'report.ts' {
+      description 'Formats check results for humans.'
+      metadata { paths 'lib/report.ts' }
+    }
+    workspaces = component 'workspaces.ts' {
+      description 'Finds the packages of an npm workspaces monorepo.'
+      metadata { paths 'lib/workspaces.ts' }
+    }
+    types = component 'types.ts' {
+      description 'Shared types. Depends on nothing.'
+      metadata { paths 'lib/types.ts' }
+    }
+    util = component 'util.ts' {
+      description 'Small dependency-free helpers.'
+      metadata { paths 'lib/util.ts' }
+    }
+  }
+
+  archCheck.cli -> archCheck.check
+  archCheck.cli -> archCheck.init
+  archCheck.cli -> archCheck.report
+  archCheck.cli -> archCheck.workspaces
+  archCheck.api -> archCheck.check
+  archCheck.api -> archCheck.config
+  archCheck.api -> archCheck.init
+  archCheck.api -> archCheck.report
+  archCheck.api -> archCheck.types
+  archCheck.api -> archCheck.workspaces
+  archCheck.check -> archCheck.analysis
+  archCheck.check -> archCheck.baseline
+  archCheck.check -> archCheck.config
+  archCheck.check -> archCheck.types
+  archCheck.check -> archCheck.util
+  archCheck.init -> archCheck.analysis
+  archCheck.init -> archCheck.check
+  archCheck.init -> archCheck.config
+  archCheck.init -> archCheck.types
+  archCheck.init -> archCheck.util
+  archCheck.analysis -> archCheck.types
+  archCheck.analysis -> archCheck.util
+  archCheck.baseline -> archCheck.config
+  archCheck.baseline -> archCheck.types
+  archCheck.baseline -> archCheck.util
+  archCheck.config -> archCheck.types
+  archCheck.report -> archCheck.types
+  archCheck.workspaces -> archCheck.config
+}

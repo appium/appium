@@ -1,10 +1,9 @@
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
-import {cycleKey} from './analysis/cycles.js';
 import {readOptionalJson} from './config.js';
 import type {Analysis, Baseline, CycleEntry} from './types.js';
-import {boundaryKey, byString} from './util.js';
+import {boundaryKey, byString, cycleKey} from './util.js';
 
 /** Splits `current` keys against a baseline into new (not baselined) and stale (no longer present). */
 export function diffAgainstBaseline(

@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "es2023",
-    "noEmit": true
-  }
-}

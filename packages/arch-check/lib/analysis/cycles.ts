@@ -7,12 +7,6 @@ export interface ClassifiedCycles {
   typeOnlyCycles: string[];
 }
 
-/** Canonical key of a cycle: rotated to start at its smallest file. */
-export function cycleKey(files: readonly string[]): string {
-  const start = files.indexOf([...files].sort(byString)[0]);
-  return [...files.slice(start), ...files.slice(0, start)].join(' > ');
-}
-
 /** Whether every import in the cycle exists at runtime (none is type-only). */
 export function isRuntimeCycle(files: readonly string[], runtimeEdges: ReadonlySet<string>): boolean {
   return files.every((file, i) => runtimeEdges.has(`${file} -> ${files[(i + 1) % files.length]}`));

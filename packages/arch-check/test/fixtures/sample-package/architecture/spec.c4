@@ -1,5 +1,0 @@
-specification {
-  element container
-  element component
-  tag unenforced
-}

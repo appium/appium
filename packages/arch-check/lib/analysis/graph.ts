@@ -3,8 +3,7 @@ import path from 'node:path';
 import {cruise, type ICruiseResult, type IModule} from 'dependency-cruiser';
 
 import type {ResolvedConfig} from '../types.js';
-import {byString} from '../util.js';
-import {cycleKey} from './cycles.js';
+import {byString, cycleKey} from '../util.js';
 
 export interface SourceGraph {
   modules: IModule[];

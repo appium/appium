@@ -139,34 +139,33 @@ type CollectOptionalSplits<
   OAcc extends string[] = [],
   AllowOptional extends boolean = true,
 > = CurP extends readonly unknown[]
-  ?
-      | (IsPureRestArray<CurP> extends true
-          ? {
-              readonly r: Readonly<OAcc extends [] ? [...RAcc, ...string[]] : RAcc>;
-              readonly o: AllowOptional extends true
-                ? CanAcceptUndefined<CurP[number]> extends true
-                  ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
-                  : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}
-                : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
-            }
-          : CanOmitTrailing<CurP, AllowUrlString> extends true
-            ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
-            : never)
-      | (AllowOptional extends false
+  ? | (IsPureRestArray<CurP> extends true
+        ? {
+            readonly r: Readonly<OAcc extends [] ? [...RAcc, ...string[]] : RAcc>;
+            readonly o: AllowOptional extends true
+              ? CanAcceptUndefined<CurP[number]> extends true
+                ? {readonly kind: 'rest'; readonly min: Readonly<OAcc>}
+                : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}
+              : {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>};
+          }
+        : CanOmitTrailing<CurP, AllowUrlString> extends true
+          ? {readonly r: Readonly<RAcc>; readonly o: {readonly kind: 'exact'; readonly tuple: Readonly<OAcc>}}
+          : never)
+    | (AllowOptional extends false
+        ? never
+        : CurP extends readonly []
           ? never
-          : CurP extends readonly []
+          : IsPureRestArray<CurP> extends true
             ? never
-            : IsPureRestArray<CurP> extends true
-              ? never
-              : CurP extends readonly [infer H, ...infer T]
-                ? CanAcceptUndefined<H> extends true
+            : CurP extends readonly [infer H, ...infer T]
+              ? CanAcceptUndefined<H> extends true
+                ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string], AllowOptional>
+                : never
+              : [] extends CurP
+                ? CurP extends readonly [(infer _)?, ...infer T]
                   ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string], AllowOptional>
                   : never
-                : [] extends CurP
-                  ? CurP extends readonly [(infer _)?, ...infer T]
-                    ? CollectOptionalSplits<T, AllowUrlString, RAcc, [...OAcc, string], AllowOptional>
-                    : never
-                  : never)
+                : never)
   : never;
 
 /** Enumerates `(r, o)` splits across `CurP` (`AllowUrlString`: `true` for REST URL `:param`s, `false` for execute). */
@@ -176,30 +175,28 @@ type CollectParamSplits<
   RAcc extends string[] = [],
   AllowOptional extends boolean = true,
 > = CurP extends readonly unknown[]
-  ?
-      | CollectOptionalSplits<CurP, AllowUrlString, RAcc, [], AllowOptional>
-      | (CurP extends readonly []
+  ? | CollectOptionalSplits<CurP, AllowUrlString, RAcc, [], AllowOptional>
+    | (CurP extends readonly []
+        ? never
+        : IsPureRestArray<CurP> extends true
           ? never
-          : IsPureRestArray<CurP> extends true
-            ? never
-            : CurP extends readonly [infer _, ...infer T]
-              ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
-              : [] extends CurP
-                ? CurP extends readonly [(infer _)?, ...infer T]
-                  ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
-                  : never
-                : CurP extends readonly [...infer Head, infer Last]
-                  ?
-                      | (CanOmitWithUrl<Last, AllowUrlString> extends true
-                          ? CollectParamSplits<Head, true, RAcc, AllowOptional>
-                          : never)
-                      | CollectParamSplits<
-                          Head,
-                          false,
-                          [...RAcc, string],
-                          CanAcceptUndefined<Last> extends true ? AllowOptional : false
-                        >
-                  : never)
+          : CurP extends readonly [infer _, ...infer T]
+            ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
+            : [] extends CurP
+              ? CurP extends readonly [(infer _)?, ...infer T]
+                ? CollectParamSplits<T, AllowUrlString, [...RAcc, string], AllowOptional>
+                : never
+              : CurP extends readonly [...infer Head, infer Last]
+                ? | (CanOmitWithUrl<Last, AllowUrlString> extends true
+                      ? CollectParamSplits<Head, true, RAcc, AllowOptional>
+                      : never)
+                  | CollectParamSplits<
+                      Head,
+                      false,
+                      [...RAcc, string],
+                      CanAcceptUndefined<Last> extends true ? AllowOptional : false
+                    >
+                : never)
   : never;
 
 type NonEmptyStringTuple<R extends readonly string[]> = Exclude<R, readonly []>;
@@ -304,15 +301,14 @@ type CheckedMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
       ? LooseMethodDef
       : [string] extends [keyof Commands]
         ? LooseMethodDef
-        :
-            | (BaseMethodDef & Partial<CommandProp<never>>)
-            | {
-                [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> &
-                  CommandProp<K> &
-                  PayloadParamsProp<
-                    Kind extends 'driver' ? OverloadParams<Commands[K]> : PluginCommandParams<Commands[K]>
-                  >;
-              }[keyof Commands];
+        : | (BaseMethodDef & Partial<CommandProp<never>>)
+          | {
+              [K in keyof Commands]: Omit<BaseMethodDef, 'payloadParams'> &
+                CommandProp<K> &
+                PayloadParamsProp<
+                  Kind extends 'driver' ? OverloadParams<Commands[K]> : PluginCommandParams<Commands[K]>
+                >;
+            }[keyof Commands];
 
 type IsExactDriver<T> =
   T extends Driver<infer C, infer CArgs, infer Settings, infer CR, infer DR>

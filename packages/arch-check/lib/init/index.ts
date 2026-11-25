@@ -1,5 +1,5 @@
 import {existsSync} from 'node:fs';
-import {mkdir, readFile, readdir, realpath, rm, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, readdir, realpath, rm, rmdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 import {cruiseSources} from '../analysis/graph.js';
@@ -89,7 +89,8 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
       targets.map((file, i) => (previous[i] === undefined ? rm(file, {force: true}) : writeFile(file, previous[i]))),
     );
     if (createdDir) {
-      await rm(modelDir, {recursive: true, force: true});
+      // Not recursive: keep files that something else added in the meantime.
+      await rmdir(modelDir).catch(() => undefined);
     }
     throw err;
   }

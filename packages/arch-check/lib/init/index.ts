@@ -76,7 +76,7 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     ...(Object.keys(userConfig).length ? [['config.json', `${JSON.stringify(userConfig, null, 2)}\n`]] : []),
   ];
   const targets = [...written.map(([name]) => name), 'baseline.json'].map((name) => path.join(modelDir, name));
-  const previous = await Promise.all(targets.map((file) => readFile(file, 'utf8').catch(() => undefined)));
+  const previous = await Promise.all(targets.map((file) => readIfExists(file)));
   const createdDir = await mkdir(modelDir, {recursive: true});
   try {
     await Promise.all(written.map(([name, content]) => writeFile(path.join(modelDir, name), content)));
@@ -98,4 +98,16 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     components: components.length,
     edges: edges.length,
   };
+}
+
+/** File content, or undefined if it does not exist; other read errors propagate. */
+async function readIfExists(file: string): Promise<string | undefined> {
+  try {
+    return await readFile(file, 'utf8');
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+      return undefined;
+    }
+    throw err;
+  }
 }

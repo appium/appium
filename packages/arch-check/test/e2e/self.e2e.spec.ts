@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {appendFile, cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile} from 'node:fs/promises';
+import {appendFile, chmod, cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
@@ -39,6 +39,29 @@ describe('arch-check on itself', () => {
     await rm(path.join(dir, 'architecture/baseline.json'));
     await initPackage(dir);
     assert.deepEqual((await checkPackage(dir)).findings, []);
+  });
+
+  it('does not touch an existing baseline it cannot read', {skip: process.platform === 'win32'}, async () => {
+    const dir = await copyOfSources();
+    const baseline = path.join(dir, 'architecture/baseline.json');
+    await mkdir(path.join(dir, 'architecture'));
+    await writeFile(baseline, '{}');
+    await chmod(baseline, 0o000);
+    try {
+      // Running as root ignores the mode, so the read succeeds and there is nothing to check.
+      if (
+        await readFile(baseline).then(
+          () => true,
+          () => false,
+        )
+      ) {
+        return;
+      }
+      await assert.rejects(initPackage(dir), /EACCES/);
+      assert.deepEqual(await readdir(path.join(dir, 'architecture')), ['baseline.json']);
+    } finally {
+      await chmod(baseline, 0o600);
+    }
   });
 
   describe('on a copy with violations', () => {

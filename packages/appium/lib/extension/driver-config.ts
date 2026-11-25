@@ -314,14 +314,24 @@ export class DriverConfig extends ExtensionConfig<DriverType> {
 
   private getPreferredDriverNames(requestedNames: string[]): string[] {
     const drivers = this.installedExtensions;
+    const requested = new Set(requestedNames);
     const preferredNames = new Map<string, string>();
-    for (const [driverName, {automationName}] of Object.entries(drivers)) {
+    const selectedPackages = new Map<string, string>();
+    for (const [driverName, {automationName, pkgName}] of Object.entries(drivers)) {
       const automationKey = automationName.toLowerCase();
+      if (requested.has(driverName) && this.resolvedDrivers.has(driverName)) {
+        const previousPackage = selectedPackages.get(automationKey);
+        if (previousPackage !== undefined) {
+          throw new TypeError(
+            `Resolved packages '${previousPackage}' and '${pkgName}' claim automationName '${automationName}'`,
+          );
+        }
+        selectedPackages.set(automationKey, pkgName);
+      }
       if (!this.embeddedDrivers.has(automationKey) && !preferredNames.has(automationKey)) {
         preferredNames.set(automationKey, driverName);
       }
     }
-    const requested = new Set(requestedNames);
     return [...requested].filter((driverName) => {
       const {automationName} = drivers[driverName];
       const preferredName = preferredNames.get(automationName.toLowerCase());

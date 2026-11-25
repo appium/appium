@@ -1,4 +1,4 @@
-import type {Driver, DriverType, PluginType, ServerArgs, SetOptional} from '@appium/types';
+import type {DriverType, PluginType, ServerArgs, SetOptional} from '@appium/types';
 
 import type {InstallType} from './manifest/index.js';
 export type CliCommandServer = 'server';
@@ -110,9 +110,15 @@ export interface ProgrammaticArgs {
 /**
  * An imported Appium driver constructor.
  * Each driver can declare its own options type. Appium supplies the options
- * and capability-validation flag when it creates a session.
+ * and capability-validation flag when it creates a session. The session method
+ * identifies drivers without requiring the same version of the instance types.
  */
-type EmbeddedDriverConstructor = new (options: never, shouldValidateCaps: boolean) => Driver;
+type EmbeddedDriverConstructor = new (
+  options: never,
+  shouldValidateCaps: boolean,
+) => {
+  createSession(...args: never[]): unknown;
+};
 
 /** An ESM namespace with at least one Appium driver export. */
 export type EmbeddedDriverModule<Exports extends object = {readonly default: EmbeddedDriverConstructor}> = {

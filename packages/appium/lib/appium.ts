@@ -50,6 +50,7 @@ import {
 } from './helpers/capability.js';
 import * as insecureFeatures from './insecure-features.js';
 import * as inspectorCommands from './inspector-commands.js';
+import {ArgSpec} from './schema/arg-spec.js';
 import {appiumSchema} from './schema/schema.js';
 import {pickBy} from './utils/index.js';
 
@@ -265,12 +266,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * there is nothing to pass after omitting defaults.
    */
   getCliArgsForDriver(extName: string): StringRecord | undefined {
-    const allCliArgsForExt = this.args.driver?.[extName] as StringRecord | undefined;
+    const normalizedName = ArgSpec.toNormalizedExtName(extName);
+    const driverArgs = this.args.driver;
+    const allCliArgsForExt = (driverArgs?.[extName] ?? driverArgs?.[normalizedName]) as StringRecord | undefined;
     if (util.isEmpty(allCliArgsForExt)) {
       return undefined;
     }
 
-    const defaults = this.configSchema.getDefaultsForExtension(DRIVER_TYPE, extName);
+    const defaults = this.configSchema.getDefaultsForExtension(DRIVER_TYPE, normalizedName);
     const cliArgs = util.isEmpty(defaults)
       ? allCliArgsForExt
       : pickBy(

@@ -59,11 +59,16 @@ it('should isolate embedded main selections and pass normalized names to real se
   }
 
   for (const driver of [FirstDriver, SecondDriver]) {
+    // A driver built with an earlier Appium release can have a different opts type.
+    const externalDriver: new (opts: InitialOpts) => {
+      opts: Pick<InitialOpts, 'port'>;
+      createSession: InstanceType<typeof TestDriver>['createSession'];
+    } = driver;
     const server = await main({
       appiumHome,
       address: '127.0.0.1',
       port: 0,
-      useDrivers: [driver === FirstDriver ? driver : {driver, version: '1.0.0'}],
+      useDrivers: [driver === FirstDriver ? externalDriver : {driver: externalDriver, version: '1.0.0'}],
       relaxedSecurityEnabled: true,
       denyInsecure: [`${driver.automationName}:foo`],
       loglevel: 'error',
@@ -178,8 +183,21 @@ it('should validate and default config for resolved package selections without s
     init({...startupArgs, configFile: programmaticFile, useDrivers: [programmaticDriver]}),
   ]);
   assert.deepEqual(file.parsedArgs.driver?.['path-driver'], {numberValue: 3, defaultOnly: true});
-  assert.deepEqual(file.appiumDriver.getCliArgsForDriver('path-driver'), {numberValue: 3});
   assert.deepEqual(programmatic.parsedArgs.driver?.['path-driver'], {testValue: 'value'});
+
+  file.appiumDriver.configureGlobalFeatures();
+  const {error, value} = await file.appiumDriver.createSession({
+    alwaysMatch: {platformName: 'Fake', 'appium:automationName': 'PathDriver', 'appium:newCommandTimeout': 0},
+    firstMatch: [{}],
+  });
+  assert.ifError(error);
+  assert.ok(value);
+  const [sessionId] = value;
+  try {
+    assert.deepEqual(file.appiumDriver.sessions[sessionId].cliArgs, {numberValue: 3});
+  } finally {
+    await file.appiumDriver.deleteSession(sessionId);
+  }
 
   await assert.rejects(
     init({...startupArgs, configFile, useDrivers: [programmaticDriver]}),
@@ -199,14 +217,19 @@ async function writeResolvedDriver(
     JSON.stringify({
       name: directory,
       version: '1.0.0',
+      main: 'index.mjs',
       appium: {
-        driverName: 'path-driver',
+        driverName: 'PathDriver',
         automationName: 'PathDriver',
         platformNames: ['Fake'],
         mainClass: 'PathDriver',
         schema: './schema.json',
       },
     }),
+  );
+  await fs.writeFile(
+    path.join(driverRoot, 'index.mjs'),
+    `export {BaseDriver as PathDriver} from ${JSON.stringify(import.meta.resolve('@appium/base-driver'))};`,
   );
   await fs.writeFile(path.join(driverRoot, 'schema.json'), JSON.stringify({type: 'object', properties}));
   return driverRoot;

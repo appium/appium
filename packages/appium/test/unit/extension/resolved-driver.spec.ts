@@ -228,6 +228,26 @@ describe('resolved drivers', function () {
       await assert.rejects(loadActiveDrivers(driverConfig, 1, ['old']), /shadowed by unselected driver 'resolved'/);
     });
 
+    it('should reject two selected packages with the same automation name', async function () {
+      const duplicateRoot = path.join(root, 'node_modules', 'duplicate-driver');
+      await writePackage(duplicateRoot, {
+        ...DRIVER_PKG,
+        name: 'duplicate-driver',
+        appium: {...DRIVER_PKG.appium, driverName: 'duplicate', automationName: 'resolved'},
+      });
+      await fs.mkdir(path.join(duplicateRoot, 'lib'), {recursive: true});
+      await fs.writeFile(path.join(duplicateRoot, 'lib', 'index.js'), 'export class ResolvedDriver {}');
+
+      await assert.rejects(
+        loadActiveDrivers(driverConfig, 1, [driverRoot, duplicateRoot]),
+        /Resolved packages 'resolved-driver' and 'duplicate-driver' claim automationName 'resolved'/,
+      );
+      await assert.rejects(
+        loadActiveDrivers(driverConfig.createServerConfig(), 1, [duplicateRoot, driverRoot]),
+        /Resolved packages 'duplicate-driver' and 'resolved-driver' claim automationName 'Resolved'/,
+      );
+    });
+
     it('should reject different embedded classes with the same automation name', async function () {
       class FirstDriver extends TestDriver {
         static automationName = 'Shared';

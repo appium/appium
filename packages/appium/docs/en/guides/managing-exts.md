@@ -143,8 +143,9 @@ file of driver names.
 Each server keeps its directly supplied classes and resolved package locations in its own driver
 configuration, even when multiple servers share an `APPIUM_HOME`. A directly supplied class takes
 precedence over a package driver with the same `automationName`; a resolved package takes precedence
-over an installed driver. Only the preferred driver contributes server hooks and routes. Supplying
-different classes with the same automation name, or conflicting derived driver names, is an error.
+over an installed driver. Only the preferred driver contributes server hooks and routes. Startup rejects
+two selected resolved packages or two embedded classes that claim the same automation name. It also rejects
+conflicting derived driver names.
 If an installed driver is shadowed by an unselected package with the same automation name, startup
 reports the conflicting names instead of silently omitting the requested driver's hooks.
 A single constructor must also have one active driver name; mixing a direct class and package metadata

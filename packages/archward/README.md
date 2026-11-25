@@ -1,11 +1,11 @@
-# @appium/arch-check
+# @appium/archward
 
 > Checks a package's source against its [C4](https://c4model.com) architecture model
 
 ## Summary
 
 Keeps a package's architecture honest. The architecture is written once, as text, in a
-[LikeC4](https://likec4.dev) model that lives next to the package. `arch-check` compares the actual
+[LikeC4](https://likec4.dev) model that lives next to the package. `archward` compares the actual
 imports against it and fails on:
 
 - an import between components that the model does not declare (domain leaks);
@@ -22,12 +22,12 @@ baseline can only shrink.
 ## Usage
 
 ```bash
-npm install --save-dev @appium/arch-check
-npx arch-check init [packageDir]               # scaffold architecture/ from the current code
-npx arch-check [packageDir...]                 # check (default: current directory)
-npx arch-check --workspaces [rootDir]          # check the workspace packages that have a model
-npx arch-check --update-baseline               # tolerate all current violations
-npx arch-check --verbose                       # list every finding
+npm install --save-dev @appium/archward
+npx archward init [packageDir]               # scaffold architecture/ from the current code
+npx archward [packageDir...]                 # check (default: current directory)
+npx archward --workspaces [rootDir]          # check the workspace packages that have a model
+npx archward --update-baseline               # tolerate all current violations
+npx archward --verbose                       # list every finding
 ```
 
 `init` also takes `--source-root <dir>` and `--entry-point-scope <scope>` (repeatable); they are
@@ -39,17 +39,17 @@ installed, as imports are resolved with the package's `tsconfig.json`.
 
 ### Getting started
 
-`arch-check init` creates `architecture/` from the code as it is: one component per top-level
+`archward init` creates `architecture/` from the code as it is: one component per top-level
 directory and per root file of the source root (`lib`, or `src` if `lib` holds build output; use
 `--source-root` to override), allowed dependencies taken from the current imports, and a baseline
 for the existing cycles. Then:
 
 1. Edit `model.c4`: delete the dependencies that should not be allowed, merge or rename components,
-   add descriptions. Run `arch-check --update-baseline` to tolerate the violations this creates.
-2. Run `arch-check` in CI.
+   add descriptions. Run `archward --update-baseline` to tolerate the violations this creates.
+2. Run `archward` in CI.
 3. Tell agents about the model, see [AI agents](#ai-agents) (`init` prints a ready snippet).
 
-In a monorepo, run `init` in each package, and `arch-check --workspaces .` from the root.
+In a monorepo, run `init` in each package, and `archward --workspaces .` from the root.
 
 ### Files
 
@@ -113,10 +113,10 @@ adding an entry accepts a violation, so it deserves review.
 ## AI agents
 
 The model is only a single source of truth if agents read it and keep it current. A project that
-adopts `arch-check` must say so in its `AGENTS.md` (or equivalent), so that agents:
+adopts `archward` must say so in its `AGENTS.md` (or equivalent), so that agents:
 
 - read the model before adding or moving code, and put new code in the component that owns it;
-- run `arch-check` before finishing, as CI does;
+- run `archward` before finishing, as CI does;
 - update the model in the same change when a component, path or dependency legitimately changes,
   and explain why in the PR description;
 - never loosen the model or the baseline to silence a failure, and only ever remove baseline entries
@@ -128,7 +128,7 @@ A snippet to adapt (replace `packages/foo`):
 ## Architecture
 
 `packages/foo/architecture/*.c4` is the source of truth for the component boundaries of
-`packages/foo`. CI runs `npx arch-check packages/foo`.
+`packages/foo`. CI runs `npx archward packages/foo`.
 
 - Before adding or moving code, find the owning component (`metadata.paths`) and respect its
   allowed dependencies. New files must be covered by a component's `paths`.
@@ -144,7 +144,7 @@ Agents can also query the model directly: `npx likec4 mcp architecture` starts a
 ## API
 
 ```ts
-import {checkPackage, formatReport} from '@appium/arch-check';
+import {checkPackage, formatReport} from '@appium/archward';
 
 const result = await checkPackage('path/to/package');
 console.log(formatReport(result));

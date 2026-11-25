@@ -51,7 +51,7 @@ describe('findPackageImports', () => {
   let packageDir: string;
 
   beforeEach(async () => {
-    packageDir = await mkdtemp(path.join(tmpdir(), 'arch-check-pi-'));
+    packageDir = await mkdtemp(path.join(tmpdir(), 'archward-pi-'));
   });
 
   afterEach(async () => {

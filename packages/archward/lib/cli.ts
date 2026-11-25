@@ -7,8 +7,8 @@ import {formatReport} from './report.js';
 import {findWorkspacePackages} from './workspaces.js';
 
 const USAGE = `Usage:
-  arch-check [packageDir...] [--workspaces] [--update-baseline] [--verbose]
-  arch-check init [packageDir] [--source-root <dir>] [--entry-point-scope <scope>]...
+  archward [packageDir...] [--workspaces] [--update-baseline] [--verbose]
+  archward init [packageDir] [--source-root <dir>] [--entry-point-scope <scope>]...
 
 Checks each package (default: the current directory) against its architecture/*.c4.
   --workspaces       treat each packageDir as a monorepo root and check its workspace packages
@@ -129,7 +129,7 @@ async function runUpdateBaseline(packageDir: string): Promise<number> {
   if (unbaselinable) {
     process.stderr.write(
       `warning: ${analysis.unownedFiles.length} unowned files and ${analysis.packageImports.length} package ` +
-        'import violations cannot be baselined and still fail the check. Fix them (see `arch-check`).\n',
+        'import violations cannot be baselined and still fail the check. Fix them (see `archward`).\n',
     );
   }
   return EXIT_OK;
@@ -144,8 +144,8 @@ async function runInit(args: CliArgs): Promise<number> {
       `${result.edges} allowed dependencies (taken from the current imports).\n\n` +
       'Next steps:\n' +
       '  1. Delete the dependencies in model.c4 that should not be allowed, add descriptions.\n' +
-      `  2. Run \`arch-check ${rel} --update-baseline\` to tolerate the violations that creates.\n` +
-      '  3. Run `arch-check` in CI, and add the following to AGENTS.md:\n\n' +
+      `  2. Run \`archward ${rel} --update-baseline\` to tolerate the violations that creates.\n` +
+      '  3. Run `archward` in CI, and add the following to AGENTS.md:\n\n' +
       `${agentsSnippet(rel)}`,
   );
   return EXIT_OK;
@@ -155,7 +155,7 @@ function agentsSnippet(packageDir: string): string {
   return `## Architecture
 
 \`${packageDir}/architecture/*.c4\` is the source of truth for the component boundaries of
-\`${packageDir}\`. CI runs \`npx arch-check ${packageDir}\`.
+\`${packageDir}\`. CI runs \`npx archward ${packageDir}\`.
 
 - Before adding or moving code, find the owning component (\`metadata.paths\`) and respect its
   allowed dependencies. New files must be covered by a component's \`paths\`.

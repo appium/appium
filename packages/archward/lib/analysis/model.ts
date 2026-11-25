@@ -24,7 +24,7 @@ export interface Ownership {
 
 /** Exports the LikeC4 model in `modelDir` to JSON using the bundled `likec4` CLI. */
 export async function exportModel(modelDir: string): Promise<ArchitectureModel> {
-  const tmp = await mkdtemp(path.join(tmpdir(), 'arch-check-'));
+  const tmp = await mkdtemp(path.join(tmpdir(), 'archward-'));
   try {
     const out = path.join(tmp, 'model.json');
     await execFileAsync(process.execPath, [await findLikec4Bin(), 'export', 'json', modelDir, '-o', out]);

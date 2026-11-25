@@ -69,7 +69,7 @@
       "path": "packages/storage-plugin"
     },
     {
-      "path": "packages/arch-check"
+      "path": "packages/archward"
     }
   ]
 }

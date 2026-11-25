@@ -1,7 +1,7 @@
 import {readFile, realpath} from 'node:fs/promises';
 import path from 'node:path';
 
-import type {ArchCheckConfig, ResolvedConfig} from './types.js';
+import type {ArchwardConfig, ResolvedConfig} from './types.js';
 
 export const ARCHITECTURE_DIR = 'architecture';
 
@@ -16,7 +16,7 @@ export async function loadConfig(packageDir: string): Promise<ResolvedConfig> {
   const root = await realpath(path.resolve(packageDir));
   const modelDir = path.join(root, ARCHITECTURE_DIR);
   const configFile = path.join(modelDir, 'config.json');
-  const user = parseConfig(await readOptionalJson<ArchCheckConfig>(configFile), configFile);
+  const user = parseConfig(await readOptionalJson<ArchwardConfig>(configFile), configFile);
   return {
     packageDir: root,
     sourceRoot: normalizeSourceRoot(user.sourceRoot ?? 'lib', configFile),
@@ -42,7 +42,7 @@ export function normalizeSourceRoot(sourceRoot: string, origin = 'sourceRoot'): 
 }
 
 /** Validates the contents of `architecture/config.json`; unknown options are rejected to catch typos. */
-export function parseConfig(raw: unknown, file: string): ArchCheckConfig {
+export function parseConfig(raw: unknown, file: string): ArchwardConfig {
   const fail = (msg: string): never => {
     throw new Error(`${file}: ${msg}`);
   };
@@ -69,7 +69,7 @@ export function parseConfig(raw: unknown, file: string): ArchCheckConfig {
       fail(`'${key}' must be 'error' or 'ignore'`);
     }
   }
-  return config as ArchCheckConfig;
+  return config as ArchwardConfig;
 }
 
 /** Reads and parses a JSON file, returning `{}` if it does not exist. */

@@ -6,7 +6,7 @@ import {cruiseSources} from '../analysis/graph.js';
 import {exportModel} from '../analysis/model.js';
 import {updateBaseline} from '../check.js';
 import {ARCHITECTURE_DIR, normalizeSourceRoot} from '../config.js';
-import type {ArchCheckConfig, ResolvedConfig} from '../types.js';
+import type {ArchwardConfig, ResolvedConfig} from '../types.js';
 import {deriveComponents, deriveEdges} from './derive.js';
 import {renderModel} from './render.js';
 import {detectSourceRoot} from './source-root.js';
@@ -66,7 +66,7 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
   const pkgName = (JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8')) as {name?: string}).name;
   const rendered = renderModel(pkgName ?? path.basename(root), components, edges);
 
-  const userConfig: ArchCheckConfig = {
+  const userConfig: ArchwardConfig = {
     ...(sourceRoot === 'lib' ? {} : {sourceRoot}),
     ...(options.entryPointScopes?.length ? {entryPointScopes: options.entryPointScopes} : {}),
   };

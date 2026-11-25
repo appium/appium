@@ -11,7 +11,7 @@ import {checkPackage, initPackage, updateBaseline, type Finding} from '../../lib
 // Compiled to build/test/e2e, so the package root is three levels up.
 const PACKAGE_DIR = fileURLToPath(new URL('../../../', import.meta.url));
 
-describe('arch-check on itself', () => {
+describe('archward on itself', () => {
   it('conforms to its own architecture model', async () => {
     const result = await checkPackage(PACKAGE_DIR);
     assert.deepEqual(result.findings, []);
@@ -133,7 +133,7 @@ afterEach(async () => {
 
 /** Copies the package's sources (and its model, if asked to) into a temp directory. */
 async function copyOfSources(withModel = false): Promise<string> {
-  const dir = await mkdtemp(path.join(tmpdir(), 'arch-check-self-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'archward-self-'));
   dirs.push(dir);
   for (const entry of ['lib', 'package.json', 'tsconfig.json', ...(withModel ? ['architecture'] : [])]) {
     await cp(path.join(PACKAGE_DIR, entry), path.join(dir, entry), {recursive: true});

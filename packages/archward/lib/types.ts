@@ -1,5 +1,5 @@
 /** Optional per-package settings, read from `architecture/config.json`. */
-export interface ArchCheckConfig {
+export interface ArchwardConfig {
   /** Directory (relative to the package) that holds the source to check. Default: `lib`. */
   sourceRoot?: string;
   /** tsconfig (relative to the package) used to resolve imports. Default: `tsconfig.json`. */

@@ -1,13 +1,13 @@
-// Architecture of @appium/arch-check, checked by `arch-check` itself (see ../README.md).
+// Architecture of @appium/archward, checked by `archward` itself (see ../README.md).
 // Each component owns the files in `metadata.paths`; each `a -> b` ALLOWS a to import b.
 model {
-  archCheck = container '@appium/arch-check' {
+  archward = container '@appium/archward' {
     api = component 'index.ts' {
       description 'Public programmatic entry point; re-exports only.'
       metadata { paths 'lib/index.ts' }
     }
     cli = component 'cli.ts' {
-      description 'Argument parsing, exit codes and printing for the `arch-check` command.'
+      description 'Argument parsing, exit codes and printing for the `archward` command.'
       metadata { paths 'lib/cli.ts' }
     }
     check = component 'check.ts' {
@@ -19,7 +19,7 @@ model {
       metadata { paths 'lib/analysis/**' }
     }
     init = component 'init' {
-      description 'Derives a starting model and baseline from the current code (`arch-check init`).'
+      description 'Derives a starting model and baseline from the current code (`archward init`).'
       metadata { paths 'lib/init/**' }
     }
     baseline = component 'baseline.ts' {
@@ -48,32 +48,32 @@ model {
     }
   }
 
-  archCheck.cli -> archCheck.check
-  archCheck.cli -> archCheck.init
-  archCheck.cli -> archCheck.report
-  archCheck.cli -> archCheck.workspaces
-  archCheck.api -> archCheck.check
-  archCheck.api -> archCheck.config
-  archCheck.api -> archCheck.init
-  archCheck.api -> archCheck.report
-  archCheck.api -> archCheck.types
-  archCheck.api -> archCheck.workspaces
-  archCheck.check -> archCheck.analysis
-  archCheck.check -> archCheck.baseline
-  archCheck.check -> archCheck.config
-  archCheck.check -> archCheck.types
-  archCheck.check -> archCheck.util
-  archCheck.init -> archCheck.analysis
-  archCheck.init -> archCheck.check
-  archCheck.init -> archCheck.config
-  archCheck.init -> archCheck.types
-  archCheck.init -> archCheck.util
-  archCheck.analysis -> archCheck.types
-  archCheck.analysis -> archCheck.util
-  archCheck.baseline -> archCheck.config
-  archCheck.baseline -> archCheck.types
-  archCheck.baseline -> archCheck.util
-  archCheck.config -> archCheck.types
-  archCheck.report -> archCheck.types
-  archCheck.workspaces -> archCheck.config
+  archward.cli -> archward.check
+  archward.cli -> archward.init
+  archward.cli -> archward.report
+  archward.cli -> archward.workspaces
+  archward.api -> archward.check
+  archward.api -> archward.config
+  archward.api -> archward.init
+  archward.api -> archward.report
+  archward.api -> archward.types
+  archward.api -> archward.workspaces
+  archward.check -> archward.analysis
+  archward.check -> archward.baseline
+  archward.check -> archward.config
+  archward.check -> archward.types
+  archward.check -> archward.util
+  archward.init -> archward.analysis
+  archward.init -> archward.check
+  archward.init -> archward.config
+  archward.init -> archward.types
+  archward.init -> archward.util
+  archward.analysis -> archward.types
+  archward.analysis -> archward.util
+  archward.baseline -> archward.config
+  archward.baseline -> archward.types
+  archward.baseline -> archward.util
+  archward.config -> archward.types
+  archward.report -> archward.types
+  archward.workspaces -> archward.config
 }

@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import type {IModule} from 'dependency-cruiser';
 
-import type {ArchCheckConfig} from '../types.js';
+import type {ArchwardConfig} from '../types.js';
 import {byString} from '../util.js';
 import {isExportedSubpath, readInstalledExports} from './exports.js';
 
@@ -22,7 +22,7 @@ export interface PackageImportContext {
   /** Source root with a trailing slash, e.g. `lib/`. */
   prefix: string;
   entryPointScopes: readonly string[];
-  undeclaredDependencies: NonNullable<ArchCheckConfig['undeclaredDependencies']>;
+  undeclaredDependencies: NonNullable<ArchwardConfig['undeclaredDependencies']>;
   declared: DeclaredDependencies;
   /** The graph without type-only imports; an import missing from it is erased at runtime. */
   runtimeModules: readonly IModule[];

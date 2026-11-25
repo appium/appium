@@ -15,9 +15,9 @@ export function renderModel(
   tag unenforced
 }
 `;
-  const model = `// Architecture of ${packageName}, derived from the code by \`arch-check init\`.
+  const model = `// Architecture of ${packageName}, derived from the code by \`archward init\`.
 // Each component owns the files in \`metadata.paths\`; each \`a -> b\` below ALLOWS a to import b.
-// Delete the dependencies you do not want (arch-check then reports them), and add descriptions.
+// Delete the dependencies you do not want (archward then reports them), and add descriptions.
 model {
   ${container} = container ${quote(packageName)} {
 ${components

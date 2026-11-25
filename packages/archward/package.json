@@ -1,5 +1,5 @@
 {
-  "name": "@appium/arch-check",
+  "name": "@appium/archward",
   "version": "0.1.0",
   "description": "Checks a package's source against its C4 architecture model (component boundaries, import cycles)",
   "keywords": [
@@ -18,10 +18,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/arch-check"
+    "directory": "packages/archward"
   },
   "bin": {
-    "arch-check": "./bin/arch-check.js"
+    "archward": "./bin/archward.js"
   },
   "directories": {
     "lib": "lib"

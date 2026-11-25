@@ -10,7 +10,7 @@ describe('findWorkspacePackages', () => {
   let root: string;
 
   beforeEach(async () => {
-    root = await mkdtemp(path.join(tmpdir(), 'arch-check-ws-'));
+    root = await mkdtemp(path.join(tmpdir(), 'archward-ws-'));
   });
 
   afterEach(async () => {

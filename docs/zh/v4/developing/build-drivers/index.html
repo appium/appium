@@ -3515,10 +3515,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#proxy-commands-to-another-webdriver-implementation" class="md-nav__link">
+  <a href="#webdriver_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Proxy commands to another WebDriver implementation
+        把命令代理到另一个 WebDriver 实现
       
     </span>
   </a>
@@ -4381,10 +4381,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#proxy-commands-to-another-webdriver-implementation" class="md-nav__link">
+  <a href="#webdriver_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Proxy commands to another WebDriver implementation
+        把命令代理到另一个 WebDriver 实现
       
     </span>
   </a>
@@ -4904,46 +4904,31 @@
 </span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="_13">添加驱动脚本<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<p>Sometimes you might want users of your driver to be able to run scripts outside the context of
-a session (for example, to run a script that pre-builds aspects of your driver). To support this,
-you can add a map of script names and JS files to the <code>scripts</code> field within your Appium extension
-metadata. So let's say you've created a script in your project that lives in a <code>scripts</code> directory
-in your project, named <code>driver-prebuild.js</code>. Then you could add a <code>scripts</code> field like this:</p>
+<p>有时你可能希望驱动用户能够在会话上下文之外运行脚本（例如运行一个预先构建驱动某些部分的脚本）。为支持这一点，你可以在 Appium 扩展元数据的 <code>scripts</code> 字段中添加一个"脚本名 → JS 文件"的映射。假设你在项目的 <code>scripts</code> 目录下创建了一个名为 <code>driver-prebuild.js</code> 的脚本，那么可以像这样添加<code>scripts</code> 字段：</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span><span class="nt">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">        </span><span class="nt">"prebuild"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./scripts/driver-prebuild.js"</span>
 </span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Now, assuming your driver is named <code>mydriver</code>, users of your driver can run <code>appium driver run
-mydriver prebuild</code>, and your script will execute.</p>
-<h3 id="proxy-commands-to-another-webdriver-implementation">Proxy commands to another WebDriver implementation<a class="headerlink" href="#proxy-commands-to-another-webdriver-implementation" title="Permanent link">&para;</a></h3>
-<p>A very common design architecture for Appium drivers is to have some kind of platform-specific
-WebDriver implementation that the Appium driver interfaces with. For example, the Appium
-UiAutomator2 driver interfaces with a special (Java-based) server running on the Android device. In
-webview mode, it also interfaces with Chromedriver.</p>
-<p>If you find yourself in this situation, it is extremely easy to tell Appium that your driver is
-just going to be proxying WebDriver commands straight to another endpoint.</p>
-<p>First, let Appium know that your driver <em>can</em> proxy by implementing the <code>canProxy</code> method:</p>
+<p>假设你的驱动名为 <code>mydriver</code>，驱动用户就可以运行 <code>appium driver run mydriver prebuild</code>，你的脚本便会执行。</p>
+<h3 id="webdriver_1">把命令代理到另一个 WebDriver 实现<a class="headerlink" href="#webdriver_1" title="Permanent link">&para;</a></h3>
+<p>Appium 驱动一种非常常见的设计架构，是与某种平台专有的 WebDriver 实现对接。例如，Appium 的 UiAutomator2 驱动对接一个运行在 Android 设备上的特殊（基于 Java 的）服务器；在 webview 模式下，它还对接 Chromedriver。</p>
+<p>如果你发现自己正处于这种情形，告诉 Appium"这个驱动只是把 WebDriver 命令直接代理转发到另一个端点"是极其简单的。</p>
+<p>首先，实现 <code>canProxy</code> 方法，让 Appium 知道你的驱&#x52A8;<em>&#x53EF;&#x4EE5;</em>&#x4EE3;理：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nx">canProxy</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
 </span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Next, tell Appium which WebDriver routes it should <em>not</em> attempt to proxy (there often end up being
-certain routes that you don't want to forward on):</p>
+<p>接下来，告诉 Appium 哪些 WebDriver 路&#x7531;<em>&#x4E0D;&#x5E94;</em>&#x5C1D;试代理（通常总有一些路由是你不想转发出去的）：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nx">getProxyAvoidList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">        </span><span class="p">[</span><span class="s1">'POST'</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">RegExp</span><span class="p">(</span><span class="s1">'^/session/[^/]+/appium'</span><span class="p">)]</span>
 </span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">    </span><span class="p">];</span>
 </span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The proxy avoidance list should be an array of arrays, where each inner array has an HTTP method as
-its first member, and a regular expression as its second. If the regular expression matches the
-route, then the route will not be proxied and instead will be handled by your driver. In this
-example, we are avoiding proxying all <code>POST</code> routes that have the <code>appium</code> prefix.</p>
-<p>Next, we have to set up the proxying itself. The way to do this is to use a special class from
-Appium called <code>WebDriverProxy</code>. You'll want to create a <code>WebDriverProxy</code> object using the details
-required to connect to the remote server:</p>
+<p>禁止代理列表应是一个二维数组，每个内层数组的第一个成员是 HTTP 方法，第二个是正则表达式。如果正则表达式匹配某条路由，该路由就不会被代理，而是交由你的驱动处理。这个例子中，我们禁止代理所有带 <code>appium</code> 前缀的 <code>POST</code> 路由。</p>
+<p>然后要设置代理本身。做法是使用 Appium 提供的特殊类 <code>WebDriverProxy</code>。你需要用连接远程服务器所需的详细信息创建 <code>WebDriverProxy</code> 对象：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1">// import {WebDriverProxy} from 'appium/driver';</span>
 </span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>
 </span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">proxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebDriverProxy</span><span class="p">({</span>
@@ -4955,19 +4940,13 @@ required to connect to the remote server:</p>
 </span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">proxyReqRes</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
 </span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="k">this</span><span class="p">.</span><span class="nx">proxyCommand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">proxy</span><span class="p">.</span><span class="nx">command</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">proxy</span><span class="p">);</span>
 </span></code></pre></div>
-<p>Here we are creating a proxy object and assigning some of its methods to <code>this</code> under the names
-<code>proxyReqRes</code> and <code>proxyCommand</code>. This is required for Appium to use the proxy, so don't forget
-this step! The <code>WebDriverProxy</code> has a variety of other options which you can check out in the
-source code as well.</p>
-<p>Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
-be active, or it might only be active when in a certain context. You can define the logic as an
-implementation of <code>proxyActive</code>:</p>
+<p>这里我们创建了代理对象，并把它的部分方法以 <code>proxyReqRes</code> 和 <code>proxyCommand</code> 的名字挂到 <code>this</code>上。这是 Appium 使用代理的必要条件，千万别漏掉这一步！ <code>WebDriverProxy</code> 还有许多其他选项，你可以在<a href="https://github.com/appium/appium/blob/master/packages/base-driver/lib/wd-proxy/proxy.ts">源码</a>中查看。</p>
+<p>最后，我们需要告诉 Appium 代理何时激活。对你的驱动来说，代理可能一直激活，也可能只在某个特定上下文中激活。你可以把这部分逻辑实现为 <code>proxyActive</code>：</p>
 <div class="language-js highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nx">proxyActive</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// or use custom logic</span>
 </span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>With those pieces in play, you won't have to reimplement anything that's already implemented by the
-remote endpoint you're proxying to. Appium will take care of all the proxying for you.</p>
+<p>有了这几块拼图，你就不必重新实现远程端点已经实现过的功能。所有的代理工作都会由 Appium 代劳。</p>
 <h3 id="proxy-bidi-commands-to-another-bidi-implementation">Proxy BiDi commands to another BiDi implementation<a class="headerlink" href="#proxy-bidi-commands-to-another-bidi-implementation" title="Permanent link">&para;</a></h3>
 <p>All of the above about proxying WebDriver commands is conceptually also valid for proxying BiDi
 commands specifically. In order to enable BiDi proxying, you need to implement <code>get bidiProxyUrl</code>
@@ -5381,7 +5360,7 @@ extensions, which showcase several ways of using IPC messages.</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月24日 13:00:54 UTC"><span class="timeago" datetime="2026-11-24T13:00:54+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月24日 13:00:54 UTC">2026-11-24</span>
   </span>
 
     

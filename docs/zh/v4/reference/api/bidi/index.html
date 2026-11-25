@@ -2197,6 +2197,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3809,6 +3820,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3999,6 +4021,17 @@ sent as a websocket event, that both drivers and clients can emit or listen to.<
 </table>
 <h4 id="response_1">Response<a class="headerlink" href="#response_1" title="Permanent link">&para;</a></h4>
 <p><code>{subscription: string}</code> — a unique subscription ID that can be passed to <code>session.unsubscribe</code>.</p>
+<h4 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">&para;</a></h4>
+<p>A session can have up to 100 subscriptions. Every subscription covers a combination of each of its
+events and each of its contexts (an event without contexts counts as one), and all the subscriptions
+together, counted one by one, can cover up to 1000 combinations. Lists in the parameters can have up
+to 1000 items, and the event names, contexts and subscription IDs can be up to 256 characters long.
+A request that exceeds a limit fails with an <code>invalid argument</code> error without changing the subscriptions.</p>
+<p>Unsubscribing by event names (<code>events</code>) removes the matching contexts of those events across all the
+subscriptions (an event stays active in the contexts that are not listed), but the IDs of the
+subscriptions that have no events left stay valid, so they can still be passed to <code>session.unsubscribe</code>.
+The oldest such ID expires only when a new subscription needs its slot at the limit of 100 subscriptions.
+An unknown or expired ID fails the whole <code>subscriptions</code> request, and none of its subscriptions are removed.</p>
 <h3 id="bidiunsubscribe">bidiUnsubscribe<a class="headerlink" href="#bidiunsubscribe" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>session.unsubscribe
 </span></code></pre></div>
@@ -4063,7 +4096,7 @@ error without removing any subscriptions. Subscription IDs are cleared when the 
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月16日 18:43:19 UTC"><span class="timeago" datetime="2026-11-16T18:43:19+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月16日 18:43:19 UTC">2026-11-16</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago" title="2026年11月21日 10:49:08 UTC"><span class="timeago" datetime="2026-11-21T10:49:08+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="2026年11月21日 10:49:08 UTC">2026-11-21</span>
   </span>
 
     

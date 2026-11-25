@@ -631,8 +631,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
     const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
-    let createdSessionIds: Set<string> | undefined;
-    let createSessionPluginChainSettled = false;
+    const sessionTracker = newSessionPlugins?.length ? this.createSessionTracker() : undefined;
     // get any plugins which are registered as handling this command
     const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
     const plugins = candidates.filter((p) => canHandleCmd(p, cmd));
@@ -683,17 +682,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       if (isUmbrellaCmd) {
         // some commands, like deleteSession, we want to make sure to handle on *this* driver,
         // not the platform driver
-        const result = await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
-        if (newSessionPlugins?.length) {
-          const id = (result as SessionHandlerCreateResult).value?.[0];
-          if (id && !createSessionPluginChainSettled) {
-            (createdSessionIds ??= new Set()).add(id);
-          } else if (id && this.sessionExists(id)) {
-            // A plugin can reject while an unawaited next() is still creating the session.
-            await this.cleanupFailedSession(id);
-          }
-        }
-        return result;
+        return await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
       }
 
       if (!dstSession) {
@@ -709,7 +698,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       args,
       plugins,
       cmdHandledBy,
-      next: defaultBehavior,
+      next: sessionTracker?.wrap(defaultBehavior) ?? defaultBehavior,
     });
     // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
     // re-enters executeCommand for a different command doesn't inherit and misuse this one
@@ -727,15 +716,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     // new sessionId, so that plugins can share state between their createSession method and other
     // instance methods
     if (newSessionPlugins?.length) {
-      createSessionPluginChainSettled = true;
       const newSessionId =
         !res.error && Array.isArray(res.value) && typeof res.value[0] === 'string' ? res.value[0] : undefined;
-      // Retrying plugins may create several sessions; only keep the one returned to the client.
-      for (const id of createdSessionIds ?? []) {
-        if (id !== newSessionId && this.sessionExists(id)) {
-          await this.cleanupFailedSession(id);
-        }
-      }
+      await sessionTracker?.settle(newSessionId);
       if (!newSessionId) {
         res.error ??= new Error('A createSession plugin did not return a session ID');
         return res;
@@ -889,6 +872,42 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     delete this.sessions[sessionId];
     delete this.sessionPlugins[sessionId];
     delete this.sessionIpcs[sessionId];
+  }
+
+  private createSessionTracker() {
+    const createdSessionIds = new Set<string>();
+    let settled = false;
+
+    const cleanupIfRegistered = async (id: string) => {
+      if (this.sessionExists(id)) {
+        await this.cleanupFailedSession(id);
+      }
+    };
+
+    return {
+      wrap: (next: () => Promise<unknown>) => async () => {
+        const result = (await next()) as SessionHandlerCreateResult;
+        const id = result.value?.[0];
+        if (id) {
+          if (settled) {
+            // An unawaited next() may finish after the client has received a response.
+            await cleanupIfRegistered(id);
+          } else {
+            createdSessionIds.add(id);
+          }
+        }
+        return result;
+      },
+      settle: async (returnedId: string | undefined) => {
+        settled = true;
+        // A retry may create several sessions, but only one is returned to the client.
+        for (const id of createdSessionIds) {
+          if (id !== returnedId) {
+            await cleanupIfRegistered(id);
+          }
+        }
+      },
+    };
   }
 }
 

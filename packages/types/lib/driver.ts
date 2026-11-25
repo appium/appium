@@ -2,7 +2,7 @@ import type {EventEmitter} from 'node:events';
 import type internal from 'node:stream';
 
 import type {Capabilities, DriverCaps, W3CCapabilities} from './capabilities.js';
-import type {BidiModuleMap, BiDiResultData, DriverExecuteMethodDef, DriverMethodMap} from './command-maps.js';
+import type {BidiModuleMap, BiDiResultData, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {
   DefaultCreateSessionResult,
   DefaultDeleteSessionResult,
@@ -332,7 +332,7 @@ export interface DriverStatic<T extends Driver> {
    */
   updateServer?: UpdateServerCallback;
   /** Drivers can define new methods mapped to command names; see {@linkcode MethodMap} (use `as const satisfies MethodMap<MyDriver>`). */
-  newMethodMap?: Readonly<DriverMethodMap<T>>;
+  newMethodMap?: MethodMap<T>;
   /**
    * Drivers can define new custom bidi commands and map them to driver methods. The format must
    * be the same as that used by Appium's bidi-commands.js file, for example:
@@ -350,7 +350,7 @@ export interface DriverStatic<T extends Driver> {
    * }
    */
   newBidiCommands?: BidiModuleMap;
-  executeMethodMap?: Readonly<StringRecord<DriverExecuteMethodDef<T>>>;
+  executeMethodMap?: ExecuteMethodMap<T>;
 }
 
 /**

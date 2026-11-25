@@ -458,10 +458,8 @@ type CheckedExecuteMethodDef<Commands, Kind extends 'driver' | 'plugin'> =
  * }
  * ```
  */
-export type DriverExecuteMethodDef<T extends Driver> = LooseExecuteMethodDef &
-  (IsLooseDriverCheck<T, false> extends true
-    ? unknown
-    : CheckedExecuteMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>);
+export type DriverExecuteMethodDef<T extends Driver> =
+  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, DriverCommand>, 'driver'>;
 
 /**
  * A definition of an execute method in a {@linkcode Plugin}.
@@ -470,18 +468,20 @@ export type DriverExecuteMethodDef<T extends Driver> = LooseExecuteMethodDef &
  * `optional` params must be compatible with that method's signature (ignoring its leading `next`
  * and `driver` parameters). See {@linkcode DriverExecuteMethodDef} for details.
  */
-export type PluginExecuteMethodDef<T extends Plugin> = LooseExecuteMethodDef &
-  (IsLoosePluginCheck<T, false> extends true
-    ? unknown
-    : CheckedExecuteMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>);
+export type PluginExecuteMethodDef<T extends Plugin> =
+  IsAny<T> extends true ? LooseExecuteMethodDef : CheckedExecuteMethodDef<ConditionalPick<T, PluginCommand>, 'plugin'>;
 
 /**
  * Definition of an execute method (which overloads the behavior of the `execute` command) in a {@linkcode Driver} or {@linkcode Plugin}.
  */
 export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
-  ? Readonly<StringRecord<PluginExecuteMethodDef<T>>>
+  ? Readonly<
+      StringRecord<IsLoosePluginCheck<T, false> extends true ? LooseExecuteMethodDef : PluginExecuteMethodDef<T>>
+    >
   : T extends Driver
-    ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
+    ? Readonly<
+        StringRecord<IsLooseDriverCheck<T, false> extends true ? LooseExecuteMethodDef : DriverExecuteMethodDef<T>>
+      >
     : never;
 
 export interface BidiMethodParams extends Pick<PayloadParams, 'makeArgs' | 'validate'> {

@@ -605,10 +605,16 @@ expectAssignable<DriverMethodDef<Driver | ExternalDriver>>({command: 'anyCustomC
 expectAssignable<DriverMethodDef<Driver<CustomCapConstraints> | ExternalDriver<CustomCapConstraints>>>({
   command: 'anyCustomCommand',
 } as const);
-expectAssignable<DriverExecuteMethodDef<ExternalDriver>>({command: 'anyCustomCommand'} as const);
-expectAssignable<DriverExecuteMethodDef<Driver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
-expectAssignable<DriverExecuteMethodDef<ExternalDriver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
-expectAssignable<DriverExecuteMethodDef<Driver | ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<DriverExecuteMethodDef<Driver>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<DriverExecuteMethodDef<ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<DriverExecuteMethodDef<Driver<CustomCapConstraints>>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<DriverExecuteMethodDef<ExternalDriver<CustomCapConstraints>>>({
+  command: 'anyCustomCommand',
+} as const);
+expectNotAssignable<DriverExecuteMethodDef<Driver | ExternalDriver>>({command: 'anyCustomCommand'} as const);
+expectNotAssignable<
+  PluginExecuteMethodDef<Plugin & {customPluginCmd(next: NextPluginCallback, driver: ExternalDriver): Promise<void>}>
+>({command: 'anyCustomCommand'} as const);
 expectNotAssignable<DriverMethodDef<Driver | (Driver & {getStatus(a: number): Promise<any>})>>({
   command: 'anyCustomCommand',
 } as const);
@@ -702,7 +708,7 @@ export function genericPluginExecSpread<P extends Plugin>(m: ExecuteMethodMap<P>
 expectAssignable<DriverMethodDef<Driver<CustomCapConstraints>> | undefined>(
   genericMethodMapLookup(ConstrainedDriver, '/constrained'),
 );
-expectAssignable<DriverExecuteMethodDef<Driver<CustomCapConstraints>> | undefined>(
+expectAssignable<ExecuteMethodMap<Driver<CustomCapConstraints>>[string] | undefined>(
   genericExecMapLookup(ConstrainedDriver, 'test: constrained'),
 );
 expectAssignable<{command?: string}>(genericExecSpread(ConstrainedDriver, 'test: constrained'));

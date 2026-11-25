@@ -1,4 +1,4 @@
-import type {BidiModuleMap, PluginExecuteMethodDef, PluginMethodMap} from './command-maps.js';
+import type {BidiModuleMap, ExecuteMethodMap, MethodMap} from './command-maps.js';
 import type {DriverCommand, ExternalDriver} from './driver.js';
 import type {UpdateServerCallback} from './server.js';
 import type {Class, StringRecord} from './util.js';
@@ -23,8 +23,8 @@ export interface PluginStatic<P extends Plugin> {
    *   }
    * } as const satisfies MethodMap<MyPlugin>
    */
-  newMethodMap?: Readonly<PluginMethodMap<P>>;
-  executeMethodMap?: Readonly<StringRecord<PluginExecuteMethodDef<P>>>;
+  newMethodMap?: MethodMap<P>;
+  executeMethodMap?: ExecuteMethodMap<P>;
   newBidiCommands?: BidiModuleMap;
 }
 

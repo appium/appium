@@ -21,7 +21,7 @@ export interface PluginStatic<P extends Plugin> {
    *     GET: {command: 'getNewThing'},
    *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
    *   }
-   * }
+   * } as const satisfies MethodMap<MyPlugin>
    */
   newMethodMap?: MethodMap<P>;
   executeMethodMap?: ExecuteMethodMap<P>;

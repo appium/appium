@@ -331,6 +331,7 @@ export interface DriverStatic<T extends Driver> {
    * (see {@linkcode AppiumServer.frontRouter}).
    */
   updateServer?: UpdateServerCallback;
+  /** Drivers can define new methods mapped to command names; see {@linkcode MethodMap} (use `as const satisfies MethodMap<MyDriver>`). */
   newMethodMap?: MethodMap<T>;
   /**
    * Drivers can define new custom bidi commands and map them to driver methods. The format must

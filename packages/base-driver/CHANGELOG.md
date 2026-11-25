@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [11.0.1](https://github.com/appium/appium/compare/@appium/base-driver@11.0.0...@appium/base-driver@11.0.1) (2026-11-23)
+
+### Bug Fixes
+
+* **appium:** give each createSession call its own plugin instances ([#23214](https://github.com/appium/appium/issues/23214)) ([a7fbe25](https://github.com/appium/appium/commit/a7fbe25a0c7f1c9f3e1487aaae858bb6a3e21afd))
+* **base-driver:** bound the state of the BiDi subscriptions ([#23198](https://github.com/appium/appium/issues/23198)) ([db8a588](https://github.com/appium/appium/commit/db8a58813b6e89770e7245790f2aa1cd25d8a5dd))
+* **base-driver:** reject prototype-polluting keys in settings updates ([#23132](https://github.com/appium/appium/issues/23132)) ([3599786](https://github.com/appium/appium/commit/3599786ecbcb4168f23b9c35edd38fd044a2890b))
+
+
 ## [11.0.0](https://github.com/appium/appium/compare/@appium/base-driver@10.8.3...@appium/base-driver@11.0.0) (2026-11-15)
 
 ### ⚠ BREAKING CHANGES

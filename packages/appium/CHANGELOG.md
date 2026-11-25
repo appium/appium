@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/appium/appium/compare/appium@4.0.0...appium@4.0.1) (2026-11-23)
+
+### Bug Fixes
+
+* **appium:** give each createSession call its own plugin instances ([#23214](https://github.com/appium/appium/issues/23214)) ([a7fbe25](https://github.com/appium/appium/commit/a7fbe25a0c7f1c9f3e1487aaae858bb6a3e21afd))
+* **appium:** release the manifest lock while a driver/plugin script runs ([#23204](https://github.com/appium/appium/issues/23204)) ([bca2398](https://github.com/appium/appium/commit/bca239835c55ef037e34ea80cbf48d9f6a5b736a))
+* **appium:** remove a session before its driver finishes deleting it ([#23215](https://github.com/appium/appium/issues/23215)) ([43ffd5f](https://github.com/appium/appium/commit/43ffd5f888e9e968f75afc01f0a6de929319d104))
+* **base-driver:** bound the state of the BiDi subscriptions ([#23198](https://github.com/appium/appium/issues/23198)) ([db8a588](https://github.com/appium/appium/commit/db8a58813b6e89770e7245790f2aa1cd25d8a5dd))
+
+
 ## [4.0.0](https://github.com/appium/appium/compare/appium@3.9.1...appium@4.0.0) (2026-11-15)
 
 ### ⚠ BREAKING CHANGES

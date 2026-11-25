@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@8.0.0...@appium/execute-driver-plugin@9.0.0) (2026-11-23)
+
+### ⚠ BREAKING CHANGES
+
+* **execute-driver-plugin:** webdriverio 10 requires Node.js ^22.23.4 || ^24.22.1 || &gt;&#x3D;26.12.1, so the plugin&#x27;s minimum supported Node versions are raised accordingly.
+
+### Features
+
+* **execute-driver-plugin:** update webdriverio to v10 ([#23170](https://github.com/appium/appium/issues/23170)) ([2b232ad](https://github.com/appium/appium/commit/2b232adb2aa1fc981816f5b3ef5f140c06d37f56))
+
+
 ## [8.0.0](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@7.0.3...@appium/execute-driver-plugin@8.0.0) (2026-11-15)
 
 ### ⚠ BREAKING CHANGES

@@ -139,6 +139,9 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   private _isShuttingDown = false;
 
+  /** Inner driver deleteSession calls that are still running, by session id */
+  private readonly pendingTeardowns = new Map<string, Promise<unknown>>();
+
   /**
    * @param opts - CLI/server options (address, port, security, default capabilities, etc.)
    */
@@ -408,18 +411,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       await driverInstance.startNewCommandTimeout();
     } catch (error: unknown) {
       if (registeredSessionId) {
-        try {
-          // A failed initialization must not leave a registered session or an idle timer,
-          // even if the driver's own deleteSession also fails.
-          try {
-            await this.sessions[registeredSessionId]?.clearNewCommandTimeout();
-          } finally {
-            await this.deleteSession(registeredSessionId);
-          }
-        } catch (cleanupError) {
-          const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-          this.log.warn(`Could not clean up failed session ${registeredSessionId}: ${message}`);
-        }
+        await this.cleanupFailedSession(registeredSessionId);
       }
       return markResponseEnvelope({
         protocol,
@@ -477,20 +469,23 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * driver’s `deleteSession`.
    */
   async deleteSession(sessionId: string): Promise<SessionHandlerDeleteResult> {
+    const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
     try {
-      const dstSession: ExternalDriver | undefined = this.sessions[sessionId];
-      if (dstSession) {
-        this.cleanupBidiSockets(sessionId);
-      }
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {
         throw new Error('Session not found');
       }
+      // The inner driver may take a while to clean up, and must not get any other command or a
+      // second deleteSession call meanwhile
+      delete this.sessions[sessionId];
+      this.cleanupBidiSockets(sessionId);
+      const teardown = dstSession.deleteSession(sessionId);
+      this.pendingTeardowns.set(sessionId, teardown);
 
       return markResponseEnvelope({
         protocol: PROTOCOLS.W3C,
-        value: await dstSession.deleteSession(sessionId),
+        value: await teardown,
       });
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -503,27 +498,40 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       // regardless of whether the deleteSession completes successfully or not
       // make the session unavailable, because who knows what state it might
       // be in otherwise
-      this.log.info(`Removing session ${sessionId} from our master session list`);
-      this.deleteLinkedSessionObjects(sessionId);
+      if (dstSession) {
+        this.pendingTeardowns.delete(sessionId);
+        this.log.info(`Removing session ${sessionId} from our master session list`);
+        this.deleteLinkedSessionObjects(sessionId);
+      }
     }
   }
 
   /**
    * Ends every active session, either by normal `deleteSession` or by `startUnexpectedShutdown`
-   * when `force` is true.
+   * when `force` is true, and waits for the sessions that are already being deleted.
    */
   async deleteAllSessions(opts: {force?: boolean; reason?: string} = {}): Promise<void> {
     const sessionsCount = Object.keys(this.sessions).length;
-    if (0 === sessionsCount) {
+    // A second deleteSession or startUnexpectedShutdown call would run the driver teardown twice
+    const teardowns = [...this.pendingTeardowns.values()];
+    if (0 === sessionsCount && 0 === teardowns.length) {
       this.log.debug('There are no active sessions for cleanup');
       return;
     }
 
     const {force = false, reason} = opts;
-    this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
-    const cleanupPromises = force
-      ? Object.values(this.sessions).map((drv) => drv.startUnexpectedShutdown(reason ? new Error(reason) : undefined))
-      : Object.keys(this.sessions).map((id) => this.deleteSession(id));
+    if (sessionsCount) {
+      this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
+    }
+    if (teardowns.length) {
+      this.log.debug(`Waiting for ${util.pluralize('session', teardowns.length, true)} to finish deleting`);
+    }
+    const cleanupPromises = [
+      ...(force
+        ? Object.values(this.sessions).map((drv) => drv.startUnexpectedShutdown(reason ? new Error(reason) : undefined))
+        : Object.keys(this.sessions).map((id) => this.deleteSession(id))),
+      ...teardowns,
+    ];
     for (const cleanupPromise of cleanupPromises) {
       try {
         await cleanupPromise;
@@ -561,12 +569,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * session (or sessionless when `sessionId` is null).
    */
   pluginsToHandleCmd(cmd: string, sessionId: string | null = null): Plugin[] {
-    // to handle a given command, a plugin should either implement that command as a plugin
-    // instance method or it should implement a generic 'handle' method
-    return this.pluginsForSession(sessionId).filter((p) => {
-      const pluginMethod = (p as Plugin & Record<string, unknown>)[cmd];
-      return typeof pluginMethod === 'function' || typeof p.handle === 'function';
-    });
+    return this.pluginsForSession(sessionId).filter((p) => canHandleCmd(p, cmd));
   }
 
   /**
@@ -626,8 +629,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       }
     }
 
+    // Each createSession call gets its own plugin instances, so that concurrent calls do not share them
+    const newSessionPlugins = cmd === CREATE_SESSION_COMMAND ? this.createPluginInstances() : undefined;
+    const sessionTracker = newSessionPlugins?.length ? this.createSessionTracker() : undefined;
     // get any plugins which are registered as handling this command
-    const plugins = this.pluginsToHandleCmd(cmd, sessionId);
+    const candidates = newSessionPlugins ?? this.pluginsForSession(sessionId);
+    const plugins = candidates.filter((p) => canHandleCmd(p, cmd));
 
     // now we define a 'cmdHandledBy' object which will keep track of which plugins have handled this
     // command. we care about this because (a) multiple plugins can handle the same command, and
@@ -691,7 +698,7 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       args,
       plugins,
       cmdHandledBy,
-      next: defaultBehavior,
+      next: sessionTracker?.wrap(defaultBehavior) ?? defaultBehavior,
     });
     // clear the ambient proxy request while the plugin/default chain runs, so a plugin that
     // re-enters executeCommand for a different command doesn't inherit and misuse this one
@@ -705,18 +712,20 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
 
-    // And finally, if the command was createSession, we want to migrate any plugins which were
-    // previously sessionless to use the new sessionId, so that plugins can share state between
-    // their createSession method and other instance methods
-    if (cmd === CREATE_SESSION_COMMAND && this.sessionlessPlugins.length && !res.error) {
-      const newSessionId = (res.value as unknown[])[0] as string;
-      this.log.info(
-        `Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
-          `to session ID ${newSessionId}`,
-      );
-      this.sessionPlugins[newSessionId] = this.sessionlessPlugins;
-      const promoted = this.sessionPlugins[newSessionId] as (Plugin & ExtensionCore)[];
-      for (const p of promoted) {
+    // And finally, if the command was createSession, we want to attach its plugin instances to the
+    // new sessionId, so that plugins can share state between their createSession method and other
+    // instance methods
+    if (newSessionPlugins?.length) {
+      const newSessionId =
+        !res.error && Array.isArray(res.value) && typeof res.value[0] === 'string' ? res.value[0] : undefined;
+      await sessionTracker?.settle(newSessionId);
+      if (!newSessionId) {
+        res.error ??= new Error('A createSession plugin did not return a session ID');
+        return res;
+      }
+      this.log.info(`Attaching ${newSessionPlugins.length} plugins to session ID ${newSessionId}`);
+      this.sessionPlugins[newSessionId] = newSessionPlugins;
+      for (const p of newSessionPlugins as (Plugin & ExtensionCore)[]) {
         if (typeof p.updateLogPrefix === 'function') {
           p.updateLogPrefix(`${generateDriverLogPrefix(p)} <${generateDriverLogPrefix(this.sessions[newSessionId])}>`);
         }
@@ -724,7 +733,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
         const extPlugin = p as unknown as IpcAssignable;
         await extPlugin.assignIpc(this.sessionIpcs[newSessionId]);
       }
-      this.sessionlessPlugins = [];
     }
 
     return res;
@@ -805,15 +813,17 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
   /** Runs the wrapped plugin chain and merges the result into a `SessionHandlerResult` shape. */
   async executeWrappedCommand(wrappedCmd: () => Promise<unknown>): Promise<SessionHandlerResult<unknown>> {
     let cmdRes: unknown;
-    let cmdErr: unknown;
     const res: SessionHandlerResult<unknown> = {};
     try {
       // At this point, `wrappedCmd` defines a whole sequence of plugin handlers, culminating in
       // our default handler. Whatever it returns is what we're going to want to send back to the
       // user.
       cmdRes = await wrappedCmd();
-    } catch (e) {
-      cmdErr = e;
+    } catch (error) {
+      return markResponseEnvelope({
+        error: error instanceof Error ? error : new Error(String(error)),
+        protocol: PROTOCOLS.W3C,
+      });
     }
 
     // A marked envelope or a returned Error is passed through. `{protocol: 'W3C', value}` is data.
@@ -821,7 +831,6 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
       Object.assign(res, cmdRes);
     } else {
       res.value = cmdRes;
-      res.error = cmdErr instanceof Error ? cmdErr : undefined;
       res.protocol = PROTOCOLS.W3C;
     }
     return markResponseEnvelope(res);
@@ -845,10 +854,60 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
     return typeof dstSession?.canProxy === 'function' && dstSession.canProxy(sessionId);
   }
 
+  private async cleanupFailedSession(sessionId: string): Promise<void> {
+    try {
+      // Stop the idle timer even if the driver's deleteSession fails before clearing it.
+      try {
+        await this.sessions[sessionId]?.clearNewCommandTimeout();
+      } finally {
+        await this.deleteSession(sessionId);
+      }
+    } catch (cleanupError) {
+      const message = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+      this.log.warn(`Could not clean up failed session ${sessionId}: ${message}`);
+    }
+  }
+
   private deleteLinkedSessionObjects(sessionId: string): void {
     delete this.sessions[sessionId];
     delete this.sessionPlugins[sessionId];
     delete this.sessionIpcs[sessionId];
+  }
+
+  private createSessionTracker() {
+    const createdSessionIds = new Set<string>();
+    let settled = false;
+
+    const cleanupIfRegistered = async (id: string) => {
+      if (this.sessionExists(id)) {
+        await this.cleanupFailedSession(id);
+      }
+    };
+
+    return {
+      wrap: (next: () => Promise<unknown>) => async () => {
+        const result = (await next()) as SessionHandlerCreateResult;
+        const id = result.value?.[0];
+        if (id) {
+          if (settled) {
+            // An unawaited next() may finish after the client has received a response.
+            await cleanupIfRegistered(id);
+          } else {
+            createdSessionIds.add(id);
+          }
+        }
+        return result;
+      },
+      settle: async (returnedId: string | undefined) => {
+        settled = true;
+        // A retry may create several sessions, but only one is returned to the client.
+        for (const id of createdSessionIds) {
+          if (id !== returnedId) {
+            await cleanupIfRegistered(id);
+          }
+        }
+      },
+    };
   }
 }
 
@@ -867,6 +926,13 @@ export class NoDriverProxyCommandError extends Error {
         `'command()' method, in addition to the normal 'proxyReqRes'`,
     );
   }
+}
+
+// to handle a given command, a plugin should either implement that command as a plugin
+// instance method or it should implement a generic 'handle' method
+function canHandleCmd(plugin: Plugin, cmd: string): boolean {
+  const pluginMethod = (plugin as Plugin & Record<string, unknown>)[cmd];
+  return typeof pluginMethod === 'function' || typeof plugin.handle === 'function';
 }
 
 /** True if `cmd` should run on the umbrella driver instead of only on the session’s inner driver. */

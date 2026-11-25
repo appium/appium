@@ -114,6 +114,20 @@ Supported by: `@AppiumTestDistribution`
 npm install -g appium-installer
 ```
 
+### [BenchFleet Appium](https://github.com/benchfleet/benchfleet-appium)
+
+BenchFleet Appium is a command-line tool for running existing Appium tests on real Android phones
+connected to a [BenchFleet](https://benchfleet.com) Hub, a desktop app for managing many phones
+(Pro or Team plan). For each phone, the Hub starts an Appium server with the UiAutomator2 driver.
+The tool then runs your test command once per phone with that server's URL in `APPIUM_URL`, and
+collects each phone's JUnit report. iOS and BenchFleet's cloud phones are not supported yet.
+
+Supported by: `@benchfleet`
+
+```sh title="Install This Tool"
+npm install -g benchfleet-appium
+```
+
 ### [Optics](https://github.com/mozarkai/optics-framework)
 
 Optics is an open-source test automation framework that uses Appium to drive Android, iOS,

@@ -32,4 +32,6 @@ Appium server 已经提供了一种通过 [过滤](../guides/log-filters.md) 来
 
   格式化过程会通过标准的 Node.js [util.format](https://nodejs.org/api/util.html#utilformatformat-args) API 完成。
 
-- 在发送相应的服务器请求时，如果这个日志行被使用并且应该被掩码处理，请额外添加自定义请求头 `X-Appium-Is-Sensitive`，其值为 `1` 或 `true`（大小写不敏感）。如果没有这个请求头，上述日志值将不会被掩码处理。这样就可以根据扩展处理的具体请求来有条件地屏蔽日志记录；如果日志表达式位于公共部分，就可以在这里统一控制。
+- While sending the appropriate server request, where this log line is used and should be masked,
+  add the custom header `X-Appium-Is-Sensitive` with its value set to `1`, `true` or `yes` (case-insensitive).
+  如果没有这个请求头，上述日志值将不会被掩码处理。这样就可以根据扩展处理的具体请求来有条件地屏蔽日志记录；如果日志表达式位于公共部分，就可以在这里统一控制。

@@ -8,7 +8,7 @@ title: System Requirements
 The basic requirements for the Appium server are:
 
 - A macOS, Linux, or Windows operating system
-- [Node.js](https://nodejs.org) version in the [SemVer](https://semver.org) range `^20.19.0 || ^22.12.0 || >=24.0.0`
+- [Node.js](https://nodejs.org) version in the [SemVer](https://semver.org) range `^22.22.2 || ^24.15.0 || >=26.0.0`
   - LTS is recommended
 - [`npm`](https://npmjs.com) version `>=10` (`npm` is usually bundled with Node.js, but can be upgraded
   independently)

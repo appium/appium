@@ -169,12 +169,6 @@ async createSession(w3cCaps) {
 }
 ```
 
-!!! 警告 “已废弃”
-
-```
-较老的驱动可能仍以最多四个参数定义 createSession，例如createSession(jwpCaps, reqCaps, w3cCaps, otherDriverData)。这种形式是已退役的 JSON Wire Protocol 的遗留产物——它要求前两个参数是期望能力和必须能力，而实际上只有第一个W3C 形式的参数被使用过。otherDriverData 参数同样已被废弃，与其他并行运行会话的协调请改用IPC（见下文"向同一会话中的插件发送消息"）。新驱动应使用上面所示的单参数形式。
-```
-
 你要确保调用 `super.createSession`，以拿到会话 ID 以及处理过的能力（注意：能力同时也被设置在`this.caps` 上；此处仅修改局部变量 `caps`，这只改变用户在创建会话响应中看到的内容，没有其他效果）。
 
 就是这样！中间的空白部分由你的驱动所需的启动逻辑来填充。
@@ -356,11 +350,7 @@ schema 的规则如下：
 
 ### 添加驱动脚本
 
-Sometimes you might want users of your driver to be able to run scripts outside the context of
-a session (for example, to run a script that pre-builds aspects of your driver). To support this,
-you can add a map of script names and JS files to the `scripts` field within your Appium extension
-metadata. So let's say you've created a script in your project that lives in a `scripts` directory
-in your project, named `driver-prebuild.js`. Then you could add a `scripts` field like this:
+有时你可能希望驱动用户能够在会话上下文之外运行脚本（例如运行一个预先构建驱动某些部分的脚本）。为支持这一点，你可以在 Appium 扩展元数据的 `scripts` 字段中添加一个"脚本名 → JS 文件"的映射。假设你在项目的 `scripts` 目录下创建了一个名为 `driver-prebuild.js` 的脚本，那么可以像这样添加`scripts` 字段：
 
 ```json
 {
@@ -370,20 +360,15 @@ in your project, named `driver-prebuild.js`. Then you could add a `scripts` fiel
 }
 ```
 
-Now, assuming your driver is named `mydriver`, users of your driver can run `appium driver run
-mydriver prebuild`, and your script will execute.
+假设你的驱动名为 `mydriver`，驱动用户就可以运行 `appium driver run mydriver prebuild`，你的脚本便会执行。
 
-### Proxy commands to another WebDriver implementation
+### 把命令代理到另一个 WebDriver 实现
 
-A very common design architecture for Appium drivers is to have some kind of platform-specific
-WebDriver implementation that the Appium driver interfaces with. For example, the Appium
-UiAutomator2 driver interfaces with a special (Java-based) server running on the Android device. In
-webview mode, it also interfaces with Chromedriver.
+Appium 驱动一种非常常见的设计架构，是与某种平台专有的 WebDriver 实现对接。例如，Appium 的 UiAutomator2 驱动对接一个运行在 Android 设备上的特殊（基于 Java 的）服务器；在 webview 模式下，它还对接 Chromedriver。
 
-If you find yourself in this situation, it is extremely easy to tell Appium that your driver is
-just going to be proxying WebDriver commands straight to another endpoint.
+如果你发现自己正处于这种情形，告诉 Appium"这个驱动只是把 WebDriver 命令直接代理转发到另一个端点"是极其简单的。
 
-First, let Appium know that your driver _can_ proxy by implementing the `canProxy` method:
+首先，实现 `canProxy` 方法，让 Appium 知道你的驱&#x52A8;_&#x53EF;&#x4EE5;_&#x4EE3;理：
 
 ```js
 canProxy() {
@@ -391,8 +376,7 @@ canProxy() {
 }
 ```
 
-Next, tell Appium which WebDriver routes it should _not_ attempt to proxy (there often end up being
-certain routes that you don't want to forward on):
+接下来，告诉 Appium 哪些 WebDriver 路&#x7531;_&#x4E0D;&#x5E94;_&#x5C1D;试代理（通常总有一些路由是你不想转发出去的）：
 
 ```js
 getProxyAvoidList() {
@@ -402,14 +386,9 @@ getProxyAvoidList() {
 }
 ```
 
-The proxy avoidance list should be an array of arrays, where each inner array has an HTTP method as
-its first member, and a regular expression as its second. If the regular expression matches the
-route, then the route will not be proxied and instead will be handled by your driver. In this
-example, we are avoiding proxying all `POST` routes that have the `appium` prefix.
+禁止代理列表应是一个二维数组，每个内层数组的第一个成员是 HTTP 方法，第二个是正则表达式。如果正则表达式匹配某条路由，该路由就不会被代理，而是交由你的驱动处理。这个例子中，我们禁止代理所有带 `appium` 前缀的 `POST` 路由。
 
-Next, we have to set up the proxying itself. The way to do this is to use a special class from
-Appium called `WebDriverProxy`. You'll want to create a `WebDriverProxy` object using the details
-required to connect to the remote server:
+然后要设置代理本身。做法是使用 Appium 提供的特殊类 `WebDriverProxy`。你需要用连接远程服务器所需的详细信息创建 `WebDriverProxy` 对象：
 
 ```js
 // import {WebDriverProxy} from 'appium/driver';
@@ -424,14 +403,9 @@ this.proxyReqRes = proxy.proxyReqRes.bind(proxy);
 this.proxyCommand = proxy.command.bind(proxy);
 ```
 
-Here we are creating a proxy object and assigning some of its methods to `this` under the names
-`proxyReqRes` and `proxyCommand`. This is required for Appium to use the proxy, so don't forget
-this step! The `WebDriverProxy` has a variety of other options which you can check out in the
-source code as well.
+这里我们创建了代理对象，并把它的部分方法以 `proxyReqRes` 和 `proxyCommand` 的名字挂到 `this`上。这是 Appium 使用代理的必要条件，千万别漏掉这一步！ `WebDriverProxy` 还有许多其他选项，你可以在[源码](https://github.com/appium/appium/blob/master/packages/base-driver/lib/wd-proxy/proxy.ts)中查看。
 
-Finally, we need a way to tell Appium when the proxy is active. For your driver it might always
-be active, or it might only be active when in a certain context. You can define the logic as an
-implementation of `proxyActive`:
+最后，我们需要告诉 Appium 代理何时激活。对你的驱动来说，代理可能一直激活，也可能只在某个特定上下文中激活。你可以把这部分逻辑实现为 `proxyActive`：
 
 ```js
 proxyActive() {
@@ -439,8 +413,7 @@ proxyActive() {
 }
 ```
 
-With those pieces in play, you won't have to reimplement anything that's already implemented by the
-remote endpoint you're proxying to. Appium will take care of all the proxying for you.
+有了这几块拼图，你就不必重新实现远程端点已经实现过的功能。所有的代理工作都会由 Appium 代劳。
 
 ### Proxy BiDi commands to another BiDi implementation
 
@@ -608,6 +581,12 @@ A couple notes about this system:
    mode!
 3. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
+4. If your driver is written in TypeScript, declare the map `as const satisfies
+      ExecuteMethodMap<MyDriver>` (with `ExecuteMethodMap` imported from `@appium/types`). The
+   compiler then checks that each `command` names a method of your driver, and that the
+   `required`/`optional` params are consistent with that method's signature: the method must not
+   require a parameter which is listed as `optional` (or not listed at all), and must accept all
+   of the listed parameters.
 
 One of the nice things about the Execute Method strategy is that methods implemented in this way
 will be available via the classic or BiDi interfaces (since they will result in the same Appium
@@ -674,6 +653,36 @@ this.eventEmitter.emit('bidiEvent', {
 Now, if the client has subscribed to the `system.cpu` event, it will be notified with the load
 whenever the driver emits it.
 
+#### Slow clients and high-rate events
+
+Appium does not buffer events indefinitely for a client that does not read them. A connection
+that keeps more than `--bidi-max-buffered-bytes` unsent for longer than `--bidi-max-buffered-ms`
+is closed with the code `1013`, and connections that do not answer WebSocket pings (see
+`--bidi-heartbeat-interval`) are terminated. Both only affect the offending connection.
+
+Drivers that emit events at a high rate (e.g. media streams) can let Appium skip events for a
+connection that is falling behind, instead of waiting for it to be closed. Add a `delivery` hint
+to the event (it is never sent to clients; older Appium versions ignore it):
+
+```js
+this.eventEmitter.emit('bidiEvent', {
+  method: 'appium:media.units',
+  params: {track: 'video', units},
+  delivery: {policy: 'droppable', chain: 'video', syncPoint: startsWithKeyframe},
+})
+```
+
+- `policy`: `reliable` (default) events are always sent, `droppable` ones may be skipped.
+- `chain`: events of the same chain depend on each other. After one is skipped for a connection,
+  the following ones are skipped for it too, until an event with `syncPoint: true` (e.g. a keyframe)
+  arrives and the connection has caught up. Every connection resynchronizes independently.
+
+Subscriptions are per session, not per connection, so Appium decides by the state of each
+connection's buffer. To react to dropped events (e.g. to request a keyframe or lower the bitrate),
+listen to `bidiBackpressure` on the same emitter. Its payload is `{method, chain?, state, dropped}`,
+where `state` is `dropping` once the first connection starts skipping events (and again whenever a
+sync point is skipped, so that you can request a new one) and `recovered` once the last one stops, and `dropped` is the largest number of events skipped for a single connection.
+
 ### Make itself aware of resources other concurrent drivers are using
 
 Let's say your driver uses up some system resources, like ports. There are a few ways to make sure
@@ -681,55 +690,35 @@ that multiple simultaneous sessions don't use the same resources:
 
 1. Have your users specify resource IDs via capabilities (`appium:driverPort` etc)
 2. Just always use free resources (find a new random port for each session)
-3. Have each driver express what resources it is using, then examine currently-used resources from
-   other drivers when a new session begins.
+3. Have each running instance of your driver publish and subscribe to messages on a shared IPC
+   channel, so sessions can coordinate directly with one another.
 
-!!! warning "Deprecated"
-
-```
-The `driverData`-based mechanism described below is deprecated. Prefer
-[IPC](#send-messages-to-plugins-running-on-the-same-session) for coordinating resources across
-concurrently-running sessions instead.
-```
-
-To support this third strategy, you can implement `get driverData` in your driver to return what
-sorts of resources your driver is currently using, for example:
-
-```js
-get driverData() {
-  return {specialPort: 1234, specialFile: /path/to/file}
-}
-```
-
-Now, when a new session is started on your driver, the `driverData` response from any other
-simultaneously running drivers (of the same type) will also be included, as the last parameter of
-the deprecated, multi-argument form of the `createSession` method:
-
-```js
-async createSession(jwpCaps, reqCaps, w3cCaps, driverData)
-```
-
-You can dig into this `driverData` array to see what resources other drivers are using to help
-determine which ones you want to use for this particular session.
+The per-session IPC channel described in Send messages to plugins running on the same
+session is isolated per session, so it
+can't be used for this: it doesn't let you talk to _other_ sessions of your driver. Instead,
+construct and hold on to your own `AppiumIpc` instance (exported from `appium/driver.js`) at
+module scope in your driver's package, for example as a memoized singleton. Since Node.js caches
+modules, every instance of your driver loaded within the same Appium server process will share
+that one `AppiumIpc` object, and can use it to publish and subscribe to topics across sessions —
+the same way the per-session channel works, just not scoped to a single session. See
+[xcuitest-driver's `session-claim-handler.ts`](https://github.com/appium/appium-xcuitest-driver/blob/master/lib/session-claim-handler.ts)
+for a real example, which uses this technique to detect and resolve conflicting sessions targeting
+the same device UDID.
 
 !!! warning
 
 ```
-Be careful here, since `driverData` is only passed between sessions of a single running Appium
-server. There's nothing to stop a user from running multiple Appium servers and requesting your
-driver simultaneously on each of them. In this case, you won't be able to ensure independence
-of resources via `driverData`, so you might consider using file-based locking mechanisms or
-something similar.
+This only works for sessions running within the same Node.js process (i.e. the same Appium
+server). It cannot coordinate sessions running on different Appium server processes; for that,
+consider file-based locking or a similar out-of-process mechanism.
 ```
 
 !!! warning
 
 ```
-It's also important to note you will only receive `driverData` for other instances of *your*
-driver. So unrelated drivers also running may still be using some system resources. In general
-Appium doesn't provide any features for ensuring unrelated drivers don't interfere with one
-another, so it's up to the drivers to allow users to specify resource locations or addresses to
-avoid clashes.
+Appium also doesn't provide any features for ensuring unrelated drivers don't interfere with
+one another, so it's up to the drivers to allow users to specify resource locations or
+addresses to avoid clashes.
 ```
 
 ### Log events to the Appium event timeline
@@ -880,10 +869,15 @@ export type IpcMessage<T> = {
 
 There are some important things to keep in mind when using Appium's IPC feature:
 
-- IPC is only available once `onIpcInit` has been called, at the end of the `createSession` flow.
-  It cannot be used statically or in `createSession` hooks
-- In sum, IPC is only for use during a session (this is also to prevent drivers/plugins from
-  accessing or reading data sent on IPC channels in other sessions.)
+- The `ipcSubscribe` method (and the IPC channel it subscribes to) is only available once
+  `onIpcInit` has been called, at the end of the `createSession` flow. It cannot be used statically
+  or in `createSession` hooks
+- The channel that `ipcSubscribe` gives you access to is scoped to the current session, and is
+  shared only with the plugins active in that same session (this is also to prevent drivers/plugins
+  from accessing or reading data sent on IPC channels in other sessions.) To coordinate across
+  multiple concurrent sessions of your own driver instead, see Make itself aware of resources
+  other concurrent drivers are
+  using.
 - The default max size of an IPC message is 1MB. This can be configured by the server-admin by
   using the `--max-ipc-data-size` arg (value is a number in bytes).
 - If a message exceeds the configured size, any call to `publish` methods will throw, so be

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/appium/appium/compare/@appium/images-plugin@6.0.0...@appium/images-plugin@6.0.1) (2026-11-23)
+
+### Bug Fixes
+
+* **images-plugin:** match asyncbox condition-unmet errors by code ([#23195](https://github.com/appium/appium/issues/23195)) ([2890b29](https://github.com/appium/appium/commit/2890b294299eb737a1451f14d1968f8ef8b543ca))
+
+
 ## [6.0.0](https://github.com/appium/appium/compare/@appium/images-plugin@5.0.2...@appium/images-plugin@6.0.0) (2026-11-15)
 
 ### ⚠ BREAKING CHANGES

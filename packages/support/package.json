@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "gitHead": "f7b20335eab4022e5cbbb627ec86866a994444f8",
   "description": "Support libs used across Appium packages",
   "keywords": [
@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@appium/tsconfig": "~2.0.0",
-    "@types/yauzl": "^2.10.3"
+    "@types/yauzl": "^3.0.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

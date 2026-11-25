@@ -8,7 +8,7 @@ title: 系统要求
 Appium 服务器的基本要求如下：
 
 - macOS、Linux 或 Windows 操作系统
-- [Node.js](https://nodejs.org) 版本在 [SemVer](https://semver.org) 范围 `^20.19.0 || ^22.12.0 || >=24.0.0`
+- [Node.js](https://nodejs.org) version in the [SemVer](https://semver.org) range `^22.22.2 || ^24.15.0 || >=26.0.0`
   - 推荐使用 LTS 版本
 - [`npm`](https://npmjs.com) 版本 `>=10`（`npm` 通常与 Node.js 捆绑，但可以独立升级）
 

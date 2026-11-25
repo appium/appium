@@ -76,17 +76,29 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     ...(Object.keys(userConfig).length ? [['config.json', `${JSON.stringify(userConfig, null, 2)}\n`]] : []),
   ];
   const targets = [...written.map(([name]) => name), 'baseline.json'].map((name) => path.join(modelDir, name));
-  const previous = await Promise.all(targets.map((file) => readIfExists(file)));
+  const previous = new Map(await Promise.all(targets.map(async (file) => [file, await readIfExists(file)] as const)));
+  // Only files this invocation started writing are rolled back.
+  const touched = new Set<string>();
   const createdDir = await mkdir(modelDir, {recursive: true});
   try {
-    await Promise.all(written.map(([name, content]) => writeFile(path.join(modelDir, name), content)));
+    await Promise.all(
+      written.map(([name, content]) => {
+        const file = path.join(modelDir, name);
+        touched.add(file);
+        return writeFile(file, content);
+      }),
+    );
     // Fail now if a generated name is not valid LikeC4, rather than on the first check.
     await exportModel(modelDir);
+    touched.add(path.join(modelDir, 'baseline.json'));
     await updateBaseline(root);
   } catch (err) {
     // Leave no half-initialized model behind, so that a retry is not refused.
     await Promise.all(
-      targets.map((file, i) => (previous[i] === undefined ? rm(file, {force: true}) : writeFile(file, previous[i]))),
+      [...touched].map((file) => {
+        const before = previous.get(file);
+        return before === undefined ? rm(file, {force: true}) : writeFile(file, before);
+      }),
     );
     if (createdDir) {
       // Not recursive: keep files that something else added in the meantime.

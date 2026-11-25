@@ -1,5 +1,5 @@
 import {existsSync} from 'node:fs';
-import {mkdir, readFile, readdir, realpath, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, readdir, realpath, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 import {cruiseSources} from '../analysis/graph.js';
@@ -75,11 +75,24 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     ['model.c4', rendered.model],
     ...(Object.keys(userConfig).length ? [['config.json', `${JSON.stringify(userConfig, null, 2)}\n`]] : []),
   ];
-  await mkdir(modelDir, {recursive: true});
-  await Promise.all(written.map(([name, content]) => writeFile(path.join(modelDir, name), content)));
-  // Fail now if a generated name is not valid LikeC4, rather than on the first check.
-  await exportModel(modelDir);
-  await updateBaseline(root);
+  const targets = [...written.map(([name]) => name), 'baseline.json'].map((name) => path.join(modelDir, name));
+  const previous = await Promise.all(targets.map((file) => readFile(file, 'utf8').catch(() => undefined)));
+  const createdDir = await mkdir(modelDir, {recursive: true});
+  try {
+    await Promise.all(written.map(([name, content]) => writeFile(path.join(modelDir, name), content)));
+    // Fail now if a generated name is not valid LikeC4, rather than on the first check.
+    await exportModel(modelDir);
+    await updateBaseline(root);
+  } catch (err) {
+    // Leave no half-initialized model behind, so that a retry is not refused.
+    await Promise.all(
+      targets.map((file, i) => (previous[i] === undefined ? rm(file, {force: true}) : writeFile(file, previous[i]))),
+    );
+    if (createdDir) {
+      await rm(modelDir, {recursive: true, force: true});
+    }
+    throw err;
+  }
   return {
     files: [...written.map(([name]) => `${ARCHITECTURE_DIR}/${name}`), `${ARCHITECTURE_DIR}/baseline.json`],
     components: components.length,

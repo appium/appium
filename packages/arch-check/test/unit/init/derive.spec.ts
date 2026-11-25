@@ -42,6 +42,24 @@ describe('init', () => {
     assert.deepEqual(edges, ['driver -> utils', 'driver -> utils_file', 'web-execution -> driver']);
   });
 
+  it('escapes glob metacharacters so that components own only their own files', () => {
+    const odd = deriveComponents(['src/[id].ts', 'src/i.ts', 'src/(group)/a.ts', 'src/group/b.ts'], 'src');
+    assert.deepEqual(
+      odd.map((c) => c.paths),
+      ['src/\\(group\\)/**', 'src/group/**', 'src/\\[id\\].ts', 'src/i.ts'],
+    );
+    assert.deepEqual(
+      deriveEdges(
+        [
+          ['src/i.ts', 'src/[id].ts'],
+          ['src/group/b.ts', 'src/(group)/a.ts'],
+        ],
+        odd,
+      ),
+      ['group -> c_group_', 'i -> c_id_'].sort(),
+    );
+  });
+
   it('renders the model', () => {
     const {model, spec} = renderModel('@scope/pkg', components.slice(0, 1), []);
     assert.match(spec, /tag unenforced/);

@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import picomatch from 'picomatch';
+
 import {byString} from '../util.js';
 
 /** Words LikeC4 does not accept as element names. */
@@ -22,6 +24,7 @@ export interface DerivedComponent {
  */
 export function deriveComponents(files: readonly string[], sourceRoot: string): DerivedComponent[] {
   const prefix = `${sourceRoot.replace(/\/$/, '')}/`;
+  const globPrefix = escapeGlob(prefix);
   const dirs = new Set<string>();
   const rootFiles = new Set<string>();
   for (const file of files) {
@@ -47,12 +50,12 @@ export function deriveComponents(files: readonly string[], sourceRoot: string): 
     ...[...dirs].sort(byString).map((dir) => ({
       id: uniqueId(dir),
       title: dir,
-      paths: `${prefix}${dir}/**`,
+      paths: `${globPrefix}${escapeGlob(dir)}/**`,
     })),
     ...[...rootFiles].sort(byString).map((file) => ({
       id: uniqueId(dirs.has(path.parse(file).name) ? `${path.parse(file).name}_file` : path.parse(file).name),
       title: file,
-      paths: `${prefix}${file}`,
+      paths: `${globPrefix}${escapeGlob(file)}`,
     })),
   ];
 }
@@ -65,7 +68,8 @@ export function deriveEdges(
   imports: readonly (readonly string[])[],
   components: readonly DerivedComponent[],
 ): string[] {
-  const owners = components.map((c) => ({id: c.id, isMatch: globMatcher(c.paths)}));
+  // Same matching rules as the check itself, so derived edges agree with the model's ownership.
+  const owners = components.map((c) => ({id: c.id, isMatch: picomatch(c.paths, {dot: true})}));
   const ownerOf = (file: string) => owners.find((o) => o.isMatch(file))?.id;
   const edges = new Set<string>();
   for (const [from, to] of imports) {
@@ -83,6 +87,7 @@ export function toIdentifier(name: string): string {
   return RESERVED.has(id) ? `${id}_` : id;
 }
 
-function globMatcher(glob: string): (file: string) => boolean {
-  return glob.endsWith('/**') ? (file) => file.startsWith(glob.slice(0, -2)) : (file) => file === glob;
+/** Escapes glob metacharacters so that a literal path segment matches only itself. */
+function escapeGlob(literal: string): string {
+  return literal.replace(/[\\*?[\]{}()!+@]/g, '\\$&');
 }

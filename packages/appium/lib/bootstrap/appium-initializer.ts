@@ -26,6 +26,7 @@ import {
   isServerCommandArgs,
   isSetupCommandArgs,
 } from '../schema/cli-args-guards.js';
+import {emitCliNumberCoercionWarnings} from '../schema/cli-args.js';
 import {getDefaultsForSchema} from '../schema/schema.js';
 import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
 import {readConfigFile} from './config-file.js';
@@ -79,11 +80,13 @@ export class AppiumInitializer {
 
     if (isSetupCommandArgs(preConfigArgs)) {
       this.printValidationSummaries(driverConfig, pluginConfig);
+      emitCliNumberCoercionWarnings();
       await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
 
     await requireDir(appiumHome, true, appiumHomeSourceName);
+    emitCliNumberCoercionWarnings();
     await this.runExtensionCliIfNeeded(preConfigArgs, driverConfig, pluginConfig);
     return {} as InitResult<Cmd>;
   }
@@ -145,6 +148,7 @@ export class AppiumInitializer {
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
       this.printValidationSummaries(driverConfig, pluginConfig);
+      emitCliNumberCoercionWarnings();
       return {} as InitResult<Cmd>;
     }
 
@@ -155,6 +159,7 @@ export class AppiumInitializer {
         appiumHome,
       });
       this.printValidationSummaries(driverConfig, pluginConfig);
+      emitCliNumberCoercionWarnings();
       return {} as InitResult<Cmd>;
     }
 
@@ -162,6 +167,8 @@ export class AppiumInitializer {
     // Deferred from loadExtensions() so these render through the now-active (Winston-backed) logger.
     this.printValidationSummaries(driverConfig, pluginConfig);
     await this.applyLogFilters(serverArgs);
+    // after the filters load, so the value can be redacted
+    emitCliNumberCoercionWarnings();
 
     if (!serverArgs.noPermsCheck) {
       await requireDir(appiumHome, true, appiumHomeSourceName);

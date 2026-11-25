@@ -12,6 +12,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js
 import {INSTALL_TYPES} from '../../lib/extension/manifest/index.js';
 import {log} from '../../lib/logger.js';
 import {stripColorCodes} from '../../lib/logsink.js';
+import {emitCliNumberCoercionWarnings} from '../../lib/schema/cli-args.js';
 import * as schema from '../../lib/schema/schema.js';
 import {resolveFixture} from '../helpers.js';
 
@@ -229,6 +230,9 @@ describe('parser', function () {
       it('should warn when an integer server argument is coerced', function (t) {
         const warn = t.mock.method(log, 'warn');
         assert.strictEqual(p.parseArgs(['--port', '4723abc']).port, 4723);
+        assert.strictEqual(warn.mock.callCount(), 0);
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 1);
         assert.deepStrictEqual(warn.mock.calls[0].arguments, [`The value '4723abc' of --port was coerced to 4723`]);
       });
     });

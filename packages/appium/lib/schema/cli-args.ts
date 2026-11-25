@@ -79,13 +79,25 @@ function getSchemaValidator<Coerced>(
   };
 }
 
+// argparse runs before the log file and filters exist, so the warning waits
+const pendingCliNumberWarnings: string[] = [];
+
 // parseInt('4723abc') and parseFloat('7abc') drop the rest of the token without an error
 function parseCliNumber(value: string, parse: (value: string) => number, flag: string): number {
   const parsed = parse(value);
   if (!Number.isNaN(parsed) && Number(value) !== parsed) {
-    log.warn(`The value '${util.truncateString(value, {length: 100})}' of ${flag} was coerced to ${parsed}`);
+    pendingCliNumberWarnings.push(
+      `The value '${util.truncateString(value, {length: 100})}' of ${flag} was coerced to ${parsed}`,
+    );
   }
   return parsed;
+}
+
+/** Logs number-coercion warnings stored while arguments were parsed. */
+export function emitCliNumberCoercionWarnings(): void {
+  for (const message of pendingCliNumberWarnings.splice(0)) {
+    log.warn(message);
+  }
 }
 
 function makeDescription(schema: AppiumJSONSchema): string {

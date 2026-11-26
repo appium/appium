@@ -1426,10 +1426,13 @@ describe('AppiumDriver', function () {
           try {
             fakeDriver.newCommandTimeoutMs = 1000;
             await fakeDriver.startNewCommandTimeout();
+            const upstreamIds: number[] = [];
             for (const id of commandIds) {
-              const received = new Promise((resolve) => upstreamSocket.once('message', resolve));
+              const received = new Promise<Buffer>((resolve) =>
+                upstreamSocket.once('message', (data) => resolve(data as Buffer)),
+              );
               client.send(JSON.stringify({id, method: 'browsingContext.getTree', params: {}}));
-              await received;
+              upstreamIds.push((JSON.parse((await received).toString()) as {id: number}).id);
             }
             await clock.tickAsync(2000);
             assert.notEqual(fakeDriver.sessionId, null);
@@ -1443,16 +1446,20 @@ describe('AppiumDriver', function () {
               upstreamSocket.close();
               await closed;
             } else {
-              for (const [responseIndex, id] of commandIds.toReversed().entries()) {
-                const received = new Promise((resolve) => client.once('message', resolve));
+              const expectedClientIds = commandIds.toReversed();
+              for (const [responseIndex, upstreamId] of upstreamIds.toReversed().entries()) {
+                const received = new Promise<Buffer>((resolve) =>
+                  client.once('message', (data) => resolve(data as Buffer)),
+                );
                 upstreamSocket.send(
                   JSON.stringify(
                     responseType === 'success'
-                      ? {id, type: 'success', result: {contexts: []}}
-                      : {id, type: 'error', error: 'unknown error', message: 'Test command failed'},
+                      ? {id: upstreamId, type: 'success', result: {contexts: []}}
+                      : {id: upstreamId, type: 'error', error: 'unknown error', message: 'Test command failed'},
                   ),
                 );
-                await received;
+                const clientResponse = JSON.parse((await received).toString()) as {id: number};
+                assert.equal(clientResponse.id, expectedClientIds[responseIndex]);
                 if (responseIndex === 0) {
                   await clock.tickAsync(2000);
                   assert.notEqual(fakeDriver.sessionId, null);

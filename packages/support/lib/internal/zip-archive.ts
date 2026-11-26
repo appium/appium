@@ -20,6 +20,28 @@ export interface ZipArchiveOptions {
   exclude?: string;
 }
 
+/**
+ * Creates a ZIP archive stream out of a file or the contents of a folder.
+ * Symlinks below the source are stored as such. Any failure destroys the returned stream with the error.
+ *
+ * @param srcPath The full path to the source file or folder. A file is stored under its base name.
+ * @param opts Compression and filtering options. The filters only apply to folders.
+ */
+export function createZipStream(srcPath: string, opts: ZipArchiveOptions): Readable {
+  const zip = new ZipFile();
+  const output = zip.outputStream as Readable;
+  // `on`, as yazl may report several failures (e.g. one per vanished file)
+  zip.on('error', (err) => output.destroy(err));
+  void (async () => {
+    try {
+      await populate(zip, output, srcPath, opts);
+    } catch (err) {
+      output.destroy(err as Error);
+    }
+  })();
+  return output;
+}
+
 function toMode(stats: Stats): number {
   // File modes are not reliable on Windows
   return isWindows() && stats.isDirectory() ? 0o40755 : stats.mode & 0xffff;
@@ -75,26 +97,4 @@ async function populate(zip: ZipFile, output: Readable, srcPath: string, opts: Z
     }
   }
   zip.end();
-}
-
-/**
- * Creates a ZIP archive stream out of a file or the contents of a folder.
- * Symlinks below the source are stored as such. Any failure destroys the returned stream with the error.
- *
- * @param srcPath The full path to the source file or folder. A file is stored under its base name.
- * @param opts Compression and filtering options. The filters only apply to folders.
- */
-export function createZipStream(srcPath: string, opts: ZipArchiveOptions): Readable {
-  const zip = new ZipFile();
-  const output = zip.outputStream as Readable;
-  // `on`, as yazl may report several failures (e.g. one per vanished file)
-  zip.on('error', (err) => output.destroy(err));
-  void (async () => {
-    try {
-      await populate(zip, output, srcPath, opts);
-    } catch (err) {
-      output.destroy(err as Error);
-    }
-  })();
-  return output;
 }

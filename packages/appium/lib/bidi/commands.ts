@@ -28,8 +28,7 @@ import {
   trackBiDiEvent,
 } from './flow-control.js';
 import {BidiProxyBridge} from './proxy.js';
-
-export type SendData = (data: string | Buffer, options?: {binary?: boolean}) => Promise<void>;
+import {getBidiEventMatchKeys, type SendData, toBidiErrorResponse, toSendableCloseCode} from './utils.js';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
 type AnyDriver = ExternalDriver | AppiumDriver;
@@ -48,56 +47,10 @@ interface InitBiDiSocketResult {
   logSocketErr: LogSocketError;
 }
 
-const {WebSocketCloseCode, MIN_APPLICATION_CLOSE_CODE, MAX_APPLICATION_CLOSE_CODE} = net;
-const RESERVED_CLOSE_CODES: readonly number[] = [
-  WebSocketCloseCode.RESERVED,
-  WebSocketCloseCode.NO_STATUS_RECEIVED,
-  WebSocketCloseCode.ABNORMAL_CLOSURE,
-];
+const {WebSocketCloseCode} = net;
 const BIDI_EVENTS_MAP: WeakMap<AnyDriver, Record<string, number>> = new WeakMap();
 const BIDI_CONNECTION_CLEANUPS: WeakMap<WebSocket, Set<() => void>> = new WeakMap();
 const MAX_LOGGED_DATA_LENGTH = 300;
-
-/**
- * Convert an error thrown while handling a local BiDi command into a W3C BiDi error response.
- *
- * @param id - Request correlation ID
- * @param err - Error thrown during command execution
- * @returns W3C BiDi error response payload
- */
-export function toBidiErrorResponse(id: number, err: unknown): ErrorBiDiCommandResponse {
-  if (
-    err !== null &&
-    typeof err === 'object' &&
-    'bidiErrObject' in err &&
-    typeof (err as {bidiErrObject: unknown}).bidiErrObject === 'function'
-  ) {
-    return (err as {bidiErrObject: (msgId: number) => ErrorBiDiCommandResponse}).bidiErrObject(id);
-  }
-  return {
-    id,
-    type: 'error',
-    error: errors.UnknownError.error(),
-    message: err instanceof Error ? err.message : String(err),
-    stacktrace: err instanceof Error ? err.stack : undefined,
-  };
-}
-
-/**
- * 'close' events can report reserved codes like 1005 and 1006, which RFC 6455 forbids in a close
- * frame and ws throws on, so anything ws would reject is replaced with an internal error.
- *
- * @param code - WebSocket close code reported by ws
- * @returns Close code safe to pass to `WebSocket.close()`
- */
-export function toSendableCloseCode(code: number): number {
-  const isStandard =
-    code >= WebSocketCloseCode.NORMAL_CLOSURE &&
-    code <= WebSocketCloseCode.BAD_GATEWAY &&
-    !RESERVED_CLOSE_CODES.includes(code);
-  const isApplication = code >= MIN_APPLICATION_CLOSE_CODE && code <= MAX_APPLICATION_CLOSE_CODE;
-  return isStandard || isApplication ? code : WebSocketCloseCode.INTERNAL_ERROR;
-}
 
 function registerConnectionCleanup(ws: WebSocket, cleanup: () => void): () => void {
   let cleanups = BIDI_CONNECTION_CLEANUPS.get(ws);
@@ -124,7 +77,7 @@ function runConnectionCleanups(ws: WebSocket): void {
     return;
   }
   BIDI_CONNECTION_CLEANUPS.delete(ws);
-  for (const cleanup of [...cleanups]) {
+  for (const cleanup of Array.from(cleanups)) {
     try {
       cleanup();
     } catch {}
@@ -183,7 +136,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
     }
     const initBidiEventListenersFunc: OmitThisParameter<typeof initBidiEventListeners> =
       initBidiEventListeners.bind(this);
-    initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, send, guard);
+    initBidiEventListenersFunc(ws, bidiHandlerDriver, bidiHandlerPlugins, send, guard, proxyBridge);
   } catch (err) {
     this.log.error(err);
     try {
@@ -491,9 +444,11 @@ function initBidiSocketHandlers(
  * @param ws - the websocket connection to/from the client
  * @param bidiHandlerDriver - the driver
  * handling the bidi commands
+ * @param bidiHandlerPlugins - plugins that may emit bidi events
  * @param send - a method used to send data to the
  * client
  * @param guard - enforces the send buffer limits of the connection
+ * @param proxyBridge - bridge managing per-connection local subscriptions when proxying
  */
 function initBidiEventListeners(
   this: AppiumDriver,
@@ -502,6 +457,7 @@ function initBidiEventListeners(
   bidiHandlerPlugins: ExtensionPlugin[],
   send: SendData,
   guard: BiDiConnectionGuard,
+  proxyBridge: BidiProxyBridge | null = null,
 ): void {
   // If the driver emits a bidi event that should maybe get sent to the client, check to make
   // sure the client is subscribed and then pass it on
@@ -551,14 +507,18 @@ function initBidiEventListeners(
         return;
       }
 
-      const moduleName = method.split('.')[0];
-      const isSubscribed = [method, moduleName].some((event) => {
-        const contexts = bidiHandlerDriver.bidiEventSubs[event];
-        return Array.isArray(contexts) && (contexts.includes('') || contexts.includes(context));
-      });
+      const isSubscribed = proxyBridge
+        ? proxyBridge.isLocallySubscribed(method, context)
+        : getBidiEventMatchKeys(method).some((eventName) => {
+            const contexts = bidiHandlerDriver.bidiEventSubs[eventName];
+            return Array.isArray(contexts) && (contexts.includes('') || contexts.includes(context));
+          });
       if (!isSubscribed) {
         // other contexts of the method may still be subscribed
-        if (!hasSubscription(bidiHandlerDriver, method, moduleName)) {
+        const stillSubscribed = proxyBridge
+          ? proxyBridge.hasLocalSubscription(method)
+          : hasSubscription(bidiHandlerDriver, method);
+        if (!stillSubscribed) {
           gate.forget(method);
         }
       } else {
@@ -614,8 +574,8 @@ function guardSend(send: SendData, guard: BiDiConnectionGuard): SendData {
   };
 }
 
-function hasSubscription(driver: AnyDriver, method: string, moduleName: string): boolean {
-  return [method, moduleName].some((event) => (driver.bidiEventSubs[event]?.length ?? 0) > 0);
+function hasSubscription(driver: AnyDriver, method: string): boolean {
+  return getBidiEventMatchKeys(method).some((eventName) => (driver.bidiEventSubs[eventName]?.length ?? 0) > 0);
 }
 
 async function assertIsOpen(ws: WebSocket, timeoutMs: number = 5000): Promise<WebSocket> {

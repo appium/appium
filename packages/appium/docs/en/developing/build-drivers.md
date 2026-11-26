@@ -573,7 +573,9 @@ connection with a few intentional differences for Appium's own events:
 - **Merged `log` / `log.entryAdded` stream:** Subscribing to `log` or `log.entryAdded` without
   `userContexts` registers the subscription both upstream and on the local driver, so both
   upstream browser log events and local driver-emitted `log.entryAdded` events (such as server or
-  device logs) are delivered on the same client socket. Supplying `userContexts` routes `log` /
+  device logs) are delivered on the same client socket. For requests containing only shared/browser
+  events (no Appium-only events), local registration is best-effort and falls back to the upstream
+  subscription if the local driver rejects it. Supplying `userContexts` routes `log` /
   `log.entryAdded` upstream only.
 - **No plugin BiDi interception in proxy mode:** When `bidiProxyUrl` is active, plugins are not
   attached to the BiDi connection (`bidiHandlerPlugins` is empty), so plugin BiDi command wrappers

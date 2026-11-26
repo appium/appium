@@ -5,7 +5,7 @@ import type {AddressInfo} from 'node:net';
 import {afterEach, describe, it} from 'node:test';
 import {setImmediate} from 'node:timers/promises';
 
-import {BaseDriver} from '@appium/base-driver';
+import {BaseDriver, errors} from '@appium/base-driver';
 import type {ExternalDriver, StringRecord} from '@appium/types';
 import sinon from 'sinon';
 import {WebSocket, WebSocketServer} from 'ws';
@@ -586,6 +586,28 @@ describe('BiDi proxied local event subscriptions', function () {
       params: {subscriptions: [sub2Id]},
     });
     assert.deepEqual(idempotentRes, {id: 59, type: 'success', result: {}});
+
+    // A driver throwing InvalidArgumentError with custom wording is still treated idempotently.
+    const sub3Res = await sendAndReceive(client, clientQueue, {
+      id: 590,
+      method: 'session.subscribe',
+      params: {events: ['appium:custom.errorWording']},
+    });
+    const sub3Id = (sub3Res.result as StringRecord).subscription as string;
+    let throwCustomInvalidArg = true;
+    (driver.executeBidiCommand as sinon.SinonStub).callsFake(async (method, params) => {
+      if (method === 'session.unsubscribe' && throwCustomInvalidArg) {
+        throwCustomInvalidArg = false;
+        throw new errors.InvalidArgumentError('No matching subscription found');
+      }
+      return await realExecute(method, params);
+    });
+    const customInvalidArgRes = await sendAndReceive(client, clientQueue, {
+      id: 591,
+      method: 'session.unsubscribe',
+      params: {subscriptions: [sub3Id]},
+    });
+    assert.deepEqual(customInvalidArgRes, {id: 591, type: 'success', result: {}});
   });
 
   it('supports legacy event-based unsubscribe and subsequent ID unsubscribe without stale upstream call', async function () {
@@ -894,12 +916,13 @@ describe('BiDi proxied local event subscriptions', function () {
       await closed;
       await setImmediate();
 
-      if (clientQueue.pendingCount() > 0) {
-        const errFrame = await clientQueue.next();
-        assert.equal(errFrame.id, 80);
-        assert.equal(errFrame.type, 'error');
+      assert.equal(client.readyState, WebSocket.CLOSED);
+      assert.deepEqual(driver.bidiEventSubs, {});
+      while (clientQueue.pendingCount() > 0) {
+        const frame = await clientQueue.next();
+        assert.equal(frame.id, 80);
+        assert.equal(frame.type, 'error');
       }
-      assert.equal(clientQueue.pendingCount(), 0);
 
       // Pending command waiter was aborted on upstream close so session idle timeout recovers cleanly.
       await clock.tickAsync(500);
@@ -908,5 +931,478 @@ describe('BiDi proxied local event subscriptions', function () {
       await driver.clearNewCommandTimeout();
       clock.restore();
     }
+  });
+
+  it('delivers both colon-namespaced and dot-namespaced events for module-level appium subscription', async function () {
+    const {driver, client, clientQueue, upstreamSocket, upstreamQueue} = await setupProxySession();
+
+    const subRes = await sendAndReceive(client, clientQueue, {
+      id: 100,
+      method: 'session.subscribe',
+      params: {events: ['appium']},
+    });
+    assert.equal(subRes.id, 100);
+    assert.equal(subRes.type, 'success');
+    const appiumSubId = (subRes.result as StringRecord).subscription as string;
+    await roundTripSentinel(client, clientQueue, upstreamSocket, upstreamQueue, 101);
+
+    // Emit colon-namespaced first, then dot-namespaced, plus colon-only.
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium:android.contextUpdated',
+      params: {name: 'WEBVIEW_1'},
+    });
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium.contextUpdated',
+      params: {name: 'NATIVE_APP'},
+    });
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium:keepalive',
+      params: {ok: true},
+    });
+
+    const ev1 = await clientQueue.next();
+    const ev2 = await clientQueue.next();
+    const ev3 = await clientQueue.next();
+    assert.deepEqual(
+      [ev1.method, ev2.method, ev3.method],
+      ['appium:android.contextUpdated', 'appium.contextUpdated', 'appium:keepalive'],
+    );
+
+    // Subscribe to a separate local event as a delivery sentinel, then unsubscribe the module subscription.
+    const logResponder = (async () => {
+      const req = await upstreamQueue.next();
+      upstreamSocket.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-mod-sentinel'}}));
+    })();
+    const sentinelSub = await sendAndReceive(client, clientQueue, {
+      id: 102,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.equal(sentinelSub.type, 'success');
+    await logResponder;
+
+    const unsubRes = await sendAndReceive(client, clientQueue, {
+      id: 103,
+      method: 'session.unsubscribe',
+      params: {subscriptions: [appiumSubId]},
+    });
+    assert.deepEqual(unsubRes, {id: 103, type: 'success', result: {}});
+
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium:android.contextUpdated',
+      params: {ignored: true},
+    });
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium.contextUpdated',
+      params: {ignored: true},
+    });
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'log.entryAdded',
+      params: {text: 'module-unsub-sentinel'},
+    });
+    const nextEv = await clientQueue.next();
+    assert.equal(nextEv.method, 'log.entryAdded');
+    assert.deepEqual(nextEv.params, {text: 'module-unsub-sentinel'});
+    assert.equal(clientQueue.pendingCount(), 0);
+  });
+
+  for (const mode of ['appium-only', 'shared'] as const) {
+    it(`does not leak local ${mode} subscription when client closes while bidiSubscribe is in flight`, async function () {
+      const {driver, client, upstreamSocket, upstreamQueue} = await setupProxySession();
+
+      let releaseSubscribe!: () => void;
+      let notifySubscribeStarted!: () => void;
+      const subscribeStarted = new Promise<void>((resolve) => {
+        notifySubscribeStarted = resolve;
+      });
+      const gate = new Promise<void>((resolve) => {
+        releaseSubscribe = resolve;
+      });
+
+      const realBidiSubscribe = driver.bidiSubscribe.bind(driver);
+      let subscribeFinished!: Promise<void>;
+      sinon.stub(driver, 'bidiSubscribe').callsFake(async (events, contexts, userContexts) => {
+        notifySubscribeStarted();
+        await gate;
+        const result = await realBidiSubscribe(events, contexts, userContexts);
+        return result;
+      });
+
+      const events = mode === 'appium-only' ? ['appium:android.contextUpdated'] : ['log.entryAdded'];
+      const upstreamResponder =
+        mode === 'shared'
+          ? (async () => {
+              const req = await upstreamQueue.next();
+              assert.equal(req.method, 'session.subscribe');
+              upstreamSocket.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-race-sub'}}));
+            })()
+          : Promise.resolve();
+
+      client.send(JSON.stringify({id: 110, method: 'session.subscribe', params: {events}}));
+      await upstreamResponder;
+      await subscribeStarted;
+
+      const upstreamClosed = new Promise<void>((resolve) => upstreamSocket.once('close', () => resolve()));
+      client.close();
+      await upstreamClosed;
+
+      subscribeFinished = new Promise<void>((resolve) => {
+        const realUnsub = driver.bidiUnsubscribe.bind(driver);
+        sinon.stub(driver, 'bidiUnsubscribe').callsFake(async (ev, ctx, subs) => {
+          try {
+            return await realUnsub(ev, ctx, subs);
+          } finally {
+            resolve();
+          }
+        });
+      });
+
+      releaseSubscribe();
+      await subscribeFinished;
+      await setImmediate();
+      assert.deepEqual(driver.bidiEventSubs, {});
+    });
+  }
+
+  it('keeps upstream subscription when local bidiSubscribe fails for shared-only requests, but rolls back mixed Appium requests', async function () {
+    const {driver, client, clientQueue, upstreamSocket, upstreamQueue} = await setupProxySession();
+
+    const realSubscribe = driver.bidiSubscribe.bind(driver);
+    sinon.stub(driver, 'bidiSubscribe').callsFake(async (events, contexts, userContexts) => {
+      if (events.includes('log.entryAdded') || events.includes('log')) {
+        throw new errors.InvalidArgumentError('Cannot create more than 100 subscriptions');
+      }
+      return await realSubscribe(events, contexts, userContexts);
+    });
+
+    // 1. Shared-only request (log.entryAdded): local failure is best-effort, upstream succeeds without rollback.
+    const sharedResponder = (async () => {
+      const req = await upstreamQueue.next();
+      assert.equal(req.method, 'session.subscribe');
+      assert.deepEqual((req.params as StringRecord).events, ['log.entryAdded']);
+      upstreamSocket.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-shared-only'}}));
+    })();
+    const sharedRes = await sendAndReceive(client, clientQueue, {
+      id: 120,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.deepEqual(sharedRes, {id: 120, type: 'success', result: {subscription: 'up-shared-only'}});
+    await sharedResponder;
+    assert.deepEqual(driver.bidiEventSubs, {});
+    // Prove no rollback session.unsubscribe was sent upstream.
+    await roundTripSentinel(client, clientQueue, upstreamSocket, upstreamQueue, 121);
+
+    // 2. Shared + browser event (no Appium-only event): still best-effort, upstream kept.
+    const sharedBrowserResponder = (async () => {
+      const req = await upstreamQueue.next();
+      assert.equal(req.method, 'session.subscribe');
+      assert.deepEqual((req.params as StringRecord).events, ['log', 'browsingContext.load']);
+      upstreamSocket.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-log-browser'}}));
+    })();
+    const sharedBrowserRes = await sendAndReceive(client, clientQueue, {
+      id: 122,
+      method: 'session.subscribe',
+      params: {events: ['log', 'browsingContext.load']},
+    });
+    assert.deepEqual(sharedBrowserRes, {id: 122, type: 'success', result: {subscription: 'up-log-browser'}});
+    await sharedBrowserResponder;
+    assert.deepEqual(driver.bidiEventSubs, {});
+    await roundTripSentinel(client, clientQueue, upstreamSocket, upstreamQueue, 123);
+
+    // 3. Mixed request including an Appium-only event: local failure surfaces error and rolls back upstream.
+    const mixedResponder = (async () => {
+      const subReq = await upstreamQueue.next();
+      assert.equal(subReq.method, 'session.subscribe');
+      assert.deepEqual((subReq.params as StringRecord).events, ['log.entryAdded']);
+      upstreamSocket.send(JSON.stringify({id: subReq.id, type: 'success', result: {subscription: 'up-mixed-rb'}}));
+
+      const rbReq = await upstreamQueue.next();
+      assert.equal(rbReq.method, 'session.unsubscribe');
+      assert.deepEqual((rbReq.params as StringRecord).subscriptions, ['up-mixed-rb']);
+      upstreamSocket.send(JSON.stringify({id: rbReq.id, type: 'success', result: {}}));
+    })();
+    const mixedErrRes = await sendAndReceive(client, clientQueue, {
+      id: 124,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded', 'appium:android.contextUpdated']},
+    });
+    assert.equal(mixedErrRes.id, 124);
+    assert.equal(mixedErrRes.type, 'error');
+    assert.equal(mixedErrRes.error, 'invalid argument');
+    await mixedResponder;
+    assert.deepEqual(driver.bidiEventSubs, {});
+  });
+
+  it('falls back to upstream-only for shared log.entryAdded when driver reaches MAX_BIDI_SUBSCRIPTIONS', async function () {
+    const {driver, client, clientQueue, upstreamSocket, upstreamQueue} = await setupProxySession();
+
+    // Fill BaseDriver's 100-subscription driver-wide cap with local Appium subscriptions.
+    for (let i = 0; i < 100; ++i) {
+      const res = await sendAndReceive(client, clientQueue, {
+        id: 1000 + i,
+        method: 'session.subscribe',
+        params: {events: [`appium:cap.event${i}`]},
+      });
+      assert.equal(res.type, 'success');
+    }
+
+    // Shared-only log.entryAdded succeeds via upstream even though local cap is exhausted.
+    const capResponder = (async () => {
+      const req = await upstreamQueue.next();
+      assert.equal(req.method, 'session.subscribe');
+      assert.deepEqual((req.params as StringRecord).events, ['log.entryAdded']);
+      upstreamSocket.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-after-cap'}}));
+    })();
+    const sharedAfterCap = await sendAndReceive(client, clientQueue, {
+      id: 1200,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.deepEqual(sharedAfterCap, {id: 1200, type: 'success', result: {subscription: 'up-after-cap'}});
+    await capResponder;
+    assert.equal(driver.bidiEventSubs['log.entryAdded'], undefined);
+    await roundTripSentinel(client, clientQueue, upstreamSocket, upstreamQueue, 1201);
+  });
+
+  it('does not clear context-scoped upstream tracking on global legacy event unsubscribe', async function () {
+    const {driver, client, clientQueue, upstreamSocket, upstreamQueue} = await setupProxySession();
+
+    const responder = (async () => {
+      // 1. Mixed context-scoped subscribe -> upstream gets browsingContext.load scoped to ['A'].
+      const subReq = await upstreamQueue.next();
+      assert.equal(subReq.method, 'session.subscribe');
+      assert.deepEqual(subReq.params, {events: ['browsingContext.load'], contexts: ['A']});
+      upstreamSocket.send(JSON.stringify({id: subReq.id, type: 'success', result: {subscription: 'up-ctx-a'}}));
+
+      // 2. Global legacy unsubscribe without contexts -> forwarded upstream.
+      const globalUnsubReq = await upstreamQueue.next();
+      assert.equal(globalUnsubReq.method, 'session.unsubscribe');
+      assert.deepEqual(globalUnsubReq.params, {events: ['browsingContext.load']});
+      upstreamSocket.send(JSON.stringify({id: globalUnsubReq.id, type: 'success', result: {}}));
+
+      // 3. Later ID-based unsubscribe MUST still unsubscribe 'up-ctx-a' upstream.
+      const idUnsubReq = await upstreamQueue.next();
+      assert.equal(idUnsubReq.method, 'session.unsubscribe');
+      assert.deepEqual(idUnsubReq.params, {subscriptions: ['up-ctx-a']});
+      upstreamSocket.send(JSON.stringify({id: idUnsubReq.id, type: 'success', result: {}}));
+    })();
+
+    const subRes = await sendAndReceive(client, clientQueue, {
+      id: 130,
+      method: 'session.subscribe',
+      params: {events: ['appium:x', 'browsingContext.load'], contexts: ['A']},
+    });
+    assert.equal(subRes.type, 'success');
+    const subId = (subRes.result as StringRecord).subscription as string;
+
+    const globalUnsubRes = await sendAndReceive(client, clientQueue, {
+      id: 131,
+      method: 'session.unsubscribe',
+      params: {events: ['browsingContext.load']},
+    });
+    assert.deepEqual(globalUnsubRes, {id: 131, type: 'success', result: {}});
+
+    const idUnsubRes = await sendAndReceive(client, clientQueue, {
+      id: 132,
+      method: 'session.unsubscribe',
+      params: {subscriptions: [subId]},
+    });
+    assert.deepEqual(idUnsubRes, {id: 132, type: 'success', result: {}});
+    await responder;
+    assert.deepEqual(driver.bidiEventSubs, {});
+  });
+
+  it('isolates local event delivery and legacy event unsubscribe across two proxied sockets on the same session', async function () {
+    const {
+      driver,
+      sessionId,
+      appiumPort,
+      upstreamServer,
+      upstreamSockets,
+      client: clientA,
+      clientQueue: queueA,
+      upstreamSocket: upstreamA,
+      upstreamQueue: upQueueA,
+    } = await setupProxySession();
+
+    const upstreamBConnected = new Promise<WebSocket>((resolve) => {
+      upstreamServer.once('connection', (sock) => {
+        upstreamSockets.push(sock);
+        resolve(sock);
+      });
+    });
+    const clientB = new WebSocket(`ws://127.0.0.1:${appiumPort}/bidi/${sessionId}`);
+    const queueB = createJsonQueue(clientB);
+    cleanups.push(() => clientB.terminate());
+    await new Promise<void>((resolve) => clientB.once('open', resolve));
+    const upstreamB = await upstreamBConnected;
+    const upQueueB = createJsonQueue(upstreamB);
+
+    // 1. Delivery isolation: clientA subscribes to appium:android.contextUpdated; clientB only to appium:sentinelB.
+    const subA = await sendAndReceive(clientA, queueA, {
+      id: 140,
+      method: 'session.subscribe',
+      params: {events: ['appium:android.contextUpdated', 'appium:sentinelA']},
+    });
+    assert.equal(subA.type, 'success');
+    const subB = await sendAndReceive(clientB, queueB, {
+      id: 141,
+      method: 'session.subscribe',
+      params: {events: ['appium:sentinelB']},
+    });
+    assert.equal(subB.type, 'success');
+
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {
+      method: 'appium:android.contextUpdated',
+      params: {from: 'driver'},
+    });
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {method: 'appium:sentinelA', params: {ok: 'A'}});
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {method: 'appium:sentinelB', params: {ok: 'B'}});
+
+    const aEv1 = await queueA.next();
+    const aEv2 = await queueA.next();
+    assert.deepEqual([aEv1.method, aEv2.method], ['appium:android.contextUpdated', 'appium:sentinelA']);
+    // First frame on clientB must be sentinelB (proving appium:android.contextUpdated was NOT delivered to clientB).
+    const bEv1 = await queueB.next();
+    assert.equal(bEv1.method, 'appium:sentinelB');
+    assert.equal(queueB.pendingCount(), 0);
+
+    // 2. Legacy unsubscribe isolation (upstream-only userContexts subscriber vs local subscriber):
+    // clientA subscribes locally + upstream to log.entryAdded; clientB subscribes upstream-only with userContexts.
+    const logSubAResponder = (async () => {
+      const req = await upQueueA.next();
+      upstreamA.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-log-a'}}));
+    })();
+    const logSubA = await sendAndReceive(clientA, queueA, {
+      id: 142,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.equal(logSubA.type, 'success');
+    await logSubAResponder;
+
+    const logSubBResponder = (async () => {
+      const req = await upQueueB.next();
+      assert.deepEqual(req.params, {events: ['log.entryAdded'], userContexts: ['u1']});
+      upstreamB.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-log-b-uc'}}));
+
+      const unsubReq = await upQueueB.next();
+      assert.equal(unsubReq.method, 'session.unsubscribe');
+      assert.deepEqual(unsubReq.params, {events: ['log.entryAdded']});
+      upstreamB.send(JSON.stringify({id: unsubReq.id, type: 'success', result: {}}));
+    })();
+    const logSubB = await sendAndReceive(clientB, queueB, {
+      id: 143,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded'], userContexts: ['u1']},
+    });
+    assert.equal(logSubB.type, 'success');
+
+    // clientB unsubscribes log.entryAdded by event name -> must NOT affect clientA's local log.entryAdded subscription.
+    const unsubUcB = await sendAndReceive(clientB, queueB, {
+      id: 144,
+      method: 'session.unsubscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.deepEqual(unsubUcB, {id: 144, type: 'success', result: {}});
+    await logSubBResponder;
+    assert.deepEqual(driver.bidiEventSubs['log.entryAdded'], ['']);
+
+    // 3. Both sockets subscribe locally to log.entryAdded, then clientB unsubscribes by event name -> clientA stays subscribed.
+    const localLogBResponder = (async () => {
+      const req = await upQueueB.next();
+      upstreamB.send(JSON.stringify({id: req.id, type: 'success', result: {subscription: 'up-log-b-local'}}));
+      const unsubReq = await upQueueB.next();
+      assert.equal(unsubReq.method, 'session.unsubscribe');
+      assert.deepEqual(unsubReq.params, {events: ['log.entryAdded']});
+      upstreamB.send(JSON.stringify({id: unsubReq.id, type: 'success', result: {}}));
+    })();
+    const localLogSubB = await sendAndReceive(clientB, queueB, {
+      id: 145,
+      method: 'session.subscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.equal(localLogSubB.type, 'success');
+    const localLogUnsubB = await sendAndReceive(clientB, queueB, {
+      id: 146,
+      method: 'session.unsubscribe',
+      params: {events: ['log.entryAdded']},
+    });
+    assert.deepEqual(localLogUnsubB, {id: 146, type: 'success', result: {}});
+    await localLogBResponder;
+
+    // Driver store still retains clientA's local log.entryAdded; emitting delivers ONLY to clientA.
+    assert.deepEqual(driver.bidiEventSubs['log.entryAdded'], ['']);
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {method: 'log.entryAdded', params: {text: 'still-for-A'}});
+    driver.eventEmitter.emit(BIDI_EVENT_NAME, {method: 'appium:sentinelB', params: {ok: 'B2'}});
+
+    const aLog = await queueA.next();
+    assert.equal(aLog.method, 'log.entryAdded');
+    assert.deepEqual(aLog.params, {text: 'still-for-A'});
+    const bSentinel2 = await queueB.next();
+    assert.equal(bSentinel2.method, 'appium:sentinelB');
+    assert.deepEqual(bSentinel2.params, {ok: 'B2'});
+    assert.equal(queueB.pendingCount(), 0);
+  });
+
+  it('skips JSON.parse on upstream event frames while still correlating spaced command responses', async function () {
+    const driver = new ProxyTestDriver();
+    await driver.createSession({alwaysMatch: {platformName: 'Fake'}, firstMatch: [{}]});
+    cleanups.push(() => driver.deleteSession());
+
+    const sentToClient: string[] = [];
+    const sentToUpstream: StringRecord[] = [];
+    const fakeClient = Object.assign(new EventEmitter(), {
+      readyState: WebSocket.OPEN,
+      close: () => {},
+    }) as unknown as WebSocket;
+    const fakeUpstream = Object.assign(new EventEmitter(), {
+      readyState: WebSocket.OPEN,
+      close: () => {},
+      terminate: () => {},
+    }) as unknown as WebSocket;
+
+    const bridge = new BidiProxyBridge(
+      fakeClient,
+      fakeUpstream,
+      driver as unknown as ExternalDriver,
+      async (data) => {
+        sentToClient.push(data.toString());
+      },
+      async (data) => {
+        sentToUpstream.push(JSON.parse(data.toString()) as StringRecord);
+      },
+    );
+    bridge.attachUpstreamHandlers();
+
+    const parseSpy = sinon.spy(JSON, 'parse');
+    // 1. Idle upstream event frame -> forwarded raw without calling JSON.parse.
+    const eventFrame = JSON.stringify({type: 'event', method: 'network.responseCompleted', params: {status: 200}});
+    fakeUpstream.emit('message', Buffer.from(eventFrame), false);
+    await setImmediate();
+    assert.equal(parseSpy.callCount, 0);
+    assert.equal(sentToClient[0], eventFrame);
+
+    // 2. While a command is in flight, an event frame without command response markers still skips JSON.parse.
+    const pendingCmd = bridge.handleClientMessage(
+      Buffer.from(JSON.stringify({id: 200, method: 'browsingContext.getTree', params: {}})),
+    );
+    await setImmediate();
+    const syntheticId = sentToUpstream[0].id as number;
+    parseSpy.resetHistory();
+
+    fakeUpstream.emit('message', Buffer.from(eventFrame), false);
+    await setImmediate();
+    assert.equal(parseSpy.callCount, 0);
+    assert.equal(sentToClient[1], eventFrame);
+
+    // 3. Pretty-printed upstream response with spaces around ':' is parsed and restored to client ID 200.
+    const spacedResponse = `{ "type": "success", "id": ${syntheticId}, "result": { "contexts": [] } }`;
+    fakeUpstream.emit('message', Buffer.from(spacedResponse), false);
+    await pendingCmd;
+    assert.equal(parseSpy.callCount, 1);
+    assert.deepEqual(JSON.parse(sentToClient[2]), {id: 200, type: 'success', result: {contexts: []}});
+    bridge.dispose();
   });
 });

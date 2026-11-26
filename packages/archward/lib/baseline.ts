@@ -1,3 +1,4 @@
+import {randomUUID} from 'node:crypto';
 import {mkdir, rename, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
@@ -46,7 +47,7 @@ export async function writeBaseline(file: string, analysis: Analysis, previous: 
   };
   await mkdir(path.dirname(file), {recursive: true});
   // Write to a temp file and rename it into place, so a failure never leaves a partial baseline.
-  const tmp = `${file}.${process.pid}.tmp`;
+  const tmp = `${file}.${randomUUID()}.tmp`;
   try {
     await writeFile(tmp, `${JSON.stringify(next, null, 2)}\n`);
     await rename(tmp, file);

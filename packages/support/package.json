@@ -54,11 +54,11 @@
   "dependencies": {
     "@appium/logger": "~3.0.0",
     "@appium/types": "~2.0.0",
-    "archiver": "^8.0.0",
     "asyncbox": "^7.0.0",
     "axios": "^1.20.0",
     "lockfile": "^1.0.4",
     "mime-types": "^3.0.2",
+    "picomatch": "^4.0.7",
     "plist": "^5.0.0",
     "pluralize": "^8.0.0",
     "sanitize-filename": "^1.6.4",
@@ -66,11 +66,13 @@
     "shell-quote": "^1.12.0",
     "teen_process": "^5.0.0",
     "which": "^7.0.0",
-    "yauzl": "^3.4.0"
+    "yauzl": "^3.4.0",
+    "yazl": "^3.3.1"
   },
   "devDependencies": {
     "@appium/tsconfig": "~2.0.0",
-    "@types/yauzl": "^3.0.0"
+    "@types/yauzl": "^3.0.0",
+    "@types/yazl": "^3.3.1"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

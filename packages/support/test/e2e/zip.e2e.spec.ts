@@ -1126,6 +1126,107 @@ describe('#zip', function () {
     });
   });
 
+  describe('archive writing', function () {
+    let src: string;
+
+    async function listEntries(zipPath: string): Promise<Record<string, number>> {
+      const entries: Record<string, number> = {};
+      await zip.readEntries(zipPath, ({entry}) => {
+        entries[entry.fileName] = entry.externalFileAttributes >>> 16;
+      });
+      return entries;
+    }
+
+    beforeEach(async function () {
+      src = path.resolve(tmpRoot, 'src');
+      await fs.mkdirp(path.resolve(src, 'a', 'b'));
+      await fs.mkdirp(path.resolve(src, 'empty'));
+      await fs.writeFile(path.resolve(src, 'a', 'b', 'c.txt'), 'c');
+      await fs.writeFile(path.resolve(src, 'a', 'skip.log'), 'l');
+      await fs.writeFile(path.resolve(src, '.dot'), 'd');
+    });
+
+    it('toArchive should apply the pattern and ignore filters, skipping dot files', async function () {
+      const dstPath = path.resolve(tmpRoot, 'filtered.zip');
+      await zip.toArchive(dstPath, {cwd: src, pattern: '**/*.{txt,log}', ignore: ['**/*.log']});
+      assert.deepEqual(Object.keys(await listEntries(dstPath)), ['a/b/c.txt']);
+    });
+
+    it('toArchive should include folders but skip dot files with the default pattern', async function () {
+      const dstPath = path.resolve(tmpRoot, 'all.zip');
+      await zip.toArchive(dstPath, {cwd: src});
+      assert.deepEqual(Object.keys(await listEntries(dstPath)).sort(), [
+        'a/',
+        'a/b/',
+        'a/b/c.txt',
+        'a/skip.log',
+        'empty/',
+      ]);
+    });
+
+    it('toInMemoryZip should store dot files, empty folders and a single file under its base name', async function () {
+      const dirZip = path.resolve(tmpRoot, 'dir.zip');
+      await fs.writeFile(dirZip, await zip.toInMemoryZip(src));
+      assert.deepEqual(Object.keys(await listEntries(dirZip)).sort(), [
+        '.dot',
+        'a/',
+        'a/b/',
+        'a/b/c.txt',
+        'a/skip.log',
+        'empty/',
+      ]);
+
+      const fileZip = path.resolve(tmpRoot, 'file.zip');
+      await fs.writeFile(fileZip, await zip.toInMemoryZip(path.resolve(src, 'a', 'b', 'c.txt')));
+      assert.deepEqual(Object.keys(await listEntries(fileZip)), ['c.txt']);
+    });
+
+    it('toInMemoryZip should work without compression', async function () {
+      const dstPath = path.resolve(tmpRoot, 'stored.zip');
+      await fs.writeFile(dstPath, await zip.toInMemoryZip(src, {level: 0}));
+      await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'stored'));
+      assert.strictEqual(await fs.readFile(path.resolve(tmpRoot, 'stored', 'a', 'b', 'c.txt'), 'utf8'), 'c');
+    });
+
+    it('should keep file modes and store symlinks as such', {skip: isWindows()}, async function () {
+      await fs.chmod(path.resolve(src, 'a', 'b', 'c.txt'), 0o755);
+      await fs.symlink('b/c.txt', path.resolve(src, 'a', 'link'));
+      const dstPath = path.resolve(tmpRoot, 'modes.zip');
+      await fs.writeFile(dstPath, await zip.toInMemoryZip(src));
+      const entries = await listEntries(dstPath);
+      assert.strictEqual(entries['a/b/c.txt'], 0o100755);
+      assert.strictEqual(entries['a/link'] & 0o170000, 0o120000);
+
+      await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'out'));
+      assert.strictEqual(await fs.readlink(path.resolve(tmpRoot, 'out', 'a', 'link')), 'b/c.txt');
+    });
+
+    it('toArchive should match folder entries with folder globs and skip the destination archive', async function () {
+      const dstPath = path.resolve(src, 'self.zip');
+      await zip.toArchive(dstPath, {cwd: src, ignore: ['**/b', 'empty']});
+      assert.deepEqual(Object.keys(await listEntries(dstPath)).sort(), ['a/', 'a/b/c.txt', 'a/skip.log']);
+    });
+
+    it('should follow a symlinked source folder', {skip: isWindows()}, async function () {
+      const link = path.resolve(tmpRoot, 'src-link');
+      await fs.symlink(src, link);
+      const dstPath = path.resolve(tmpRoot, 'linked.zip');
+      await fs.writeFile(dstPath, await zip.toInMemoryZip(link));
+      assert.ok('a/b/c.txt' in (await listEntries(dstPath)));
+    });
+
+    it('toArchive should be rejected if the destination cannot be written', async function () {
+      await assert.rejects(zip.toArchive(path.resolve(tmpRoot, 'no', 'such', 'dir.zip'), {cwd: src}), /ENOENT/);
+    });
+
+    it('toArchive should be rejected if the source folder does not exist', async function () {
+      await assert.rejects(
+        zip.toArchive(path.resolve(tmpRoot, 'x.zip'), {cwd: path.resolve(tmpRoot, 'nope')}),
+        /ENOENT/,
+      );
+    });
+  });
+
   describe('unicode filename handling', {skip: isWindows()}, function () {
     let zippedFilePath: string;
     let assetsPath: string;

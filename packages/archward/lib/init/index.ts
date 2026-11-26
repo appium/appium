@@ -75,9 +75,9 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     ['model.c4', rendered.model],
     ...(Object.keys(userConfig).length ? [['config.json', `${JSON.stringify(userConfig, null, 2)}\n`]] : []),
   ];
-  const targets = [...written.map(([name]) => name), 'baseline.json'].map((name) => path.join(modelDir, name));
+  const targets = written.map(([name]) => path.join(modelDir, name));
   const previous = new Map(await Promise.all(targets.map(async (file) => [file, await readIfExists(file)] as const)));
-  // Only files this invocation started writing are rolled back.
+  // Only the files this invocation started writing are rolled back.
   const touched = new Set<string>();
   const createdDir = await mkdir(modelDir, {recursive: true});
   try {
@@ -90,7 +90,7 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     );
     // Fail now if a generated name is not valid LikeC4, rather than on the first check.
     await exportModel(modelDir);
-    touched.add(path.join(modelDir, 'baseline.json'));
+    // The baseline is written atomically as the last step, so a failure never leaves one of ours.
     await updateBaseline(root);
   } catch (err) {
     // Leave no half-initialized model behind, so that a retry is not refused.

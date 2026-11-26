@@ -1,4 +1,4 @@
-import {mkdir, writeFile} from 'node:fs/promises';
+import {mkdir, rename, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 import {readOptionalJson} from './config.js';
@@ -45,5 +45,13 @@ export async function writeBaseline(file: string, analysis: Analysis, previous: 
     },
   };
   await mkdir(path.dirname(file), {recursive: true});
-  await writeFile(file, `${JSON.stringify(next, null, 2)}\n`);
+  // Write to a temp file and rename it into place, so a failure never leaves a partial baseline.
+  const tmp = `${file}.${process.pid}.tmp`;
+  try {
+    await writeFile(tmp, `${JSON.stringify(next, null, 2)}\n`);
+    await rename(tmp, file);
+  } catch (err) {
+    await rm(tmp, {force: true});
+    throw err;
+  }
 }

@@ -314,7 +314,7 @@ Websockets. Implementing handlers for BiDi commands works just the same as imple
 for WebDriver classic commands (described in the previous section). You simply define a method on
 your driver of the appropriate name, and it will be called when the BiDi command is requested by
 the client. To see which specific names you should use for BiDi commands, have a look at
-[bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)
+[bidi-commands](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/bidi-commands)
 
 You are not limited to BiDi commands that are defined in the official BiDi specification. If you
 wish to define new commands, you may do so; you just need to tell Appium about them! See

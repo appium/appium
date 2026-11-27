@@ -1,6 +1,6 @@
 {
   "name": "@appium/archward",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Checks a package's source against its C4 architecture model (component boundaries, import cycles)",
   "keywords": [
     "appium",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/types@2.0.0...@appium/types@3.0.0) (2026-11-27)
+
+### ⚠ BREAKING CHANGES
+
+* **types:** MethodMap, DriverMethodMap, PluginMethodMap, DriverMethodDef, and PluginMethodDef now validate command names and payloadParams against driver and plugin command signatures by default. Pass MethodMap&lt;T, false&gt; or DriverMethodDef&lt;T, true&gt; / PluginMethodDef&lt;T, true&gt; for proxied or handle()-dispatched routes.
+
+### Features
+
+* **types:** check method map payload params against command signatures ([#23158](https://github.com/appium/appium/issues/23158)) ([df431dd](https://github.com/appium/appium/commit/df431dd2719d55e29fdf504947282e6f972cae69))
+
+
 ## [2.0.0](https://github.com/appium/appium/compare/@appium/types@1.7.2...@appium/types@2.0.0) (2026-11-15)
 
 ### ⚠ BREAKING CHANGES

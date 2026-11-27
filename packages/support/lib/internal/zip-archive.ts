@@ -47,8 +47,20 @@ function toMode(stats: Stats): number {
   return isWindows() && stats.isDirectory() ? 0o40755 : stats.mode & 0xffff;
 }
 
-async function addEntry(zip: ZipFile, absPath: string, name: string, stats: Stats, level: number): Promise<void> {
-  const common = {mtime: stats.mtime, mode: toMode(stats)};
+async function addEntry(
+  zip: ZipFile,
+  output: Readable,
+  absPath: string,
+  name: string,
+  stats: Stats,
+  level: number,
+): Promise<void> {
+  const common = {
+    mtime: stats.mtime,
+    mode: toMode(stats),
+    // yazl cannot encode the extended timestamp before the Unix epoch
+    forceDosTimestamp: stats.mtime.getTime() < 0,
+  };
   if (stats.isDirectory()) {
     zip.addEmptyDirectory(name, common);
   } else if (stats.isSymbolicLink()) {
@@ -60,6 +72,10 @@ async function addEntry(zip: ZipFile, absPath: string, name: string, stats: Stat
       const input = createReadStream(absPath);
       // yazl does not listen to it, and files may vanish after the walk
       input.once('error', (err) => zip.emit('error', err));
+      // Release the file if the consumer is gone before the entry is read
+      const destroyInput = () => input.destroy();
+      output.once('close', destroyInput);
+      input.once('close', () => output.off('close', destroyInput));
       cb(null, input);
     });
     /* oxlint-enable promise/prefer-await-to-callbacks */
@@ -71,7 +87,7 @@ async function populate(zip: ZipFile, output: Readable, srcPath: string, opts: Z
   const resolved = path.resolve(srcPath);
   // The root is followed if it is a symlink, while the entries below it are not
   if (!(await stat(resolved)).isDirectory()) {
-    await addEntry(zip, resolved, path.basename(resolved), await lstat(resolved), level);
+    await addEntry(zip, output, resolved, path.basename(resolved), await lstat(resolved), level);
     zip.end();
     return;
   }
@@ -96,7 +112,7 @@ async function populate(zip: ZipFile, output: Readable, srcPath: string, opts: Z
     const name = path.relative(root, absPath).split(path.sep).join('/');
     const isDir = stats.isDirectory();
     if (matches(isIncluded, name, isDir) && !matches(isIgnored, name, isDir)) {
-      await addEntry(zip, absPath, name, stats, level);
+      await addEntry(zip, output, absPath, name, stats, level);
     }
   }
   zip.end();

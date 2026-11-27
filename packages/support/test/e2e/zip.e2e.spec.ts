@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {readdirSync} from 'node:fs';
+import {utimes} from 'node:fs/promises';
 import path from 'node:path';
 import {Readable} from 'node:stream';
 import {afterEach, beforeEach, describe, it} from 'node:test';
@@ -1213,6 +1215,26 @@ describe('#zip', function () {
       const dstPath = path.resolve(tmpRoot, 'linked.zip');
       await fs.writeFile(dstPath, await zip.toInMemoryZip(link));
       assert.ok('a/b/c.txt' in (await listEntries(dstPath)));
+    });
+
+    it('should archive files dated before the Unix epoch', async function () {
+      const old = path.resolve(src, 'a', 'b', 'c.txt');
+      await utimes(old, new Date(-1000), new Date(-1000));
+      const dstPath = path.resolve(tmpRoot, 'epoch.zip');
+      await fs.writeFile(dstPath, await zip.toInMemoryZip(src));
+      await zip.extractAllTo(dstPath, path.resolve(tmpRoot, 'epoch'));
+      assert.strictEqual(await fs.readFile(path.resolve(tmpRoot, 'epoch', 'a', 'b', 'c.txt'), 'utf8'), 'c');
+    });
+
+    it('should release the open file if the consumer fails early', {skip: isWindows()}, async function () {
+      await fs.writeFile(path.resolve(src, 'big.bin'), Buffer.alloc(16 * 1024 * 1024));
+      const countFds = () => readdirSync('/dev/fd').length;
+      const before = countFds();
+      await assert.rejects(zip.toInMemoryZip(src, {level: 0, maxSize: 64 * 1024}), /must not be greater/);
+      for (let i = 0; i < 50 && countFds() > before; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      assert.ok(countFds() <= before, 'the source file is still open');
     });
 
     it(

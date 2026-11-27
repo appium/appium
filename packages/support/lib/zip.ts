@@ -93,7 +93,7 @@ export interface ZipCompressionOptions {
 }
 
 export interface ZipSourceOptions {
-  /** GLOB pattern for compression */
+  /** GLOB pattern for compression (picomatch syntax, e.g. numeric ranges are limited to `{1..3}`, not `{01..03}`) */
   pattern?: string;
   /** The source root folder (the parent folder of the destination file by default) */
   cwd?: string;

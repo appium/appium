@@ -93,11 +93,14 @@ export interface ZipCompressionOptions {
 }
 
 export interface ZipSourceOptions {
-  /** GLOB pattern for compression (picomatch syntax, e.g. numeric ranges are limited to `{1..3}`, not `{01..03}`) */
+  /** GLOB pattern for compression (picomatch syntax; `{01..03}` and `{10..14..2}` ranges are not expanded) */
   pattern?: string;
   /** The source root folder (the parent folder of the destination file by default) */
   cwd?: string;
-  /** The list of ignored patterns */
+  /**
+   * The list of ignored patterns (picomatch syntax). Ranges like `{01..03}` are not expanded,
+   * so such files would be included in the archive; list them explicitly instead.
+   */
   ignore?: string[];
 }
 

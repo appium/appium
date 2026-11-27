@@ -1215,6 +1215,20 @@ describe('#zip', function () {
       assert.ok('a/b/c.txt' in (await listEntries(dstPath)));
     });
 
+    it(
+      'toArchive should be rejected if a file cannot be read',
+      {skip: isWindows() || process.getuid?.() === 0},
+      async function () {
+        const locked = path.resolve(src, 'a', 'b', 'c.txt');
+        await fs.chmod(locked, 0o000);
+        try {
+          await assert.rejects(zip.toArchive(path.resolve(tmpRoot, 'locked.zip'), {cwd: src}), /EACCES/);
+        } finally {
+          await fs.chmod(locked, 0o644);
+        }
+      },
+    );
+
     it('toArchive should be rejected if the destination cannot be written', async function () {
       await assert.rejects(zip.toArchive(path.resolve(tmpRoot, 'no', 'such', 'dir.zip'), {cwd: src}), /ENOENT/);
     });

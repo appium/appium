@@ -54,11 +54,14 @@ async function addEntry(zip: ZipFile, absPath: string, name: string, stats: Stat
   } else if (stats.isSymbolicLink()) {
     zip.addBuffer(Buffer.from(await readlink(absPath)), name, {...common, compress: false});
   } else if (stats.isFile()) {
-    // Lazy, so only one file is open at a time and no stat is repeated (yazl API is callback-based)
+    // Lazy, so only one file is open at a time (yazl API is callback-based)
     /* oxlint-disable promise/prefer-await-to-callbacks */
-    zip.addReadStreamLazy(name, {...common, compressionLevel: level, size: stats.size}, (cb) =>
-      cb(null, createReadStream(absPath)),
-    );
+    zip.addReadStreamLazy(name, {...common, compressionLevel: level}, (cb) => {
+      const input = createReadStream(absPath);
+      // yazl does not listen to it, and files may vanish after the walk
+      input.once('error', (err) => zip.emit('error', err));
+      cb(null, input);
+    });
     /* oxlint-enable promise/prefer-await-to-callbacks */
   }
 }

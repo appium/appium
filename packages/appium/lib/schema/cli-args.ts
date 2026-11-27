@@ -11,7 +11,7 @@ import {
   type AppiumJSONSchemaKeywords,
 } from './cli-transformers.js';
 import {formatErrors} from './format-errors.js';
-import {flattenSchema, validate} from './schema.js';
+import {appiumSchema, type AppiumSchema} from './schema.js';
 
 export type ArgumentDefinitions = Map<[name: string] | [name: string, alias: string], ArgumentOptions>;
 
@@ -34,9 +34,11 @@ const SHORT_ARG_CUTOFF = 3;
  * Converts the finalized, flattened schema representation into
  * `ArgumentDefinitions` for handoff to `argparse`.
  */
-export function toParserArgs(): ArgumentDefinitions {
-  const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
-  return new Map(flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec)));
+export function toParserArgs(configSchema = appiumSchema): ArgumentDefinitions {
+  const flattened = configSchema.flatten().filter(({schema}) => !schema.appiumCliIgnored);
+  return new Map(
+    flattened.map(({schema, argSpec}) => subSchemaToArgDef(schema as AppiumJSONSchema, argSpec, configSchema)),
+  );
 }
 
 /**
@@ -60,18 +62,19 @@ const screamingSnakeCase = (s: string) => kebabCase(s).replace(/-/g, '_').toUppe
  * Given an argument spec, return a validator/coercer function backed by schema validation.
  */
 function getSchemaValidator<Coerced>(
+  configSchema: AppiumSchema,
   {ref: schemaId}: ArgSpec,
   coerce: (value: string) => Coerced = (value) => value as Coerced,
 ): (value: string) => Coerced {
   return (value) => {
     const coerced = coerce(value);
-    const errors = validate(coerced, schemaId);
+    const errors = configSchema.validate(coerced, schemaId);
     if (util.isEmpty(errors)) {
       return coerced;
     }
     // the error formatter needs the parsed data (not the raw string) to locate errors inside objects
     const data = util.isPlainObject(coerced) ? coerced : value;
-    const formattedErrors = formatErrors(errors, data, {schemaId});
+    const formattedErrors = formatErrors(errors, data, {schema: configSchema.getSchema(schemaId)});
     const formattedErrorsStr =
       typeof formattedErrors === 'string' ? formattedErrors : formattedErrors.map((e) => e.error).join(', ');
     throw new ArgumentTypeError('\n\n' + formattedErrorsStr);
@@ -87,7 +90,7 @@ function makeDescription(schema: AppiumJSONSchema): string {
   return desc;
 }
 
-function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDef {
+function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec, configSchema: AppiumSchema): ArgDef {
   const {type, appiumCliAliases, appiumCliTransformer, enum: enumValues} = subSchema;
   const {name, arg} = argSpec;
 
@@ -114,7 +117,7 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.OBJECT: {
-      argTypeFunction = getSchemaValidator(argSpec, (value: string) => {
+      argTypeFunction = getSchemaValidator(configSchema, argSpec, (value: string) => {
         const o = transformers.json(value);
         if (!util.isPlainObject(o)) {
           throw new ArgumentTypeError(
@@ -130,15 +133,15 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.NUMBER: {
-      argTypeFunction = getSchemaValidator(argSpec, parseFloat);
+      argTypeFunction = getSchemaValidator(configSchema, argSpec, parseFloat);
       break;
     }
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(argSpec, (v) => parseInt(v, 10));
+      argTypeFunction = getSchemaValidator(configSchema, argSpec, (v) => parseInt(v, 10));
       break;
     }
     case TYPENAMES.STRING: {
-      argTypeFunction = getSchemaValidator(argSpec);
+      argTypeFunction = getSchemaValidator(configSchema, argSpec);
       break;
     }
     case TYPENAMES.NULL:

@@ -107,6 +107,33 @@ export interface ProgrammaticArgs {
   showDebugInfo?: boolean;
 }
 
+/**
+ * An imported Appium driver constructor.
+ * Each driver can declare its own options type. Appium supplies the options
+ * and capability-validation flag when it creates a session. The session method
+ * identifies drivers without requiring the same version of the instance types.
+ */
+type EmbeddedDriverConstructor = new (
+  options: never,
+  shouldValidateCaps: boolean,
+) => {
+  createSession(...args: never[]): unknown;
+};
+
+/** An ESM namespace with at least one Appium driver export. */
+export type EmbeddedDriverModule<Exports extends object = {readonly default: EmbeddedDriverConstructor}> = {
+  [Name in keyof Exports]-?: Exports[Name] extends EmbeddedDriverConstructor ? Name : never;
+}[keyof Exports] &
+  (string | number) extends never
+  ? never
+  : Exports;
+
+type DriverSelectionEntry<Entry> = Entry extends string | EmbeddedDriverConstructor
+  ? Entry
+  : Entry extends object
+    ? EmbeddedDriverModule<Entry>
+    : never;
+
 export interface DriverExtArgs {
   driverCommand: CliExtensionSubcommand;
   driver?: string;
@@ -200,6 +227,17 @@ export type Args<
   Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
 > = Cmd extends CliCommandServer ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs> : ParsedArgs<Cmd, SubCmd>;
+
+/** Inputs to programmatic main, with any driver namespace entries checked for a driver export. */
+export type MainArgs<
+  Cmd extends CliCommand = CliCommandServer,
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
+  Drivers extends readonly (string | object)[] = readonly (string | EmbeddedDriverConstructor | EmbeddedDriverModule)[],
+> = Cmd extends CliCommandServer
+  ? Omit<Args<Cmd, SubCmd>, 'useDrivers'> & {
+      useDrivers?: Drivers & {[Index in keyof Drivers]: DriverSelectionEntry<Drivers[Index]>};
+    }
+  : Args<Cmd, SubCmd>;
 
 /**
  * Shown by `appium --build-info`

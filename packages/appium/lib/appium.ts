@@ -50,7 +50,8 @@ import {
 } from './helpers/capability.js';
 import * as insecureFeatures from './insecure-features.js';
 import * as inspectorCommands from './inspector-commands.js';
-import {getDefaultsForExtension} from './schema/index.js';
+import {ArgSpec} from './schema/arg-spec.js';
+import {appiumSchema} from './schema/schema.js';
 import {pickBy} from './utils/index.js';
 
 const desiredCapabilityConstraints = {
@@ -144,8 +145,12 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
 
   /**
    * @param opts - CLI/server options (address, port, security, default capabilities, etc.)
+   * @param configSchema - schema used to build this server's options
    */
-  constructor(opts: DriverOpts<AppiumDriverConstraints>) {
+  constructor(
+    opts: DriverOpts<AppiumDriverConstraints>,
+    readonly configSchema = appiumSchema,
+  ) {
     // It is necessary to set `--tmp` here since it should be set to
     // process.env.APPIUM_TMP_DIR once at an initial point in the Appium lifecycle.
     // The process argument will be referenced by BaseDriver.
@@ -261,12 +266,14 @@ export class AppiumDriver extends DriverCore<AppiumDriverConstraints> {
    * there is nothing to pass after omitting defaults.
    */
   getCliArgsForDriver(extName: string): StringRecord | undefined {
-    const allCliArgsForExt = this.args.driver?.[extName] as StringRecord | undefined;
+    const normalizedName = ArgSpec.toNormalizedExtName(extName);
+    const driverArgs = this.args.driver;
+    const allCliArgsForExt = (driverArgs?.[extName] ?? driverArgs?.[normalizedName]) as StringRecord | undefined;
     if (util.isEmpty(allCliArgsForExt)) {
       return undefined;
     }
 
-    const defaults = getDefaultsForExtension(DRIVER_TYPE, extName);
+    const defaults = this.configSchema.getDefaultsForExtension(DRIVER_TYPE, normalizedName);
     const cliArgs = util.isEmpty(defaults)
       ? allCliArgsForExt
       : pickBy(

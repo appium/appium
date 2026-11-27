@@ -137,6 +137,7 @@ describe('AppiumDriver', function () {
 
       // stub does not satisfy DriverConfig typing
       (appium as any).driverConfig = {
+        getAutomationNames: () => ({}),
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,
           version: '1.2.3',
@@ -715,7 +716,11 @@ describe('AppiumDriver', function () {
         fakeDriver.sessionId = SESSION_ID;
         sandbox.stub(fakeDriver, 'execute').resolves(scriptResult);
         const port = await getTestPort();
-        const appiumServer = await server({routeConfiguringFunction: routeConfiguringFunction(appium), port});
+        const appiumServer = await server({
+          routeConfiguringFunction: routeConfiguringFunction(appium),
+          hostname: TEST_HOST,
+          port,
+        });
         try {
           const {status, data} = await httpPost(`http://${TEST_HOST}:${port}/session/${SESSION_ID}/execute/sync`, {
             script: 'return arguments[0]',
@@ -827,6 +832,7 @@ describe('AppiumDriver', function () {
         }
         class ProbeDriver extends BaseDriver<Constraints> {}
         (appium as any).driverConfig = {
+          getAutomationNames: () => ({probe: 'Fake'}),
           findMatchingDriver: sandbox.stub().returns({driver: ProbeDriver, version: '1.2.3', driverName: 'probe'}),
         };
         setPluginClassesForTest(appium, new Map<any, string>([[SessionStatePlugin, 'state']]));
@@ -1022,6 +1028,7 @@ describe('AppiumDriver', function () {
         }
         class ProbeDriver extends BaseDriver<Constraints> {}
         (appium as any).driverConfig = {
+          getAutomationNames: () => ({probe: 'Fake'}),
           findMatchingDriver: sandbox
             .stub()
             .onFirstCall()
@@ -1068,6 +1075,7 @@ describe('AppiumDriver', function () {
         // stub does not satisfy DriverConfig typing
         (appium as any).driverConfig = {
           installedExtensions: {[driverName]: {automationName}},
+          getAutomationNames: () => ({[driverName]: automationName}),
           findMatchingDriver: sandbox.stub().returns({
             driver: mockedDriverReturnerClass,
             version: '1.2.3',
@@ -1254,6 +1262,7 @@ describe('AppiumDriver', function () {
             'my-driver': {automationName: 'MyAutomation'},
             other: {automationName: 'MY-DRIVER'},
           },
+          getAutomationNames: () => ({'my-driver': 'MyAutomation', other: 'MY-DRIVER'}),
         };
         appium.configureGlobalFeatures();
         const driver = new BaseDriver();

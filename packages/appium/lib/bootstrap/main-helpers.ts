@@ -14,6 +14,7 @@ import type {DriverNameMap, PluginNameMap} from '../extension/index.js';
 import {APPIUM_VER, getBuildInfo, getGitRev, updateBuildInfo} from '../helpers/build.js';
 import {log as logger} from '../logger.js';
 import {validate as validateSchema} from '../schema/schema.js';
+import type {AppiumSchema} from '../schema/schema.js';
 import {checkNodeOk, requireDir} from './node-helpers.js';
 import {getNonDefaultServerArgs} from './startup-config.js';
 
@@ -93,7 +94,7 @@ export async function preflightChecks(args: ParsedArgs<CliCommandServer>, throwI
 /**
  * Prints welcome line (version + optional git rev), non-default server args, and default capabilities.
  */
-export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promise<void> {
+export async function logStartupInfo(args: ParsedArgs<CliCommandServer>, configSchema?: AppiumSchema): Promise<void> {
   let welcome = `Welcome to Appium v${APPIUM_VER}`;
   const appiumRev = await getGitRev();
   if (appiumRev) {
@@ -101,7 +102,7 @@ export async function logStartupInfo(args: ParsedArgs<CliCommandServer>): Promis
   }
   logger.info(welcome);
 
-  const showArgs = getNonDefaultServerArgs(args);
+  const showArgs = getNonDefaultServerArgs(args, configSchema);
   if (Object.keys(showArgs).length) {
     logNonDefaultArgsWarning(showArgs);
   }
@@ -142,6 +143,9 @@ export function buildServerOpts(
   pluginClasses: PluginNameMap,
 ): {serverOpts: ServerOpts; normalizedBasePath: string} {
   const routeConfiguringFunction = makeRouter(appiumDriver);
+  // Normalize package locations and embedded classes to the names expected by hooks.
+  const activeNames = appiumDriver.driverConfig.activeProgrammaticDriverNames;
+  const cliArgs = activeNames ? {...parsedArgs, useDrivers: activeNames} : parsedArgs;
   const serverOpts: ServerOpts = {
     routeConfiguringFunction,
     port: parsedArgs.port,
@@ -150,7 +154,7 @@ export function buildServerOpts(
     basePath: parsedArgs.basePath,
     serverUpdaters: getServerUpdaters(driverClasses, pluginClasses),
     extraMethodMap: getExtraMethodMap(driverClasses, pluginClasses),
-    cliArgs: parsedArgs,
+    cliArgs,
   };
   const normalizedBasePath = normalizeBasePath(parsedArgs.basePath);
   for (const timeoutArgName of ['keepAliveTimeout', 'requestTimeout'] as const) {

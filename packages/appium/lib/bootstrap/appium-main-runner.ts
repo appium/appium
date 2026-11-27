@@ -9,7 +9,7 @@ import type {
   CliExtensionSubcommand,
 } from 'appium/types/index.js';
 
-import {getActiveDrivers, getActivePlugins} from '../extension/index.js';
+import {getActivePlugins, loadActiveDrivers} from '../extension/index.js';
 import {log as logger} from '../logger.js';
 import type {InitResult, ServerInitData} from './init-types.js';
 import {buildServerOpts, createAppiumServer, determineAppiumHomeSource, logStartupInfo} from './main-helpers.js';
@@ -26,6 +26,7 @@ export class AppiumMainRunner {
    *
    * @param initResult - Output of {@link AppiumInitializer.init}
    * @param args - Original args (used to describe `appiumHome` source in logs)
+   * @param useDrivers - Original programmatic selection when it contains embedded modules
    */
   async run<
     Cmd extends CliCommand = CliCommandServer,
@@ -33,6 +34,7 @@ export class AppiumMainRunner {
   >(
     initResult: InitResult<Cmd>,
     args?: Args<Cmd, SubCmd>,
+    useDrivers?: readonly (string | object)[],
   ): Promise<Cmd extends CliCommandServer ? AppiumServer : void> {
     if (util.isEmpty(initResult)) {
       return undefined as Cmd extends CliCommandServer ? AppiumServer : void;
@@ -49,7 +51,7 @@ export class AppiumMainRunner {
       appiumDriver.pluginClasses.set(pluginClass, name);
     }
 
-    await logStartupInfo(parsedArgs);
+    await logStartupInfo(parsedArgs, appiumDriver.configSchema);
 
     appiumDriver.configureGlobalFeatures();
     // the rules are enforced by the shared app download helper of every driver
@@ -58,10 +60,10 @@ export class AppiumMainRunner {
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);
 
-    const driverClasses = await getActiveDrivers(
+    const driverClasses = await loadActiveDrivers(
       driverConfig,
       parsedArgs.driversImportChunkSize,
-      parsedArgs.useDrivers,
+      useDrivers ?? parsedArgs.useDrivers,
     );
     const {serverOpts, normalizedBasePath} = buildServerOpts(appiumDriver, parsedArgs, driverClasses, pluginClasses);
 
@@ -75,7 +77,7 @@ export class AppiumMainRunner {
 
     this.attachSignalHandlers(appiumDriver, server);
 
-    driverConfig.print();
+    driverConfig.print([...driverClasses.values()]);
     pluginConfig.print([...pluginClasses.values()]);
 
     return server as Cmd extends CliCommandServer ? AppiumServer : void;

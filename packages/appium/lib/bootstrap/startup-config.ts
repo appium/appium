@@ -2,7 +2,7 @@
 import {util} from '@appium/support';
 import type {Args} from 'appium/types/index.js';
 
-import {getAllArgSpecs, getDefaultsForSchema} from '../schema/schema.js';
+import {appiumSchema} from '../schema/schema.js';
 import {difference, getPath, pickBy, setPath} from '../utils/index.js';
 import type {ReadConfigFileResult} from './config-file.js';
 
@@ -16,13 +16,13 @@ interface FlattenedArg {
  *
  * @param parsedArgs - Fully merged server args (CLI + config + defaults)
  */
-export function getNonDefaultServerArgs(parsedArgs: Args): Args {
+export function getNonDefaultServerArgs(parsedArgs: Args, configSchema = appiumSchema): Args {
   /**
    * Flattens parsed args into a single level object for comparison with
    * flattened defaults across server args and extension args.
    */
   const flatten = (args: Args): Record<string, FlattenedArg> => {
-    const argSpecs = getAllArgSpecs();
+    const argSpecs = configSchema.getAllArgSpecs();
     const flattened = [...argSpecs.values()].reduce<Record<string, FlattenedArg>>((acc, argSpec: {dest: string}) => {
       const value = getPath(args, argSpec.dest);
       if (value !== undefined) {
@@ -71,7 +71,7 @@ export function getNonDefaultServerArgs(parsedArgs: Args): Args {
       (defaultValueIsArray(dest) && argValueNotArrayOrArraysDiffer(dest)) ||
       defaultValueNotArrayAndValuesDiffer(dest));
 
-  const defaultsFromSchema = getDefaultsForSchema(true) as Record<string, unknown>;
+  const defaultsFromSchema = configSchema.getDefaults(true) as Record<string, unknown>;
 
   const nonDefault = pickBy(args, (_v, key) => isNotDefault(String(key)));
   const result = {} as Args;

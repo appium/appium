@@ -1,5 +1,5 @@
 import {console as supportConsole, util} from '@appium/support';
-import type {DriverOpts} from '@appium/types';
+import type {AppiumConfig, DriverOpts} from '@appium/types';
 import type {
   Args,
   CliCommand,
@@ -12,10 +12,10 @@ import type {
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
 import {injectAppiumSymlinks} from '../cli/extension-command.js';
 import {runExtensionCommand} from '../cli/extension.js';
-import {ArgParser, getParser} from '../cli/parser.js';
+import {ArgParser, getCliServerSelection, getParser} from '../cli/parser.js';
 import {runSetupCommand} from '../cli/setup-command.js';
 import {SERVER_SUBCOMMAND} from '../constants.js';
-import {type ExtensionConfigs, loadExtensions} from '../extension/index.js';
+import {type ExtensionConfigs, isDriverLocation, loadExtensions} from '../extension/index.js';
 import {log as logger} from '../logger.js';
 import {init as logsinkInit} from '../logsink.js';
 import type {ErrorObject} from '../schema/ajv.js';
@@ -26,20 +26,20 @@ import {
   isServerCommandArgs,
   isSetupCommandArgs,
 } from '../schema/cli-args-guards.js';
-import {getDefaultsForSchema} from '../schema/schema.js';
+import {appiumSchema, type AppiumSchema} from '../schema/schema.js';
 import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
-import {readConfigFile} from './config-file.js';
+import {loadConfigFile, validateConfigFile, type ReadConfigFileResult} from './config-file.js';
 import type {InitResult, PreConfigArgs} from './init-types.js';
 import {determineAppiumHomeSource, preflightChecks} from './main-helpers.js';
 import {adjustNodePath, requireDir, showDebugInfo} from './node-helpers.js';
 import {getNonDefaultServerArgs, showConfig} from './startup-config.js';
 
+type PreConfig = {preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean};
+
 /**
  * Parses CLI/programmatic args, loads config and extensions, and returns server-ready state or runs extension/setup flows.
  */
 export class AppiumInitializer {
-  private throwInsteadOfExit = false;
-
   /**
    * Resolves Appium home, loads config, and either returns server-ready state for the server subcommand
    * or performs setup/extension CLI work and returns an empty result.
@@ -50,29 +50,46 @@ export class AppiumInitializer {
     Cmd extends CliCommand = CliCommandServer,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
   >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
-    this.throwInsteadOfExit = false;
-
     const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     await requireDir(appiumHome, false, appiumHomeSourceName);
 
     adjustNodePath();
 
-    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+    const extensions = await loadExtensions(appiumHome);
+    const {driverConfig, pluginConfig} = extensions;
+    const serverDriverConfig = driverConfig.createServerConfig();
+    const selection = args ? getProgrammaticServerSelection(args as PreConfigArgs) : getCliServerSelection();
+    const configFile = selection && !selection.help ? await loadConfigFile(selection.configFile) : undefined;
+    const fileConfig = configFile?.result?.config as AppiumConfig | undefined;
+    const useDrivers = selection?.useDrivers ?? fileConfig?.server?.['use-drivers'];
+    if (Array.isArray(useDrivers) && useDrivers.every((entry) => typeof entry === 'string')) {
+      for (const location of useDrivers.filter(isDriverLocation)) {
+        await serverDriverConfig.addResolvedDriver(location);
+      }
+    }
 
-    const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
-    this.throwInsteadOfExit = throwInsteadOfExit;
+    const configSchema = await serverDriverConfig.getStartupSchema();
+    // The existing public schema helpers still describe the installed extensions.
+    await appiumSchema.finalize();
+    const preConfig = await this.parsePreConfigArgs(configSchema, args);
+    const {preConfigArgs} = preConfig;
 
-    const configResult = await readConfigFile(preConfigArgs.configFile);
+    const loadedFile =
+      configFile && selection?.configFile === preConfigArgs.configFile
+        ? configFile
+        : await loadConfigFile(preConfigArgs.configFile);
+    const configResult = validateConfigFile(loadedFile, {}, configSchema);
     this.assertConfigFileOk(configResult);
 
     if (isServerCommandArgs(preConfigArgs)) {
+      serverDriverConfig.normalizeResolvedDriverArgs(configResult.config, configSchema);
       return this.finishServerInit(
-        preConfigArgs,
+        preConfig,
         configResult,
-        driverConfig,
-        pluginConfig,
-        appiumHome,
+        extensions,
+        serverDriverConfig,
+        configSchema,
         appiumHomeSourceName,
       );
     }
@@ -91,27 +108,20 @@ export class AppiumInitializer {
   private async parsePreConfigArgs<
     Cmd extends CliCommand,
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void,
-  >(args?: Args<Cmd, SubCmd>): Promise<{preConfigArgs: PreConfigArgs; throwInsteadOfExit: boolean}> {
-    const parser = await getParser();
-    let throwInsteadOfExit = false;
-
+  >(configSchema: AppiumSchema, args?: Args<Cmd, SubCmd>): Promise<PreConfig> {
     if (args) {
-      if (args.throwInsteadOfExit) {
-        throwInsteadOfExit = true;
-        delete args.throwInsteadOfExit;
-      }
-      const preConfigArgs = {
-        ...args,
-        subcommand: args.subcommand ?? SERVER_SUBCOMMAND,
-      } as PreConfigArgs;
-      ArgParser.normalizeServerArgs(preConfigArgs);
+      await configSchema.finalize();
+      const {throwInsteadOfExit = false, ...serverArgs} = args;
+      const preConfigArgs = {...serverArgs, subcommand: args.subcommand ?? SERVER_SUBCOMMAND} as PreConfigArgs;
+      ArgParser.normalizeServerArgs(preConfigArgs, configSchema);
       return {preConfigArgs, throwInsteadOfExit};
     }
 
-    return {preConfigArgs: parser.parseArgs() as PreConfigArgs, throwInsteadOfExit};
+    const parser = await getParser(false, configSchema);
+    return {preConfigArgs: parser.parseArgs() as PreConfigArgs, throwInsteadOfExit: false};
   }
 
-  private assertConfigFileOk(configResult: Awaited<ReturnType<typeof readConfigFile>>): void {
+  private assertConfigFileOk(configResult: ReadConfigFileResult): void {
     if (!util.isEmpty(configResult.errors)) {
       let errorsListString: string;
       if (configResult.reason) {
@@ -127,14 +137,15 @@ export class AppiumInitializer {
   }
 
   private async finishServerInit<Cmd extends CliCommand>(
-    preConfigArgs: PreConfigArgs,
-    configResult: Awaited<ReturnType<typeof readConfigFile>>,
-    driverConfig: ExtensionConfigs['driverConfig'],
-    pluginConfig: ExtensionConfigs['pluginConfig'],
-    appiumHome: string,
+    {preConfigArgs, throwInsteadOfExit}: PreConfig,
+    configResult: ReadConfigFileResult,
+    {driverConfig, pluginConfig}: ExtensionConfigs,
+    serverDriverConfig: ExtensionConfigs['driverConfig'],
+    configSchema: AppiumSchema,
     appiumHomeSourceName: string,
   ): Promise<InitResult<Cmd>> {
-    const defaults = getDefaultsForSchema(false);
+    const {appiumHome} = serverDriverConfig;
+    const defaults = configSchema.getDefaults(false);
     const serverArgs = defaultsDeep(
       {},
       preConfigArgs as Record<string, unknown>,
@@ -143,7 +154,7 @@ export class AppiumInitializer {
     ) as unknown as ParsedArgs<CliCommandServer>;
 
     if (preConfigArgs.showConfig) {
-      showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
+      showConfig(getNonDefaultServerArgs(preConfigArgs as Args, configSchema), configResult, defaults, serverArgs);
       this.printValidationSummaries(driverConfig, pluginConfig);
       return {} as InitResult<Cmd>;
     }
@@ -167,14 +178,14 @@ export class AppiumInitializer {
       await requireDir(appiumHome, true, appiumHomeSourceName);
     }
 
-    const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>);
-    appiumDriver.driverConfig = driverConfig;
-    await preflightChecks(serverArgs, this.throwInsteadOfExit);
+    const appiumDriver = new AppiumDriver(serverArgs as DriverOpts<AppiumDriverConstraints>, configSchema);
+    appiumDriver.driverConfig = serverDriverConfig;
+    await preflightChecks(serverArgs, throwInsteadOfExit);
 
     return {
       appiumDriver,
       parsedArgs: serverArgs,
-      driverConfig,
+      driverConfig: serverDriverConfig,
       pluginConfig,
       appiumHome,
     } as InitResult<Cmd>;
@@ -229,5 +240,11 @@ export class AppiumInitializer {
         await injectAppiumSymlinks(driverConfig, pluginConfig, symlinkLog);
       }
     }
+  }
+}
+
+function getProgrammaticServerSelection(args: PreConfigArgs): ReturnType<typeof getCliServerSelection> {
+  if (!args.subcommand || isServerCommandArgs(args)) {
+    return {configFile: args.configFile, useDrivers: 'useDrivers' in args ? args.useDrivers : undefined};
   }
 }

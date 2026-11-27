@@ -1,14 +1,14 @@
 import path from 'node:path';
 import stream from 'node:stream';
+import {pipeline} from 'node:stream/promises';
 
-// @ts-ignore - archiver 8.0 types are not available; 7.x types don't match
-import {ZipArchive} from 'archiver';
 import type * as yauzl from 'yauzl';
 
 import {fs} from './fs.js';
 import {
   createBase64EncodeStream,
   createOpenReadStream,
+  createZipStream,
   extractZipStream,
   openZip,
   type OpenReadStreamFn,
@@ -67,7 +67,7 @@ export interface ZipEntry {
 export interface ZipOptions {
   /** Whether to encode the resulting archive to a base64-encoded string */
   encodeToBase64?: boolean;
-  /** Whether to log the actual archiver performance */
+  /** Whether to log the actual zipping performance */
   isMetered?: boolean;
   /**
    * The maximum size of the resulting archive in bytes.
@@ -93,11 +93,14 @@ export interface ZipCompressionOptions {
 }
 
 export interface ZipSourceOptions {
-  /** GLOB pattern for compression */
+  /** GLOB pattern for compression (picomatch syntax; `{01..03}` and `{10..14..2}` ranges are not expanded) */
   pattern?: string;
   /** The source root folder (the parent folder of the destination file by default) */
   cwd?: string;
-  /** The list of ignored patterns */
+  /**
+   * The list of ignored patterns (picomatch syntax). Ranges like `{01..03}` are not expanded,
+   * so such files would be included in the archive; list them explicitly instead.
+   */
   ignore?: string[];
 }
 
@@ -242,64 +245,40 @@ export async function toInMemoryZip(srcPath: string, opts: ZipOptions = {}): Pro
   const {isMetered = true, encodeToBase64 = false, maxSize = 1 * GiB, level = 9} = opts;
   const resultBuffers: Buffer[] = [];
   let resultBuffersSize = 0;
-  // Create a writable stream that zip buffers will be streamed to
+  let srcSize = 0;
+  let sizeError: Error | null = null;
   const resultWriteStream = new stream.Writable({
     write(buffer: Buffer, _encoding: string, next: (err?: Error) => void) {
       resultBuffers.push(buffer);
       resultBuffersSize += buffer.length;
       if (maxSize > 0 && resultBuffersSize > maxSize) {
-        resultWriteStream.emit(
-          'error',
-          new Error(`The size of the resulting ` + `archive must not be greater than ${toReadableSizeString(maxSize)}`),
+        sizeError = new Error(
+          `The size of the resulting archive must not be greater than ${toReadableSizeString(maxSize)}`,
         );
+        next(sizeError);
+        return;
       }
       next();
     },
   });
-
-  // Zip 'srcDir' and stream it to the above writable stream
-  const archive = new ZipArchive({
-    zlib: {level},
-  });
-  let srcSize: number | null = null;
-  const base64EncoderStream = encodeToBase64 ? createBase64EncodeStream() : null;
-  const resultWriteStreamPromise = new Promise<void>((resolve, reject) => {
-    resultWriteStream.once('error', (e: Error) => {
-      if (base64EncoderStream) {
-        archive.unpipe(base64EncoderStream);
-        base64EncoderStream.unpipe(resultWriteStream);
-      } else {
-        archive.unpipe(resultWriteStream);
-      }
-      archive.abort();
-      archive.destroy();
-      reject(e);
-    });
-    resultWriteStream.once('finish', () => {
-      srcSize = archive.pointer();
-      resolve();
-    });
-  });
-  const archiveStreamPromise = new Promise<void>((resolve, reject) => {
-    archive.once('finish', resolve);
-    archive.once('error', (e: Error) => reject(new Error(`Failed to archive '${srcPath}': ${e.message}`)));
+  // Counts the raw archive size, as the output might be base64-encoded afterwards
+  const sizeCounter = new stream.Transform({
+    transform(chunk: Buffer, _encoding, next) {
+      srcSize += chunk.length;
+      next(null, chunk);
+    },
   });
   const timer = isMetered ? new Timer().start() : null;
-  if ((await fs.stat(srcPath)).isDirectory()) {
-    archive.directory(srcPath, false);
-  } else {
-    archive.file(srcPath, {
-      name: path.basename(srcPath),
-    });
+  try {
+    await pipeline(
+      createZipStream(srcPath, {level}),
+      ...(isMetered ? [sizeCounter] : []),
+      ...(encodeToBase64 ? [createBase64EncodeStream()] : []),
+      resultWriteStream,
+    );
+  } catch (e) {
+    throw e === sizeError ? e : new Error(`Failed to archive '${srcPath}': ${(e as Error).message}`);
   }
-  if (base64EncoderStream) {
-    archive.pipe(base64EncoderStream);
-    base64EncoderStream.pipe(resultWriteStream);
-  } else {
-    archive.pipe(resultWriteStream);
-  }
-
-  await Promise.all([archive.finalize(), archiveStreamPromise, resultWriteStreamPromise]);
 
   if (timer) {
     log.debug(
@@ -361,31 +340,7 @@ export async function toArchive(
 ): Promise<void> {
   const {level = 9} = opts;
   const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
-  const archive = new ZipArchive({zlib: {level}});
-  const outStream = fs.createWriteStream(dstPath);
-  await new Promise<void>((resolve, reject) => {
-    const outFinished = new Promise<void>((_resolve, _reject) => {
-      outStream.once('error', (e: Error) => {
-        archive.unpipe(outStream);
-        archive.abort();
-        archive.destroy();
-        _reject(e);
-      });
-      outStream.once('finish', () => _resolve());
-    });
-
-    archive
-      .glob(pattern, {
-        cwd,
-        ignore,
-      })
-      .on('error', reject)
-      .pipe(outStream);
-
-    void Promise.all([archive.finalize(), outFinished])
-      .then(() => resolve())
-      .catch(reject);
-  });
+  await pipeline(createZipStream(cwd, {level, pattern, ignore, exclude: dstPath}), fs.createWriteStream(dstPath));
 }
 
 export default {

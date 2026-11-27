@@ -13,6 +13,7 @@ export {
   uploadFileToHttp,
 } from './http-upload.js';
 export {createBase64EncodeStream} from './base64-encode-stream.js';
+export {createZipStream, type ZipArchiveOptions} from './zip-archive.js';
 export type {EntryFs, ExtractFs, MoveFs} from './fs-like.js';
 export {MoveOperation, type MvOptions} from './move-operation.js';
 export {isPlainObject} from './plain-object.js';

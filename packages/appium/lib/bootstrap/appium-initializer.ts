@@ -26,7 +26,7 @@ import {
   isServerCommandArgs,
   isSetupCommandArgs,
 } from '../schema/cli-args-guards.js';
-import {emitCliNumberCoercionWarnings} from '../schema/cli-args.js';
+import {discardCliNumberCoercionWarnings, emitCliNumberCoercionWarnings} from '../schema/cli-args.js';
 import {getDefaultsForSchema} from '../schema/schema.js';
 import {defaultsDeep, resolveAppiumHome} from '../utils/index.js';
 import {readConfigFile} from './config-file.js';
@@ -52,7 +52,20 @@ export class AppiumInitializer {
     SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
   >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
     this.throwInsteadOfExit = false;
+    discardCliNumberCoercionWarnings();
 
+    try {
+      return await this.initFromArgs(args);
+    } catch (err) {
+      discardCliNumberCoercionWarnings();
+      throw err;
+    }
+  }
+
+  private async initFromArgs<
+    Cmd extends CliCommand = CliCommandServer,
+    SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void,
+  >(args?: Args<Cmd, SubCmd>): Promise<InitResult<Cmd>> {
     const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
     const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
     await requireDir(appiumHome, false, appiumHomeSourceName);
@@ -148,6 +161,7 @@ export class AppiumInitializer {
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs as Args), configResult, defaults, serverArgs);
       this.printValidationSummaries(driverConfig, pluginConfig);
+      await this.applyLogFilters(serverArgs);
       emitCliNumberCoercionWarnings();
       return {} as InitResult<Cmd>;
     }
@@ -159,6 +173,7 @@ export class AppiumInitializer {
         appiumHome,
       });
       this.printValidationSummaries(driverConfig, pluginConfig);
+      await this.applyLogFilters(serverArgs);
       emitCliNumberCoercionWarnings();
       return {} as InitResult<Cmd>;
     }

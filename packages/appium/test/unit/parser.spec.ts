@@ -235,6 +235,21 @@ describe('parser', function () {
         assert.strictEqual(warn.mock.callCount(), 1);
         assert.deepStrictEqual(warn.mock.calls[0].arguments, [`The value '4723abc' of --port was coerced to 4723`]);
       });
+
+      it('should drop a coercion warning from an earlier parse', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        p.parseArgs(['--port', '4723abc']);
+        assert.strictEqual(p.parseArgs(['--port', '4723']).port, 4723);
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 0);
+      });
+
+      it('should drop a coercion warning when the parse fails', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        assert.throws(() => p.parseArgs(['--port', '4723abc', '--address', '-42']));
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 0);
+      });
     });
 
     describe('extension arguments', function () {

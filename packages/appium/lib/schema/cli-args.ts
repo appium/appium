@@ -100,6 +100,11 @@ export function emitCliNumberCoercionWarnings(): void {
   }
 }
 
+/** Clears stored number-coercion warnings. */
+export function discardCliNumberCoercionWarnings(): void {
+  pendingCliNumberWarnings.length = 0;
+}
+
 function makeDescription(schema: AppiumJSONSchema): string {
   const {appiumCliDescription, description = '', appiumDeprecated} = schema;
   let desc = appiumCliDescription ?? description;

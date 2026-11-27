@@ -105,6 +105,7 @@ describe('cli-args', function () {
           it('should parse the value as a float', function (t) {
             const warn = t.mock.method(log, 'warn');
             assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10.5);
+            emitCliNumberCoercionWarnings();
             assert.strictEqual(warn.mock.callCount(), 0);
           });
 
@@ -137,6 +138,7 @@ describe('cli-args', function () {
             const warn = t.mock.method(log, 'warn');
             assert.strictEqual(result['--plugin-blob-foo'].type!('4723'), 4723);
             assert.strictEqual(result['--plugin-blob-foo'].type!('+10'), 10);
+            emitCliNumberCoercionWarnings();
             assert.strictEqual(warn.mock.callCount(), 0);
           });
 

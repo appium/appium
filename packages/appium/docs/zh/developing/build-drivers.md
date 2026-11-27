@@ -226,7 +226,8 @@ async setUrl(url) {
 
 ### 实现 WebDriver BiDi 命令
 
-[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) 是 WebDriver 规范的新版本，基于 Websocket 而非 HTTP 实现。作为 Appium 驱动作者，你可以直接利用 Appium 的 BiDi 支持，而无需了解 BiDi 协议或 Websocket 的任何细节。实现 BiDi 命令的处理方法与实现 WebDriver 经典命令的处理方法完全一样（见上一节）。你只需在驱动上定义名称对应的方法，当客户端请求该 BiDi 命令时它就会被调用。要查看 BiDi 命令应使用的具体名称，请参考 [bidi-commands.ts](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.ts)。
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) 是 WebDriver 规范的新版本，基于 Websocket 而非 HTTP 实现。作为 Appium 驱动作者，你可以直接利用 Appium 的 BiDi 支持，而无需了解 BiDi 协议或 Websocket 的任何细节。实现 BiDi 命令的处理方法与实现 WebDriver 经典命令的处理方法完全一样（见上一节）。你只需在驱动上定义名称对应的方法，当客户端请求该 BiDi 命令时它就会被调用。 To see which specific names you should use for BiDi commands, have a look at
+[bidi-commands](https://github.com/appium/appium/tree/master/packages/base-driver/lib/protocol/bidi-commands)
 
 你不必局限于官方 BiDi 规范中已定义的命令。如果你想定义新命令，也完全可以——只需要把这些新命令告知 Appium！详情请见下文 [用新的命令扩展现有协议](#用新的命令扩展现有协议)。
 

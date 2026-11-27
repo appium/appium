@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.2](https://github.com/appium/appium/compare/appium@4.0.1...appium@4.0.2) (2026-11-27)
+
+### Bug Fixes
+
+* **appium:** clean up sessions when a createSession plugin fails ([#23217](https://github.com/appium/appium/issues/23217)) ([a68b15f](https://github.com/appium/appium/commit/a68b15fdaef667d7977dbc4c8c73daadc668c88d))
+
+
 ## [4.0.1](https://github.com/appium/appium/compare/appium@4.0.0...appium@4.0.1) (2026-11-23)
 
 ### Bug Fixes

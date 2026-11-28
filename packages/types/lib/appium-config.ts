@@ -38,6 +38,10 @@ export type BidiMaxBufferedBytesConfig = number;
  */
 export type BidiMaxBufferedMsConfig = number;
 /**
+ * Reject requests whose Host header is neither an IP address, a loopback name, nor the configured server address. Hardens an unauthenticated server against DNS rebinding. Disabled by default, so existing deployments (reverse proxies, Docker service names, mDNS names) are unaffected.
+ */
+export type DenyForeignHostsConfig = boolean;
+/**
  * Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.
  */
 export type DenyInsecureConfig = string[];
@@ -199,6 +203,7 @@ export interface ServerConfig {
   "bidi-max-buffered-bytes"?: BidiMaxBufferedBytesConfig;
   "bidi-max-buffered-ms"?: BidiMaxBufferedMsConfig;
   "default-capabilities"?: DefaultCapabilitiesConfig;
+  "deny-foreign-hosts"?: DenyForeignHostsConfig;
   "deny-insecure"?: DenyInsecureConfig;
   driver?: DriverConfig;
   "keep-alive-timeout"?: KeepAliveTimeoutConfig;

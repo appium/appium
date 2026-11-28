@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import http from 'node:http';
+import os from 'node:os';
 import {afterEach, beforeEach, describe, it} from 'node:test';
 
 import {errors, routeConfiguringFunction, WebDriverProxy} from '@appium/base-driver';
@@ -200,8 +202,27 @@ describe('server configuration', function () {
     const app = fakeApp() as any;
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter});
+    // the foreign-host (DNS rebinding) middleware is opt-in and not installed by default
     assert.strictEqual(app.use.callCount, 13);
     assert.strictEqual(app.all.callCount, 0);
+  });
+
+  it('should install the foreign-host middleware when denyForeignHosts is enabled', function () {
+    const app = fakeApp() as any;
+    const configureRoutes = () => {};
+    configureServer({app, addRoutes: configureRoutes, frontRouter: fakeFrontRouter, denyForeignHosts: true});
+    assert.strictEqual(app.use.callCount, 14);
+    assert.strictEqual(app.all.callCount, 0);
+
+    const req = {headers: {host: 'rebound.example.net'}} as any;
+    const res = {status: sandbox.stub().returnsThis(), json: sandbox.stub()};
+    const next = sandbox.stub();
+    // the last registered middleware is the foreign-host rejection handler
+    // endLogFormatter, handleLogContext, then the foreign-host rejection handler
+    const mw = app.use.getCall(2).args[0];
+    mw(req, res, next);
+    assert.strictEqual(next.callCount, 0);
+    assert.strictEqual(res.status.calledWith(403), true);
   });
 
   it('should apply new methods in plugins to the standard method map', function () {
@@ -962,5 +983,60 @@ describe('server configuration', function () {
       assert.strictEqual(normalizeBasePath('wd/hub'), '/wd/hub');
       assert.strictEqual(normalizeBasePath('wd/hub/'), '/wd/hub');
     });
+  });
+});
+
+function getStatus(port: number, targetHost: string, hostHeader: string): Promise<{status: number}> {
+  return new Promise((resolve, reject) => {
+    const req = http.request(
+      {host: targetHost, port, path: '/status', headers: {host: hostHeader, accept: 'application/json'}},
+      (res) => {
+        res.resume();
+        res.on('end', () => resolve({status: res.statusCode ?? 0}));
+      },
+    );
+    req.on('error', reject);
+    req.end();
+  });
+}
+
+describe('deny-foreign-hosts server boundary', function () {
+  let port: number;
+
+  beforeEach(async function () {
+    port = await getTestPort();
+  });
+
+  it('serves requests addressed to the configured hostname and rejects them when it is not configured', async function () {
+    const driver = fakeDriver();
+    const hostname = os.hostname();
+
+    const _server = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      hostname,
+      cliArgs: {denyForeignHosts: true},
+    });
+    try {
+      const ok = await getStatus(port, hostname, hostname);
+      assert.strictEqual(ok.status, 200);
+      const foreign = await getStatus(port, hostname, 'evil.example');
+      assert.strictEqual(foreign.status, 403);
+    } finally {
+      await _server.close();
+    }
+
+    // removing the configured hostname: the same request is now rejected
+    const _serverWithoutHostname = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver as any),
+      port,
+      cliArgs: {denyForeignHosts: true},
+    });
+    try {
+      const res = await getStatus(port, '127.0.0.1', hostname);
+      assert.strictEqual(res.status, 403);
+    } finally {
+      await _serverWithoutHostname.close();
+    }
   });
 });

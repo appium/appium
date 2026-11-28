@@ -37,6 +37,7 @@ appium
 |`--bidi-max-buffered-ms`|Time (in milliseconds) a BiDi connection may stay above `--bidi-max-buffered-bytes` before it is closed. If set to `0`, the connection is closed as soon as the limit is exceeded.|integer|`30000`|
 |`--default-capabilities`, `-dc`|Capabilities that will be used for each session, unless overridden by received capabilities. See [Default Capabilities](#default-capabilities) for how they are applied.|object||
 |`--deny-insecure`|List of [insecure features](../../guides/security.md) that should be disabled in this server's sessions. Since all insecure features are disabled by default, this argument has no effect without either `--allow-insecure` or `--relaxed-security`, and is applied after both.|array<string>|`[]`|
+|`--deny-foreign-hosts`|Reject requests whose Host header is neither an IP address, a loopback name, nor the configured server address. Hardens an unauthenticated server against DNS rebinding. Disabled by default, so deployments that reach the server through a reverse proxy, Docker service names, or mDNS names are unaffected.|boolean|`false`|
 |`--driver`|Driver-specific configuration. Keys should correspond to driver package names|object||
 |`--drivers-import-chunk-size`|Maximum number of drivers that can be imported in parallel on server startup|number|`3`|
 |`--keep-alive-timeout`, `-ka`|Timeout (in seconds) to use as both the keep-alive timeout and the connection timeout for all client requests. Disabled if set to `0`.|integer|`600`|
@@ -64,6 +65,16 @@ appium
 |`--use-drivers`|List of drivers to activate. By default, all installed drivers are activated.|array<string>|`[]`|
 |`--use-plugins`|List of plugins to activate. By default, no plugins are activated. Set to `["all"]` to activate all installed plugins.|array<string>|`[]`|
 |`--webhook`, `-G`|URL for an HTTP listener where the server logs should be output. This does not affect output on the console. A bare `host:port` is also accepted, which posts the logs to the root path over plain http; a value having neither a scheme nor a port falls back to `127.0.0.1:9003`.|string||
+
+### `--deny-foreign-hosts` behind a reverse proxy
+
+When Appium listens on `--address 0.0.0.0` and is reached through a reverse proxy that
+forwards `Host: appium.company.com`, enabling `--deny-foreign-hosts` makes the server
+answer that traffic with `403`, because `appium.company.com` is not the address the
+server is configured with, and there is currently no separate CLI option to allow a
+public hostname. Operators should either bind the server to the address clients use
+(`--address appium.company.com`), keep the flag off, or terminate the Host header at
+the proxy (e.g. rewrite it to the address Appium is bound to) before enabling it.
 
 ### Default Capabilities
 

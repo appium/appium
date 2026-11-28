@@ -106,6 +106,15 @@ export const AppiumConfigJsonSchema = {
           title: 'default-capabilities config',
           type: 'object',
         },
+        'deny-foreign-hosts': {
+          default: false,
+          description:
+            'Reject requests whose Host header is neither an IP address, a loopback name, nor the configured server address. ' +
+            'Hardens an unauthenticated server against DNS rebinding. Disabled by default, so existing deployments ' +
+            '(reverse proxies, Docker service names, mDNS names) are unaffected.',
+          title: 'deny-foreign-hosts config',
+          type: 'boolean',
+        },
         'deny-insecure': {
           $comment: 'Allowed values are defined by drivers',
           appiumCliTransformer: 'csv',

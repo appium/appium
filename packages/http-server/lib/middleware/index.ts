@@ -10,4 +10,5 @@ export {handleUpgrade, tryHandleWebSocketUpgrade} from './websocket-upgrade.js';
 export type {WebSocketUpgradeOpts} from './websocket-upgrade.js';
 export {parseJsonBody} from './parse-json-body.js';
 export {rejectBrowserOrigin} from './reject-browser-origin.js';
+export {rejectForeignHosts, createHostValidator, invalidHostResponseBody} from './reject-foreign-host.js';
 export {unknownMethodHandler} from './unknown-method.js';

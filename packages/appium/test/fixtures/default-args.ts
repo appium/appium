@@ -6,6 +6,7 @@ export default {
   bidiHeartbeatInterval: 15,
   bidiMaxBufferedBytes: 33554432,
   bidiMaxBufferedMs: 30000,
+  denyForeignHosts: false,
   denyInsecure: [] as string[],
   driversImportChunkSize: 3,
   keepAliveTimeout: 600,

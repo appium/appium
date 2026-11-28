@@ -13,5 +13,5 @@
     "npm",
     "npm-arguments"
   ],
-  "misc-server": ["driver", "local-npm", "manifest", "navigation-proxy", "plugin", "schema"]
+  "misc-server": ["driver", "local-npm", "manifest", "navigation-proxy", "plugin", "schema", "deny-foreign-hosts"]
 }

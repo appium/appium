@@ -11,6 +11,8 @@ describe('parseConfig', () => {
       entryPointScopes: ['@a'],
       typeOnlyCycles: 'ignore',
       undeclaredDependencies: 'error',
+      unusedEdges: 'error',
+      unresolvedImports: 'warn',
     };
     assert.deepEqual(parseConfig(config, 'config.json'), config);
     assert.deepEqual(parseConfig({}, 'config.json'), {});
@@ -25,6 +27,8 @@ describe('parseConfig', () => {
       /'typeOnlyCycles' must be 'error' or 'ignore'/,
     );
     assert.throws(() => parseConfig({undeclaredDependencies: true}, 'config.json'), /'undeclaredDependencies' must be/);
+    assert.throws(() => parseConfig({unusedEdges: 'ignore'}, 'config.json'), /'unusedEdges' must be 'warn' or 'error'/);
+    assert.throws(() => parseConfig({unresolvedImports: true}, 'config.json'), /'unresolvedImports' must be/);
     assert.throws(() => parseConfig([], 'config.json'), /expected a JSON object/);
   });
 });

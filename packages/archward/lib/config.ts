@@ -5,7 +5,15 @@ import type {ArchwardConfig, ResolvedConfig} from './types.js';
 
 export const ARCHITECTURE_DIR = 'architecture';
 
-const CONFIG_KEYS = new Set(['sourceRoot', 'tsconfig', 'entryPointScopes', 'typeOnlyCycles', 'undeclaredDependencies']);
+const CONFIG_KEYS = new Set([
+  'sourceRoot',
+  'tsconfig',
+  'entryPointScopes',
+  'typeOnlyCycles',
+  'undeclaredDependencies',
+  'unusedEdges',
+  'unresolvedImports',
+]);
 
 /**
  * Resolves the settings of the package in `packageDir`, applying defaults over the optional
@@ -24,6 +32,8 @@ export async function loadConfig(packageDir: string): Promise<ResolvedConfig> {
     entryPointScopes: user.entryPointScopes ?? [],
     typeOnlyCycles: user.typeOnlyCycles ?? 'error',
     undeclaredDependencies: user.undeclaredDependencies ?? 'ignore',
+    unusedEdges: user.unusedEdges ?? 'warn',
+    unresolvedImports: user.unresolvedImports ?? 'warn',
     modelDir,
     baselineFile: path.join(modelDir, 'baseline.json'),
   };
@@ -67,6 +77,11 @@ export function parseConfig(raw: unknown, file: string): ArchwardConfig {
   for (const key of ['typeOnlyCycles', 'undeclaredDependencies'] as const) {
     if (config[key] !== undefined && config[key] !== 'error' && config[key] !== 'ignore') {
       fail(`'${key}' must be 'error' or 'ignore'`);
+    }
+  }
+  for (const key of ['unusedEdges', 'unresolvedImports'] as const) {
+    if (config[key] !== undefined && config[key] !== 'warn' && config[key] !== 'error') {
+      fail(`'${key}' must be 'warn' or 'error'`);
     }
   }
   return config as ArchwardConfig;

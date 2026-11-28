@@ -39,10 +39,12 @@ export async function readDeclaredDependencies(packageDir: string): Promise<Decl
     name?: string;
   } & Record<string, Record<string, string> | undefined>;
   const names = (fields: string[]) => new Set(fields.flatMap((field) => Object.keys(pkg[field] ?? {})));
+  const all = names(['dependencies', 'peerDependencies', 'optionalDependencies', 'devDependencies']);
   return {
     name: pkg.name,
     runtime: names(['dependencies', 'peerDependencies', 'optionalDependencies']),
-    dev: names(['devDependencies']),
+    // `@types/x` declares the types of `x`, which is enough for type-only imports of `x`
+    dev: new Set([...names(['devDependencies']), ...[...all].flatMap((name) => typedPackage(name) ?? [])]),
   };
 }
 
@@ -121,6 +123,12 @@ export function externalPackageName(specifier: string): string | null {
   const parts = specifier.split('/');
   const name = specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
   return !name || (!specifier.startsWith('@') && BUILTINS.has(name)) ? null : name;
+}
+
+/** The package that `@types/<name>` (or `@types/<scope>__<name>`) provides types for. */
+function typedPackage(name: string): string | null {
+  const match = /^@types\/(.+)$/.exec(name);
+  return match ? match[1].replace(/^(.+?)__(.+)$/, '@$1/$2') : null;
 }
 
 /**

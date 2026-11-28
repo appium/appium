@@ -125,11 +125,10 @@ async function runUpdateBaseline(packageDir: string): Promise<number> {
     `Baseline updated: ${analysis.boundaries.length} boundary imports, ` +
       `${analysis.runtimeCycles.length} runtime cycles, ${analysis.typeOnlyCycles.length} type-only cycles.\n`,
   );
-  const unbaselinable = analysis.unownedFiles.length + analysis.packageImports.length;
-  if (unbaselinable) {
+  if (analysis.unbaselinable.length) {
     process.stderr.write(
-      `warning: ${analysis.unownedFiles.length} unowned files and ${analysis.packageImports.length} package ` +
-        'import violations cannot be baselined and still fail the check. Fix them (see `archward`).\n',
+      `warning: ${analysis.unbaselinable.length} findings (unowned files, package imports, unused edges or ` +
+        'unresolved imports) cannot be baselined and still fail the check. Fix them (see `archward`).\n',
     );
   }
   return EXIT_OK;

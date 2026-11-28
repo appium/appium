@@ -47,6 +47,8 @@ export async function initPackage(packageDir: string, options: InitOptions = {})
     entryPointScopes: options.entryPointScopes ?? [],
     typeOnlyCycles: 'error',
     undeclaredDependencies: 'ignore',
+    unusedEdges: 'warn',
+    unresolvedImports: 'warn',
     modelDir,
     baselineFile: path.join(modelDir, 'baseline.json'),
   };

@@ -48,12 +48,6 @@ export async function readDeclaredDependencies(packageDir: string): Promise<Decl
   };
 }
 
-/** The package that `@types/<name>` (or `@types/<scope>__<name>`) provides types for. */
-function typedPackage(name: string): string | null {
-  const match = /^@types\/(.+)$/.exec(name);
-  return match ? match[1].replace(/^(.+?)__(.+)$/, '@$1/$2') : null;
-}
-
 /**
  * Checks the packages the source imports: deep imports of packages in `entryPointScopes` (unless
  * the installed package exports the subpath), and packages missing from `package.json`.
@@ -129,6 +123,12 @@ export function externalPackageName(specifier: string): string | null {
   const parts = specifier.split('/');
   const name = specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
   return !name || (!specifier.startsWith('@') && BUILTINS.has(name)) ? null : name;
+}
+
+/** The package that `@types/<name>` (or `@types/<scope>__<name>`) provides types for. */
+function typedPackage(name: string): string | null {
+  const match = /^@types\/(.+)$/.exec(name);
+  return match ? match[1].replace(/^(.+?)__(.+)$/, '@$1/$2') : null;
 }
 
 /**

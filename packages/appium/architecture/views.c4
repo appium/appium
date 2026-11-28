@@ -1,0 +1,17 @@
+views {
+  view context of appium {
+    title 'L1 Context'
+    include client, cliUser, appium, extensions
+  }
+
+  view containers {
+    title 'L2 Containers'
+    include client, cliUser, appium, extensions, libs.*
+  }
+
+  view components of appium {
+    title 'L3 Components'
+    include appium.*
+    exclude appium.publicTypes
+  }
+}

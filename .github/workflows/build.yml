@@ -15,6 +15,7 @@ on:
       - 'packages/**/*.cjs'
       - 'packages/**/*.ts'
       - 'packages/**/*.json'
+      - 'packages/*/architecture/**'
       - 'package*.json'
       - 'lerna.json'
       - '.npmrc'
@@ -37,6 +38,7 @@ on:
       - 'packages/**/*.cjs'
       - 'packages/**/*.ts'
       - 'packages/**/*.json'
+      - 'packages/*/architecture/**'
       - 'package*.json'
       - 'lerna.json'
       - '.npmrc'
@@ -213,6 +215,8 @@ jobs:
           run-build: 'false'
       - name: Lint
         run: npm run lint:ci
+      - name: Check architecture
+        run: npm run arch:check
       - name: Format check
         run: npm run format:check
       - name: Verify changelog generation

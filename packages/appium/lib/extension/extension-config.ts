@@ -355,6 +355,18 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     return await ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extManifest);
   }
 
+  /**
+   * Sets where `appium driver|plugin list`-style data comes from, and drops any cached data.
+   * Without a provider, no installed/update information is available for warnings.
+   */
+  setListProvider(provider: ExtensionListProvider | undefined): void {
+    if (provider === this.listProvider) {
+      return;
+    }
+    this.listProvider = provider;
+    this.listDataCache = undefined;
+  }
+
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
   protected async getConfigWarnings(_extManifest: ExtManifest<ExtType>, _extName: string): Promise<string[]> {
     void _extManifest;
@@ -423,18 +435,6 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
         sink.warn(summary);
       }
     }
-  }
-
-  /**
-   * Sets where `appium driver|plugin list`-style data comes from, and drops any cached data.
-   * Without a provider, no installed/update information is available for warnings.
-   */
-  setListProvider(provider: ExtensionListProvider | undefined): void {
-    if (provider === this.listProvider) {
-      return;
-    }
-    this.listProvider = provider;
-    this.listDataCache = undefined;
   }
 
   /** Fetches `list`-style data from the provider; result is cached. */

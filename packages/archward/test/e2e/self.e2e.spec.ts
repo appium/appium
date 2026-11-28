@@ -118,6 +118,34 @@ describe('archward on itself', () => {
       assert.equal(await main([dir]), 1);
     });
 
+    it('can turn unresolved imports and unused edges from warnings into errors', async () => {
+      await appendFile(file('lib/types.ts'), "import './missing.js';\n");
+      const model = await readFile(file('architecture/model.c4'), 'utf8');
+      await writeFile(
+        file('architecture/model.c4'),
+        model.replace(
+          '  archward.cli -> archward.check',
+          '  archward.cli -> archward.check\n  archward.types -> archward.report',
+        ),
+      );
+      await rm(file('architecture/config.json'), {force: true}); // the package's own config is strict
+      const warned = await checkPackage(dir);
+      assert.ok(warned.ok);
+      assert.equal(warned.warnings.length, 2);
+
+      await writeFile(file('architecture/config.json'), '{"unusedEdges": "error", "unresolvedImports": "error"}');
+      const strict = await checkPackage(dir);
+      assert.ok(!strict.ok);
+      assert.deepEqual(strict.warnings, []);
+      assert.deepEqual(keys(strict.findings, 'unused-edge'), ['archward.types -> archward.report']);
+      assert.deepEqual(keys(strict.findings, 'unresolved-import'), ['lib/types.ts -> ./missing.js']);
+      assert.equal(await main([dir]), 1);
+      assert.deepEqual((await updateBaseline(dir)).unbaselinable.map((f) => f.rule).sort(), [
+        'unresolved-import',
+        'unused-edge',
+      ]);
+    });
+
     it('exits 2 when the package cannot be checked', async () => {
       assert.equal(await main([path.join(dir, 'nope')]), 2);
       await rm(file('architecture'), {recursive: true});

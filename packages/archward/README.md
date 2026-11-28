@@ -34,7 +34,8 @@ npx archward --verbose                       # list every finding
 saved to `config.json`.
 
 Exit code: `0` ok, `1` violations found, `2` usage or runtime error. Relative imports that cannot be
-resolved are reported as warnings, as they cannot be checked. `typescript` (5 or 6) must be
+resolved and model edges that nothing uses are reported as warnings (see `unresolvedImports` and
+`unusedEdges` to make them errors). `typescript` (5 or 6) must be
 installed, as imports are resolved with the package's `tsconfig.json`.
 
 ### Getting started
@@ -99,7 +100,9 @@ specification) still own their files, but their dependencies are not checked. El
 | `tsconfig` | `tsconfig.json` | Used to resolve imports. |
 | `entryPointScopes` | `[]` | npm scopes (e.g. `["@appium"]`) whose packages must be declared in `package.json` and imported through their entry points only (a subpath the installed package lists in its `exports` is allowed). A `devDependency` is enough for `import type`. |
 | `typeOnlyCycles` | `error` | `ignore` to stop reporting cycles that exist only through `import type`. They have no runtime effect, and patterns such as command mixins that reference their driver's type produce hundreds of them. Runtime cycles are always reported. |
-| `undeclaredDependencies` | `ignore` | `error` to require every package the source imports to be declared in `package.json` (`dependencies`, `peerDependencies` or `optionalDependencies`; a `devDependency` is enough for `import type`), so nothing works only because of hoisting. Built-ins, relative and `#` imports, the package itself and tsconfig `paths` aliases are exempt. Without it, only packages in `entryPointScopes` are checked. |
+| `undeclaredDependencies` | `ignore` | `error` to require every package the source imports to be declared in `package.json` (`dependencies`, `peerDependencies` or `optionalDependencies`; a `devDependency` is enough for `import type`, and `@types/x` declares the types of `x`), so nothing works only because of hoisting. Built-ins, relative and `#` imports, the package itself and tsconfig `paths` aliases are exempt. Without it, only packages in `entryPointScopes` are checked. |
+| `unusedEdges` | `warn` | `error` to fail on a dependency that the model allows but the code never uses, so the model does not collect edges nothing needs. Like package imports, these cannot be baselined: remove the edge. |
+| `unresolvedImports` | `warn` | `error` to fail on a relative import that cannot be resolved (it cannot be checked, so a wrong path would hide a dependency). Cannot be baselined: fix the path. |
 
 Unknown options are rejected.
 

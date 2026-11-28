@@ -1,7 +1,7 @@
 import {analyze} from './analysis/index.js';
 import {diffAgainstBaseline, readBaseline, writeBaseline} from './baseline.js';
 import {loadConfig} from './config.js';
-import type {Analysis, CheckResult, Finding, ImportedBoundary} from './types.js';
+import type {Analysis, CheckResult, Finding, ImportedBoundary, ResolvedConfig} from './types.js';
 import {boundaryKey} from './util.js';
 
 /**
@@ -14,13 +14,7 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
   const baseline = await readBaseline(config.baselineFile);
   const boundariesByKey = new Map(analysis.boundaries.map((b) => [boundaryKey(b), b]));
   const findings: Finding[] = [
-    ...analysis.unownedFiles.map((file) => ({
-      rule: 'unowned-file' as const,
-      status: 'new' as const,
-      key: file,
-      message: `${file} is not owned by any component. Add its path to a component in architecture/model.c4.`,
-    })),
-    ...analysis.packageImports.map((p) => ({rule: 'package-import' as const, status: 'new' as const, ...p})),
+    ...unbaselinableFindings(config, analysis),
     ...compare('boundary', [...boundariesByKey.keys()], baseline.boundaries.map(boundaryKey), (key) =>
       describeBoundary(key, boundariesByKey),
     ),
@@ -41,8 +35,12 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
     ok: findings.length === 0,
     findings,
     warnings: [
-      ...analysis.unusedEdges.map((edge) => `edge '${edge}' is declared in the model but never used in the code.`),
-      ...analysis.unresolvedImports.map((imp) => `${imp} could not be resolved, so it was not checked.`),
+      ...(config.unusedEdges === 'warn' ? analysis.unusedEdges : []).map(
+        (edge) => `edge '${edge}' is declared in the model but never used in the code.`,
+      ),
+      ...(config.unresolvedImports === 'warn' ? analysis.unresolvedImports : []).map(
+        (imp) => `${imp} could not be resolved, so it was not checked.`,
+      ),
     ],
     analysis,
     baselined: {
@@ -53,12 +51,40 @@ export async function checkPackage(packageDir: string): Promise<CheckResult> {
   };
 }
 
-/** Rewrites the baseline to tolerate every current violation, keeping existing reasons. */
-export async function updateBaseline(packageDir: string): Promise<Analysis> {
+/**
+ * Rewrites the baseline to tolerate every current violation, keeping existing reasons.
+ * @returns the analysis, and the findings that cannot be baselined and still fail the check
+ */
+export async function updateBaseline(packageDir: string): Promise<Analysis & {unbaselinable: Finding[]}> {
   const config = await loadConfig(packageDir);
   const analysis = await analyze(config);
   await writeBaseline(config.baselineFile, analysis, await readBaseline(config.baselineFile));
-  return analysis;
+  return {...analysis, unbaselinable: unbaselinableFindings(config, analysis)};
+}
+
+/** Findings that the baseline cannot tolerate: they must be fixed. */
+function unbaselinableFindings(config: ResolvedConfig, analysis: Analysis): Finding[] {
+  return [
+    ...analysis.unownedFiles.map((file) => ({
+      rule: 'unowned-file' as const,
+      status: 'new' as const,
+      key: file,
+      message: `${file} is not owned by any component. Add its path to a component in architecture/model.c4.`,
+    })),
+    ...analysis.packageImports.map((p) => ({rule: 'package-import' as const, status: 'new' as const, ...p})),
+    ...(config.unusedEdges === 'error' ? analysis.unusedEdges : []).map((edge) => ({
+      rule: 'unused-edge' as const,
+      status: 'new' as const,
+      key: edge,
+      message: `edge '${edge}' is declared in the model but never used in the code.`,
+    })),
+    ...(config.unresolvedImports === 'error' ? analysis.unresolvedImports : []).map((imp) => ({
+      rule: 'unresolved-import' as const,
+      status: 'new' as const,
+      key: imp,
+      message: `${imp} could not be resolved, so it cannot be checked.`,
+    })),
+  ];
 }
 
 function compare(

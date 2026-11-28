@@ -8,6 +8,8 @@ const TITLES: Record<Rule, string> = {
   boundary: 'Component boundaries',
   'runtime-cycle': 'Runtime import cycles',
   'type-cycle': 'Type-only import cycles',
+  'unused-edge': 'Unused dependencies in the model',
+  'unresolved-import': 'Unresolved imports',
 };
 
 const HINTS: Record<Rule, string> = {
@@ -16,6 +18,8 @@ const HINTS: Record<Rule, string> = {
   boundary: 'Remove the import, or declare the edge in architecture/model.c4 if it is intended.',
   'runtime-cycle': 'Break the cycle (extract shared code to a lower layer).',
   'type-cycle': 'Move the shared type to a lower layer so the cycle disappears.',
+  'unused-edge': 'Remove the edge from architecture/model.c4.',
+  'unresolved-import': 'Fix the import path, or remove the import.',
 };
 
 export interface ReportOptions {

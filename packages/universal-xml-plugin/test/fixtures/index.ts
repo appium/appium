@@ -14,9 +14,13 @@ export const FIXTURES = {
   XML_IOS_TRANSFORMED_INDEX_PATH: 'ios-transformed-path.xml',
   XML_IOS_EDGE: 'ios-edge.xml',
   XML_IOS_EDGE_TRANSFORMED: 'ios-transformed-edge.xml',
+  XML_IOS_SIBLINGS: 'ios-siblings.xml',
+  XML_IOS_SIBLINGS_TRANSFORMED: 'ios-siblings-transformed.xml',
   XML_ANDROID: 'android.xml',
   XML_ANDROID_TRANSFORMED: 'android-transformed.xml',
   XML_ANDROID_TRANSFORMED_INDEX_PATH: 'android-transformed-path.xml',
+  XML_ANDROID_SIBLINGS: 'android-siblings.xml',
+  XML_ANDROID_SIBLINGS_TRANSFORMED: 'android-siblings-transformed.xml',
   XML_WEBVIEW: 'web-view.xml',
 } as const;
 

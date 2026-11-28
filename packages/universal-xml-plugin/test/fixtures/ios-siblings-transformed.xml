@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UI>
+  <App enabled="true" visible="true" axId="TheApp" text="TheApp">
+    <Nav enabled="true" visible="true">
+      <Button enabled="true" visible="true" axId="Cancel" text="Cancel"></Button>
+      <Text enabled="true" visible="true" axId="Title" text="Title"></Text>
+      <Button enabled="true" visible="true" axId="Share" text="Share"></Button>
+      <Button enabled="true" visible="true" axId="OK" text="OK"></Button>
+    </Nav>
+  </App>
+</UI>

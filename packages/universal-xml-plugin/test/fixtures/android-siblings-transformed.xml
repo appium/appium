@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UI width="1080" height="1920">
+  <View text="">
+    <Button text="Cancel"></Button>
+    <Text text="Title"></Text>
+    <Button text="" axId="Share"></Button>
+    <Button text="OK"></Button>
+  </View>
+</UI>

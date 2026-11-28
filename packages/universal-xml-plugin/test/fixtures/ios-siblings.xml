@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><AppiumAUT><XCUIElementTypeApplication type="XCUIElementTypeApplication" name="TheApp" label="TheApp" enabled="true" visible="true" index="0">
+  <XCUIElementTypeNavigationBar type="XCUIElementTypeNavigationBar" enabled="true" visible="true" index="0">
+    <XCUIElementTypeButton type="XCUIElementTypeButton" name="Cancel" label="Cancel" enabled="true" visible="true" index="0"/>
+    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" name="Title" label="Title" enabled="true" visible="true" index="1"/>
+    <XCUIElementTypeButton type="XCUIElementTypeButton" name="Share" label="Share" enabled="true" visible="true" index="2"/>
+    <XCUIElementTypeButton type="XCUIElementTypeButton" name="OK" label="OK" enabled="true" visible="true" index="3"/>
+  </XCUIElementTypeNavigationBar>
+</XCUIElementTypeApplication></AppiumAUT>

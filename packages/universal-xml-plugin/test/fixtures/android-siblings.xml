@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<hierarchy index="0" class="hierarchy" rotation="0" width="1080" height="1920">
+  <android.widget.LinearLayout index="0" class="android.widget.LinearLayout" text="">
+    <android.widget.Button index="0" class="android.widget.Button" text="Cancel" />
+    <android.widget.TextView index="1" class="android.widget.TextView" text="Title" />
+    <android.widget.ImageButton index="2" class="android.widget.ImageButton" text="" content-desc="Share" />
+    <android.widget.Button index="3" class="android.widget.Button" text="OK" />
+  </android.widget.LinearLayout>
+</hierarchy>

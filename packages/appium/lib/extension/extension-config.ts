@@ -3,21 +3,16 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 
 import {fs, util} from '@appium/support';
-import type {ExtensionType, StringRecord} from '@appium/types';
+import type {ExtensionType} from '@appium/types';
 import type {ExtClass, ExtManifest, ExtName, ExtRecord} from 'appium/types/index.js';
 import {satisfies} from 'semver';
 
-import type {
-  ExtensionList,
-  ExtensionListData,
-  InstalledExtensionListData,
-  ExtensionCliCommand,
-} from '../cli/extension-command.js';
 import {APPIUM_VER} from '../helpers/build.js';
 import {log} from '../logger.js';
 import type {SchemaObject} from '../schema/ajv.js';
 import {ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema} from '../schema/schema.js';
 import {capitalize, resolveFrom} from '../utils/index.js';
+import type {ExtensionList, ExtensionListData, InstalledExtensionListData} from './list-types.js';
 import {INSTALL_TYPES, manifestValidator} from './manifest/index.js';
 import type {ExtManifestProblem, Manifest} from './manifest/index.js';
 
@@ -25,6 +20,12 @@ const DEFAULT_ENTRY_POINT = 'index.js';
 // Counter for `APPIUM_RELOAD_EXTENSIONS` cache-busting; `Date.now()` alone can collide when two
 // reloads happen within the same millisecond, which would serve the stale cached module.
 let reloadCounter = 0;
+
+/**
+ * Supplies `list`-style data (installed state, available updates) for the extensions of a config.
+ * Injected by the caller of `loadExtensions()`, because producing it is the CLI's job.
+ */
+export type ExtensionListProvider = (config: ExtensionConfig<any>) => Promise<ExtensionList>;
 
 export type ExtManifestWithSchema<E extends ExtensionType> = ExtManifest<E> & {
   schema: NonNullable<ExtManifest<E>['schema']>;
@@ -67,6 +68,7 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
   /** Populated by {@linkcode ExtensionConfig.validate}; see {@linkcode ExtensionValidationSummary}. */
   private validationSummary: ExtensionValidationSummary = EMPTY_VALIDATION_SUMMARY;
   private listDataCache: ExtensionList<ExtType> | undefined;
+  private listProvider: ExtensionListProvider | undefined;
 
   protected constructor(extensionType: ExtType, manifest: Manifest) {
     this.extensionType = extensionType;
@@ -353,6 +355,18 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     return await ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extManifest);
   }
 
+  /**
+   * Sets where `appium driver|plugin list`-style data comes from, and drops any cached data.
+   * Without a provider, no installed/update information is available for warnings.
+   */
+  setListProvider(provider: ExtensionListProvider | undefined): void {
+    if (provider === this.listProvider) {
+      return;
+    }
+    this.listProvider = provider;
+    this.listDataCache = undefined;
+  }
+
   /** Optional async warnings for this extension kind; override in subclasses when needed. */
   protected async getConfigWarnings(_extManifest: ExtManifest<ExtType>, _extName: string): Promise<string[]> {
     void _extManifest;
@@ -423,20 +437,13 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     }
   }
 
-  /**
-   * Fetches `appium driver|plugin list`-style data via the CLI command class; result is cached.
-   */
+  /** Fetches `list`-style data from the provider; result is cached. */
   protected async getListData(): Promise<ExtensionList<ExtType>> {
-    if (this.listDataCache) {
-      return this.listDataCache;
+    if (!this.listProvider) {
+      return {};
     }
-    // Import here to avoid circular dependency with cli/extension
-    const {commandClasses} = await import('../cli/extension.js');
-    const CommandClass = (commandClasses as StringRecord)[this.extensionType];
-    const cmd = new CommandClass({config: this, json: true}) as ExtensionCliCommand<ExtType>;
-    const listData = await cmd.list({showInstalled: true, showUpdates: true});
-    this.listDataCache = listData;
-    return listData;
+    this.listDataCache ??= (await this.listProvider(this)) as ExtensionList<ExtType>;
+    return this.listDataCache;
   }
 
   /**
@@ -474,8 +481,9 @@ export abstract class ExtensionConfig<ExtType extends ExtensionType> {
     if (typeof appiumVersion === 'string' && !satisfies(APPIUM_VER, appiumVersion, {includePrerelease: true})) {
       const listData = await this.getListData();
       const extListData = listData[extName] as ExtensionListData<ExtType> | undefined;
-      if (extListData?.installed) {
-        const {updateVersion, upToDate} = extListData;
+      // Without list data, the extension is known to be installed (it comes from the manifest), just not its updates.
+      if (!this.listProvider || extListData?.installed) {
+        const {updateVersion, upToDate} = extListData ?? {};
         if (!upToDate && updateVersion) {
           warnings.push(
             createPeerWarning(

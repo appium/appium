@@ -21,6 +21,16 @@ export interface ArchwardConfig {
    * default only packages in `entryPointScopes` are checked.
    */
   undeclaredDependencies?: 'error' | 'ignore';
+  /**
+   * What to do about an edge that the model declares but the code never uses. `error` keeps the
+   * model from collecting dependencies that nothing needs. Default: `warn`.
+   */
+  unusedEdges?: 'warn' | 'error';
+  /**
+   * What to do about a relative import that cannot be resolved, which cannot be checked.
+   * Default: `warn`.
+   */
+  unresolvedImports?: 'warn' | 'error';
 }
 
 export interface ResolvedConfig {
@@ -30,6 +40,8 @@ export interface ResolvedConfig {
   entryPointScopes: string[];
   typeOnlyCycles: 'error' | 'ignore';
   undeclaredDependencies: 'error' | 'ignore';
+  unusedEdges: 'warn' | 'error';
+  unresolvedImports: 'warn' | 'error';
   modelDir: string;
   baselineFile: string;
 }
@@ -69,7 +81,14 @@ export interface Baseline {
   cycles: {runtime: CycleEntry[]; typeOnly: CycleEntry[]};
 }
 
-export type Rule = 'unowned-file' | 'boundary' | 'runtime-cycle' | 'type-cycle' | 'package-import';
+export type Rule =
+  | 'unowned-file'
+  | 'boundary'
+  | 'runtime-cycle'
+  | 'type-cycle'
+  | 'package-import'
+  | 'unused-edge'
+  | 'unresolved-import';
 
 export interface Finding {
   rule: Rule;

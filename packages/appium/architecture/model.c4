@@ -1,0 +1,163 @@
+// Single source of truth for packages/appium architecture.
+// Component edges below are the ALLOWED dependencies; `metadata.paths` maps components to files.
+// Known violations live in baseline.json, not here.
+model {
+  client = actor 'Test client' 'Sends WebDriver / BiDi requests'
+  cliUser = actor 'CLI user' 'Runs the appium command'
+
+  extensions = system 'Drivers and plugins' {
+    description 'Third-party extensions, installed and loaded by Appium'
+  }
+
+  libs = system '@appium libraries' {
+    description 'Sibling monorepo packages that appium depends on'
+    support = package '@appium/support' 'Shared utilities (fs, logging, doctor, ...)'
+    types = package '@appium/types' 'Shared TypeScript types'
+    baseDriver = package '@appium/base-driver' 'Base driver and WebDriver protocol'
+    httpServer = package '@appium/http-server' 'HTTP server and websocket upgrade'
+    schema = package '@appium/schema' 'JSON schemas for config and arguments'
+    logger = package '@appium/logger' 'Log sink-capable logger'
+  }
+
+  appium = container 'appium' {
+    description 'Appium server and CLI (packages/appium)'
+
+    main = component 'main' {
+      description 'Package entry point: runs the CLI or starts the server'
+      metadata { paths 'lib/main.ts' }
+    }
+    bootstrap = component 'bootstrap' {
+      description 'Startup: argument and config-file resolution, driver init, HTTP server launch'
+      metadata { paths 'lib/bootstrap/**' }
+    }
+    cli = component 'cli' {
+      description 'CLI parsing and the driver/plugin/setup commands'
+      metadata { paths 'lib/cli/**' }
+    }
+    doctor = component 'doctor' {
+      description 'Doctor checks for the Appium installation'
+      metadata { paths 'lib/doctor/**' }
+    }
+    extension = component 'extension' {
+      description 'Installed driver/plugin registry: manifest, configs, loading'
+      metadata { paths 'lib/extension/**' }
+    }
+    driver = component 'driver' {
+      description 'AppiumDriver: session routing and command dispatch, plus its feature helpers'
+      metadata {
+        paths [
+          'lib/appium.ts',
+          'lib/insecure-features.ts',
+          'lib/inspector-commands.ts'
+        ]
+      }
+    }
+    bidi = component 'bidi' {
+      description 'BiDi command handling and flow control'
+      metadata { paths 'lib/bidi/**' }
+    }
+    schema = component 'schema' {
+      description 'Argument schema, validation and CLI argument specs'
+      metadata { paths 'lib/schema/**' }
+    }
+    helpers = component 'helpers' {
+      description 'Appium-specific helpers: capability processing, driver build'
+      metadata { paths 'lib/helpers/**' }
+    }
+    utils = component 'utils' {
+      description 'Generic leaf utilities: npm, package.json, hashing, env'
+      metadata { paths 'lib/utils/**' }
+    }
+    logsink = component 'logsink' {
+      description 'Log sink and log-level plumbing'
+      metadata { paths 'lib/logsink.ts' }
+    }
+    logger = component 'logger' {
+      description 'The shared Appium logger instance'
+      metadata { paths 'lib/logger.ts' }
+    }
+    constants = component 'constants' {
+      description 'Shared constants'
+      metadata { paths 'lib/constants.ts' }
+    }
+    publicTypes = component 'public types' {
+      #unenforced
+      description 'Public type declarations exposed as appium/types'
+      metadata { paths 'types/**' }
+    }
+  }
+
+  // Context
+  client -> appium 'WebDriver / BiDi over HTTP'
+  cliUser -> appium 'appium, appium driver install, ...'
+  appium -> extensions 'installs, loads and routes sessions to'
+  appium -> libs.support 'uses'
+  appium -> libs.types 'uses'
+  appium -> libs.baseDriver 'uses'
+  appium -> libs.httpServer 'uses'
+  appium -> libs.schema 'uses'
+  appium -> libs.logger 'uses'
+
+  // Allowed component dependencies (the enforced layering)
+  appium.main -> appium.bootstrap
+  appium.main -> appium.schema
+  appium.main -> appium.utils
+  appium.main -> appium.logger
+  appium.main -> appium.logsink
+
+  appium.bootstrap -> appium.cli
+  appium.bootstrap -> appium.extension
+  appium.bootstrap -> appium.driver
+  appium.bootstrap -> appium.schema
+  appium.bootstrap -> appium.helpers
+  appium.bootstrap -> appium.utils
+  appium.bootstrap -> appium.logger
+  appium.bootstrap -> appium.logsink
+  appium.bootstrap -> appium.constants
+
+  appium.cli -> appium.extension
+  appium.cli -> appium.doctor
+  appium.cli -> appium.schema
+  appium.cli -> appium.helpers
+  appium.cli -> appium.utils
+  appium.cli -> appium.logger
+  appium.cli -> appium.constants
+
+  appium.driver -> appium.bidi
+  appium.driver -> appium.extension
+  appium.driver -> appium.schema
+  appium.driver -> appium.helpers
+  appium.driver -> appium.utils
+  appium.driver -> appium.logger
+  appium.driver -> appium.constants
+
+  appium.extension -> appium.schema
+  appium.extension -> appium.helpers
+  appium.extension -> appium.utils
+  appium.extension -> appium.logger
+  appium.extension -> appium.constants
+
+  appium.bidi -> appium.utils
+  appium.bidi -> appium.constants
+
+  appium.schema -> appium.utils
+  appium.schema -> appium.constants
+
+  appium.helpers -> appium.utils
+  appium.helpers -> appium.logger
+
+  appium.logsink -> appium.utils
+  appium.utils -> appium.logger
+  appium.utils -> appium.constants
+
+  // Package usage beyond support/types (documentation; enforced via package.json)
+  appium.driver -> libs.baseDriver
+  appium.bidi -> libs.baseDriver
+  appium.bidi -> libs.httpServer
+  appium.bootstrap -> libs.baseDriver
+  appium.bootstrap -> libs.httpServer
+  appium.extension -> libs.baseDriver
+  appium.helpers -> libs.baseDriver
+  appium.schema -> libs.schema
+  appium.logsink -> libs.logger
+}

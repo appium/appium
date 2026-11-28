@@ -17,7 +17,6 @@ import type {
 } from '@appium/types';
 import {WebSocket} from 'ws';
 
-import type {AppiumDriver} from '../appium.js';
 import {BIDI_BASE_PATH, BIDI_EVENT_NAME} from '../constants.js';
 import {capitalize} from '../utils/index.js';
 import {
@@ -29,7 +28,16 @@ import {
 } from './flow-control.js';
 
 type ExtensionPlugin = Plugin & ExtensionCore;
-type AnyDriver = ExternalDriver | AppiumDriver;
+/** What the BiDi handlers need from the umbrella driver (`AppiumDriver`), which provides it. */
+export interface BidiHost extends ExtensionCore {
+  readonly args: Parameters<typeof resolveFlowOptions>[0];
+  readonly sessions: Record<string, ExternalDriver>;
+  readonly bidiSockets: Record<string, WebSocket[]>;
+  readonly bidiProxyClients: Record<string, WebSocket>;
+  pluginsForSession(sessionId?: string | null): Plugin[];
+  onBidiMessage: typeof onBidiMessage;
+}
+type AnyDriver = ExternalDriver | BidiHost;
 type SendData = (data: string | Buffer, options?: {binary?: boolean}) => Promise<void>;
 type LogSocketError = (err: Error) => void;
 type PendingProxyCommands = Map<number, Set<() => void>>;
@@ -80,7 +88,7 @@ export function determineBiDiHost(address: string): string {
  * @param ws The websocket connection object
  * @param req The connection pathname, which might include the session id
  */
-export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): void {
+export function onBidiConnection(this: BidiHost, ws: WebSocket, req: IncomingMessage): void {
   try {
     const initBiDiSocketFunc: OmitThisParameter<typeof initBidiSocket> = initBidiSocket.bind(this);
     const {
@@ -124,7 +132,7 @@ export function onBidiConnection(this: AppiumDriver, ws: WebSocket, req: Incomin
  * @returns The success or the error response, never throws
  */
 export async function onBidiMessage(
-  this: AppiumDriver,
+  this: BidiHost,
   data: Buffer,
   driver: AnyDriver,
   plugins: ExtensionPlugin[],
@@ -185,7 +193,7 @@ export async function onBidiMessage(
  * Log a bidi server error
  * @param err The error reported by the WebSocket server
  */
-export function onBidiServerError(this: AppiumDriver, err: Error): void {
+export function onBidiServerError(this: BidiHost, err: Error): void {
   this.log.warn(`Error from bidi websocket server: ${err}`);
 }
 
@@ -194,7 +202,7 @@ export function onBidiServerError(this: AppiumDriver, err: Error): void {
  *
  * @param sessionId The id of the session that has ended
  */
-export function cleanupBidiSockets(this: AppiumDriver, sessionId: string): void {
+export function cleanupBidiSockets(this: BidiHost, sessionId: string): void {
   if (!this.bidiSockets[sessionId]) {
     return;
   }
@@ -243,7 +251,7 @@ function wrapCommandWithPlugins(
  * @param ws The websocket connection object
  * @param req The connection pathname, which might include the session id
  */
-function initBidiSocket(this: AppiumDriver, ws: WebSocket, req: IncomingMessage): InitBiDiSocketResult {
+function initBidiSocket(this: BidiHost, ws: WebSocket, req: IncomingMessage): InitBiDiSocketResult {
   const pathname = req.url;
   if (!pathname) {
     throw new Error('Invalid connection request: pathname missing from request');
@@ -407,7 +415,7 @@ function initBidiProxyHandlers(this: AnyDriver, proxyClient: WebSocket, ws: WebS
  * @param logSocketErr - a special prefixed logger
  */
 function initBidiSocketHandlers(
-  this: AppiumDriver,
+  this: BidiHost,
   ws: WebSocket,
   proxyClient: WebSocket | null,
   send: SendData,
@@ -565,7 +573,7 @@ function finishBidiProxyCommands(pendingCommands: PendingProxyCommands, id?: num
  * @param guard - enforces the send buffer limits of the connection
  */
 function initBidiEventListeners(
-  this: AppiumDriver,
+  this: BidiHost,
   ws: WebSocket,
   bidiHandlerDriver: AnyDriver,
   bidiHandlerPlugins: ExtensionPlugin[],

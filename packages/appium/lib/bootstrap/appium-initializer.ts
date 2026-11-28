@@ -11,7 +11,7 @@ import type {
 
 import {AppiumDriver, type AppiumDriverConstraints} from '../appium.js';
 import {injectAppiumSymlinks} from '../cli/extension-command.js';
-import {runExtensionCommand} from '../cli/extension.js';
+import {listExtensionData, runExtensionCommand} from '../cli/extension.js';
 import {ArgParser, getParser} from '../cli/parser.js';
 import {runSetupCommand} from '../cli/setup-command.js';
 import {SERVER_SUBCOMMAND} from '../constants.js';
@@ -58,7 +58,7 @@ export class AppiumInitializer {
 
     adjustNodePath();
 
-    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+    const {driverConfig, pluginConfig} = await loadExtensions(appiumHome, listExtensionData);
 
     const {preConfigArgs, throwInsteadOfExit} = await this.parsePreConfigArgs(args);
     this.throwInsteadOfExit = throwInsteadOfExit;

@@ -1,0 +1,10 @@
+specification {
+  element actor
+  element system
+  element package
+  element container
+  element component {
+    notation 'Component (owns source paths, enforced)'
+  }
+  tag unenforced
+}

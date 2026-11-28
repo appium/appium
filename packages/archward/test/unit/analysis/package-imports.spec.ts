@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdtemp, rm} from 'node:fs/promises';
+import {mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {afterEach, beforeEach, describe, it} from 'node:test';
@@ -8,6 +8,7 @@ import {
   externalPackageName,
   findPackageImports,
   parseScopedSpecifier,
+  readDeclaredDependencies,
   type PackageImportContext,
 } from '../../../lib/analysis/package-imports.js';
 import {mod} from './modules.js';
@@ -43,6 +44,35 @@ describe('externalPackageName', () => {
       'data:text/js,1',
     ]) {
       assert.equal(externalPackageName(skipped), null, skipped);
+    }
+  });
+});
+
+describe('readDeclaredDependencies', () => {
+  it('lets @types packages declare the types of the package they describe', async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'archward-dd-'));
+    try {
+      await writeFile(
+        path.join(dir, 'package.json'),
+        JSON.stringify({
+          name: 'me',
+          dependencies: {a: '1'},
+          devDependencies: {'@types/json-schema': '1', '@types/babel__core': '1', '@types/foo_bar__baz': '1', b: '1'},
+        }),
+      );
+      const declared = await readDeclaredDependencies(dir);
+      assert.deepEqual([...declared.runtime], ['a']);
+      assert.deepEqual([...declared.dev].sort(), [
+        '@babel/core',
+        '@foo_bar/baz',
+        '@types/babel__core',
+        '@types/foo_bar__baz',
+        '@types/json-schema',
+        'b',
+        'json-schema',
+      ]);
+    } finally {
+      await rm(dir, {recursive: true, force: true});
     }
   });
 });

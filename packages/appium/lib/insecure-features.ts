@@ -1,9 +1,18 @@
 import {util} from '@appium/support';
-import type {ExternalDriver} from '@appium/types';
+import type {AppiumLogger, ExternalDriver} from '@appium/types';
 
-import type {AppiumDriver} from './appium.js';
 import {log as logger} from './logger.js';
 import {kebabCase} from './utils/index.js';
+
+/** What these functions need from the umbrella driver (`AppiumDriver`), which provides it. */
+export interface InsecureFeaturesHost {
+  readonly args: {relaxedSecurityEnabled?: boolean; allowInsecure?: string[]; denyInsecure?: string[]};
+  readonly log: Pick<AppiumLogger, 'info' | 'warn'>;
+  readonly driverConfig?: {installedExtensions?: Record<string, {automationName?: string}>};
+  relaxedSecurityEnabled: boolean;
+  allowInsecure: string[];
+  denyInsecure: string[];
+}
 
 const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
@@ -14,7 +23,7 @@ const FEATURE_NAME_SEPARATOR = ':';
  * globally-applied features.
  * Uses `logger` instead of `this.log` to reduce user confusion.
  */
-export function configureGlobalFeatures(this: AppiumDriver) {
+export function configureGlobalFeatures(this: InsecureFeaturesHost) {
   if (this.args.relaxedSecurityEnabled) {
     logger.info(
       `Enabling relaxed security. All insecure features will be ` +
@@ -49,7 +58,7 @@ export function configureGlobalFeatures(this: AppiumDriver) {
  * @param driverName - Installed driver name used to look up the manifest's automationName;
  * not itself an insecure-feature scope.
  */
-export function configureDriverFeatures(this: AppiumDriver, driver: ExternalDriver, driverName: string) {
+export function configureDriverFeatures(this: InsecureFeaturesHost, driver: ExternalDriver, driverName: string) {
   // the docs tell users to scope a feature with the driver's automationName, which is also what
   // the driver itself compares against in `isFeatureEnabled`
   const automationName = this.driverConfig?.installedExtensions?.[driverName]?.automationName;

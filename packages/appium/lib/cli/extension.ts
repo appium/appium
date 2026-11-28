@@ -5,6 +5,7 @@ import type {Args, CliExtensionCommand, CliExtensionSubcommand} from 'appium/typ
 import {DRIVER_TYPE, EXT_SUBCOMMAND_RUN, PLUGIN_TYPE} from '../constants.js';
 import type {ExtensionConfig} from '../extension/extension-config.js';
 import {reloadManifest} from '../extension/index.js';
+import type {ExtensionList} from '../extension/list-types.js';
 import {isExtensionCommandArgs} from '../schema/cli-args-guards.js';
 import {withManifestLock} from '../utils/index.js';
 import DriverCliCommand from './driver-command.js';
@@ -15,6 +16,15 @@ export const commandClasses = Object.freeze({
   [DRIVER_TYPE]: DriverCliCommand,
   [PLUGIN_TYPE]: PluginCliCommand,
 } as const);
+
+/** Collects `list`-style data (installed state, available updates) for the extensions of `config`. */
+export async function listExtensionData(config: ExtensionConfig<ExtensionType>): Promise<ExtensionList> {
+  const CommandClass = commandClasses[config.extensionType as DriverType | PluginType] as Class<
+    DriverCliCommand | PluginCliCommand
+  >;
+  const cmd = new CommandClass({config, json: true} as any);
+  return await cmd.list({showInstalled: true, showUpdates: true});
+}
 
 export type ExtCommand<ExtType extends ExtensionType> = ExtType extends DriverType
   ? Class<DriverCliCommand>

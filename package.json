@@ -30,6 +30,11 @@
     "access": "public"
   },
   "scripts": {
+    "arch:baseline": "run-s arch:build \"arch:run -- --update-baseline\"",
+    "arch:build": "tsc -b packages/archward",
+    "arch:check": "run-s arch:build arch:run",
+    "arch:preview": "likec4 start packages/appium/architecture",
+    "arch:run": "archward packages/appium",
     "build": "run-s build:*",
     "build:compile": "tsc -b",
     "build:workspaces": "lerna run build",

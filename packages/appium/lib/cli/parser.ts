@@ -18,6 +18,7 @@ import {
   SETUP_SUBCOMMAND,
 } from '../constants.js';
 import {APPIUM_VER} from '../helpers/build.js';
+import {discardCliNumberCoercionWarnings} from '../schema/cli-args.js';
 import type {ArgumentDefinitions} from '../schema/index.js';
 import {finalizeSchema, getAllArgSpecs, getArgSpec, hasArgSpec} from '../schema/index.js';
 import {setPath} from '../utils/index.js';
@@ -307,6 +308,7 @@ export class ArgParser {
    * `parse_args` is a backwards-compatible alias of this method.
    */
   parseArgs(args: string[] = process.argv.slice(2)): TransformedArgsMap {
+    discardCliNumberCoercionWarnings();
     if (!NON_SERVER_ARGS.has(args[0])) {
       args.unshift(SERVER_SUBCOMMAND);
     }
@@ -335,6 +337,7 @@ export class ArgParser {
       }
       return ArgParser._transformParsedArgs(knownArgs);
     } catch (err) {
+      discardCliNumberCoercionWarnings();
       if (this.debug) {
         throw err;
       }

@@ -10,7 +10,9 @@ import {readConfigFile} from '../../lib/bootstrap/config-file.js';
 import {ArgParser, getParser} from '../../lib/cli/parser.js';
 import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants.js';
 import {INSTALL_TYPES} from '../../lib/extension/manifest/index.js';
+import {log} from '../../lib/logger.js';
 import {stripColorCodes} from '../../lib/logsink.js';
+import {emitCliNumberCoercionWarnings} from '../../lib/schema/cli-args.js';
 import * as schema from '../../lib/schema/schema.js';
 import {resolveFixture} from '../helpers.js';
 
@@ -223,6 +225,30 @@ describe('parser', function () {
 
       it('should parse a file for --log-filters', function () {
         assert.ok(Object.hasOwn(p.parseArgs(['--log-filters', LOG_FILTERS_FIXTURE]), 'logFilters'));
+      });
+
+      it('should warn when an integer server argument is coerced', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        assert.strictEqual(p.parseArgs(['--port', '4723abc']).port, 4723);
+        assert.strictEqual(warn.mock.callCount(), 0);
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 1);
+        assert.deepStrictEqual(warn.mock.calls[0].arguments, [`The value '4723abc' of --port was coerced to 4723`]);
+      });
+
+      it('should drop a coercion warning from an earlier parse', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        p.parseArgs(['--port', '4723abc']);
+        assert.strictEqual(p.parseArgs(['--port', '4723']).port, 4723);
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 0);
+      });
+
+      it('should drop a coercion warning when the parse fails', function (t) {
+        const warn = t.mock.method(log, 'warn');
+        assert.throws(() => p.parseArgs(['--port', '4723abc', '--address', '-42']));
+        emitCliNumberCoercionWarnings();
+        assert.strictEqual(warn.mock.callCount(), 0);
       });
     });
 

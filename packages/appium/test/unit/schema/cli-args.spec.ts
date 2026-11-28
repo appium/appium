@@ -5,7 +5,8 @@ import type {ExtensionType} from '@appium/types';
 import type {ArgumentOptions} from 'argparse';
 
 import {PLUGIN_TYPE} from '../../../lib/constants.js';
-import {toParserArgs} from '../../../lib/schema/cli-args.js';
+import {log} from '../../../lib/logger.js';
+import {emitCliNumberCoercionWarnings, toParserArgs} from '../../../lib/schema/cli-args.js';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema/index.js';
 
 type ParserArgSpec = ArgumentOptions & {
@@ -101,8 +102,22 @@ describe('cli-args', function () {
             result = await getArgs({schema, extName, extType});
           });
 
-          it('should parse the value as a float', function () {
+          it('should parse the value as a float', function (t) {
+            const warn = t.mock.method(log, 'warn');
             assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10.5);
+            emitCliNumberCoercionWarnings();
+            assert.strictEqual(warn.mock.callCount(), 0);
+          });
+
+          it('should warn when the value is coerced', function (t) {
+            const warn = t.mock.method(log, 'warn');
+            assert.strictEqual(result['--plugin-blob-foo'].type!('7abc'), 7);
+            assert.strictEqual(warn.mock.callCount(), 0);
+            emitCliNumberCoercionWarnings();
+            assert.strictEqual(warn.mock.callCount(), 1);
+            assert.deepStrictEqual(warn.mock.calls[0].arguments, [
+              `The value '7abc' of --plugin-blob-foo was coerced to 7`,
+            ]);
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
@@ -119,8 +134,30 @@ describe('cli-args', function () {
             result = await getArgs({schema, extName, extType});
           });
 
-          it('should parse the value as an integer', function () {
+          it('should parse the value as an integer', function (t) {
+            const warn = t.mock.method(log, 'warn');
+            assert.strictEqual(result['--plugin-blob-foo'].type!('4723'), 4723);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('+10'), 10);
+            emitCliNumberCoercionWarnings();
+            assert.strictEqual(warn.mock.callCount(), 0);
+          });
+
+          it('should warn when the value is coerced', function (t) {
+            const warn = t.mock.method(log, 'warn');
             assert.strictEqual(result['--plugin-blob-foo'].type!('10.5'), 10);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('4723abc'), 4723);
+            assert.strictEqual(result['--plugin-blob-foo'].type!('0x10'), 0);
+            assert.strictEqual(warn.mock.callCount(), 0);
+            emitCliNumberCoercionWarnings();
+            assert.strictEqual(warn.mock.callCount(), 3);
+            assert.deepStrictEqual(
+              warn.mock.calls.map((call) => call.arguments[0]),
+              [
+                `The value '10.5' of --plugin-blob-foo was coerced to 10`,
+                `The value '4723abc' of --plugin-blob-foo was coerced to 4723`,
+                `The value '0x10' of --plugin-blob-foo was coerced to 0`,
+              ],
+            );
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {

@@ -2,6 +2,7 @@ import {util} from '@appium/support';
 import {type ArgumentOptions, ArgumentTypeError} from 'argparse';
 import type {JSONSchema7, JSONSchema7TypeName} from 'json-schema';
 
+import {log} from '../logger.js';
 import {kebabCase} from '../utils/index.js';
 import type {ArgSpec} from './arg-spec.js';
 import {
@@ -78,6 +79,32 @@ function getSchemaValidator<Coerced>(
   };
 }
 
+// argparse runs before the log file and filters exist, so the warning waits
+const pendingCliNumberWarnings: string[] = [];
+
+// parseInt('4723abc') and parseFloat('7abc') drop the rest of the token without an error
+function parseCliNumber(value: string, parse: (value: string) => number, flag: string): number {
+  const parsed = parse(value);
+  if (!Number.isNaN(parsed) && Number(value) !== parsed) {
+    pendingCliNumberWarnings.push(
+      `The value '${util.truncateString(value, {length: 100})}' of ${flag} was coerced to ${parsed}`,
+    );
+  }
+  return parsed;
+}
+
+/** Logs number-coercion warnings stored while arguments were parsed. */
+export function emitCliNumberCoercionWarnings(): void {
+  for (const message of pendingCliNumberWarnings.splice(0)) {
+    log.warn(message);
+  }
+}
+
+/** Clears stored number-coercion warnings. */
+export function discardCliNumberCoercionWarnings(): void {
+  pendingCliNumberWarnings.length = 0;
+}
+
 function makeDescription(schema: AppiumJSONSchema): string {
   const {appiumCliDescription, description = '', appiumDeprecated} = schema;
   let desc = appiumCliDescription ?? description;
@@ -130,11 +157,11 @@ function subSchemaToArgDef(subSchema: AppiumJSONSchema, argSpec: ArgSpec): ArgDe
       break;
     }
     case TYPENAMES.NUMBER: {
-      argTypeFunction = getSchemaValidator(argSpec, parseFloat);
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseCliNumber(v, parseFloat, aliases[0]));
       break;
     }
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(argSpec, (v) => parseInt(v, 10));
+      argTypeFunction = getSchemaValidator(argSpec, (v) => parseCliNumber(v, (s) => parseInt(s, 10), aliases[0]));
       break;
     }
     case TYPENAMES.STRING: {

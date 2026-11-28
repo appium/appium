@@ -59,7 +59,7 @@
     "@types/picomatch": "^4.0.0"
   },
   "peerDependencies": {
-    "typescript": ">=5.0.0 <7"
+    "typescript": "<8"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0",

@@ -19,6 +19,7 @@ import {SubProcess} from 'teen_process';
 
 import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor.js';
 import type {ExtensionConfig as BaseExtensionConfig} from '../extension/extension-config.js';
+import type {ExtensionList, ExtensionListData} from '../extension/list-types.js';
 import {
   INSTALL_TYPE_DEV,
   INSTALL_TYPE_GIT,
@@ -41,38 +42,19 @@ export type ExtensionCommandOptions<ExtType extends ExtensionType = ExtensionTyp
 };
 export type ExtensionConfig<ExtType extends ExtensionType = ExtensionType> = BaseExtensionConfig<ExtType>;
 
+export type {
+  ExtensionList,
+  ExtensionListData,
+  ExtensionListMetadata,
+  InstalledExtensionListData,
+} from '../extension/list-types.js';
+
 export type ExtRecord<ExtType extends ExtensionType = ExtensionType> = AppiumExtRecord<ExtType>;
 
 export type ExtMetadata<ExtType extends ExtensionType = ExtensionType> = AppiumExtMetadata<ExtType>;
 export type ExtManifest<ExtType extends ExtensionType = ExtensionType> = AppiumExtManifest<ExtType>;
 export type ExtPackageJson<ExtType extends ExtensionType = ExtensionType> = AppiumExtPackageJson<ExtType>;
 export type ExtInstallReceipt<ExtType extends ExtensionType = ExtensionType> = AppiumExtInstallReceipt<ExtType>;
-/**
- * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCliCommand.list}.
- */
-export type ExtensionListMetadata = {
-  installed: boolean;
-  upToDate?: boolean;
-  updateVersion?: string | null;
-  unsafeUpdateVersion?: string | null;
-  updateError?: string;
-  devMode?: boolean;
-  repositoryUrl?: string;
-};
-/**
- * Possible return value for {@linkcode ExtensionCliCommand.list}
- */
-export type ExtensionListData<ExtType extends ExtensionType = ExtensionType> = Partial<ExtManifest<ExtType>> &
-  Partial<ExtensionListMetadata>;
-
-export type InstalledExtensionListData<ExtType extends ExtensionType = ExtensionType> = ExtManifest<ExtType> &
-  ExtensionListMetadata;
-
-/**
- * Return value of {@linkcode ExtensionCliCommand.list}.
- */
-export type ExtensionList<ExtType extends ExtensionType = ExtensionType> = Record<string, ExtensionListData<ExtType>>;
-
 /**
  * Return value of {@linkcode ExtensionCliCommand._run}
  */

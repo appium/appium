@@ -184,7 +184,7 @@ describe('ExtensionConfig', function () {
       let extData: any;
       let config: any;
 
-      beforeEach(function () {
+      beforeEach(async function () {
         const manifest = Manifest.getInstance('/some/path');
         extData = {
           version: '1.0.0',
@@ -198,6 +198,8 @@ describe('ExtensionConfig', function () {
         };
         manifest.setExtension(DRIVER_TYPE, extData.pkgName, extData);
         config = new ExtensionConfig(DRIVER_TYPE, manifest);
+        const {listExtensionData} = await import('../../../lib/cli/extension.js');
+        config.setListProvider(listExtensionData);
       });
 
       describe('when the extension data is missing an `installSpec` field', function () {
@@ -268,6 +270,24 @@ describe('ExtensionConfig', function () {
               `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
             ]);
           });
+        });
+      });
+
+      describe('without a list provider', function () {
+        it('still warns about an incompatible peer dependency', async function () {
+          extData.appiumVersion = '1.9.9';
+          config.setListProvider(undefined);
+          const [warning] = await config.getGenericConfigWarnings(extData, extData.pkgName);
+          assert.match(warning, /due to its peer dependency on Appium 1\.9\.9\. Please install a compatible version/);
+        });
+
+        it('does not look for an upgrade', async function () {
+          delete extData.appiumVersion;
+          MockNpm.getLatestVersion.resolves('1.1.0');
+          MockNpm.getLatestSafeUpgradeVersion.resolves('1.1.0');
+          config.setListProvider(undefined);
+          const [warning] = await config.getGenericConfigWarnings(extData, extData.pkgName);
+          assert.match(warning, /Please ask the developer of `derp` to add a peer dependency/);
         });
       });
 

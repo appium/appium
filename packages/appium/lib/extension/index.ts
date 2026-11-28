@@ -7,6 +7,7 @@ import {USE_ALL_PLUGINS} from '../constants.js';
 import {log} from '../logger.js';
 import {withManifestLock, zip} from '../utils/index.js';
 import {DriverConfig} from './driver-config.js';
+import type {ExtensionListProvider} from './extension-config.js';
 import {Manifest} from './manifest/index.js';
 import {PluginConfig} from './plugin-config.js';
 
@@ -42,11 +43,21 @@ export async function reloadManifest(manifest: Manifest): Promise<void> {
  * - Returns these instances
  *
  * If `appiumHome` is needed, use `resolveAppiumHome` from `../utils/index.js`.
+ *
+ * `listProvider` supplies installed/update data for compatibility warnings (see `cli/extension.ts`).
+ * The configs are per-process singletons: a provider stays set until another one replaces it.
  */
-export async function loadExtensions(appiumHome: string): Promise<ExtensionConfigs> {
+export async function loadExtensions(
+  appiumHome: string,
+  listProvider?: ExtensionListProvider,
+): Promise<ExtensionConfigs> {
   const manifest = Manifest.getInstance(appiumHome);
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);
+  if (listProvider) {
+    driverConfig.setListProvider(listProvider);
+    pluginConfig.setListProvider(listProvider);
+  }
 
   await withManifestLock(appiumHome, () => reloadManifest(manifest));
 

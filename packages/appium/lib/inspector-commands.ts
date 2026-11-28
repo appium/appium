@@ -7,22 +7,29 @@ import type {
   BidiModuleMap,
   DriverClass,
   ExecuteMethodMap,
+  ExternalDriver,
   ListCommandsResponse,
   ListExtensionsResponse,
   MethodMap,
   PayloadParams,
+  Plugin,
   PluginClass,
   RestCommandItemParam,
   RestMethodsToCommandsMap,
 } from '@appium/types';
 
-import type {AppiumDriver} from './appium.js';
 import {mapValues} from './utils/index.js';
+
+/** What these functions need from the umbrella driver (`AppiumDriver`), which provides it. */
+export interface InspectorHost {
+  driverForSession(sessionId: string): ExternalDriver | null;
+  pluginsForSession(sessionId?: string | null): Plugin[];
+}
 
 /**
  * Returns available REST and BiDi commands for base, driver and plugins.
  */
-export async function listCommands(this: AppiumDriver, sessionId?: string): Promise<ListCommandsResponse> {
+export async function listCommands(this: InspectorHost, sessionId?: string): Promise<ListCommandsResponse> {
   let driverRestMethodMap: MethodMap<any> = {};
   let driverBiDiCommands: BidiModuleMap = {};
   let pluginRestMethodMaps: Record<string, MethodMap<any>> = {};
@@ -48,7 +55,7 @@ export async function listCommands(this: AppiumDriver, sessionId?: string): Prom
 /**
  * Returns available execute methods exposed by driver and plugins.
  */
-export async function listExtensions(this: AppiumDriver, sessionId?: string): Promise<ListExtensionsResponse> {
+export async function listExtensions(this: InspectorHost, sessionId?: string): Promise<ListExtensionsResponse> {
   let driverExecuteMethodMap: ExecuteMethodMap<any> = {};
   let pluginExecuteMethodMaps: Record<string, ExecuteMethodMap<any>> = {};
   if (sessionId) {

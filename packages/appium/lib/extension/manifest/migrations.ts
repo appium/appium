@@ -1,13 +1,20 @@
-import type {ManifestDataVersions} from 'appium/types/index.js';
+import type {ExtensionType} from '@appium/types';
+import type {ExtRecord, ManifestDataVersions} from 'appium/types/index.js';
 
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../../constants.js';
 import {log} from '../../logger.js';
-import type {Manifest} from './manifest.js';
 
 const SCHEMA_REV_3 = 3;
 const SCHEMA_REV_4 = 4;
 
-type Migration = (manifest: Manifest) => boolean | Promise<boolean>;
+/** The part of `Manifest` that migrations use; keeps this module independent of the class. */
+export interface MigratableManifest {
+  readonly schemaRev: number;
+  getExtensionData<ExtType extends ExtensionType>(extType: ExtType): ExtRecord<ExtType>;
+  setSchemaRev(rev: number): void;
+}
+
+type Migration = (manifest: MigratableManifest) => boolean | Promise<boolean>;
 
 const Migrations: Partial<Record<keyof ManifestDataVersions, Migration>> = {
   [SCHEMA_REV_3]: (manifest) => {
@@ -34,7 +41,7 @@ const Migrations: Partial<Record<keyof ManifestDataVersions, Migration>> = {
  *
  * @returns If `true` existing packages should be synced from disk and the manifest should be persisted.
  */
-export async function migrate(manifest: Manifest): Promise<boolean> {
+export async function migrate(manifest: MigratableManifest): Promise<boolean> {
   let didChange = false;
   for (const migration of Object.values(Migrations)) {
     if (migration) {
@@ -49,7 +56,7 @@ export async function migrate(manifest: Manifest): Promise<boolean> {
   return didChange;
 }
 
-function setSchemaRev(manifest: Manifest, version: number): boolean {
+function setSchemaRev(manifest: MigratableManifest, version: number): boolean {
   if ((manifest.schemaRev ?? 0) < version) {
     manifest.setSchemaRev(version);
     return true;

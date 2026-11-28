@@ -88,7 +88,7 @@
     "@types/method-override": "3.0.0",
     "@types/mime-types": "3.0.1",
     "@types/morgan": "1.9.10",
-    "@types/node": "26.6.7",
+    "@types/node": "26.6.10",
     "@types/picomatch": "4.0.3",
     "@types/pluralize": "0.0.33",
     "@types/semver": "7.8.0",
